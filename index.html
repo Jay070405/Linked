@@ -5,13 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的个人作品集</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- 修改开场动画部分，添加小角色 -->
     <div class="intro-animation">
         <div class="intro-circle">
-            <button class="start-button">Welcome to Lin's Portfolio</button>
+            <!-- 添加魔法阵元素 -->
+            <div class="magic-circle">
+                <div class="magic-circle-outer"></div>
+                <div class="magic-circle-middle"></div>
+                <div class="magic-circle-inner"></div>
+                
+                <div class="magic-runes">
+                    <div class="rune">✧</div>
+                    <div class="rune">✦</div>
+                    <div class="rune">✧</div>
+                    <div class="rune">✦</div>
+                    <div class="rune">✧</div>
+                    <div class="rune">✦</div>
+                    <div class="rune">✧</div>
+                    <div class="rune">✦</div>
+                </div>
+                
+                <div class="magic-lines">
+                    <div class="magic-line"></div>
+                    <div class="magic-line"></div>
+                    <div class="magic-line"></div>
+                    <div class="magic-line"></div>
+                    <div class="magic-line"></div>
+                    <div class="magic-line"></div>
+                    <div class="magic-line"></div>
+                    <div class="magic-line"></div>
+                </div>
+                
+                <div class="magic-center"></div>
+            </div>
+            
+            <button class="start-button">进入作品集</button>
         </div>
         
         <!-- 添加右下角的小角色 -->
@@ -29,7 +60,7 @@
     </div>
 
     <!-- 包裹所有现有内容 -->
-    <div class="content-wrapper">
+    <div class="content-wrapper" style="opacity: 1; visibility: visible;">
         <!-- 添加地面 -->
         <div class="ground"></div>
 
@@ -39,9 +70,9 @@
                 <div class="logo">Shijie Lin</div>
                 <ul class="nav-links">
                     <li><a href="#home">首页</a></li>
-                    <li><a href="#about">关于我</a></li>
+                    <li><a href="about.html">关于我</a></li>
                     <li><a href="#portfolio">作品集</a></li>
-                    <li><a href="#contact">联系方式</a></li>
+                    <li><a href="contact.html">联系方式</a></li>
                 </ul>
             </div>
         </nav>
@@ -60,152 +91,20 @@
             <div class="welcome-text">PORTFOLIO</div>
         </section>
 
-        <!-- 关于我部分 -->
-        <section id="about" class="about">
-            <h2 class="scale-in">About Me</h2>
-            
-            <!-- 添加个人介绍 -->
-            <div class="about-intro slide-in-left">
-                我是林世杰，ArtCenter College of Design 概念艺术专业在读生，专注游戏与影视领域的角色/场景概念设计，会用3D建模（Blender/Maya）与数字绘画（Photoshop/Procreate）融合，曾为商业项目提升视觉辨识度并实现100%交付满意度。希望你会喜欢我的作品。
-            </div>
-
-            <div class="about-content">
-                <div class="about-text slide-in-left">
-                    <div class="about-header">
-                        <h3>概念艺术家 / 视觉叙事设计师</h3>
-                        <p class="about-location">📍 上海 · Los Angeles | 🎓 ArtCenter College of Design 在读</p>
-                    </div>
-                    
-                    <div class="about-tags">
-                        <h4>🌟 个人特质</h4>
-                        <div class="tags">
-                            <span class="tag">快速学习者</span>
-                            <span class="tag">热爱探索新技术</span>
-                            <span class="tag">创意思维活跃</span>
-                        </div>
-                        <div class="tags" style="margin-top: 1rem;">
-                            <span class="tag">游戏文化爱好者</span>
-                            <span class="tag">娱乐产业研究者</span>
-                            <span class="tag">跨媒体创作者</span>
-                        </div>
-                    </div>
-
-                    <div class="about-services">
-                        <h4>🎯 专业服务</h4>
-                        <ul>
-                            <li>
-                                <strong>角色/场景概念设计</strong>
-                                <p>专注于创造独特而富有生命力的角色与场景设计</p>
-                            </li>
-                            <li>
-                                <strong>世界观视觉开发</strong>
-                                <p>擅长融合东方传统美学与现代数字技术</p>
-                            </li>
-                            <li>
-                                <strong>创意设计协作</strong>
-                                <p>追求高品质的视觉呈现与艺术创新</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="skills slide-in-right">
-                    <h4>🛠️ 技能专长</h4>
-                    <div class="skill-category">
-                        <h5>软件工具</h5>
-                        <ul>
-                            <li>Photoshop</li>
-                            <li>Illustrator</li>
-                            <li>Procreate</li>
-                            <li>Maya</li>
-                            <li>Blender</li>
-                        </ul>
-                    </div>
-                    <div class="skill-category">
-                        <h5>艺术技能</h5>
-                        <ul>
-                            <li>数字绘画</li>
-                            <li>3D建模</li>
-                            <li>视觉叙事</li>
-                            <li>色彩理论</li>
-                        </ul>
-                    </div>
-                    <div class="achievements">
-                        <h4>🏆 主要成就</h4>
-                        <ul>
-                            <li>ArtCenter Merit 奖学金获得者</li>
-                            <li>个人插画委托项目 100%满意度交付</li>
-                            <li>原创角色设计入选校级艺术展览</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- 作品集部分 -->
         <section id="portfolio" class="portfolio">
-            <h2>我的作品</h2>
-            
-            <!-- 作品分类标签 -->
+            <h2>作品集</h2>
             <div class="portfolio-tabs">
                 <button class="portfolio-tab active" data-category="all">全部</button>
-                <button class="portfolio-tab" data-category="school">School Work</button>
-                <button class="portfolio-tab" data-category="personal">Personal Work</button>
-                <button class="portfolio-tab" data-category="sketch">Sketch</button>
+                <button class="portfolio-tab" data-category="personal">个人作品</button>
+                <button class="portfolio-tab" data-category="school">学校作品</button>
+                <button class="portfolio-tab" data-category="sketch">速写</button>
             </div>
             
             <div class="portfolio-grid">
-                <!-- School Work 项目 -->
-                <div class="portfolio-item" data-category="all school">
-                    <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay.png" alt="背景绘画">
-                    <div class="portfolio-overlay">
-                        <h3>背景绘画</h3>
-                        <p>ArtCenter 课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <img src="image/school/cat diary (1).png" alt="猫咪日记">
-                    <div class="portfolio-overlay">
-                        <h3>猫咪日记</h3>
-                        <p>角色设计课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <img src="image/school/class_work photoshop fundomental.png" alt="Photoshop基础">
-                    <div class="portfolio-overlay">
-                        <h3>Photoshop基础</h3>
-                        <p>数字绘画课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <img src="image/school/Screenshot 2025-03-01 212506.png" alt="创意透视">
-                    <div class="portfolio-overlay">
-                        <h3>创意透视</h3>
-                        <p>环境设计课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <img src="image/school/maya.png" alt="Maya 3D建模">
-                    <div class="portfolio-overlay">
-                        <h3>Maya 3D建模</h3>
-                        <p>3D建模课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <img src="image/school/vis dev.jpg" alt="视觉开发">
-                    <div class="portfolio-overlay">
-                        <h3>视觉开发</h3>
-                        <p>视觉开发课程作业</p>
-                    </div>
-                </div>
-                
-                <!-- Personal Work 项目 -->
+                <!-- 个人作品项目 -->
                 <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">1</span>
                     <img src="image/personal/artist (1).png" alt="艺术家">
                     <div class="portfolio-overlay">
                         <h3>艺术家</h3>
@@ -214,6 +113,7 @@
                 </div>
                 
                 <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">2</span>
                     <img src="image/personal/personal project.jpg" alt="个人项目">
                     <div class="portfolio-overlay">
                         <h3>个人项目</h3>
@@ -222,6 +122,7 @@
                 </div>
                 
                 <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">3</span>
                     <img src="image/personal/sakura-villege.png" alt="樱花村">
                     <div class="portfolio-overlay">
                         <h3>樱花村</h3>
@@ -230,6 +131,7 @@
                 </div>
                 
                 <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">4</span>
                     <img src="image/personal/world tree.png" alt="世界树">
                     <div class="portfolio-overlay">
                         <h3>世界树</h3>
@@ -237,8 +139,8 @@
                     </div>
                 </div>
                 
-                <!-- 修改寺庙草稿为寺庙 -->
                 <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">5</span>
                     <img src="image/personal/寺庙草稿.jpg" alt="寺庙">
                     <div class="portfolio-overlay">
                         <h3>寺庙</h3>
@@ -246,17 +148,112 @@
                     </div>
                 </div>
                 
-                <!-- Sketch 项目 -->
-                <div class="portfolio-item" data-category="all sketch">
-                    <video src="image/sketch.mp4" alt="速写视频" autoplay loop muted></video>
+                <!-- 添加三个新的作品项目 -->
+                <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">6</span>
+                    <img src="image/personal/废弃小镇.png" alt="废弃小镇">
                     <div class="portfolio-overlay">
-                        <h3>速写过程</h3>
+                        <h3>废弃小镇</h3>
+                        <p>个人概念设计作品</p>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">7</span>
+                    <img src="image/personal/剑仙.png" alt="剑仙">
+                    <div class="portfolio-overlay">
+                        <h3>剑仙</h3>
+                        <p>个人角色设计作品</p>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-category="all personal">
+                    <span class="portfolio-number">8</span>
+                    <img src="image/personal/森林.png" alt="森林">
+                    <div class="portfolio-overlay">
+                        <h3>神秘森林</h3>
+                        <p>个人环境设计作品</p>
+                    </div>
+                </div>
+                
+                <!-- 学校作品项目 -->
+                <div class="portfolio-item" data-category="all school">
+                    <span class="portfolio-number">9</span>
+                    <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay.png" alt="背景绘画">
+                    <div class="portfolio-overlay">
+                        <h3>背景绘画</h3>
+                        <p>ArtCenter 课程作业</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="all school">
+                    <span class="portfolio-number">10</span>
+                    <img src="image/school/cat diary (1).png" alt="猫咪日记">
+                    <div class="portfolio-overlay">
+                        <h3>猫咪日记</h3>
+                        <p>角色设计课程作业</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="all school">
+                    <span class="portfolio-number">11</span>
+                    <img src="image/school/class_work photoshop fundomental.png" alt="Photoshop基础">
+                    <div class="portfolio-overlay">
+                        <h3>Photoshop基础</h3>
+                        <p>数字绘画课程作业</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="all school">
+                    <span class="portfolio-number">12</span>
+                    <img src="image/school/Screenshot 2025-03-01 212506.png" alt="创意透视">
+                    <div class="portfolio-overlay">
+                        <h3>创意透视</h3>
+                        <p>环境设计课程作业</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="all school">
+                    <span class="portfolio-number">13</span>
+                    <img src="image/school/maya.png" alt="Maya 3D建模">
+                    <div class="portfolio-overlay">
+                        <h3>Maya 3D建模</h3>
+                        <p>3D建模课程作业</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="all school">
+                    <span class="portfolio-number">14</span>
+                    <img src="image/school/vis dev.jpg" alt="视觉开发">
+                    <div class="portfolio-overlay">
+                        <h3>视觉开发</h3>
+                        <p>视觉开发课程作业</p>
+                    </div>
+                </div>
+                
+                <!-- 添加新的三个速写视频 -->
+                <div class="portfolio-item" data-category="all sketch">
+                    <span class="portfolio-number">15</span>
+                    <div class="video-container">
+                        <video src="image/sketch/sketch (1) (1).mp4" alt="速写视频1" poster="image/sketch/sketch (1) (1).mp4#t=99999" muted></video>
+                        <div class="play-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>速写过程1</h3>
                         <p>创作过程记录</p>
                     </div>
                 </div>
                 
                 <div class="portfolio-item" data-category="all sketch">
-                    <video src="image/sketch (2).mp4" alt="速写视频2" autoplay loop muted></video>
+                    <span class="portfolio-number">16</span>
+                    <div class="video-container">
+                        <video src="image/sketch/sketch (2).mp4" alt="速写视频2" poster="image/sketch/sketch (2).mp4#t=99999" muted></video>
+                        <div class="play-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                    </div>
                     <div class="portfolio-overlay">
                         <h3>速写过程2</h3>
                         <p>创作过程记录</p>
@@ -264,43 +261,17 @@
                 </div>
                 
                 <div class="portfolio-item" data-category="all sketch">
-                    <video src="image/sketch/sketch (1) (1).mp4" alt="速写视频3" autoplay loop muted></video>
+                    <span class="portfolio-number">17</span>
+                    <div class="video-container">
+                        <video src="image/sketch/WeChat_20250303101335.mp4" alt="速写视频3" poster="image/sketch/WeChat_20250303101335.mp4#t=99999" muted></video>
+                        <div class="play-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                    </div>
                     <div class="portfolio-overlay">
                         <h3>速写过程3</h3>
                         <p>创作过程记录</p>
                     </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all sketch">
-                    <video src="image/sketch/sketch (2).mp4" alt="速写视频4" autoplay loop muted></video>
-                    <div class="portfolio-overlay">
-                        <h3>速写过程4</h3>
-                        <p>创作过程记录</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all sketch">
-                    <video src="image/sketch/WeChat_20250303101335.mp4" alt="速写视频5" autoplay loop muted></video>
-                    <div class="portfolio-overlay">
-                        <h3>速写过程5</h3>
-                        <p>创作过程记录</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 联系方式部分 -->
-        <section id="contact" class="contact">
-            <h2>联系我</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <p><i class="fas fa-envelope"></i> your.email@example.com</p>
-                    <p><i class="fas fa-phone"></i> +86 123 4567 8900</p>
-                </div>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-weixin"></i></a>
                 </div>
             </div>
         </section>
@@ -329,4 +300,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-

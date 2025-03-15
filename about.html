@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我 - Shijie Lin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 关于页面特定样式 */
+        body {
+            background-color: #1a1a1a;
+        }
+        
+        .about-page-header {
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, rgba(20, 20, 22, 0.9), rgba(30, 30, 35, 0.8));
+        }
+        
+        .about-page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image/sakura-villege.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .about-page-title {
+            font-size: 5rem;
+            color: transparent;
+            background: linear-gradient(120deg, 
+                var(--primary-dark) 0%,
+                var(--primary) 25%,
+                var(--primary-light) 50%,
+                var(--primary) 75%,
+                var(--primary-dark) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-align: center;
+            position: relative;
+        }
+        
+        .about-page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent,
+                var(--primary),
+                transparent
+            );
+        }
+        
+        .back-to-home {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(30, 30, 35, 0.7);
+            color: var(--primary-light);
+            padding: 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(137, 207, 240, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .back-to-home:hover {
+            transform: translateY(-5px);
+            background: rgba(137, 207, 240, 0.2);
+            box-shadow: 0 8px 20px rgba(137, 207, 240, 0.4);
+        }
+        
+        .back-to-home i {
+            font-size: 1.5rem;
+        }
+        
+        .about-container {
+            max-width: 2000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Shijie Lin</div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="about.html" class="active">关于我</a></li>
+                <li><a href="index.html#portfolio">作品集</a></li>
+                <li><a href="index.html#contact">联系方式</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <header class="about-page-header">
+        <h1 class="about-page-title">About Me</h1>
+    </header>
+
+    <!-- 关于我内容 -->
+    <div class="about-container">
+        <section class="about">
+            <div class="about-intro slide-in-left">
+                我是林世杰，ArtCenter College of Design 概念艺术专业在读生，专注游戏与影视领域的角色/场景概念设计，会用3D建模（Blender/Maya）与数字绘画（Photoshop/Procreate）融合，曾为商业项目提升视觉辨识度并实现100%交付满意度。希望你会喜欢我的作品。
+            </div>
+
+            <div class="about-content">
+                <div class="about-text slide-in-left">
+                    <div class="about-header">
+                        <h3>概念艺术家 / 视觉叙事设计师</h3>
+                        <p class="about-location">📍 上海 · Los Angeles | 🎓 ArtCenter College of Design 在读</p>
+                    </div>
+                    
+                    <div class="about-tags">
+                        <h4>🌟 个人特质</h4>
+                        <div class="tags">
+                            <span class="tag">快速学习者</span>
+                            <span class="tag">热爱探索新技术</span>
+                            <span class="tag">创意思维活跃</span>
+                        </div>
+                        <div class="tags" style="margin-top: 1rem;">
+                            <span class="tag">游戏文化爱好者</span>
+                            <span class="tag">娱乐产业研究者</span>
+                            <span class="tag">跨媒体创作者</span>
+                        </div>
+                    </div>
+
+                    <div class="about-services">
+                        <h4>🎯 专业服务</h4>
+                        <ul>
+                            <li>
+                                <strong>角色/场景概念设计</strong>
+                                <p>专注于创造独特而富有生命力的角色与场景设计</p>
+                            </li>
+                            <li>
+                                <strong>世界观视觉开发</strong>
+                                <p>擅长融合东方传统美学与现代数字技术</p>
+                            </li>
+                            <li>
+                                <strong>创意设计协作</strong>
+                                <p>追求高品质的视觉呈现与艺术创新</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="skills slide-in-right">
+                    <h4>🛠️ 技能专长</h4>
+                    <div class="skill-category">
+                        <h5>软件工具</h5>
+                        <ul>
+                            <li>Photoshop</li>
+                            <li>Illustrator</li>
+                            <li>Procreate</li>
+                            <li>Maya</li>
+                            <li>Blender</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h5>艺术技能</h5>
+                        <ul>
+                            <li>数字绘画</li>
+                            <li>3D建模</li>
+                            <li>视觉叙事</li>
+                            <li>色彩理论</li>
+                        </ul>
+                    </div>
+                    <div class="achievements">
+                        <h4>🏆 主要成就</h4>
+                        <ul>
+                            <li>ArtCenter Merit 奖学金获得者</li>
+                            <li>个人插画委托项目 100%满意度交付</li>
+                            <li>原创角色设计入选校级艺术展览</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 返回首页按钮 -->
+    <a href="index.html" class="back-to-home">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <!-- 添加鼠标发光效果 -->
+    <div class="cursor-glow"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // 页面加载时添加动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 标记已经看过开场动画
+            sessionStorage.setItem('hasSeenIntro', 'true');
+            
+            // 创建发光元素
+            const cursor = document.createElement('div');
+            cursor.className = 'cursor-glow';
+            document.body.appendChild(cursor);
+
+            // 跟踪鼠标移动
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+
+            // 鼠标进入可点击元素时的效果
+            document.querySelectorAll('a, button').forEach(elem => {
+                elem.addEventListener('mouseenter', () => {
+                    cursor.classList.add('active');
+                });
+                elem.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('active');
+                });
+            });
+            
+            // 添加滚动监听
+            const animatedElements = document.querySelectorAll('.slide-in-left, .slide-in-right');
+            
+            // 初始检查
+            checkElements(animatedElements);
+            
+            // 滚动时检查
+            window.addEventListener('scroll', () => {
+                checkElements(animatedElements);
+            });
+            
+            // 检查元素是否在视口中
+            function checkElements(elements) {
+                const triggerBottom = window.innerHeight * 0.8;
+                
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    
+                    if (elementTop < triggerBottom) {
+                        element.classList.add('visible');
+                    }
+                });
+            }
+            
+            // 立即触发一次滚动事件，确保元素可见
+            setTimeout(() => {
+                window.dispatchEvent(new Event('scroll'));
+            }, 100);
+        });
+    </script>
+</body>
+</html> 

@@ -21,53 +21,96 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 修改开场动画逻辑
-    const startButton = document.querySelector('.start-button');
-    const introCircle = document.querySelector('.intro-circle');
-    const introAnimation = document.querySelector('.intro-animation');
-    const contentWrapper = document.querySelector('.content-wrapper');
+    // 处理视频点击播放/暂停功能
+    const videoContainers = document.querySelectorAll('.video-container');
     
-    // 初始化内容包装器
-    contentWrapper.style.opacity = '0';
-    contentWrapper.style.visibility = 'hidden';
+    videoContainers.forEach(container => {
+        const video = container.querySelector('video');
+        const playIcon = container.querySelector('.play-icon');
+        
+        container.addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止冒泡，防止触发作品项目的点击事件
+            
+            if (video.paused) {
+                // 如果视频是暂停状态，播放视频并隐藏播放图标
+                video.play();
+                video.setAttribute('loop', 'true');
+                playIcon.style.opacity = '0';
+            } else {
+                // 如果视频正在播放，暂停视频并显示播放图标
+                video.pause();
+                playIcon.style.opacity = '0.8';
+            }
+        });
+        
+        // 视频播放结束后显示播放图标
+        video.addEventListener('ended', () => {
+            playIcon.style.opacity = '0.8';
+        });
+    });
 
-    // 添加按钮点击事件
-    startButton.addEventListener('click', () => {
-        // 隐藏按钮
-        startButton.style.opacity = '0';
-        
-        // 确保页面在顶部
-        window.scrollTo(0, 0);
-        
-        // 动画圆形
-        introCircle.classList.add('animate-circle');
-        
-        // 延迟后隐藏介绍动画
-        setTimeout(() => {
-            introAnimation.classList.add('animate-intro');
+    // 处理开场动画
+    // 检查是否已经显示过开场动画
+    const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
+    const introAnimation = document.querySelector('.intro-animation');
+    
+    // 如果页面上有开场动画元素
+    if (introAnimation) {
+        // 如果已经显示过开场动画，则直接隐藏
+        if (hasSeenIntro) {
+            introAnimation.style.display = 'none';
+            document.body.style.overflow = 'auto';
             
-            // 显示内容
-            contentWrapper.style.visibility = 'visible';
-            contentWrapper.style.opacity = '1';
+            // 确保内容可见
+            const contentWrapper = document.querySelector('.content-wrapper');
+            if (contentWrapper) {
+                contentWrapper.style.opacity = '1';
+                contentWrapper.style.visibility = 'visible';
+            }
+        } else {
+            // 否则显示开场动画并记录状态
+            sessionStorage.setItem('hasSeenIntro', 'true');
             
-            // 不要添加欢迎文字的淡出动画
-            const welcomeText = document.querySelector('.welcome-text');
-            if (welcomeText) {
-                welcomeText.style.opacity = '1';
+            // 确保内容初始隐藏
+            const contentWrapper = document.querySelector('.content-wrapper');
+            if (contentWrapper) {
+                contentWrapper.style.opacity = '0';
+                contentWrapper.style.visibility = 'hidden';
             }
             
-            // 启动樱花效果
-            startSakura();
+            const startButton = document.querySelector('.start-button');
+            const introCircle = document.querySelector('.intro-circle');
             
-            // 延迟后完全移除介绍动画
-            setTimeout(() => {
-                introAnimation.style.display = 'none';
-                
-                // 添加滚动监听
-                addScrollListeners();
-            }, 1000);
-        }, 1000);
-    });
+            if (startButton) {
+                startButton.addEventListener('click', function() {
+                    introCircle.classList.add('animate-circle');
+                    setTimeout(function() {
+                        introAnimation.classList.add('animate-intro');
+                        document.body.style.overflow = 'auto';
+                        
+                        // 显示内容
+                        if (contentWrapper) {
+                            contentWrapper.style.opacity = '1';
+                            contentWrapper.style.visibility = 'visible';
+                        }
+                        
+                        // 添加樱花动画
+                        startSakura();
+                    }, 1000);
+                });
+            }
+        }
+    } else {
+        // 如果没有开场动画元素，确保内容可见
+        const contentWrapper = document.querySelector('.content-wrapper');
+        if (contentWrapper) {
+            contentWrapper.style.opacity = '1';
+            contentWrapper.style.visibility = 'visible';
+        }
+    }
+
+    // 添加滚动监听函数
+    addScrollListeners();
 
     // 添加滚动监听函数
     function addScrollListeners() {
@@ -110,12 +153,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const portfolioTabs = document.querySelectorAll('.portfolio-tab');
     const portfolioItems = document.querySelectorAll('.portfolio-item');
     
-    // 确保初始状态下所有项目都可见
-    portfolioItems.forEach(item => {
-        item.style.display = 'block';
-        item.style.opacity = '1';
-        item.style.transform = 'scale(1)';
-    });
+    // 确保初始状态下所有项目都可见，并将速写项目移到最后
+    const portfolioContainer = portfolioItems[0]?.parentNode;
+    if (portfolioContainer) {
+        const sketchItems = Array.from(portfolioItems).filter(item => 
+            item.dataset.category.includes('sketch')
+        );
+        
+        // 将速写项目移到最后，并将它们添加到个人作品类别中
+        sketchItems.forEach(item => {
+            // 将速写项目添加到个人作品类别
+            if (!item.dataset.category.includes('personal')) {
+                item.dataset.category = item.dataset.category + ' personal';
+            }
+            
+            // 将速写项目移到最后
+            portfolioContainer.appendChild(item);
+        });
+        
+        // 设置所有项目为可见
+        portfolioItems.forEach(item => {
+            item.style.display = 'block';
+            item.style.opacity = '1';
+            item.style.transform = 'scale(1)';
+        });
+    }
     
     portfolioTabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -126,16 +188,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const category = tab.dataset.category;
             
-            // 显示或隐藏作品项目
+            // 处理所有类别，包括速写类别
             portfolioItems.forEach(item => {
-                // 如果是"全部"类别或者项目类别匹配当前选择的类别
                 if (category === 'all' || item.dataset.category.includes(category)) {
+                    // 显示匹配的项目
                     item.style.display = 'block';
                     setTimeout(() => {
                         item.style.opacity = '1';
                         item.style.transform = 'scale(1)';
                     }, 50);
                 } else {
+                    // 隐藏不匹配的项目
                     item.style.opacity = '0';
                     item.style.transform = 'scale(0.95)';
                     setTimeout(() => {
@@ -143,6 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 500);
                 }
             });
+            
+            // 更新作品编号
+            updatePortfolioNumbers();
         });
     });
 
@@ -172,6 +238,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 为所有作品项目添加点击事件
     portfolioItems.forEach(item => {
         item.addEventListener('click', (e) => {
+            // 如果点击的是视频容器，不打开模态框
+            if (e.target.closest('.video-container')) {
+                return;
+            }
+            
             e.preventDefault();
             
             // 获取项目标题和类别
@@ -419,6 +490,66 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         <h3>设计理念</h3>
                         <p>想设计一个低角度视角(Low Angle Shot)来呈现这座荒废的寺庙，通过这种视角增强建筑的宏伟感和神秘氛围，同时展现岁月流逝的痕迹与自然侵蚀的美感。</p>
+                    `;
+                    break;
+                    
+                case '废弃小镇':
+                    modalGallery.innerHTML = `
+                        <div class="modal-image-container">
+                            <img src="image/personal/废弃小镇.png" alt="废弃小镇" class="full-width-image">
+                            <div class="image-caption">废弃小镇概念设计</div>
+                        </div>
+                    `;
+                    
+                    modalDescription.innerHTML = `
+                        <h3>项目背景</h3>
+                        <p>这是我的个人环境概念设计项目，探索被遗弃的城镇空间所蕴含的故事与情感。</p>
+                        
+                        <h3>设计理念</h3>
+                        <p>通过这个作品，我想表达时间流逝和人类活动痕迹的美学。废弃的建筑与逐渐侵蚀的自然元素形成了一种独特的视觉张力，引发观者对过去与未来的思考。</p>
+                        
+                        <h3>技术实现</h3>
+                        <p>在创作过程中，我特别注重光影的处理和氛围的营造，通过精细的细节和纹理表现，赋予这个废弃空间以生命力和故事感。色调的选择也经过精心考量，以增强场景的情感表达。</p>
+                    `;
+                    break;
+                    
+                case '剑仙':
+                    modalGallery.innerHTML = `
+                        <div class="modal-image-container">
+                            <img src="image/personal/剑仙.png" alt="剑仙" class="full-width-image">
+                            <div class="image-caption">剑仙角色设计</div>
+                        </div>
+                    `;
+                    
+                    modalDescription.innerHTML = `
+                        <h3>项目背景</h3>
+                        <p>这是我的个人角色设计项目，灵感来源于中国古典武侠小说中的剑仙形象。</p>
+                        
+                        <h3>设计理念</h3>
+                        <p>我想通过这个角色设计，融合传统东方美学与现代视觉语言，创造一个既有古典韵味又具现代感的剑仙形象。角色的姿态和表情传达了内心的平静与超然，同时蕴含着强大的力量。</p>
+                        
+                        <h3>创作过程</h3>
+                        <p>在设计过程中，我注重服装细节与人物气质的表现，通过精心设计的光效和构图，强调了角色的神秘感和超凡气质。色彩的选择也经过精心考量，以增强整体的视觉冲击力和情感表达。</p>
+                    `;
+                    break;
+                    
+                case '森林':
+                    modalGallery.innerHTML = `
+                        <div class="modal-image-container">
+                            <img src="image/personal/森林.png" alt="森林" class="full-width-image">
+                            <div class="image-caption">神秘森林概念设计</div>
+                        </div>
+                    `;
+                    
+                    modalDescription.innerHTML = `
+                        <h3>项目背景</h3>
+                        <p>这是我的个人环境概念设计项目，探索神秘森林的视觉表现与氛围营造。</p>
+                        
+                        <h3>设计理念</h3>
+                        <p>通过这个作品，我想表达自然的神秘与生命力。茂密的植被、独特的光线和雾气的处理，共同创造出一个既梦幻又真实的森林世界，引导观者进入一个充满想象的空间。</p>
+                        
+                        <h3>技术实现</h3>
+                        <p>在创作过程中，我特别关注光线穿透树叶的效果和空间层次感的表现。通过精细的笔触和色彩渐变，营造出深邃而又充满活力的森林氛围，让观者能够感受到自然的神秘与宁静。</p>
                     `;
                     break;
                     
@@ -685,6 +816,143 @@ document.addEventListener('DOMContentLoaded', () => {
                 character.remove();
             }, 500);
         });
+    }
+    
+    // 处理微信二维码弹窗
+    const wechatLink = document.getElementById('wechat-link');
+    const wechatModal = document.getElementById('wechat-modal');
+    const closeWechat = document.querySelector('.close-wechat');
+    
+    if (wechatLink && wechatModal) {
+        // 点击微信图标显示弹窗
+        wechatLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            wechatModal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        });
+        
+        // 点击关闭按钮隐藏弹窗
+        if (closeWechat) {
+            closeWechat.addEventListener('click', () => {
+                wechatModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // 恢复滚动
+            });
+        }
+        
+        // 点击弹窗外部区域关闭弹窗
+        window.addEventListener('click', (e) => {
+            if (e.target === wechatModal) {
+                wechatModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+
+    // 添加动态更新作品编号的函数
+    function updatePortfolioNumbers() {
+        // 获取所有当前可见的作品项目
+        const visibleItems = document.querySelectorAll('.portfolio-item:not([style*="display: none"])');
+        
+        // 为每个可见项目重新分配编号
+        visibleItems.forEach((item, index) => {
+            const numberElement = item.querySelector('.portfolio-number');
+            if (numberElement) {
+                numberElement.textContent = index + 1;
+            }
+        });
+    }
+
+    // 获取作品集容器
+    const portfolioGrid = document.querySelector('.portfolio-grid');
+    if (portfolioGrid) {
+        // 重新排序作品项目，确保它们按照我们想要的顺序显示
+        const portfolioItems = Array.from(portfolioGrid.querySelectorAll('.portfolio-item'));
+        
+        // 清空容器
+        portfolioGrid.innerHTML = '';
+        
+        // 按照类别重新添加项目
+        // 首先添加个人作品（不包括速写视频）
+        portfolioItems.filter(item => 
+            item.getAttribute('data-category').includes('personal') && 
+            !item.getAttribute('data-category').includes('sketch')
+        ).forEach(item => portfolioGrid.appendChild(item));
+        
+        // 然后添加学校作品
+        portfolioItems.filter(item => item.getAttribute('data-category').includes('school'))
+            .forEach(item => portfolioGrid.appendChild(item));
+        
+        // 最后添加速写视频
+        portfolioItems.filter(item => item.getAttribute('data-category').includes('sketch'))
+            .forEach(item => portfolioGrid.appendChild(item));
+        
+        // 更新编号
+        updatePortfolioNumbers();
+    }
+
+    // 初始化魔法阵粒子
+    if (document.querySelector('.intro-circle')) {
+        createMagicParticles();
+    }
+
+    // 魔法阵粒子效果
+    function createMagicParticles() {
+        const particles = document.createElement('div');
+        particles.className = 'particles';
+        document.querySelector('.intro-circle').appendChild(particles);
+        
+        // 创建20个粒子
+        for (let i = 0; i < 20; i++) {
+            createParticle(particles);
+        }
+    }
+
+    function createParticle(container) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // 随机位置
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 150 + Math.random() * 100; // 在魔法阵周围
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        
+        // 设置初始位置
+        particle.style.left = `calc(50% + ${x}px)`;
+        particle.style.top = `calc(50% + ${y}px)`;
+        
+        // 随机大小
+        const size = 2 + Math.random() * 4;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // 随机透明度
+        particle.style.opacity = 0.3 + Math.random() * 0.7;
+        
+        // 添加到容器
+        container.appendChild(particle);
+        
+        // 开始动画
+        animateParticle(particle);
+    }
+
+    function animateParticle(particle) {
+        // 随机移动方向和距离
+        const moveX = -50 + Math.random() * 100;
+        const moveY = -50 + Math.random() * 100;
+        
+        // 随机动画持续时间
+        const duration = 3 + Math.random() * 4;
+        
+        // 设置CSS变量用于动画
+        particle.style.setProperty('--move-x', `${moveX}px`);
+        particle.style.setProperty('--move-y', `${moveY}px`);
+        
+        // 设置动画
+        particle.style.animation = `floatParticle ${duration}s infinite alternate`;
+        
+        // 随机延迟
+        particle.style.animationDelay = `${Math.random() * 2}s`;
     }
 });
 

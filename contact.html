@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>联系方式 - Shijie Lin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 联系页面特定样式 */
+        body {
+            background-color: #1a1a1a;
+        }
+        
+        .contact-page-header {
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, rgba(20, 20, 22, 0.9), rgba(30, 30, 35, 0.8));
+        }
+        
+        .contact-page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image/personal/world tree.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .contact-page-title {
+            font-size: 5rem;
+            color: transparent;
+            background: linear-gradient(120deg, 
+                var(--primary-dark) 0%,
+                var(--primary) 25%,
+                var(--primary-light) 50%,
+                var(--primary) 75%,
+                var(--primary-dark) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-align: center;
+            position: relative;
+        }
+        
+        .contact-page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent,
+                var(--primary),
+                transparent
+            );
+        }
+        
+        .back-to-home {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(30, 30, 35, 0.7);
+            color: var(--primary-light);
+            padding: 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(137, 207, 240, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .back-to-home:hover {
+            transform: translateY(-5px);
+            background: rgba(137, 207, 240, 0.2);
+            box-shadow: 0 8px 20px rgba(137, 207, 240, 0.4);
+        }
+        
+        .back-to-home i {
+            font-size: 1.5rem;
+        }
+        
+        .contact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .contact-card {
+            background: rgba(30, 30, 35, 0.4);
+            border-radius: 10px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(137, 207, 240, 0.1);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .contact-section-title {
+            font-size: 2rem;
+            color: var(--primary-light);
+            margin-bottom: 1.5rem;
+            font-family: var(--heading-font);
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .contact-section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+        
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-family: var(--body-font);
+        }
+        
+        .contact-info-item i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 1rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(137, 207, 240, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-info-item:hover i {
+            background: rgba(137, 207, 240, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .contact-info-text {
+            font-size: 1.1rem;
+            color: #ffffff;
+        }
+        
+        .contact-info-text a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .contact-info-text a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .contact-info-text a:hover {
+            color: var(--primary-light);
+        }
+        
+        .contact-info-text a:hover::after {
+            width: 100%;
+        }
+        
+        .social-links-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .social-link {
+            width: 60px;
+            height: 60px;
+            background: rgba(30, 30, 35, 0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(137, 207, 240, 0.2);
+        }
+        
+        .social-link i {
+            font-size: 1.8rem;
+            color: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: rgba(137, 207, 240, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .social-link:hover i {
+            color: #ffffff;
+        }
+        
+        .contact-form {
+            margin-top: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-family: var(--accent-font);
+            font-weight: 500;
+            color: var(--primary-light);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(25, 25, 30, 0.5);
+            border: 1px solid rgba(137, 207, 240, 0.2);
+            border-radius: 5px;
+            color: #ffffff;
+            font-family: var(--body-font);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(137, 207, 240, 0.3);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background: var(--primary);
+            color: #1a1a1a;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--accent-font);
+            letter-spacing: 1px;
+        }
+        
+        .submit-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(137, 207, 240, 0.4);
+        }
+        
+        .wechat-preview {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .wechat-qr-preview {
+            max-width: 200px;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .wechat-qr-preview:hover {
+            transform: scale(1.05);
+        }
+        
+        .wechat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .wechat-modal.show {
+            opacity: 1;
+        }
+        
+        .wechat-modal-content {
+            position: relative;
+            margin: 10% auto;
+            width: 320px;
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(137, 207, 240, 0.3);
+            text-align: center;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(137, 207, 240, 0.2);
+        }
+        
+        .wechat-modal.show .wechat-modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .close-wechat {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-wechat:hover {
+            color: var(--primary-light);
+            transform: rotate(90deg);
+        }
+        
+        .wechat-modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--primary-light);
+            font-family: var(--heading-font);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .wechat-qr {
+            width: 100%;
+            max-width: 250px;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .wechat-qr:hover {
+            transform: scale(1.02);
+        }
+        
+        .wechat-tip {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--primary-light);
+            font-style: italic;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .form-actions {
+            margin-top: 2rem;
+        }
+        
+        .form-note {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        .alternative-contact {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(137, 207, 240, 0.2);
+            text-align: center;
+        }
+        
+        .email-direct {
+            display: inline-block;
+            color: var(--primary-light);
+            text-decoration: none;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .email-direct::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .email-direct:hover {
+            color: #ffffff;
+        }
+        
+        .email-direct:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Shijie Lin</div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="about.html">关于我</a></li>
+                <li><a href="index.html#portfolio">作品集</a></li>
+                <li><a href="contact.html" class="active">联系方式</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <header class="contact-page-header">
+        <h1 class="contact-page-title">Contact Me</h1>
+    </header>
+
+    <!-- 联系方式内容 -->
+    <div class="contact-container">
+        <div class="contact-card slide-in-left">
+            <h2 class="contact-section-title">联系信息</h2>
+            <div class="contact-info-item">
+                <i class="fas fa-envelope"></i>
+                <div class="contact-info-text">
+                    <a href="mailto:jaylindesignart@gmail.com">jaylindesignart@gmail.com</a>
+                </div>
+            </div>
+            <div class="contact-info-item">
+                <i class="fas fa-phone"></i>
+                <div class="contact-info-text">+1 626-727-0409</div>
+            </div>
+            <div class="contact-info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="contact-info-text">Los Angeles, California</div>
+            </div>
+            
+            <div class="social-links-container">
+                <a href="https://www.linkedin.com/feed/?trk=404_page" target="_blank" class="social-link">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://na_shi.artstation.com/" target="_blank" class="social-link">
+                    <i class="fab fa-artstation"></i>
+                </a>
+                <a href="#" id="wechat-link" class="social-link">
+                    <i class="fab fa-weixin"></i>
+                </a>
+            </div>
+            
+            <!-- 添加提示文字 -->
+            <p class="wechat-tip" style="text-align: center; margin-top: 1.5rem; color: var(--primary-light); font-style: italic;">点击微信图标查看二维码</p>
+        </div>
+        
+        <div class="contact-card slide-in-right">
+            <h2 class="contact-section-title">发送消息</h2>
+            <form class="contact-form" id="contactForm" action="https://formspree.io/f/meoaoovl" method="POST">
+                <div class="form-group">
+                    <label for="name" class="form-label">姓名</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="form-label">邮箱</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject" class="form-label">主题</label>
+                    <input type="text" id="subject" name="subject" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="message" class="form-label">消息内容</label>
+                    <textarea id="message" name="message" class="form-control" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">发送消息</button>
+                    <p class="form-note">消息将直接发送到我的邮箱</p>
+                </div>
+                <!-- 添加一个隐藏的蜜罐字段来防止垃圾邮件 -->
+                <input type="text" name="_gotcha" style="display:none">
+                <!-- 添加成功页面的URL -->
+                <input type="hidden" name="_next" value="thanks.html">
+            </form>
+            
+            <!-- 添加替代联系方式提示 -->
+            <div class="alternative-contact">
+                <p>或者您可以直接发送邮件至：</p>
+                <a href="mailto:jaylindesignart@gmail.com" class="email-direct">jaylindesignart@gmail.com</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 返回首页按钮 -->
+    <a href="index.html" class="back-to-home">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <!-- 添加微信二维码弹窗 -->
+    <div id="wechat-modal" class="wechat-modal">
+        <div class="wechat-modal-content">
+            <span class="close-wechat">&times;</span>
+            <h3>扫描二维码添加微信</h3>
+            <img src="image/Image_20250314201247.jpg" alt="微信二维码" class="wechat-qr" style="max-width: 250px; border-radius: 10px; border: 2px solid var(--primary); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);">
+            <p style="margin-top: 1rem; color: #ffffff; font-size: 0.9rem;">可通过微信与我直接联系</p>
+        </div>
+    </div>
+
+    <!-- 添加鼠标发光效果 -->
+    <div class="cursor-glow"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // 页面加载时添加动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 标记已经看过开场动画
+            sessionStorage.setItem('hasSeenIntro', 'true');
+            
+            // 创建发光元素
+            const cursor = document.createElement('div');
+            cursor.className = 'cursor-glow';
+            document.body.appendChild(cursor);
+
+            // 跟踪鼠标移动
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+
+            // 鼠标进入可点击元素时的效果
+            document.querySelectorAll('a, button, input, textarea').forEach(elem => {
+                elem.addEventListener('mouseenter', () => {
+                    cursor.classList.add('active');
+                });
+                elem.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('active');
+                });
+            });
+            
+            // 添加滚动监听
+            const animatedElements = document.querySelectorAll('.slide-in-left, .slide-in-right');
+            
+            // 初始检查
+            checkElements(animatedElements);
+            
+            // 滚动时检查
+            window.addEventListener('scroll', () => {
+                checkElements(animatedElements);
+            });
+            
+            // 检查元素是否在视口中
+            function checkElements(elements) {
+                const triggerBottom = window.innerHeight * 0.8;
+                
+                elements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    
+                    if (elementTop < triggerBottom) {
+                        element.classList.add('visible');
+                    }
+                });
+            }
+            
+            // 立即触发一次滚动事件，确保元素可见
+            setTimeout(() => {
+                window.dispatchEvent(new Event('scroll'));
+            }, 100);
+            
+            // 处理微信二维码弹窗
+            const wechatLink = document.getElementById('wechat-link');
+            const wechatModal = document.getElementById('wechat-modal');
+            const closeWechat = document.querySelector('.close-wechat');
+            
+            if (wechatLink && wechatModal) {
+                // 点击微信图标显示弹窗
+                wechatLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    wechatModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden'; // 防止背景滚动
+                    
+                    // 添加动画效果
+                    setTimeout(() => {
+                        wechatModal.classList.add('show');
+                    }, 10);
+                });
+                
+                // 点击关闭按钮隐藏弹窗
+                if (closeWechat) {
+                    closeWechat.addEventListener('click', () => {
+                        wechatModal.classList.remove('show');
+                        
+                        // 等待动画完成后隐藏弹窗
+                        setTimeout(() => {
+                            wechatModal.style.display = 'none';
+                            document.body.style.overflow = 'auto'; // 恢复滚动
+                        }, 300);
+                    });
+                }
+                
+                // 点击弹窗外部区域关闭弹窗
+                window.addEventListener('click', (e) => {
+                    if (e.target === wechatModal) {
+                        wechatModal.classList.remove('show');
+                        
+                        // 等待动画完成后隐藏弹窗
+                        setTimeout(() => {
+                            wechatModal.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                        }, 300);
+                    }
+                });
+            }
+            
+            // 处理联系表单提交
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    // 不阻止默认提交行为，让表单正常提交到Formspree
+                    
+                    // 可以添加一些UI反馈，比如禁用按钮或显示加载指示器
+                    const submitBtn = this.querySelector('.submit-btn');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = '发送中...';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 
