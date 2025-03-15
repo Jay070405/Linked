@@ -67,6 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 contentWrapper.style.opacity = '1';
                 contentWrapper.style.visibility = 'visible';
             }
+            
+            // 如果是首页，显示樱花
+            if (isHomePage()) {
+                showCherryBlossoms();
+            }
         } else {
             // 否则显示开场动画并记录状态
             sessionStorage.setItem('hasSeenIntro', 'true');
@@ -95,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         
                         // 添加樱花动画
-                        startSakura();
+                        showCherryBlossoms();
                     }, 1000);
                 });
             }
@@ -106,6 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (contentWrapper) {
             contentWrapper.style.opacity = '1';
             contentWrapper.style.visibility = 'visible';
+        }
+        
+        // 如果是首页，显示樱花
+        if (isHomePage()) {
+            showCherryBlossoms();
         }
     }
 
@@ -610,57 +620,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 优化樱花效果函数
-    function startSakura() {
-        // 检查是否已存在樱花容器，如果存在则移除
-        const existingContainer = document.querySelector('.sakura-container');
-        if (existingContainer) {
-            // 清除之前的定时器
-            if (existingContainer.dataset.intervalId) {
-                clearInterval(parseInt(existingContainer.dataset.intervalId));
-            }
-            existingContainer.remove();
-        }
-        
-        const sakuraContainer = document.createElement('div');
-        sakuraContainer.className = 'sakura-container';
-        document.body.appendChild(sakuraContainer);
-        
-        // 创建樱花
-        function createSakura() {
-            const sakura = document.createElement('div');
-            sakura.className = 'sakura';
-            sakura.innerHTML = '❀';
-            sakura.style.left = Math.random() * 100 + 'vw';
-            sakura.style.fontSize = Math.random() * 10 + 10 + 'px';
-            sakura.style.animationDuration = Math.random() * 10 + 10 + 's';
-            sakuraContainer.appendChild(sakura);
-            
-            // 动画结束后移除
-            setTimeout(() => {
-                if (sakura && sakura.parentNode) {
-                    sakura.remove();
-                }
-            }, 20000);
-        }
-        
-        // 初始创建一些樱花，但数量减少
-        for (let i = 0; i < 10; i++) {
-            setTimeout(createSakura, 300 * i);
-        }
-        
-        // 持续创建樱花，但限制数量和频率
-        const sakuraInterval = setInterval(() => {
-            // 如果樱花数量超过30个，则不再创建
-            if (sakuraContainer.children.length < 30) {
-                createSakura();
-            }
-        }, 2000); // 降低创建频率
-        
-        // 保存interval ID以便需要时清除
-        sakuraContainer.dataset.intervalId = sakuraInterval;
-    }
-
     // 添加动画类
     function addAnimationClasses() {
         // 添加淡入动画
@@ -712,45 +671,49 @@ document.addEventListener('DOMContentLoaded', () => {
         document.dispatchEvent(event);
     }, 100);
 
-    // 修改滚动监听部分，使樱花效果在向上滚动时重新出现
+    // 添加全局变量来跟踪樱花状态
+    let sakuraVisible = true;
+
+    // 修改滚动监听部分，确保在滚动到作品集部分时樱花消失
     window.addEventListener('scroll', () => {
-        // 获取 About Me 部分的位置
-        const aboutSection = document.querySelector('.about');
-        if (!aboutSection) return;
-        
-        const aboutPosition = aboutSection.getBoundingClientRect().top;
-        const screenPosition = window.innerHeight * 0.7; // 当 About Me 部分进入视口的 70% 位置时
-        
-        // 获取樱花容器
-        let sakuraContainer = document.querySelector('.sakura-container');
-        
-        // 如果滚动到 About Me 部分，则淡出并最终移除樱花效果
-        if (aboutPosition < screenPosition) {
-            if (sakuraContainer) {
-                sakuraContainer.style.opacity = '0';
-                
-                // 延迟后完全移除樱花容器
-                setTimeout(() => {
-                    // 清除定时器
-                    if (sakuraContainer && sakuraContainer.dataset.intervalId) {
-                        clearInterval(parseInt(sakuraContainer.dataset.intervalId));
-                    }
-                    // 移除容器
-                    if (sakuraContainer && sakuraContainer.parentNode) {
-                        sakuraContainer.remove();
-                    }
-                }, 1000);
-            }
-        } else {
-            // 如果向上滚动离开 About Me 部分，且樱花容器不存在，则重新创建
-            if (!sakuraContainer) {
-                // 重新创建樱花效果
-                startSakura();
-            } else if (sakuraContainer.style.opacity === '0') {
-                // 如果容器存在但是透明度为0，则恢复显示
-                sakuraContainer.style.opacity = '1';
+        // 获取作品集部分的位置
+        const portfolioSection = document.querySelector('#portfolio');
+        if (portfolioSection) {
+            const portfolioPosition = portfolioSection.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight * 0.7; // 当作品集部分进入视口的70%位置时
+            
+            // 获取樱花容器
+            const sakuraContainer = document.querySelector('.sakura-container');
+            
+            // 如果滚动到作品集部分，则淡出并最终移除樱花效果
+            if (portfolioPosition < screenPosition) {
+                if (sakuraContainer && sakuraVisible) {
+                    sakuraVisible = false;
+                    sakuraContainer.style.opacity = '0';
+                    
+                    // 延迟后完全移除樱花容器
+                    setTimeout(() => {
+                        // 清除定时器
+                        if (sakuraContainer && sakuraContainer.dataset.intervalId) {
+                            clearInterval(parseInt(sakuraContainer.dataset.intervalId));
+                        }
+                        // 移除容器
+                        if (sakuraContainer && sakuraContainer.parentNode) {
+                            sakuraContainer.remove();
+                        }
+                    }, 1000);
+                }
+            } else {
+                // 如果向上滚动离开作品集部分，且樱花容器不存在，则重新创建
+                if (!sakuraContainer && !sakuraVisible && isHomePage()) {
+                    sakuraVisible = true;
+                    // 重新创建樱花效果
+                    showCherryBlossoms();
+                }
             }
         }
+        
+        // ... existing scroll event code ...
     });
 
     // 修改控制 PORTFOLIO 文字透明度的代码
@@ -954,5 +917,112 @@ document.addEventListener('DOMContentLoaded', () => {
         // 随机延迟
         particle.style.animationDelay = `${Math.random() * 2}s`;
     }
+
+    // 检查是否是首页
+    function isHomePage() {
+        return window.location.pathname === '/' || 
+               window.location.pathname === '/index.html' || 
+               window.location.href.endsWith('index.html') ||
+               window.location.pathname.endsWith('/');
+    }
+
+    // 樱花动画函数
+    function showCherryBlossoms() {
+        // 检查是否有樱花容器元素
+        let cherryContainer = document.querySelector('.sakura-container');
+        
+        // 如果不存在，创建一个新的
+        if (!cherryContainer) {
+            cherryContainer = document.createElement('div');
+            cherryContainer.className = 'sakura-container';
+            document.body.appendChild(cherryContainer);
+        } else {
+            // 如果存在，清除现有樱花
+            cherryContainer.innerHTML = '';
+            // 清除之前的定时器
+            if (cherryContainer.dataset.intervalId) {
+                clearInterval(parseInt(cherryContainer.dataset.intervalId));
+            }
+        }
+        
+        // 确保容器可见
+        cherryContainer.style.opacity = '1';
+        cherryContainer.style.display = 'block';
+        
+        // 创建樱花
+        function createSakura() {
+            const sakura = document.createElement('div');
+            sakura.className = 'sakura';
+            sakura.innerHTML = '❀';
+            sakura.style.left = Math.random() * 100 + 'vw';
+            sakura.style.fontSize = Math.random() * 10 + 10 + 'px';
+            sakura.style.animationDuration = Math.random() * 10 + 10 + 's';
+            cherryContainer.appendChild(sakura);
+            
+            // 动画结束后移除
+            setTimeout(() => {
+                if (sakura && sakura.parentNode) {
+                    sakura.remove();
+                }
+            }, 20000);
+        }
+        
+        // 初始创建一些樱花
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createSakura, 300 * i);
+        }
+        
+        // 持续创建樱花，但限制数量和频率
+        const sakuraInterval = setInterval(() => {
+            // 如果樱花数量超过30个，则不再创建
+            if (cherryContainer.children.length < 30) {
+                createSakura();
+            }
+        }, 2000); // 降低创建频率
+        
+        // 保存interval ID以便需要时清除
+        cherryContainer.dataset.intervalId = sakuraInterval;
+        
+        return cherryContainer;
+    }
+
+    // 页面加载时
+    document.addEventListener('DOMContentLoaded', function() {
+        // 如果是首页，重置樱花动画状态并显示樱花
+        if (isHomePage()) {
+            // 重置樱花动画状态
+            sessionStorage.removeItem('hasSeenIntro');
+            sakuraVisible = true;
+            
+            // 显示樱花动画
+            showCherryBlossoms();
+            
+            // 初始检查一次滚动位置，确保樱花状态正确
+            setTimeout(() => {
+                const portfolioSection = document.querySelector('#portfolio');
+                if (portfolioSection) {
+                    const portfolioPosition = portfolioSection.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight * 0.7;
+                    
+                    if (portfolioPosition < screenPosition) {
+                        const sakuraContainer = document.querySelector('.sakura-container');
+                        if (sakuraContainer) {
+                            sakuraVisible = false;
+                            sakuraContainer.style.opacity = '0';
+                            
+                            setTimeout(() => {
+                                if (sakuraContainer && sakuraContainer.dataset.intervalId) {
+                                    clearInterval(parseInt(sakuraContainer.dataset.intervalId));
+                                }
+                                if (sakuraContainer && sakuraContainer.parentNode) {
+                                    sakuraContainer.remove();
+                                }
+                            }, 1000);
+                        }
+                    }
+                }
+            }, 500);
+        }
+    });
 });
 
