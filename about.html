@@ -113,14 +113,22 @@
     <nav>
         <div class="nav-container">
             <div class="logo">Shijie Lin</div>
+            <!-- 添加汉堡菜单按钮 -->
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <ul class="nav-links">
                 <li><a href="index.html">首页</a></li>
                 <li><a href="about.html" class="active">关于我</a></li>
                 <li><a href="index.html#portfolio">作品集</a></li>
-                <li><a href="index.html#contact">联系方式</a></li>
+                <li><a href="contact.html">联系方式</a></li>
             </ul>
         </div>
     </nav>
+    <!-- 添加菜单背景遮罩 -->
+    <div class="menu-overlay"></div>
 
     <!-- 页面标题 -->
     <header class="about-page-header">
@@ -272,6 +280,52 @@
             setTimeout(() => {
                 window.dispatchEvent(new Event('scroll'));
             }, 100);
+            
+            // 汉堡菜单功能
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            const navLinks = document.querySelector('.nav-links');
+            const menuOverlay = document.querySelector('.menu-overlay');
+            
+            if (hamburgerMenu) {
+                hamburgerMenu.addEventListener('click', function() {
+                    console.log('汉堡菜单被点击');
+                    // 切换汉堡菜单激活状态
+                    this.classList.toggle('active');
+                    // 切换导航菜单显示状态
+                    navLinks.classList.toggle('active');
+                    // 切换背景遮罩
+                    if (menuOverlay) {
+                        menuOverlay.classList.toggle('active');
+                    }
+                    // 防止滚动
+                    if (navLinks.classList.contains('active')) {
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+            
+            // 点击遮罩关闭菜单
+            if (menuOverlay) {
+                menuOverlay.addEventListener('click', function() {
+                    if (hamburgerMenu) hamburgerMenu.classList.remove('active');
+                    if (navLinks) navLinks.classList.remove('active');
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+            
+            // 点击导航链接关闭菜单
+            const navItems = document.querySelectorAll('.nav-links a');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (hamburgerMenu) hamburgerMenu.classList.remove('active');
+                    if (navLinks) navLinks.classList.remove('active');
+                    if (menuOverlay) menuOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
         });
     </script>
 </body>

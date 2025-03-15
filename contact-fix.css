@@ -1,0 +1,116 @@
+/* 联系部分紧急修复样式 - 使用!important确保覆盖其他样式 */
+
+/* 联系部分容器 */
+.contact {
+  padding: 3rem 1rem !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+/* 联系标题 */
+.contact h2 {
+  font-size: 2.5rem !important;
+  letter-spacing: 2px !important;
+  margin-bottom: 2rem !important;
+  padding: 0 1rem !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* 联系内容容器 */
+.contact-content {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+
+/* 联系信息容器 */
+.contact-info {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 1.5rem !important;
+  margin: 0 auto 2rem auto !important;
+  width: 100% !important;
+  max-width: 500px !important;
+  padding: 0 1rem !important;
+}
+
+/* 联系信息段落 */
+.contact-info p {
+  position: relative !important;
+  padding-left: 35px !important;
+  text-align: left !important;
+  min-height: 24px !important;
+  width: 100% !important;
+  margin: 0 0 10px 0 !important;
+  font-size: 1rem !important;
+  line-height: 1.4 !important;
+  display: block !important;
+}
+
+/* 联系信息图标 */
+.contact-info p i {
+  position: absolute !important;
+  left: 0 !important;
+  top: 3px !important;
+  width: 24px !important;
+  text-align: center !important;
+  color: var(--primary) !important;
+  font-size: 1.1rem !important;
+}
+
+/* 邮箱特殊处理 */
+.contact-info p:first-child {
+  word-break: break-all !important;
+  font-size: 0.95rem !important;
+}
+
+/* 移动设备样式 */
+@media screen and (max-width: 576px) {
+  .contact {
+    padding: 2rem 0.5rem !important;
+  }
+  
+  .contact h2 {
+    font-size: 2rem !important;
+    letter-spacing: 1px !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .contact-info {
+    gap: 1.2rem !important;
+    max-width: 280px !important;
+  }
+  
+  .contact-info p {
+    font-size: 0.9rem !important;
+    padding-left: 30px !important;
+  }
+  
+  .contact-info p i {
+    font-size: 1rem !important;
+    width: 20px !important;
+  }
+  
+  .contact-info p:first-child {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* iPhone特定修复 */
+@media only screen and (max-width: 430px) {
+  .contact-info {
+    padding: 0 0.5rem !important;
+  }
+  
+  .contact-info p {
+    padding-left: 28px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .contact-info p i {
+    top: 2px !important;
+    font-size: 0.9rem !important;
+  }
+} 
