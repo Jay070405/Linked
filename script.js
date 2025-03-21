@@ -267,351 +267,352 @@ document.addEventListener('DOMContentLoaded', () => {
             // 设置模态框标题
             modalTitle.textContent = `${overlayTitle} - 项目详情`;
             
-            // 根据不同项目设置不同的内容
-            switch (altText) {
-                case '背景绘画':
-                    // 使用已有的背景绘画模态框内容
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay.png" alt="背景绘画" class="full-width-image">
-                            <div class="image-caption">白天场景</div>
+            // 特别处理第13个作品（Maya 3D建模）
+            if (overlayTitle === 'Maya 3D建模') {
+                modalGallery.innerHTML = `
+                    <div class="modal-image-container">
+                        <img src="image/school/maya.png" alt="Maya 3D建模" class="full-width-image">
+                        <h3>Maya 3D白模展示</h3>
+                    </div>
+                    <div class="modal-video-container">
+                        <video src="image/sketch/WeChat_20250303101335.mp4" controls poster="image/sketch/WeChat_20250303101335.mp4#t=99999">
+                            <source src="image/sketch/WeChat_20250303101335.mp4" type="video/mp4">
+                        </video>
+                        <h3>Maya 3D建模演示</h3>
+                        <div class="dream-story">
+                            <p>这是一个关于学生的梦境。在梦中，他打开电脑，屏幕上全是中国过年的欢乐画面。温暖的红色、喜庆的灯笼、热闹的鞭炮声，一切都那么真实。但就在这时，闹钟突然响起，他才发现之前的一切都是梦境，现在要起床去上学了。</p>
                         </div>
-                        <div class="modal-image-container">
-                            <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay_JB-copy-(1).png" alt="背景绘画夜晚" class="full-width-image">
-                            <div class="image-caption">夜晚场景</div>
-                        </div>
-                    `;
+                    </div>
+                `;
+                
+                modalDescription.innerHTML = `
+                    <h3>项目背景</h3>
+                    <p>这是3D建模课程的作业，使用Maya软件创建和渲染3D模型。同时展示了相关的建模过程。</p>
                     
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>该项目的要求是在同一个场景中创作白天和夜晚两个版本，展示不同光照条件下的环境氛围变化。</p>
-                        
-                        <h3>设计理念</h3>
-                        <p>这个场景描绘了一位魔法师来到宁静的雪村。白天版本展现了明亮、清新的氛围，而夜晚版本则通过月光和魔法元素的光芒创造出神秘而梦幻的感觉。</p>
-                        
-                        <h3>技术实现</h3>
-                        <p>通过精心设计的光影处理和色彩选择，我成功地在保持场景一致性的同时，展现了白天与夜晚截然不同的视觉效果和情感氛围。</p>
-                    `;
-                    break;
+                    <h3>技术要点</h3>
+                    <p>在这个项目中，我学习了多边形建模、UV贴图、材质设置和灯光渲染等Maya核心功能，创建了这个3D场景。</p>
                     
-                case '猫咪日记':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/cat diary (1).png" alt="猫咪日记" class="full-width-image">
-                            <div class="image-caption">猫咪日记项目</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是一个journalism课程作业，要求我们用身边日常生活中的事物创作一个journalism项目。</p>
+                    <h3>创作过程</h3>
+                    <p>从基础几何体开始，通过细化、雕刻和纹理绘制，逐步完善模型细节。最后通过精心设置的灯光和渲染参数，呈现出最终效果。项目中还包含了完整的建模过程演示。</p>
+                `;
+            } else {
+                // 其他作品的处理保持不变
+                switch (altText) {
+                    case '背景绘画':
+                        // 使用已有的背景绘画模态框内容
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay.png" alt="背景绘画" class="full-width-image">
+                                <div class="image-caption">白天场景</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay_JB-copy-(1).png" alt="背景绘画夜晚" class="full-width-image">
+                                <div class="image-caption">夜晚场景</div>
+                            </div>
+                        `;
                         
-                        <h3>创作理念</h3>
-                        <p>我选择了记录我家猫咪的日常生活作为主题，通过观察和记录它的行为、习惯和有趣瞬间，创作了这本猫咪日记。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>该项目的要求是在同一个场景中创作白天和夜晚两个版本，展示不同光照条件下的环境氛围变化。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>这个场景描绘了一位魔法师来到宁静的雪村。白天版本展现了明亮、清新的氛围，而夜晚版本则通过月光和魔法元素的光芒创造出神秘而梦幻的感觉。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>通过精心设计的光影处理和色彩选择，我成功地在保持场景一致性的同时，展现了白天与夜晚截然不同的视觉效果和情感氛围。</p>
+                        `;
+                        break;
                         
-                        <h3>表现手法</h3>
-                        <p>我使用了温暖的色调和生动的描绘方式，真实记录猫咪的日常，展现宠物与主人之间的情感联系，以及猫咪独特的个性和魅力。</p>
-                    `;
-                    break;
-                    
-                case 'Photoshop基础':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/class_work photoshop fundomental.png" alt="Photoshop基础" class="full-width-image">
-                            <div class="image-caption">数字绘画作品</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是Photoshop数字绘画基础课程的作业，旨在掌握软件的核心功能和数字绘画的基本技巧。</p>
+                    case '猫咪日记':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/cat diary (1).png" alt="猫咪日记" class="full-width-image">
+                                <div class="image-caption">猫咪日记项目</div>
+                            </div>
+                        `;
                         
-                        <h3>技术要点</h3>
-                        <p>在这个项目中，我运用了图层管理、混合模式、画笔技巧和色彩调整等Photoshop核心功能，创作了这幅数字插画。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是一个journalism课程作业，要求我们用身边日常生活中的事物创作一个journalism项目。</p>
+                            
+                            <h3>创作理念</h3>
+                            <p>我选择了记录我家猫咪的日常生活作为主题，通过观察和记录它的行为、习惯和有趣瞬间，创作了这本猫咪日记。</p>
+                            
+                            <h3>表现手法</h3>
+                            <p>我使用了温暖的色调和生动的描绘方式，真实记录猫咪的日常，展现宠物与主人之间的情感联系，以及猫咪独特的个性和魅力。</p>
+                        `;
+                        break;
                         
-                        <h3>学习收获</h3>
-                        <p>通过这个项目，我主要想要练习如何使用Photoshop的各种工具和技术来创造更好的画质感。特别是在光影处理、纹理表现和色彩过渡方面，我尝试了多种方法来提升作品的视觉质量和真实感。</p>
-                    `;
-                    break;
-                    
-                case '创意透视':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/Screenshot 2025-03-01 212506.png" alt="创意透视" class="full-width-image">
-                            <div class="image-caption">成品</div>
-                        </div>
-                        <div class="modal-image-container">
-                            <img src="image/school/creative prespetive.jpg" alt="创意透视过程" class="full-width-image">
-                            <div class="image-caption">过程</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是环境设计课程的作业，要求运用透视原理创建具有空间感和深度的场景。通过这个项目，我学习了解人物和场景大小关系，并利用SketchUp这个3D软件来确认船的透视。在获取3D船模型的基础上，我设计了自己的概念，最终完成了这幅作品。</p>
+                    case 'Photoshop基础':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/class_work photoshop fundomental.png" alt="Photoshop基础" class="full-width-image">
+                                <div class="image-caption">数字绘画作品</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>我创作了这个未来城市场景，表现了一个绝大部分人们都被统治的世界。通过精确的透视关系和光影处理，营造出既宏大又压抑的视觉体验。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是Photoshop数字绘画基础课程的作业，旨在掌握软件的核心功能和数字绘画的基本技巧。</p>
+                            
+                            <h3>技术要点</h3>
+                            <p>在这个项目中，我运用了图层管理、混合模式、画笔技巧和色彩调整等Photoshop核心功能，创作了这幅数字插画。</p>
+                            
+                            <h3>学习收获</h3>
+                            <p>通过这个项目，我主要想要练习如何使用Photoshop的各种工具和技术来创造更好的画质感。特别是在光影处理、纹理表现和色彩过渡方面，我尝试了多种方法来提升作品的视觉质量和真实感。</p>
+                        `;
+                        break;
                         
-                        <h3>技术挑战</h3>
-                        <p>项目中最大的挑战是处理复杂的透视关系和多点光源。通过反复研究和实践，结合SketchUp软件的辅助，我成功地解决了这些问题，使画面既符合透视规律又具有艺术表现力。</p>
-                    `;
-                    break;
-                    
-                case 'Maya 3D建模':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/maya.png" alt="Maya 3D建模" class="full-width-image">
-                            <div class="image-caption">3D模型渲染</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是3D建模课程的作业，使用Maya软件创建和渲染3D模型。</p>
+                    case '创意透视':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/Screenshot 2025-03-01 212506.png" alt="创意透视" class="full-width-image">
+                                <div class="image-caption">成品</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/creative prespetive.jpg" alt="创意透视过程" class="full-width-image">
+                                <div class="image-caption">过程</div>
+                            </div>
+                        `;
                         
-                        <h3>技术要点</h3>
-                        <p>在这个项目中，我学习了多边形建模、UV贴图、材质设置和灯光渲染等Maya核心功能，创建了这个3D场景。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是环境设计课程的作业，要求运用透视原理创建具有空间感和深度的场景。通过这个项目，我学习了解人物和场景大小关系，并利用SketchUp这个3D软件来确认船的透视。在获取3D船模型的基础上，我设计了自己的概念，最终完成了这幅作品。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>我创作了这个未来城市场景，表现了一个绝大部分人们都被统治的世界。通过精确的透视关系和光影处理，营造出既宏大又压抑的视觉体验。</p>
+                            
+                            <h3>技术挑战</h3>
+                            <p>项目中最大的挑战是处理复杂的透视关系和多点光源。通过反复研究和实践，结合SketchUp软件的辅助，我成功地解决了这些问题，使画面既符合透视规律又具有艺术表现力。</p>
+                        `;
+                        break;
                         
-                        <h3>创作过程</h3>
-                        <p>从基础几何体开始，通过细化、雕刻和纹理绘制，逐步完善模型细节。最后通过精心设置的灯光和渲染参数，呈现出最终效果。</p>
-                    `;
-                    break;
-                    
-                case '视觉开发':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/vis dev.jpg" alt="视觉开发" class="full-width-image">
-                            <div class="image-caption">视觉开发作品</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是视觉开发课程的作业，要求为特定故事或场景创建视觉风格和氛围。</p>
+                    case '视觉开发':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/vis dev.jpg" alt="视觉开发" class="full-width-image">
+                                <div class="image-caption">视觉开发作品</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>我为这个项目创建了一个融合东方神话与现代元素的视觉世界，通过独特的色彩方案和构图，传达出神秘而又亲切的氛围。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是视觉开发课程的作业，要求为特定故事或场景创建视觉风格和氛围。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>我为这个项目创建了一个融合东方神话与现代元素的视觉世界，通过独特的色彩方案和构图，传达出神秘而又亲切的氛围。</p>
+                            
+                            <h3>工作流程</h3>
+                            <p>从概念草图到色彩测试，再到最终渲染，整个过程注重视觉一致性和故事性，确保所有元素都服务于整体视觉叙事。</p>
+                        `;
+                        break;
                         
-                        <h3>工作流程</h3>
-                        <p>从概念草图到色彩测试，再到最终渲染，整个过程注重视觉一致性和故事性，确保所有元素都服务于整体视觉叙事。</p>
-                    `;
-                    break;
-                    
-                case '艺术家':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/artist (1).png" alt="艺术家" class="full-width-image">
-                            <div class="image-caption">角色设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的个人创作项目，旨在探索艺术家这一角色的内心世界和创作状态。</p>
+                    case '艺术家':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/artist (1).png" alt="艺术家" class="full-width-image">
+                                <div class="image-caption">角色设计</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>通过这个角色，我想表达艺术创作过程中的专注、热情和孤独。角色的姿态和表情传达了沉浸在创作中的状态，而周围的元素则象征着艺术家丰富的想象力。</p>
+                        modalDescription.innerHTML = `
+                            <h3>设计理念</h3>
+                            <p>这是一个3D和人物练习项目，通过结合3D建模和数字绘画来创作一个完整的场景。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>我的室友首先使用3D软件建模制作了一个钢琴模型，然后将其导入到Photoshop中。在PS中进行了场景的细化处理，添加了人物形象，并通过光影和色彩的调整，营造出温暖而富有艺术感的氛围。</p>
+                        `;
+                        break;
                         
-                        <h3>技术实现</h3>
-                        <p>这幅作品采用了数字绘画技术，注重光影效果和细节刻画，通过精心设计的构图和色彩，营造出温暖而又充满创意的氛围。</p>
-                    `;
-                    break;
-                    
-                case '个人项目':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/personal project.jpg" alt="个人项目" class="full-width-image">
-                            <div class="image-caption">概念设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的个人概念设计项目，探索未来与传统的融合。</p>
+                    case '未知新球':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/personal project.jpg" alt="未知新球" class="full-width-image">
+                                <div class="image-caption">未来科技概念场景</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>在这个项目中，我尝试将传统东方元素与未来科技感相结合，创造出一个既熟悉又陌生的视觉世界。通过对比和融合，表达对文化传承与创新的思考。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是一个未来科技概念场景设计项目，探索了一个神秘的未知星球。</p>
+                        `;
+                        break;
                         
-                        <h3>创作过程</h3>
-                        <p>从初期概念草图到多次迭代，我不断调整构图、色彩和细节，最终呈现出这个平衡传统与现代的作品。整个过程注重视觉冲击力和情感表达。</p>
-                    `;
-                    break;
-                    
-                case '樱花村':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/sakura-villege.png" alt="樱花村" class="full-width-image">
-                            <div class="image-caption">环境概念设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的个人环境概念设计项目，灵感来源于日本传统村落和樱花季节的美丽景色。</p>
+                    case '樱花村':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/sakura-villege.png" alt="樱花村" class="full-width-image">
+                                <div class="image-caption">环境概念设计</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>我想通过这个作品捕捉樱花盛开时的宁静与梦幻，同时展现传统建筑与自然景观的和谐共存。柔和的色调和飘落的花瓣创造出一种超脱现实的氛围。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是我的个人环境概念设计项目，灵感来源于日本传统村落和樱花季节的美丽景色。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>我想通过这个作品捕捉樱花盛开时的宁静与梦幻，同时展现传统建筑与自然景观的和谐共存。柔和的色调和飘落的花瓣创造出一种超脱现实的氛围。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>这幅作品采用了数字绘画技术，特别注重光影效果和氛围营造。通过精细的笔触和层次感的处理，呈现出樱花飘落的动态美感和空间的深度。</p>
+                        `;
+                        break;
                         
-                        <h3>技术实现</h3>
-                        <p>这幅作品采用了数字绘画技术，特别注重光影效果和氛围营造。通过精细的笔触和层次感的处理，呈现出樱花飘落的动态美感和空间的深度。</p>
-                    `;
-                    break;
-                    
-                case '世界树':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/world tree.png" alt="世界树" class="full-width-image">
-                            <div class="image-caption">概念设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的个人概念设计项目，探索世界树这一神话元素在现代视觉语言中的表达。</p>
+                    case '世界树':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/world tree.png" alt="世界树" class="full-width-image">
+                                <div class="image-caption">概念设计</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>世界树在许多文化中都是连接天地的象征。在这个作品中，我尝试将这一古老概念与现代科幻元素结合，创造出一个既神秘又宏大的视觉形象。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是我的个人概念设计项目，探索世界树这一神话元素在现代视觉语言中的表达。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>世界树在许多文化中都是连接天地的象征。在这个作品中，我尝试将这一古老概念与现代科幻元素结合，创造出一个既神秘又宏大的视觉形象。</p>
+                            
+                            <h3>创作过程</h3>
+                            <p>从初期构思到最终呈现，我注重树木的生命力和神秘感的表达。通过特殊的光效和构图，强调了世界树的宏伟与超凡，同时保留了自然生长的有机感。</p>
+                        `;
+                        break;
                         
-                        <h3>创作过程</h3>
-                        <p>从初期构思到最终呈现，我注重树木的生命力和神秘感的表达。通过特殊的光效和构图，强调了世界树的宏伟与超凡，同时保留了自然生长的有机感。</p>
-                    `;
-                    break;
-                    
-                case '寺庙':
-                    // 检查文件扩展名是否正确（从.png改为.jpg）
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/寺庙草稿.jpg" alt="寺庙" class="full-width-image">
-                            <div class="image-caption">完成品</div>
-                        </div>
-                        <div class="modal-image-container">
-                            <img src="image/personal/na_shi-.jpg" alt="那时" class="full-width-image">
-                            <div class="image-caption">过程</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是一个融合东方传统美学与现代数字技术的概念设计项目。灵感来源于中国古代寺庙建筑与自然景观的和谐统一。</p>
+                    case '寺庙':
+                        // 检查文件扩展名是否正确（从.png改为.jpg）
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/寺庙草稿.jpg" alt="寺庙" class="full-width-image">
+                                <div class="image-caption">完成品</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/personal/na_shi-.jpg" alt="那时" class="full-width-image">
+                                <div class="image-caption">过程</div>
+                            </div>
+                        `;
                         
-                        <h3>创作过程</h3>
-                        <p>从初期草图到最终渲染，整个过程注重细节与氛围的营造。通过多层次的光影处理，展现出空间的深度与神秘感。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是一个融合东方传统美学与现代数字技术的概念设计项目。灵感来源于中国古代寺庙建筑与自然景观的和谐统一。</p>
+                            
+                            <h3>创作过程</h3>
+                            <p>从初期草图到最终渲染，整个过程注重细节与氛围的营造。通过多层次的光影处理，展现出空间的深度与神秘感。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>想设计一个低角度视角(Low Angle Shot)来呈现这座荒废的寺庙，通过这种视角增强建筑的宏伟感和神秘氛围，同时展现岁月流逝的痕迹与自然侵蚀的美感。</p>
+                        `;
+                        break;
                         
-                        <h3>设计理念</h3>
-                        <p>想设计一个低角度视角(Low Angle Shot)来呈现这座荒废的寺庙，通过这种视角增强建筑的宏伟感和神秘氛围，同时展现岁月流逝的痕迹与自然侵蚀的美感。</p>
-                    `;
-                    break;
-                    
-                case '废弃小镇':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/废弃小镇.png" alt="废弃小镇" class="full-width-image">
-                            <div class="image-caption">废弃小镇概念设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的个人环境概念设计项目，探索被遗弃的城镇空间所蕴含的故事与情感。</p>
+                    case '废弃小镇':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/废弃小镇.png" alt="废弃小镇" class="full-width-image">
+                                <div class="image-caption">废弃小镇概念设计</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>通过这个作品，我想表达时间流逝和人类活动痕迹的美学。废弃的建筑与逐渐侵蚀的自然元素形成了一种独特的视觉张力，引发观者对过去与未来的思考。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是我的个人环境概念设计项目，探索被遗弃的城镇空间所蕴含的故事与情感。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>通过这个作品，我想表达时间流逝和人类活动痕迹的美学。废弃的建筑与逐渐侵蚀的自然元素形成了一种独特的视觉张力，引发观者对过去与未来的思考。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>在创作过程中，我特别注重光影的处理和氛围的营造，通过精细的细节和纹理表现，赋予这个废弃空间以生命力和故事感。色调的选择也经过精心考量，以增强场景的情感表达。</p>
+                        `;
+                        break;
                         
-                        <h3>技术实现</h3>
-                        <p>在创作过程中，我特别注重光影的处理和氛围的营造，通过精细的细节和纹理表现，赋予这个废弃空间以生命力和故事感。色调的选择也经过精心考量，以增强场景的情感表达。</p>
-                    `;
-                    break;
-                    
-                case '剑仙':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/剑仙.png" alt="剑仙" class="full-width-image">
-                            <div class="image-caption">剑仙角色设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的个人角色设计项目，灵感来源于中国古典武侠小说中的剑仙形象。</p>
+                    case '剑仙':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/剑仙.png" alt="剑仙" class="full-width-image">
+                                <div class="image-caption">剑仙角色设计</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>我想通过这个角色设计，融合传统东方美学与现代视觉语言，创造一个既有古典韵味又具现代感的剑仙形象。角色的姿态和表情传达了内心的平静与超然，同时蕴含着强大的力量。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是我的个人角色设计项目，灵感来源于中国古典武侠小说中的剑仙形象。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>我想通过这个角色设计，融合传统东方美学与现代视觉语言，创造一个既有古典韵味又具现代感的剑仙形象。角色的姿态和表情传达了内心的平静与超然，同时蕴含着强大的力量。</p>
+                            
+                            <h3>创作过程</h3>
+                            <p>在设计过程中，我注重服装细节与人物气质的表现，通过精心设计的光效和构图，强调了角色的神秘感和超凡气质。色彩的选择也经过精心考量，以增强整体的视觉冲击力和情感表达。</p>
+                        `;
+                        break;
                         
-                        <h3>创作过程</h3>
-                        <p>在设计过程中，我注重服装细节与人物气质的表现，通过精心设计的光效和构图，强调了角色的神秘感和超凡气质。色彩的选择也经过精心考量，以增强整体的视觉冲击力和情感表达。</p>
-                    `;
-                    break;
-                    
-                case '森林':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/森林.png" alt="森林" class="full-width-image">
-                            <div class="image-caption">神秘森林概念设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的个人环境概念设计项目，探索神秘森林的视觉表现与氛围营造。</p>
+                    case '森林':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/森林.png" alt="森林" class="full-width-image">
+                                <div class="image-caption">神秘森林概念设计</div>
+                            </div>
+                        `;
                         
-                        <h3>设计理念</h3>
-                        <p>通过这个作品，我想表达自然的神秘与生命力。茂密的植被、独特的光线和雾气的处理，共同创造出一个既梦幻又真实的森林世界，引导观者进入一个充满想象的空间。</p>
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是我的个人环境概念设计项目，探索神秘森林的视觉表现与氛围营造。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>通过这个作品，我想表达自然的神秘与生命力。茂密的植被、独特的光线和雾气的处理，共同创造出一个既梦幻又真实的森林世界，引导观者进入一个充满想象的空间。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>在创作过程中，我特别关注光线穿透树叶的效果和空间层次感的表现。通过精细的笔触和色彩渐变，营造出深邃而又充满活力的森林氛围，让观者能够感受到自然的神秘与宁静。</p>
+                        `;
+                        break;
                         
-                        <h3>技术实现</h3>
-                        <p>在创作过程中，我特别关注光线穿透树叶的效果和空间层次感的表现。通过精细的笔触和色彩渐变，营造出深邃而又充满活力的森林氛围，让观者能够感受到自然的神秘与宁静。</p>
-                    `;
-                    break;
-                    
-                case '速写视频':
-                case '速写视频2':
-                    // 视频项目的处理
-                    const videoSrc = imgElement.getAttribute('src');
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <video src="${videoSrc}" controls autoplay muted class="full-width-image">
+                    case '速写视频':
+                    case '速写视频2':
+                        // 视频项目的处理
+                        const videoSrc = imgElement.getAttribute('src');
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <video src="${videoSrc}" controls autoplay muted class="full-width-image">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                                <div class="image-caption">创作过程视频</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
+                            <h3>项目背景</h3>
+                            <p>这是我的速写创作过程记录，展示了从构思到完成的整个绘画流程。</p>
+                            
+                            <h3>创作方法</h3>
+                            <p>视频记录了我的数字绘画过程，包括线稿绘制、基础上色、细节刻画和最终效果调整等阶段。</p>
+                            
+                            <h3>技术要点</h3>
+                            <p>在创作过程中，我运用了多种数字绘画技巧，包括图层管理、画笔技法和色彩调整等，展示了专业数字艺术工作流程。</p>
+                        `;
+                        break;
+                        
+                    default:
+                        // 默认情况下显示基本信息
+                        const imgSrc = isVideo ? imgElement.getAttribute('src') : imgElement.getAttribute('src');
+                        const mediaElement = isVideo ? 
+                            `<video src="${imgSrc}" controls autoplay muted class="full-width-image">
                                 您的浏览器不支持视频标签。
-                            </video>
-                            <div class="image-caption">创作过程视频</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目背景</h3>
-                        <p>这是我的速写创作过程记录，展示了从构思到完成的整个绘画流程。</p>
+                             </video>` : 
+                            `<img src="${imgSrc}" alt="${altText}" class="full-width-image">`;
                         
-                        <h3>创作方法</h3>
-                        <p>视频记录了我的数字绘画过程，包括线稿绘制、基础上色、细节刻画和最终效果调整等阶段。</p>
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                ${mediaElement}
+                                <div class="image-caption">${overlayTitle}</div>
+                            </div>
+                        `;
                         
-                        <h3>技术要点</h3>
-                        <p>在创作过程中，我运用了多种数字绘画技巧，包括图层管理、画笔技法和色彩调整等，展示了专业数字艺术工作流程。</p>
-                    `;
-                    break;
-                    
-                default:
-                    // 默认情况下显示基本信息
-                    const imgSrc = isVideo ? imgElement.getAttribute('src') : imgElement.getAttribute('src');
-                    const mediaElement = isVideo ? 
-                        `<video src="${imgSrc}" controls autoplay muted class="full-width-image">
-                            您的浏览器不支持视频标签。
-                         </video>` : 
-                        `<img src="${imgSrc}" alt="${altText}" class="full-width-image">`;
-                    
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            ${mediaElement}
-                            <div class="image-caption">${overlayTitle}</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目信息</h3>
-                        <p>${overlayTitle} - ${overlayCategory}</p>
-                        
-                        <h3>详细描述</h3>
-                        <p>这是我的${overlayCategory}作品，展示了我在${overlayTitle}方面的创作能力和技术水平。</p>
-                    `;
-                    break;
+                        modalDescription.innerHTML = `
+                            <h3>项目信息</h3>
+                            <p>${overlayTitle} - ${overlayCategory}</p>
+                            
+                            <h3>详细描述</h3>
+                            <p>这是我的${overlayCategory}作品，展示了我在${overlayTitle}方面的创作能力和技术水平。</p>
+                        `;
+                        break;
+                }
             }
             
             // 显示模态框

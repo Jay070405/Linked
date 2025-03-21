@@ -123,10 +123,10 @@
                 
                 <div class="portfolio-item" data-category="all personal">
                     <span class="portfolio-number">2</span>
-                    <img src="image/personal/personal project.jpg" alt="个人项目">
+                    <img src="image/personal/personal project.jpg" alt="未知新球">
                     <div class="portfolio-overlay">
-                        <h3>个人项目</h3>
-                        <p>原创概念设计</p>
+                        <h3>未知新球</h3>
+                        <p>未来科技概念场景</p>
                     </div>
                 </div>
                 
@@ -224,7 +224,18 @@
                 
                 <div class="portfolio-item" data-category="all school">
                     <span class="portfolio-number">13</span>
-                    <img src="image/school/maya.png" alt="Maya 3D建模">
+                    <div class="video-container">
+                        <video src="image/school/maya.mp4" alt="Maya 3D建模" poster="image/school/maya.png" muted></video>
+                        <div class="play-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="video-container sketch-video">
+                            <video src="image/sketch/WeChat_20250303101335.mp4" alt="速写视频3" poster="image/sketch/WeChat_20250303101335.mp4#t=99999" muted></video>
+                            <div class="play-icon">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                        </div>
+                    </div>
                     <div class="portfolio-overlay">
                         <h3>Maya 3D建模</h3>
                         <p>3D建模课程作业</p>
@@ -240,8 +251,8 @@
                     </div>
                 </div>
                 
-                <!-- 添加新的三个速写视频 -->
-                <div class="portfolio-item" data-category="all sketch">
+                <!-- 速写视频，只在点击速写时显示 -->
+                <div class="portfolio-item" data-category="sketch">
                     <span class="portfolio-number">15</span>
                     <div class="video-container">
                         <video src="image/sketch/sketch (1) (1).mp4" alt="速写视频1" poster="image/sketch/sketch (1) (1).mp4#t=99999" muted></video>
@@ -255,7 +266,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item" data-category="all sketch">
+                <div class="portfolio-item" data-category="sketch">
                     <span class="portfolio-number">16</span>
                     <div class="video-container">
                         <video src="image/sketch/sketch (2).mp4" alt="速写视频2" poster="image/sketch/sketch (2).mp4#t=99999" muted></video>
@@ -265,20 +276,6 @@
                     </div>
                     <div class="portfolio-overlay">
                         <h3>速写过程2</h3>
-                        <p>创作过程记录</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all sketch">
-                    <span class="portfolio-number">17</span>
-                    <div class="video-container">
-                        <video src="image/sketch/WeChat_20250303101335.mp4" alt="速写视频3" poster="image/sketch/WeChat_20250303101335.mp4#t=99999" muted></video>
-                        <div class="play-icon">
-                            <i class="fas fa-play-circle"></i>
-                        </div>
-                    </div>
-                    <div class="portfolio-overlay">
-                        <h3>速写过程3</h3>
                         <p>创作过程记录</p>
                     </div>
                 </div>
@@ -323,10 +320,22 @@
             <div class="modal-body">
                 <h2 class="modal-title">项目详情</h2>
                 <div class="modal-gallery">
-                    <!-- 图片将通过JavaScript动态添加 -->
+                    <div class="modal-video-container">
+                        <video src="image/school/maya.mp4" controls poster="image/school/maya.png">
+                            <source src="image/school/maya.mp4" type="video/mp4">
+                        </video>
+                        <h3>Maya 3D建模演示</h3>
+                    </div>
+                    <div class="modal-video-container">
+                        <video src="image/sketch/WeChat_20250303101335.mp4" controls poster="image/sketch/WeChat_20250303101335.mp4#t=99999">
+                            <source src="image/sketch/WeChat_20250303101335.mp4" type="video/mp4">
+                        </video>
+                        <h3>速写过程展示</h3>
+                    </div>
                 </div>
                 <div class="modal-description">
-                    <!-- 描述将通过JavaScript动态添加 -->
+                    <h3>Maya 3D建模</h3>
+                    <p>3D建模课程作业展示，包含建模过程和速写创作过程。</p>
                 </div>
             </div>
         </div>

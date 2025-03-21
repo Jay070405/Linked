@@ -788,7 +788,6 @@ nav {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    cursor: pointer;
 }
 
 .video-container video {
@@ -796,6 +795,22 @@ nav {
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
+}
+
+/* 速写视频容器样式 */
+.video-container .sketch-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* 悬停时显示速写视频 */
+.portfolio-item:hover .sketch-video {
+    opacity: 1;
 }
 
 .portfolio-item:hover .video-container video {
@@ -2870,6 +2885,177 @@ and (-webkit-device-pixel-ratio: 3) {
             max-width: 100% !important;
             padding: 0 1rem !important;
         }
+    }
+}
+
+.portfolio-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.portfolio-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.portfolio-content .video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.portfolio-content:hover .video-container {
+    opacity: 1;
+}
+
+.portfolio-content:hover img {
+    opacity: 0.3;
+}
+
+/* 第一个视频（Maya）默认显示 */
+.portfolio-content .video-container:first-child {
+    opacity: 1;
+}
+
+/* 第二个视频（速写）在悬停时显示 */
+.portfolio-content:hover .video-container:first-child {
+    opacity: 0;
+}
+
+.portfolio-content:hover .video-container.sketch-video {
+    opacity: 1;
+}
+
+/* 确保速写类别的作品在其他类别下不显示 */
+.portfolio-item[data-category="sketch"] {
+    display: none;
+}
+
+.portfolio-tabs button[data-category="sketch"].active ~ .portfolio-grid .portfolio-item[data-category="sketch"] {
+    display: block;
+}
+
+.modal-video-container {
+    width: 100%;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.modal-video-container video {
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    background: #000;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-video-container h3 {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: var(--primary-light);
+    text-align: center;
+    font-family: var(--heading-font);
+    font-weight: 500;
+}
+
+/* 调整模态框内容的布局 */
+.modal-content {
+    max-width: 1000px;
+    width: 90%;
+    margin: 2% auto;
+    padding: 2rem;
+    background: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-light);
+    font-size: 2rem;
+    font-family: var(--heading-font);
+    font-weight: 600;
+}
+
+.modal-description {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(137, 207, 240, 0.2);
+}
+
+.modal-description h3 {
+    color: var(--primary-light);
+    margin-bottom: 1rem;
+    font-family: var(--heading-font);
+    font-weight: 500;
+}
+
+.modal-description p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    font-family: var(--body-font);
+    font-weight: 300;
+}
+
+/* 移动设备适配 */
+@media screen and (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 1rem;
+    }
+    
+    .modal-video-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .modal-video-container video {
+        max-height: 300px;
+    }
+    
+    .modal-video-container h3 {
+        font-size: 1rem;
+    }
+    
+    .modal-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.dream-story {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--primary);
+    font-family: var(--body-font);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dream-story p {
+    margin: 0;
+    text-align: left;
+    font-style: italic;
+}
+
+/* 移动设备适配 */
+@media screen and (max-width: 768px) {
+    .dream-story {
+        padding: 1rem;
+        font-size: 0.9rem;
     }
 }
 
