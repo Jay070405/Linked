@@ -3059,3 +3059,80 @@ and (-webkit-device-pixel-ratio: 3) {
     }
 }
 
+.modal-image-container {
+    margin-bottom: 20px;
+    width: 100%;
+    min-height: 200px;
+    position: relative;
+}
+
+.modal-image-container img.full-width-image {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    object-fit: contain;
+    max-height: 500px;
+}
+
+.modal-image-container .image-caption {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: var(--primary-light);
+    text-align: center;
+}
+
+/* 确保创意透视流程的图片都能显示 */
+.process-showcase {
+    cursor: pointer;
+    overflow: hidden;
+}
+
+[alt="创意透视流程"] + .portfolio-overlay h3 {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* 确保模态框有足够的高度显示多张图片 */
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.modal-pdf-container {
+    margin-bottom: 30px;
+    width: 100%;
+    position: relative;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal-pdf-container embed {
+    display: block;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.modal-pdf-container .image-caption {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: var(--primary-light);
+    text-align: center;
+    padding: 5px 0;
+}
+
+/* 在移动设备上调整PDF显示高度 */
+@media screen and (max-width: 768px) {
+    .modal-pdf-container embed {
+        height: 300px !important;
+    }
+}
+

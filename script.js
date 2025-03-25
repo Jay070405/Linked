@@ -264,6 +264,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const overlayCategory = item.querySelector('.portfolio-overlay p')?.textContent || '';
             const isVideo = imgElement.tagName.toLowerCase() === 'video';
             
+            // 输出调试信息
+            console.log('点击的作品:', overlayTitle);
+            console.log('alt文本:', altText);
+            console.log('图片路径:', imgElement.getAttribute('src'));
+            
             // 设置模态框标题
             modalTitle.textContent = `${overlayTitle} - 项目详情`;
             
@@ -386,12 +391,93 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p>项目中最大的挑战是处理复杂的透视关系和多点光源。通过反复研究和实践，结合SketchUp软件的辅助，我成功地解决了这些问题，使画面既符合透视规律又具有艺术表现力。</p>
                         `;
                         break;
+                    
+                    case '创意透视流程':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/creative prespetive (3).png" alt="创意透视草图阶段" class="full-width-image">
+                                <div class="image-caption">过程 - 初期草图</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/creative prespetvie (2).png" alt="创意透视中期阶段" class="full-width-image">
+                                <div class="image-caption">过程 - 线稿完善</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/creative prespetvie.png" alt="创意透视最终作品" class="full-width-image">
+                                <div class="image-caption">最终渲染</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
+                            <h3>创意透视流程展示</h3>
+                            <p>这个项目展示了创意透视作品从初期草图到最终渲染的完整流程。通过三个关键阶段的展示，可以清晰地看到作品的演变过程。</p>
+                            
+                            <h3>技术要点</h3>
+                            <p>这个项目运用了创意透视技术，将建筑元素通过扭曲和变形创造出视觉冲击力。从初期草图的构思，到线稿的精确处理，再到最终的细节渲染，每一步都展示了不同的技术运用。</p>
+                        `;
+                        break;
+                        
+                    case '视觉开发全集':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/vis_dev_character.png" alt="角色设计" class="full-width-image">
+                                <div class="image-caption">角色设计</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/vis_dev_prop.png" alt="道具设计" class="full-width-image">
+                                <div class="image-caption">道具设计</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/vis_dev_vehicle.png" alt="载具设计" class="full-width-image">
+                                <div class="image-caption">载具设计</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/enviroment 1.png" alt="环境设计 1" class="full-width-image">
+                                <div class="image-caption">环境设计 1</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/enviroment 2.png" alt="环境设计 2" class="full-width-image">
+                                <div class="image-caption">环境设计 2</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/enviroment 3.png" alt="环境设计 3" class="full-width-image">
+                                <div class="image-caption">环境设计 3</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/enviroment 4.png" alt="环境设计 4" class="full-width-image">
+                                <div class="image-caption">环境设计 4</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
+                            <h3>视觉开发全集</h3>
+                            <p>这是我在视觉开发课程中完成的一系列作品，包括角色设计、道具设计、载具设计和多个环境设计作业。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>在这个系列中，我尝试创建一个连贯的视觉风格，每个设计元素都支持整体世界观的构建。从角色、道具到环境，我注重细节、功能性和美学的统一。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>作品采用了多种技法和工具，包括数字绘画、3D辅助和概念设计方法。我特别关注光影处理、材质表现和空间构成，确保设计既具有视觉吸引力又符合实际功能需求。</p>
+                        `;
+                        break;
                         
                     case '视觉开发':
                         modalGallery.innerHTML = `
                             <div class="modal-image-container">
                                 <img src="image/school/vis dev.jpg" alt="视觉开发" class="full-width-image">
-                                <div class="image-caption">视觉开发作品</div>
+                                <div class="image-caption">视觉开发作品 1</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/vis dev 3.jpg" alt="视觉开发 3" class="full-width-image">
+                                <div class="image-caption">视觉开发作品 2</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/vis dev 4.jpg" alt="视觉开发 4" class="full-width-image">
+                                <div class="image-caption">视觉开发作品 3</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/vis dev 5.jpg" alt="视觉开发 5" class="full-width-image">
+                                <div class="image-caption">视觉开发作品 4</div>
                             </div>
                         `;
                         
@@ -585,6 +671,27 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             <h3>技术要点</h3>
                             <p>在创作过程中，我运用了多种数字绘画技巧，包括图层管理、画笔技法和色彩调整等，展示了专业数字艺术工作流程。</p>
+                        `;
+                        break;
+                        
+                    case '角色素描':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/sketching for entd.png" alt="角色设计素描" class="full-width-image">
+                                <div class="image-caption">角色设计</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/sketching for entd (2).png" alt="动作和表情素描" class="full-width-image">
+                                <div class="image-caption">动作和表情研究</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
+                            <h3>角色素描研究</h3>
+                            <p>这个项目展示了角色设计和动作表情研究的素描过程。通过素描深入研究角色的外观特征以及动态姿态，为后续的角色创作奠定基础。</p>
+                            
+                            <h3>设计要点</h3>
+                            <p>项目包含两个主要部分：角色整体设计和动作表情细节研究。通过对角色比例、服装和特征的精确素描，以及对各种表情和动作姿态的探索，全面展示了角色设计的基础工作。</p>
                         `;
                         break;
                         
