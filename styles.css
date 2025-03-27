@@ -3136,3 +3136,70 @@ and (-webkit-device-pixel-ratio: 3) {
     }
 }
 
+/* 语言切换按钮样式 */
+.language-selector {
+    display: flex;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.2);
+    margin-left: 15px;
+    height: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.lang-btn {
+    border: none;
+    background: transparent;
+    color: #fff;
+    padding: 0 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.lang-btn.active {
+    background: var(--primary);
+    color: #000;
+}
+
+.lang-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 导航栏语言切换按钮定位 */
+.nav-container .language-selector {
+    margin-left: auto;
+    margin-right: 15px;
+}
+
+/* 入口页面语言切换按钮样式 */
+.intro-lang {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.intro-lang .lang-btn {
+    color: #fff;
+}
+
+.intro-lang .lang-btn.active {
+    background: var(--primary);
+    color: #000;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .nav-container .language-selector {
+        margin-right: 60px; /* 为汉堡菜单留出空间 */
+    }
+    
+    .intro-lang {
+        top: 15px;
+        right: 15px;
+    }
+}
+

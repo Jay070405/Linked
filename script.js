@@ -1150,5 +1150,143 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    // 语言切换功能
+    document.addEventListener('DOMContentLoaded', function() {
+        // 定义翻译对象
+        const translations = {
+            'zh': {
+                'intro-button': '进入作品集',
+                'nav-home': '首页',
+                'nav-about': '关于我',
+                'nav-portfolio': '作品集',
+                'nav-contact': '联系方式',
+                'hero-greeting': '你好，我是',
+                'hero-subtitle1': 'Illustrator',
+                'hero-subtitle2': 'Virtual Development',
+                'hero-subtitle3': 'Concept Designer',
+                'hero-cta': '查看我的作品',
+                'portfolio-title': '作品集',
+                'tab-all': '全部',
+                'tab-personal': '个人作品',
+                'tab-school': '学校作品',
+                'tab-sketch': '速写'
+            },
+            'en': {
+                'intro-button': 'Enter Portfolio',
+                'nav-home': 'Home',
+                'nav-about': 'About',
+                'nav-portfolio': 'Portfolio',
+                'nav-contact': 'Contact',
+                'hero-greeting': 'Hello, I am',
+                'hero-subtitle1': 'Illustrator',
+                'hero-subtitle2': 'Virtual Development',
+                'hero-subtitle3': 'Concept Designer',
+                'hero-cta': 'View My Work',
+                'portfolio-title': 'Portfolio',
+                'tab-all': 'All',
+                'tab-personal': 'Personal',
+                'tab-school': 'School',
+                'tab-sketch': 'Sketch'
+            }
+        };
+        
+        // 当前语言
+        let currentLang = 'zh';
+        
+        // 选择所有语言按钮
+        const langButtons = document.querySelectorAll('.lang-btn');
+        
+        // 为语言按钮添加点击事件
+        langButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                
+                if (lang !== currentLang) {
+                    // 更新当前语言
+                    currentLang = lang;
+                    
+                    // 更新按钮状态
+                    langButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.getAttribute('data-lang') === lang) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
+                    // 更新页面文本
+                    updatePageText(lang);
+                    
+                    // 存储语言选择到本地存储
+                    localStorage.setItem('preferredLanguage', lang);
+                }
+            });
+        });
+        
+        // 从本地存储加载语言选择
+        const savedLang = localStorage.getItem('preferredLanguage');
+        if (savedLang && savedLang !== currentLang) {
+            // 模拟点击相应的语言按钮
+            const targetBtn = document.querySelector(`.lang-btn[data-lang="${savedLang}"]`);
+            if (targetBtn) {
+                targetBtn.click();
+            }
+        }
+        
+        // 更新页面文本的函数
+        function updatePageText(lang) {
+            // 更新入口按钮
+            const introButton = document.querySelector('.start-button');
+            if (introButton) {
+                introButton.textContent = translations[lang]['intro-button'];
+            }
+            
+            // 更新导航链接
+            const navLinks = document.querySelectorAll('.nav-links a');
+            if (navLinks.length >= 4) {
+                navLinks[0].textContent = translations[lang]['nav-home'];
+                navLinks[1].textContent = translations[lang]['nav-about'];
+                navLinks[2].textContent = translations[lang]['nav-portfolio'];
+                navLinks[3].textContent = translations[lang]['nav-contact'];
+            }
+            
+            // 更新英雄区问候语
+            const heroGreeting = document.querySelector('.hero-content h1');
+            if (heroGreeting) {
+                const nameSpan = heroGreeting.querySelector('.highlight');
+                const name = nameSpan ? nameSpan.textContent : 'Shijie Lin';
+                heroGreeting.innerHTML = `${translations[lang]['hero-greeting']} <span class="highlight">${name}</span>`;
+            }
+            
+            // 更新副标题
+            const subtitles = document.querySelectorAll('.subtitle');
+            if (subtitles.length >= 3) {
+                subtitles[0].textContent = translations[lang]['hero-subtitle1'];
+                subtitles[1].textContent = translations[lang]['hero-subtitle2'];
+                subtitles[2].textContent = translations[lang]['hero-subtitle3'];
+            }
+            
+            // 更新CTA按钮
+            const ctaButton = document.querySelector('.cta-button');
+            if (ctaButton) {
+                ctaButton.textContent = translations[lang]['hero-cta'];
+            }
+            
+            // 更新作品集标题
+            const portfolioTitle = document.querySelector('#portfolio h2');
+            if (portfolioTitle) {
+                portfolioTitle.textContent = translations[lang]['portfolio-title'];
+            }
+            
+            // 更新作品集标签
+            const portfolioTabs = document.querySelectorAll('.portfolio-tab');
+            if (portfolioTabs.length >= 4) {
+                portfolioTabs[0].textContent = translations[lang]['tab-all'];
+                portfolioTabs[1].textContent = translations[lang]['tab-personal'];
+                portfolioTabs[2].textContent = translations[lang]['tab-school'];
+                portfolioTabs[3].textContent = translations[lang]['tab-sketch'];
+            }
+        }
+    });
 });
 
