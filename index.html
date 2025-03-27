@@ -43,7 +43,7 @@
                 <div class="magic-center"></div>
             </div>
             
-            <button class="start-button">进入作品集</button>
+            <button class="start-button" data-translate="intro-button">进入作品集</button>
             <!-- 添加语言切换按钮 -->
             <div class="language-selector intro-lang">
                 <button class="lang-btn active" data-lang="zh">中</button>
@@ -86,10 +86,10 @@
                     <span></span>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="index.html" class="active">首页</a></li>
-                    <li><a href="about.html">关于我</a></li>
-                    <li><a href="#portfolio">作品集</a></li>
-                    <li><a href="contact.html">联系方式</a></li>
+                    <li><a href="index.html" class="active" data-translate="nav-home">首页</a></li>
+                    <li><a href="about.html" data-translate="nav-about">关于我</a></li>
+                    <li><a href="#portfolio" data-translate="nav-portfolio">作品集</a></li>
+                    <li><a href="contact.html" data-translate="nav-contact">联系方式</a></li>
                 </ul>
             </div>
         </nav>
@@ -99,25 +99,25 @@
         <!-- 首页部分 -->
         <section id="home" class="hero">
             <div class="hero-content">
-                <h1 class="parallax" data-speed="0.3">你好，我是 <span class="highlight">Shijie Lin</span></h1>
+                <h1 class="parallax" data-speed="0.3" data-translate="hero-greeting">你好，我是 <span class="highlight">Shijie Lin</span></h1>
                 <div class="subtitle-container">
-                    <p class="subtitle fade-in">Illustrator</p>
-                    <p class="subtitle fade-in">Virtual Development</p>
-                    <p class="subtitle fade-in">Concept Designer</p>
+                    <p class="subtitle fade-in" data-translate="hero-subtitle1">插画师</p>
+                    <p class="subtitle fade-in" data-translate="hero-subtitle2">虚拟开发</p>
+                    <p class="subtitle fade-in" data-translate="hero-subtitle3">概念设计师</p>
                 </div>
-                <a href="#portfolio" class="cta-button">查看我的作品</a>
+                <a href="#portfolio" class="cta-button" data-translate="hero-cta">查看我的作品</a>
             </div>
             <div class="welcome-text">PORTFOLIO</div>
         </section>
 
         <!-- 作品集部分 -->
         <section id="portfolio" class="portfolio">
-            <h2>作品集</h2>
+            <h2 data-translate="portfolio-title">作品集</h2>
             <div class="portfolio-tabs">
-                <button class="portfolio-tab active" data-category="all">全部</button>
-                <button class="portfolio-tab" data-category="personal">个人作品</button>
-                <button class="portfolio-tab" data-category="school">学校作品</button>
-                <button class="portfolio-tab" data-category="sketch">速写</button>
+                <button class="portfolio-tab active" data-category="all" data-translate="tab-all">全部</button>
+                <button class="portfolio-tab" data-category="personal" data-translate="tab-personal">个人作品</button>
+                <button class="portfolio-tab" data-category="school" data-translate="tab-school">学校作品</button>
+                <button class="portfolio-tab" data-category="sketch" data-translate="tab-sketch">速写</button>
             </div>
             
             <div class="portfolio-grid">
@@ -174,15 +174,6 @@
                     <div class="portfolio-overlay">
                         <h3>废弃小镇</h3>
                         <p>个人概念设计作品</p>
-                    </div>
-                </div>
-
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">7</span>
-                    <img src="image/personal/剑仙.png" alt="剑仙">
-                    <div class="portfolio-overlay">
-                        <h3>剑仙</h3>
-                        <p>个人角色设计作品</p>
                     </div>
                 </div>
 
@@ -316,10 +307,10 @@
         </section>
 
         <section class="contact" id="contact" style="padding: 3rem 1rem; border-radius: 8px; overflow: hidden; background: #232323;">
-            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.5rem; letter-spacing: 2px; padding: 0 1rem; word-wrap: break-word; overflow-wrap: break-word; color: #B0E2FF;">CONTACT ME</h2>
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.5rem; letter-spacing: 2px; padding: 0 1rem; word-wrap: break-word; overflow-wrap: break-word; color: #B0E2FF;" data-translate="contact-title">CONTACT ME</h2>
             <div class="contact-content" style="max-width: 800px; margin: 0 auto; padding: 0; text-align: center;">
-                <p style="color: #fff; margin-bottom: 2rem; font-size: 1.1rem;">若您对我的作品感兴趣，或有任何合作机会，请点击下方按钮了解更多联系方式</p>
-                <a href="contact.html" class="cta-button" style="display: inline-block; margin: 0 auto; padding: 1rem 2rem; font-size: 1.2rem; background-color: var(--primary); color: #000; border-radius: 30px; text-decoration: none; font-weight: 500; transition: all 0.3s ease;">联系方式</a>
+                <p style="color: #fff; margin-bottom: 2rem; font-size: 1.1rem;" data-translate="contact-content">若您对我的作品感兴趣，或有任何合作机会，请点击下方按钮了解更多联系方式</p>
+                <a href="contact.html" class="cta-button" style="display: inline-block; margin: 0 auto; padding: 1rem 2rem; font-size: 1.2rem; background-color: var(--primary); color: #000; border-radius: 30px; text-decoration: none; font-weight: 500; transition: all 0.3s ease;" data-translate="contact-title">联系方式</a>
             </div>
         </section>
 
@@ -333,7 +324,7 @@
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <div class="modal-body">
-                <h2 class="modal-title">项目详情</h2>
+                <h2 class="modal-title" data-translate="project-details">项目详情</h2>
                 <div class="modal-gallery">
                     <div class="modal-video-container">
                         <video src="image/school/maya.mp4" controls poster="image/school/maya.png">

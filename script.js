@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 
                 modalDescription.innerHTML = `
-                    <h3>项目背景</h3>
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                     <p>这是3D建模课程的作业，使用Maya软件创建和渲染3D模型。同时展示了相关的建模过程。</p>
                     
                     <h3>技术要点</h3>
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>该项目的要求是在同一个场景中创作白天和夜晚两个版本，展示不同光照条件下的环境氛围变化。</p>
                             
                             <h3>设计理念</h3>
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                             <p>这是一个journalism课程作业，要求我们用身边日常生活中的事物创作一个journalism项目。</p>
                             
                             <h3>创作理念</h3>
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                             <p>这是Photoshop数字绘画基础课程的作业，旨在掌握软件的核心功能和数字绘画的基本技巧。</p>
                             
                             <h3>技术要点</h3>
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                             <p>这是环境设计课程的作业，要求运用透视原理创建具有空间感和深度的场景。通过这个项目，我学习了解人物和场景大小关系，并利用SketchUp这个3D软件来确认船的透视。在获取3D船模型的基础上，我设计了自己的概念，最终完成了这幅作品。</p>
                             
                             <h3>设计理念</h3>
@@ -409,11 +409,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                            <p>这个项目的要求是使用5点透视技术创作一个场景。我选择了设计一个赛博朋克风格的未来世界，通过精确的透视关系展现出宏大的城市景观。</p>
+                            
                             <h3>创意透视流程展示</h3>
                             <p>这个项目展示了创意透视作品从初期草图到最终渲染的完整流程。通过三个关键阶段的展示，可以清晰地看到作品的演变过程。</p>
                             
                             <h3>技术要点</h3>
-                            <p>这个项目运用了创意透视技术，将建筑元素通过扭曲和变形创造出视觉冲击力。从初期草图的构思，到线稿的精确处理，再到最终的细节渲染，每一步都展示了不同的技术运用。</p>
+                            <p>我运用了5点透视技术，将建筑元素通过精确的扭曲和变形创造出视觉冲击力。为了表现人物在这个宏大场景中的比例，我特意设计了火车上的两个角色，让观众能够直观地感受到环境的庞大规模。从初期草图的构思，到线稿的精确处理，再到最终的细节渲染，每一步都展示了不同的技术运用。</p>
                         `;
                         break;
                         
@@ -450,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>视觉开发全集</h3>
+                            <h3>视觉开发全集 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2025年</span></h3>
                             <p>这是我在视觉开发课程中完成的一系列作品，包括角色设计、道具设计、载具设计和多个环境设计作业。</p>
                             
                             <h3>设计理念</h3>
@@ -482,14 +485,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
-                            <p>这是视觉开发课程的作业，要求为特定故事或场景创建视觉风格和氛围。</p>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+                            <p>这是视觉开发课程的作业，要求选择一部电影，并为其设计一系列道具。</p>
                             
                             <h3>设计理念</h3>
-                            <p>我为这个项目创建了一个融合东方神话与现代元素的视觉世界，通过独特的色彩方案和构图，传达出神秘而又亲切的氛围。</p>
+                            <p>在这个项目中，我为选定的电影设计了多种不同的道具。最大的挑战是确保所有道具在风格上保持统一性，使它们看起来像是来自同一个世界观，符合电影的整体美学和氛围。</p>
                             
                             <h3>工作流程</h3>
-                            <p>从概念草图到色彩测试，再到最终渲染，整个过程注重视觉一致性和故事性，确保所有元素都服务于整体视觉叙事。</p>
+                            <p>我首先分析了电影的视觉风格和色彩方案，然后设计了多个概念草图。通过反复修改和调整，确保每个道具既有独特性又与整体风格协调一致，最终呈现出一套风格统一的道具设计。</p>
                         `;
                         break;
                         
@@ -502,11 +505,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>设计理念</h3>
+                            <h3>设计理念 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这是一个3D和人物练习项目，通过结合3D建模和数字绘画来创作一个完整的场景。</p>
                             
                             <h3>技术实现</h3>
-                            <p>我的室友首先使用3D软件建模制作了一个钢琴模型，然后将其导入到Photoshop中。在PS中进行了场景的细化处理，添加了人物形象，并通过光影和色彩的调整，营造出温暖而富有艺术感的氛围。</p>
+                            <p>我首先使用3D软件建模制作了一个钢琴模型，然后将其导入到Photoshop中。在PS中进行了场景的细化处理，添加了人物形象，并通过光影和色彩的调整，营造出温暖而富有艺术感的氛围。</p>
                         `;
                         break;
                         
@@ -519,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这是一个未来科技概念场景设计项目，探索了一个神秘的未知星球。</p>
                         `;
                         break;
@@ -533,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这是我的个人环境概念设计项目，灵感来源于日本传统村落和樱花季节的美丽景色。</p>
                             
                             <h3>设计理念</h3>
@@ -553,11 +556,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这是我的个人概念设计项目，探索世界树这一神话元素在现代视觉语言中的表达。</p>
                             
                             <h3>设计理念</h3>
-                            <p>世界树在许多文化中都是连接天地的象征。在这个作品中，我尝试将这一古老概念与现代科幻元素结合，创造出一个既神秘又宏大的视觉形象。</p>
+                            <p>世界树在许多文化中都是连接天地的象征。在这个作品中，我尝试将这一古老概念与魔法元素结合，创造出一个既神秘又宏大的视觉形象。</p>
                             
                             <h3>创作过程</h3>
                             <p>从初期构思到最终呈现，我注重树木的生命力和神秘感的表达。通过特殊的光效和构图，强调了世界树的宏伟与超凡，同时保留了自然生长的有机感。</p>
@@ -578,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                             <p>这是一个融合东方传统美学与现代数字技术的概念设计项目。灵感来源于中国古代寺庙建筑与自然景观的和谐统一。</p>
                             
                             <h3>创作过程</h3>
@@ -598,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                             <p>这是我的个人环境概念设计项目，探索被遗弃的城镇空间所蕴含的故事与情感。</p>
                             
                             <h3>设计理念</h3>
@@ -606,26 +609,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             <h3>技术实现</h3>
                             <p>在创作过程中，我特别注重光影的处理和氛围的营造，通过精细的细节和纹理表现，赋予这个废弃空间以生命力和故事感。色调的选择也经过精心考量，以增强场景的情感表达。</p>
-                        `;
-                        break;
-                        
-                    case '剑仙':
-                        modalGallery.innerHTML = `
-                            <div class="modal-image-container">
-                                <img src="image/personal/剑仙.png" alt="剑仙" class="full-width-image">
-                                <div class="image-caption">剑仙角色设计</div>
-                            </div>
-                        `;
-                        
-                        modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
-                            <p>这是我的个人角色设计项目，灵感来源于中国古典武侠小说中的剑仙形象。</p>
-                            
-                            <h3>设计理念</h3>
-                            <p>我想通过这个角色设计，融合传统东方美学与现代视觉语言，创造一个既有古典韵味又具现代感的剑仙形象。角色的姿态和表情传达了内心的平静与超然，同时蕴含着强大的力量。</p>
-                            
-                            <h3>创作过程</h3>
-                            <p>在设计过程中，我注重服装细节与人物气质的表现，通过精心设计的光效和构图，强调了角色的神秘感和超凡气质。色彩的选择也经过精心考量，以增强整体的视觉冲击力和情感表达。</p>
                         `;
                         break;
                         
@@ -638,7 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                             <p>这是我的个人环境概念设计项目，探索神秘森林的视觉表现与氛围营造。</p>
                             
                             <h3>设计理念</h3>
@@ -663,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>项目背景</h3>
+                            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这是我的速写创作过程记录，展示了从构思到完成的整个绘画流程。</p>
                             
                             <h3>创作方法</h3>
@@ -687,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         
                         modalDescription.innerHTML = `
-                            <h3>角色素描研究</h3>
+                            <h3>角色素描研究 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这个项目展示了角色设计和动作表情研究的素描过程。通过素描深入研究角色的外观特征以及动态姿态，为后续的角色创作奠定基础。</p>
                             
                             <h3>设计要点</h3>
@@ -1151,142 +1134,164 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 语言切换功能
+    // 语言切换功能 - 简化版本
     document.addEventListener('DOMContentLoaded', function() {
-        // 定义翻译对象
-        const translations = {
-            'zh': {
-                'intro-button': '进入作品集',
-                'nav-home': '首页',
-                'nav-about': '关于我',
-                'nav-portfolio': '作品集',
-                'nav-contact': '联系方式',
-                'hero-greeting': '你好，我是',
-                'hero-subtitle1': 'Illustrator',
-                'hero-subtitle2': 'Virtual Development',
-                'hero-subtitle3': 'Concept Designer',
-                'hero-cta': '查看我的作品',
-                'portfolio-title': '作品集',
-                'tab-all': '全部',
-                'tab-personal': '个人作品',
-                'tab-school': '学校作品',
-                'tab-sketch': '速写'
-            },
-            'en': {
-                'intro-button': 'Enter Portfolio',
-                'nav-home': 'Home',
-                'nav-about': 'About',
-                'nav-portfolio': 'Portfolio',
-                'nav-contact': 'Contact',
-                'hero-greeting': 'Hello, I am',
-                'hero-subtitle1': 'Illustrator',
-                'hero-subtitle2': 'Virtual Development',
-                'hero-subtitle3': 'Concept Designer',
-                'hero-cta': 'View My Work',
-                'portfolio-title': 'Portfolio',
-                'tab-all': 'All',
-                'tab-personal': 'Personal',
-                'tab-school': 'School',
-                'tab-sketch': 'Sketch'
-            }
-        };
+        console.log('初始化语言切换功能');
         
-        // 当前语言
-        let currentLang = 'zh';
-        
-        // 选择所有语言按钮
+        // 获取所有语言切换按钮
         const langButtons = document.querySelectorAll('.lang-btn');
         
-        // 为语言按钮添加点击事件
-        langButtons.forEach(button => {
-            button.addEventListener('click', function() {
+        // 从本地存储获取当前语言，默认为中文
+        const currentLang = localStorage.getItem('preferredLanguage') || 'zh';
+        console.log('当前语言设置:', currentLang);
+        
+        // 更新按钮状态
+        langButtons.forEach(btn => {
+            if (btn.getAttribute('data-lang') === currentLang) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+            
+            // 添加点击事件
+            btn.addEventListener('click', function() {
                 const lang = this.getAttribute('data-lang');
+                console.log('点击语言按钮:', lang);
                 
-                if (lang !== currentLang) {
-                    // 更新当前语言
-                    currentLang = lang;
-                    
-                    // 更新按钮状态
-                    langButtons.forEach(btn => {
-                        btn.classList.remove('active');
-                        if (btn.getAttribute('data-lang') === lang) {
-                            btn.classList.add('active');
-                        }
-                    });
-                    
-                    // 更新页面文本
-                    updatePageText(lang);
-                    
-                    // 存储语言选择到本地存储
-                    localStorage.setItem('preferredLanguage', lang);
-                }
+                // 存储语言选择
+                localStorage.setItem('preferredLanguage', lang);
+                
+                // 简单粗暴地刷新页面应用新语言
+                location.reload();
             });
         });
-        
-        // 从本地存储加载语言选择
-        const savedLang = localStorage.getItem('preferredLanguage');
-        if (savedLang && savedLang !== currentLang) {
-            // 模拟点击相应的语言按钮
-            const targetBtn = document.querySelector(`.lang-btn[data-lang="${savedLang}"]`);
-            if (targetBtn) {
-                targetBtn.click();
-            }
-        }
-        
-        // 更新页面文本的函数
-        function updatePageText(lang) {
-            // 更新入口按钮
-            const introButton = document.querySelector('.start-button');
-            if (introButton) {
-                introButton.textContent = translations[lang]['intro-button'];
-            }
-            
-            // 更新导航链接
-            const navLinks = document.querySelectorAll('.nav-links a');
-            if (navLinks.length >= 4) {
-                navLinks[0].textContent = translations[lang]['nav-home'];
-                navLinks[1].textContent = translations[lang]['nav-about'];
-                navLinks[2].textContent = translations[lang]['nav-portfolio'];
-                navLinks[3].textContent = translations[lang]['nav-contact'];
-            }
-            
-            // 更新英雄区问候语
-            const heroGreeting = document.querySelector('.hero-content h1');
-            if (heroGreeting) {
-                const nameSpan = heroGreeting.querySelector('.highlight');
-                const name = nameSpan ? nameSpan.textContent : 'Shijie Lin';
-                heroGreeting.innerHTML = `${translations[lang]['hero-greeting']} <span class="highlight">${name}</span>`;
-            }
-            
-            // 更新副标题
-            const subtitles = document.querySelectorAll('.subtitle');
-            if (subtitles.length >= 3) {
-                subtitles[0].textContent = translations[lang]['hero-subtitle1'];
-                subtitles[1].textContent = translations[lang]['hero-subtitle2'];
-                subtitles[2].textContent = translations[lang]['hero-subtitle3'];
-            }
-            
-            // 更新CTA按钮
-            const ctaButton = document.querySelector('.cta-button');
-            if (ctaButton) {
-                ctaButton.textContent = translations[lang]['hero-cta'];
-            }
-            
-            // 更新作品集标题
-            const portfolioTitle = document.querySelector('#portfolio h2');
-            if (portfolioTitle) {
-                portfolioTitle.textContent = translations[lang]['portfolio-title'];
-            }
-            
-            // 更新作品集标签
-            const portfolioTabs = document.querySelectorAll('.portfolio-tab');
-            if (portfolioTabs.length >= 4) {
-                portfolioTabs[0].textContent = translations[lang]['tab-all'];
-                portfolioTabs[1].textContent = translations[lang]['tab-personal'];
-                portfolioTabs[2].textContent = translations[lang]['tab-school'];
-                portfolioTabs[3].textContent = translations[lang]['tab-sketch'];
-            }
-        }
     });
+
+    // 立即检查语言切换功能是否已加载
+    console.log('-----------------------------------------------------');
+    console.log('脚本加载完成，检查语言切换功能状态:');
+    console.log('找到语言按钮数量:', document.querySelectorAll('.lang-btn').length);
+    console.log('找到可翻译元素数量:', document.querySelectorAll('[data-translate]').length);
+    console.log('当前保存的语言设置:', localStorage.getItem('preferredLanguage') || '未设置（默认：zh）');
+    console.log('-----------------------------------------------------');
+
+    // 强制触发语言检查和应用
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'zh';
+            console.log('DOMContentLoaded后再次检查语言:', savedLang);
+            
+            // 立即更新所有语言按钮状态
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === savedLang) {
+                    btn.classList.add('active');
+                    console.log('手动激活按钮:', btn);
+                } else {
+                    btn.classList.remove('active');
+                }
+                
+                // 重新绑定点击事件，确保每个按钮都能响应
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    console.log('点击语言按钮:', lang);
+                    localStorage.setItem('preferredLanguage', lang);
+                    
+                    // 刷新页面以应用新语言
+                    window.location.reload();
+                });
+            });
+        }, 1000);
+    });
+
+    // 增强语言切换的调试功能
+    window.addEventListener('DOMContentLoaded', function() {
+        console.log('===== 语言切换增强调试 =====');
+        
+        // 为所有语言按钮添加明显的视觉反馈
+        const allLangButtons = document.querySelectorAll('.lang-btn');
+        
+        console.log(`找到 ${allLangButtons.length} 个语言按钮`);
+        
+        // 记录当前语言设置
+        const currentLanguage = localStorage.getItem('preferredLanguage') || 'zh';
+        console.log(`当前语言设置: ${currentLanguage}`);
+        
+        allLangButtons.forEach(btn => {
+            // 添加明显的视觉样式
+            btn.style.transition = 'all 0.3s ease';
+            
+            // 设置当前语言按钮的活动状态
+            if (btn.getAttribute('data-lang') === currentLanguage) {
+                btn.classList.add('active');
+                console.log(`激活语言按钮: ${btn.getAttribute('data-lang')}`);
+            } else {
+                btn.classList.remove('active');
+            }
+            
+            // 添加点击事件监听器（覆盖而非追加）
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const lang = this.getAttribute('data-lang');
+                console.log(`点击语言按钮: ${lang} (当前页面: ${window.location.pathname})`);
+                
+                // 保存语言设置
+                localStorage.setItem('preferredLanguage', lang);
+                
+                // 添加一个时间戳
+                localStorage.setItem('languageChangeTime', new Date().getTime());
+                
+                // 立即刷新页面
+                console.log('准备刷新页面...');
+                window.location.reload();
+                
+                return false;  // 确保事件不继续传播
+            }, true);  // 使用捕获阶段
+        });
+    });
+
+    // 在文件底部添加一个立即执行的函数
+    (function() {
+        console.log('直接添加语言切换功能');
+        
+        // 获取特定的语言按钮
+        const zhButton = document.getElementById('lang-zh');
+        const enButton = document.getElementById('lang-en');
+        
+        // 如果找到了特定按钮，添加直接的点击事件
+        if (zhButton) {
+            console.log('找到中文按钮');
+            zhButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('点击中文按钮');
+                localStorage.setItem('preferredLanguage', 'zh');
+                window.location.reload();
+                return false;
+            };
+        }
+        
+        if (enButton) {
+            console.log('找到英文按钮');
+            enButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('点击英文按钮');
+                localStorage.setItem('preferredLanguage', 'en');
+                window.location.reload();
+                return false;
+            };
+        }
+        
+        // 为所有按钮设置当前语言的视觉状态
+        const currentLanguage = localStorage.getItem('preferredLanguage') || 'zh';
+        if (currentLanguage === 'zh' && zhButton) {
+            zhButton.classList.add('active');
+            if (enButton) enButton.classList.remove('active');
+        } else if (currentLanguage === 'en' && enButton) {
+            enButton.classList.add('active');
+            if (zhButton) zhButton.classList.remove('active');
+        }
+    })();
 });
 

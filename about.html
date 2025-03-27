@@ -125,10 +125,10 @@
                 <span></span>
             </div>
             <ul class="nav-links">
-                <li><a href="index.html">首页</a></li>
-                <li><a href="about.html" class="active">关于我</a></li>
-                <li><a href="index.html#portfolio">作品集</a></li>
-                <li><a href="contact.html">联系方式</a></li>
+                <li><a href="index.html" data-translate="nav-home">首页</a></li>
+                <li><a href="about.html" class="active" data-translate="nav-about">关于我</a></li>
+                <li><a href="index.html#portfolio" data-translate="nav-portfolio">作品集</a></li>
+                <li><a href="contact.html" data-translate="nav-contact">联系方式</a></li>
             </ul>
         </div>
     </nav>
@@ -137,7 +137,7 @@
 
     <!-- 页面标题 -->
     <header class="about-page-header">
-        <h1 class="about-page-title">About Me</h1>
+        <h1 class="about-page-title" data-translate="about-title">关于我</h1>
     </header>
 
     <!-- 关于我内容 -->
@@ -231,10 +231,118 @@
 
     <script src="script.js"></script>
     <script>
+        // 立即执行的语言切换功能
+        (function() {
+            console.log('关于页面: 直接添加语言切换功能');
+            
+            // 获取特定的语言按钮
+            const zhButton = document.getElementById('lang-zh');
+            const enButton = document.getElementById('lang-en');
+            
+            // 如果找到了特定按钮，添加直接的点击事件
+            if (zhButton) {
+                console.log('找到中文按钮');
+                zhButton.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('点击中文按钮');
+                    localStorage.setItem('preferredLanguage', 'zh');
+                    window.location.reload();
+                    return false;
+                };
+            }
+            
+            if (enButton) {
+                console.log('找到英文按钮');
+                enButton.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('点击英文按钮');
+                    localStorage.setItem('preferredLanguage', 'en');
+                    window.location.reload();
+                    return false;
+                };
+            }
+            
+            // 为所有按钮设置当前语言的视觉状态
+            const currentLanguage = localStorage.getItem('preferredLanguage') || 'zh';
+            if (currentLanguage === 'zh' && zhButton) {
+                zhButton.classList.add('active');
+                if (enButton) enButton.classList.remove('active');
+            } else if (currentLanguage === 'en' && enButton) {
+                enButton.classList.add('active');
+                if (zhButton) zhButton.classList.remove('active');
+            }
+        })();
+        
         // 页面加载时添加动画效果
         document.addEventListener('DOMContentLoaded', function() {
             // 标记已经看过开场动画
             sessionStorage.setItem('hasSeenIntro', 'true');
+            
+            // 语言切换功能
+            const translations = {
+                'zh': {
+                    'nav-home': '首页',
+                    'nav-about': '关于我',
+                    'nav-portfolio': '作品集',
+                    'nav-contact': '联系方式',
+                    'about-title': '关于我',
+                    'about-content': '我是一名充满热情的数字艺术家，专注于概念设计和插画创作。我的作品融合了传统艺术与数字技术，致力于创造独特的视觉体验。',
+                    'back-home': '返回首页'
+                },
+                'en': {
+                    'nav-home': 'Home',
+                    'nav-about': 'About',
+                    'nav-portfolio': 'Portfolio',
+                    'nav-contact': 'Contact',
+                    'about-title': 'About Me',
+                    'about-content': 'I am a passionate digital artist focused on concept design and illustration. My work combines traditional art with digital technology, creating unique visual experiences.',
+                    'back-home': 'Back to Home'
+                }
+            };
+            
+            // 获取语言按钮
+            const langButtons = document.querySelectorAll('.lang-btn');
+            console.log('找到语言按钮数量:', langButtons.length);
+            
+            // 从本地存储获取当前语言设置
+            let currentLang = localStorage.getItem('preferredLanguage') || 'zh';
+            console.log('当前语言设置:', currentLang);
+            
+            // 更新按钮状态
+            langButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === currentLang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+                
+                // 添加点击事件
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    console.log('点击语言按钮:', lang);
+                    
+                    // 保存语言设置
+                    localStorage.setItem('preferredLanguage', lang);
+                    
+                    // 刷新页面以应用新语言
+                    window.location.reload();
+                });
+            });
+            
+            // 页面加载时应用当前语言
+            updatePageText(currentLang);
+            
+            // 更新页面文本函数
+            function updatePageText(lang) {
+                console.log('更新页面文本为:', lang);
+                document.querySelectorAll('[data-translate]').forEach(element => {
+                    const key = element.getAttribute('data-translate');
+                    if (translations[lang] && translations[lang][key]) {
+                        console.log('翻译元素:', key, '->', translations[lang][key]);
+                        element.textContent = translations[lang][key];
+                    }
+                });
+            }
             
             // 创建发光元素
             const cursor = document.createElement('div');

@@ -458,10 +458,10 @@
                 <span></span>
             </div>
             <ul class="nav-links">
-                <li><a href="index.html">首页</a></li>
-                <li><a href="about.html">关于我</a></li>
-                <li><a href="index.html#portfolio">作品集</a></li>
-                <li><a href="contact.html" class="active">联系方式</a></li>
+                <li><a href="index.html" data-translate="nav-home">首页</a></li>
+                <li><a href="about.html" data-translate="nav-about">关于我</a></li>
+                <li><a href="index.html#portfolio" data-translate="nav-portfolio">作品集</a></li>
+                <li><a href="contact.html" class="active" data-translate="nav-contact">联系方式</a></li>
             </ul>
         </div>
     </nav>
@@ -470,26 +470,30 @@
 
     <!-- 页面标题 -->
     <header class="contact-page-header">
-        <h1 class="contact-page-title">Contact Me</h1>
+        <h1 class="contact-page-title" data-translate="contact-title">联系方式</h1>
     </header>
 
     <!-- 联系方式内容 -->
     <div class="contact-container">
         <div class="contact-card slide-in-left">
-            <h2 class="contact-section-title">联系信息</h2>
+            <h2 class="contact-section-title" data-translate="contact-info-title">联系信息</h2>
             <div class="contact-info-item">
                 <i class="fas fa-envelope"></i>
                 <div class="contact-info-text">
-                    <a href="mailto:jaylindesignart@gmail.com">jaylindesignart@gmail.com</a>
+                    <span data-translate="contact-email">邮箱</span>: shijielin2004@gmail.com
                 </div>
             </div>
             <div class="contact-info-item">
                 <i class="fas fa-phone"></i>
-                <div class="contact-info-text">+1 626-727-0409</div>
+                <div class="contact-info-text">
+                    <span data-translate="contact-phone">电话</span>: +1 (206) 819-XXXX
+                </div>
             </div>
             <div class="contact-info-item">
                 <i class="fas fa-map-marker-alt"></i>
-                <div class="contact-info-text">Los Angeles, California</div>
+                <div class="contact-info-text">
+                    <span data-translate="contact-address">地址</span>: Seattle, WA
+                </div>
             </div>
             
             <div class="social-links-container">
@@ -512,23 +516,23 @@
             <h2 class="contact-section-title">发送消息</h2>
             <form class="contact-form" id="contactForm" action="https://formspree.io/f/meoaoovl" method="POST">
                 <div class="form-group">
-                    <label for="name" class="form-label">姓名</label>
+                    <label for="name" data-translate="name">姓名</label>
                     <input type="text" id="name" name="name" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="email" class="form-label">邮箱</label>
+                    <label for="email" data-translate="email">邮箱</label>
                     <input type="email" id="email" name="email" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="subject" class="form-label">主题</label>
+                    <label for="subject" data-translate="subject">主题</label>
                     <input type="text" id="subject" name="subject" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="message" class="form-label">消息内容</label>
+                    <label for="message" data-translate="message">消息内容</label>
                     <textarea id="message" name="message" class="form-control" required></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="submit-btn">发送消息</button>
+                    <button type="submit" data-translate="submit" class="submit-btn">发送消息</button>
                     <p class="form-note">消息将直接发送到我的邮箱</p>
                 </div>
                 <!-- 添加一个隐藏的蜜罐字段来防止垃圾邮件 -->
@@ -546,7 +550,7 @@
     </div>
 
     <!-- 返回首页按钮 -->
-    <a href="index.html" class="back-to-home">
+    <a href="index.html" class="back-to-home" title="返回主页" data-translate="back-home">
         <i class="fas fa-home"></i>
     </a>
 
@@ -565,10 +569,134 @@
 
     <script src="script.js"></script>
     <script>
+        // 立即执行的语言切换功能
+        (function() {
+            console.log('联系页面: 直接添加语言切换功能');
+            
+            // 获取特定的语言按钮
+            const zhButton = document.getElementById('lang-zh');
+            const enButton = document.getElementById('lang-en');
+            
+            // 如果找到了特定按钮，添加直接的点击事件
+            if (zhButton) {
+                console.log('找到中文按钮');
+                zhButton.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('点击中文按钮');
+                    localStorage.setItem('preferredLanguage', 'zh');
+                    window.location.reload();
+                    return false;
+                };
+            }
+            
+            if (enButton) {
+                console.log('找到英文按钮');
+                enButton.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('点击英文按钮');
+                    localStorage.setItem('preferredLanguage', 'en');
+                    window.location.reload();
+                    return false;
+                };
+            }
+            
+            // 为所有按钮设置当前语言的视觉状态
+            const currentLanguage = localStorage.getItem('preferredLanguage') || 'zh';
+            if (currentLanguage === 'zh' && zhButton) {
+                zhButton.classList.add('active');
+                if (enButton) enButton.classList.remove('active');
+            } else if (currentLanguage === 'en' && enButton) {
+                enButton.classList.add('active');
+                if (zhButton) zhButton.classList.remove('active');
+            }
+        })();
+        
         // 页面加载时添加动画效果
         document.addEventListener('DOMContentLoaded', function() {
             // 标记已经看过开场动画
             sessionStorage.setItem('hasSeenIntro', 'true');
+            
+            // 语言切换功能
+            const translations = {
+                'zh': {
+                    'nav-home': '首页',
+                    'nav-about': '关于我',
+                    'nav-portfolio': '作品集',
+                    'nav-contact': '联系方式',
+                    'contact-title': '联系方式',
+                    'contact-info-title': '联系信息',
+                    'contact-email': '邮箱',
+                    'contact-phone': '电话',
+                    'contact-address': '地址',
+                    'name': '姓名',
+                    'email': '邮箱',
+                    'subject': '主题',
+                    'message': '消息内容',
+                    'submit': '发送消息',
+                    'back-home': '返回首页'
+                },
+                'en': {
+                    'nav-home': 'Home',
+                    'nav-about': 'About',
+                    'nav-portfolio': 'Portfolio',
+                    'nav-contact': 'Contact',
+                    'contact-title': 'Contact Me',
+                    'contact-info-title': 'Contact Information',
+                    'contact-email': 'Email',
+                    'contact-phone': 'Phone',
+                    'contact-address': 'Address',
+                    'name': 'Name',
+                    'email': 'Email',
+                    'subject': 'Subject',
+                    'message': 'Message',
+                    'submit': 'Submit',
+                    'back-home': 'Back to Home'
+                }
+            };
+            
+            // 获取语言按钮
+            const langButtons = document.querySelectorAll('.lang-btn');
+            console.log('找到语言按钮数量:', langButtons.length);
+            
+            // 从本地存储获取当前语言设置
+            let currentLang = localStorage.getItem('preferredLanguage') || 'zh';
+            console.log('当前语言设置:', currentLang);
+            
+            // 更新按钮状态
+            langButtons.forEach(btn => {
+                if (btn.getAttribute('data-lang') === currentLang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+                
+                // 添加点击事件
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    console.log('点击语言按钮:', lang);
+                    
+                    // 保存语言设置
+                    localStorage.setItem('preferredLanguage', lang);
+                    
+                    // 刷新页面以应用新语言
+                    window.location.reload();
+                });
+            });
+            
+            // 页面加载时应用当前语言
+            updatePageText(currentLang);
+            
+            // 更新页面文本函数
+            function updatePageText(lang) {
+                console.log('更新页面文本为:', lang);
+                document.querySelectorAll('[data-translate]').forEach(element => {
+                    const key = element.getAttribute('data-translate');
+                    if (translations[lang] && translations[lang][key]) {
+                        console.log('翻译元素:', key, '->', translations[lang][key]);
+                        element.textContent = translations[lang][key];
+                    }
+                });
+            }
             
             // 创建发光元素
             const cursor = document.createElement('div');
