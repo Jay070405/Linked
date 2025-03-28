@@ -3,83 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>感谢您的留言 - Shijie Lin</title>
+    <title>感谢 - Shijie Lin</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 感谢页面特定样式 */
         .thanks-container {
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, rgba(20, 20, 22, 0.9), rgba(30, 30, 35, 0.8));
+            padding: 0 2rem;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            position: relative;
+            overflow: hidden;
         }
         
-        .thanks-icon {
-            font-size: 5rem;
-            color: var(--primary);
-            margin-bottom: 2rem;
-            animation: pulse 2s infinite;
+        .thanks-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('image/sakura-villege.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: -1;
         }
         
-        .thanks-title {
+        .thanks-content {
+            max-width: 800px;
+            background: rgba(30, 30, 35, 0.7);
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border: 1px solid rgba(137, 207, 240, 0.1);
+            animation: fadeInUp 1s ease;
+            z-index: 2;
+        }
+        
+        .thanks-heading {
             font-size: 3rem;
-            color: var(--primary-light);
-            margin-bottom: 1.5rem;
+            color: transparent;
+            background: linear-gradient(120deg, 
+                var(--primary-dark) 0%,
+                var(--primary) 25%,
+                var(--primary-light) 50%,
+                var(--primary) 75%,
+                var(--primary-dark) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 3s linear infinite;
             font-family: var(--heading-font);
             font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            position: relative;
         }
         
-        .thanks-message {
+        .thanks-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent,
+                var(--primary),
+                transparent
+            );
+        }
+        
+        .thanks-text {
+            color: #f0f0f0;
             font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 3rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.9);
-            font-family: var(--body-font);
+            margin-bottom: 2rem;
+            line-height: 1.6;
         }
         
-        .back-button {
+        .return-home {
             display: inline-block;
-            padding: 1rem 2rem;
-            background: var(--primary);
-            color: #1a1a1a;
             text-decoration: none;
-            border-radius: 5px;
+            color: var(--primary-light);
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 500;
+            padding: 1rem 2rem;
+            border: 1px solid var(--primary);
+            border-radius: 30px;
             transition: all 0.3s ease;
-            font-family: var(--accent-font);
-            letter-spacing: 1px;
+            background: rgba(30, 30, 35, 0.5);
         }
         
-        .back-button:hover {
-            background: var(--primary-light);
+        .return-home:hover {
+            background: rgba(137, 207, 240, 0.15);
+            box-shadow: 0 5px 15px rgba(137, 207, 240, 0.2);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(137, 207, 240, 0.4);
         }
         
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 1;
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
-            50% {
-                transform: scale(1.1);
-                opacity: 0.8;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes shine {
+            0% {
+                background-position: 0% 50%;
             }
             100% {
-                transform: scale(1);
-                opacity: 1;
+                background-position: 200% 50%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 在导航栏部分添加汉堡菜单按钮和背景遮罩 -->
+    <!-- 导航栏 -->
     <nav>
         <div class="nav-container">
             <div class="logo">Shijie Lin</div>
@@ -97,140 +150,35 @@
             <ul class="nav-links">
                 <li><a href="index.html" data-translate="nav-home">首页</a></li>
                 <li><a href="about.html" data-translate="nav-about">关于我</a></li>
-                <li><a href="index.html#portfolio" data-translate="nav-portfolio">作品集</a></li>
+                <li><a href="portfolio.html" data-translate="nav-portfolio">作品集</a></li>
                 <li><a href="contact.html" data-translate="nav-contact">联系方式</a></li>
+                <li class="resume-links">
+                    <a href="resume/简历 中文.pdf" target="_blank" data-translate="resume-cn">简历(中文)</a>
+                    <a href="resume/简历 _1_ (1).pdf" target="_blank" data-translate="resume-en">Resume(EN)</a>
+                </li>
             </ul>
         </div>
     </nav>
     <!-- 添加菜单背景遮罩 -->
     <div class="menu-overlay"></div>
 
+    <!-- 感谢内容 -->
     <div class="thanks-container">
-        <div class="thanks-icon">
-            <i class="fas fa-check-circle"></i>
+        <div class="thanks-content">
+            <h1 class="thanks-heading" data-translate="thanks-title">感谢</h1>
+            <p class="thanks-text" data-translate="thanks-content">感谢您的留言，我会尽快回复。</p>
+            <a href="index.html" class="return-home" data-translate="back-home">返回首页</a>
         </div>
-        <h1 class="thanks-title" data-translate="thanks-title">感谢</h1>
-        <p class="thanks-message" data-translate="thanks-content">感谢您的留言，我会尽快回复。</p>
-        <a href="index.html" class="back-button" data-translate="back-home">返回首页</a>
     </div>
-    
+
     <!-- 添加鼠标发光效果 -->
     <div class="cursor-glow"></div>
-    
+
     <script src="script.js"></script>
     <script>
-        // 立即执行的语言切换功能
-        (function() {
-            console.log('感谢页面: 直接添加语言切换功能');
-            
-            // 获取特定的语言按钮
-            const zhButton = document.getElementById('lang-zh');
-            const enButton = document.getElementById('lang-en');
-            
-            // 如果找到了特定按钮，添加直接的点击事件
-            if (zhButton) {
-                console.log('找到中文按钮');
-                zhButton.onclick = function(e) {
-                    e.preventDefault();
-                    console.log('点击中文按钮');
-                    localStorage.setItem('preferredLanguage', 'zh');
-                    window.location.reload();
-                    return false;
-                };
-            }
-            
-            if (enButton) {
-                console.log('找到英文按钮');
-                enButton.onclick = function(e) {
-                    e.preventDefault();
-                    console.log('点击英文按钮');
-                    localStorage.setItem('preferredLanguage', 'en');
-                    window.location.reload();
-                    return false;
-                };
-            }
-            
-            // 为所有按钮设置当前语言的视觉状态
-            const currentLanguage = localStorage.getItem('preferredLanguage') || 'zh';
-            if (currentLanguage === 'zh' && zhButton) {
-                zhButton.classList.add('active');
-                if (enButton) enButton.classList.remove('active');
-            } else if (currentLanguage === 'en' && enButton) {
-                enButton.classList.add('active');
-                if (zhButton) zhButton.classList.remove('active');
-            }
-        })();
-        
-        // 页面加载时添加动画效果
         document.addEventListener('DOMContentLoaded', function() {
             // 标记已经看过开场动画
             sessionStorage.setItem('hasSeenIntro', 'true');
-            
-            // 语言切换功能
-            const translations = {
-                'zh': {
-                    'nav-home': '首页',
-                    'nav-about': '关于我',
-                    'nav-portfolio': '作品集',
-                    'nav-contact': '联系方式',
-                    'thanks-title': '感谢',
-                    'thanks-content': '感谢您的留言，我会尽快回复。',
-                    'back-home': '返回首页'
-                },
-                'en': {
-                    'nav-home': 'Home',
-                    'nav-about': 'About',
-                    'nav-portfolio': 'Portfolio',
-                    'nav-contact': 'Contact',
-                    'thanks-title': 'Thank You',
-                    'thanks-content': 'Thank you for your message. I will get back to you soon.',
-                    'back-home': 'Back to Home'
-                }
-            };
-            
-            // 获取语言按钮
-            const langButtons = document.querySelectorAll('.lang-btn');
-            console.log('找到语言按钮数量:', langButtons.length);
-            
-            // 从本地存储获取当前语言设置
-            let currentLang = localStorage.getItem('preferredLanguage') || 'zh';
-            console.log('当前语言设置:', currentLang);
-            
-            // 更新按钮状态
-            langButtons.forEach(btn => {
-                if (btn.getAttribute('data-lang') === currentLang) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-                
-                // 添加点击事件
-                btn.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    console.log('点击语言按钮:', lang);
-                    
-                    // 保存语言设置
-                    localStorage.setItem('preferredLanguage', lang);
-                    
-                    // 刷新页面以应用新语言
-                    window.location.reload();
-                });
-            });
-            
-            // 页面加载时应用当前语言
-            updatePageText(currentLang);
-            
-            // 更新页面文本函数
-            function updatePageText(lang) {
-                console.log('更新页面文本为:', lang);
-                document.querySelectorAll('[data-translate]').forEach(element => {
-                    const key = element.getAttribute('data-translate');
-                    if (translations[lang] && translations[lang][key]) {
-                        console.log('翻译元素:', key, '->', translations[lang][key]);
-                        element.textContent = translations[lang][key];
-                    }
-                });
-            }
             
             // 创建发光元素
             const cursor = document.createElement('div');

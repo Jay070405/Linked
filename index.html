@@ -88,8 +88,12 @@
                 <ul class="nav-links">
                     <li><a href="index.html" class="active" data-translate="nav-home">首页</a></li>
                     <li><a href="about.html" data-translate="nav-about">关于我</a></li>
-                    <li><a href="#portfolio" data-translate="nav-portfolio">作品集</a></li>
+                    <li><a href="portfolio.html" data-translate="nav-portfolio">作品集</a></li>
                     <li><a href="contact.html" data-translate="nav-contact">联系方式</a></li>
+                    <li class="resume-links">
+                        <a href="resume/简历 中文.pdf" target="_blank" data-translate="resume-cn">简历(中文)</a>
+                        <a href="resume/简历 _1_ (1).pdf" target="_blank" data-translate="resume-en">Resume(EN)</a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -105,206 +109,69 @@
                     <p class="subtitle fade-in" data-translate="hero-subtitle2">虚拟开发</p>
                     <p class="subtitle fade-in" data-translate="hero-subtitle3">概念设计师</p>
                 </div>
-                <a href="#portfolio" class="cta-button" data-translate="hero-cta">查看我的作品</a>
+                <a href="portfolio.html" class="cta-button" data-translate="hero-cta">查看我的作品</a>
             </div>
             <div class="welcome-text">PORTFOLIO</div>
         </section>
 
-        <!-- 作品集部分 -->
-        <section id="portfolio" class="portfolio">
-            <h2 data-translate="portfolio-title">作品集</h2>
-            <div class="portfolio-tabs">
-                <button class="portfolio-tab active" data-category="all" data-translate="tab-all">全部</button>
-                <button class="portfolio-tab" data-category="personal" data-translate="tab-personal">个人作品</button>
-                <button class="portfolio-tab" data-category="school" data-translate="tab-school">学校作品</button>
-                <button class="portfolio-tab" data-category="sketch" data-translate="tab-sketch">速写</button>
-            </div>
-            
-            <div class="portfolio-grid">
-                <!-- 个人作品项目 -->
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">1</span>
-                    <img src="image/personal/artist (1).png" alt="艺术家">
-                    <div class="portfolio-overlay">
-                        <h3>艺术家</h3>
-                        <p>原创角色设计</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">2</span>
-                    <img src="image/personal/personal project.jpg" alt="未知新球">
-                    <div class="portfolio-overlay">
-                        <h3>未知新球</h3>
-                        <p>未来科技概念场景</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">3</span>
-                    <img src="image/personal/sakura-villege.png" alt="樱花村">
-                    <div class="portfolio-overlay">
-                        <h3>樱花村</h3>
-                        <p>环境概念设计</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">4</span>
-                    <img src="image/personal/world tree.png" alt="世界树">
-                    <div class="portfolio-overlay">
-                        <h3>世界树</h3>
-                        <p>概念设计</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">5</span>
-                    <img src="image/personal/寺庙草稿.jpg" alt="寺庙">
-                    <div class="portfolio-overlay">
-                        <h3>寺庙</h3>
-                        <p>建筑概念设计</p>
-                    </div>
-                </div>
-                
-                <!-- 添加三个新的作品项目 -->
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">6</span>
-                    <img src="image/personal/废弃小镇.png" alt="废弃小镇">
-                    <div class="portfolio-overlay">
-                        <h3>废弃小镇</h3>
-                        <p>个人概念设计作品</p>
-                    </div>
-                </div>
-
-                <div class="portfolio-item" data-category="all personal">
-                    <span class="portfolio-number">8</span>
-                    <img src="image/personal/森林.png" alt="森林">
-                    <div class="portfolio-overlay">
-                        <h3>神秘森林</h3>
-                        <p>个人环境设计作品</p>
-                    </div>
-                </div>
-                
-                <!-- 学校作品项目 -->
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">9</span>
-                    <img src="image/school/vis_dev_character.png" alt="视觉开发全集">
-                    <div class="portfolio-overlay">
-                        <h3>视觉开发全集</h3>
-                        <p>角色、道具与环境</p>
-                    </div>
-                </div>
-                
-                <!-- 交换10和17的位置 -->
-                <div class="portfolio-item process-showcase" data-category="all school">
-                    <span class="portfolio-number">10</span>
-                    <img src="image/school/creative prespetvie.png" alt="创意透视流程">
-                    <div class="portfolio-overlay">
-                        <h3>创意透视流程</h3>
-                        <p>从草图到最终作品</p>
-                    </div>
-                </div>
-
-                <!-- 交换11和16的位置 -->
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">11</span>
-                    <img src="image/school/sketching for entd.png" alt="角色素描">
-                    <div class="portfolio-overlay">
-                        <h3>角色素描</h3>
-                        <p>设计与动作表情研究</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">12</span>
-                    <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay.png" alt="背景绘画">
-                    <div class="portfolio-overlay">
-                        <h3>背景绘画</h3>
-                        <p>ArtCenter 课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">13</span>
-                    <img src="image/school/Screenshot 2025-03-01 212506.png" alt="创意透视">
-                    <div class="portfolio-overlay">
-                        <h3>创意透视</h3>
-                        <p>环境设计课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">14</span>
-                    <div class="video-container">
-                        <video src="image/school/maya.mp4" alt="Maya 3D建模" poster="image/school/maya.png" muted></video>
-                        <div class="play-icon">
-                            <i class="fas fa-play-circle"></i>
+        <!-- 技能展示区域 -->
+        <section id="skills-showcase" class="skills-showcase">
+            <div class="container">
+                <h2 class="section-title" data-translate="skills-showcase-title">我的专业领域</h2>
+                <div class="skills-cards">
+                    <div class="skill-card slide-in-left">
+                        <div class="skill-icon">
+                            <i class="fas fa-paint-brush"></i>
+                        </div>
+                        <h3 data-translate="design-process-title">设计流程</h3>
+                        <p data-translate="design-process-desc">从概念构思到最终作品，我的设计流程注重细节与创新。每个项目都经过充分研究、草图探索、迭代优化和精细执行，确保作品既满足功能需求又具备艺术价值。</p>
+                        <div class="skill-progress">
+                            <div class="progress-bar" style="width: 90%"></div>
                         </div>
                     </div>
-                    <div class="portfolio-overlay">
-                        <h3>Maya 3D建模</h3>
-                        <p>3D建模课程作业</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">15</span>
-                    <img src="image/school/vis dev.jpg" alt="视觉开发">
-                    <div class="portfolio-overlay">
-                        <h3>视觉开发</h3>
-                        <p>视觉开发课程作业</p>
-                    </div>
-                </div>
-
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">16</span>
-                    <img src="image/school/cat diary (1).png" alt="猫咪日记">
-                    <div class="portfolio-overlay">
-                        <h3>猫咪日记</h3>
-                        <p>角色设计课程作业</p>
-                    </div>
-                </div>
-
-                <div class="portfolio-item" data-category="all school">
-                    <span class="portfolio-number">17</span>
-                    <img src="image/school/class_work photoshop fundomental.png" alt="Photoshop基础">
-                    <div class="portfolio-overlay">
-                        <h3>Photoshop基础</h3>
-                        <p>数字绘画课程作业</p>
-                    </div>
-                </div>
-                
-                <!-- 速写视频，只在点击速写时显示 -->
-                <div class="portfolio-item" data-category="sketch">
-                    <span class="portfolio-number">18</span>
-                    <div class="video-container">
-                        <video src="image/sketch/sketch (1) (1).mp4" alt="速写视频1" poster="image/sketch/sketch (1) (1).mp4#t=99999" muted></video>
-                        <div class="play-icon">
-                            <i class="fas fa-play-circle"></i>
+                    <div class="skill-card scale-in">
+                        <div class="skill-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h3 data-translate="technical-skills-title">专业技能</h3>
+                        <p data-translate="technical-skills-desc">熟练运用数字绘画技术与3D建模工具，将创意转化为视觉作品。精通透视、色彩理论和构图原则，能够在不同艺术风格间自如转换，为项目带来独特的视觉表达。</p>
+                        <div class="skill-progress">
+                            <div class="progress-bar" style="width: 85%"></div>
                         </div>
                     </div>
-                    <div class="portfolio-overlay">
-                        <h3>速写过程1</h3>
-                        <p>创作过程记录</p>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item" data-category="sketch">
-                    <span class="portfolio-number">19</span>
-                    <div class="video-container">
-                        <video src="image/sketch/sketch (2).mp4" alt="速写视频2" poster="image/sketch/sketch (2).mp4#t=99999" muted></video>
-                        <div class="play-icon">
-                            <i class="fas fa-play-circle"></i>
+                    <div class="skill-card slide-in-right">
+                        <div class="skill-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 data-translate="creative-philosophy-title">创作理念</h3>
+                        <p data-translate="creative-philosophy-desc">我相信艺术是连接情感与想象的桥梁。我的创作融合东西方美学，注重叙事性与氛围营造，通过细节与象征元素赋予作品层次感和共鸣，让观者在视觉体验中产生情感连接。</p>
+                        <div class="skill-progress">
+                            <div class="progress-bar" style="width: 95%"></div>
                         </div>
                     </div>
-                    <div class="portfolio-overlay">
-                        <h3>速写过程2</h3>
-                        <p>创作过程记录</p>
+                </div>
+                <div class="skills-stats">
+                    <div class="stat-item fade-in">
+                        <div class="stat-number">5+</div>
+                        <div class="stat-label" data-translate="years-experience">年专业经验</div>
                     </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label" data-translate="completed-projects">完成项目</div>
+                    </div>
+                    <div class="stat-item fade-in">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label" data-translate="client-satisfaction">客户满意度</div>
+                    </div>
+                </div>
+                <div class="portfolio-btn-container">
+                    <a href="portfolio.html" class="portfolio-btn" data-translate="view-portfolio">查看我的作品集</a>
                 </div>
             </div>
         </section>
+
+        <!-- 添加鼠标发光效果 -->
+        <div class="cursor-glow"></div>
 
         <section class="contact" id="contact" style="padding: 3rem 1rem; border-radius: 8px; overflow: hidden; background: #232323;">
             <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.5rem; letter-spacing: 2px; padding: 0 1rem; word-wrap: break-word; overflow-wrap: break-word; color: #B0E2FF;" data-translate="contact-title">CONTACT ME</h2>
@@ -330,7 +197,7 @@
                         <video src="image/school/maya.mp4" controls poster="image/school/maya.png">
                             <source src="image/school/maya.mp4" type="video/mp4">
                         </video>
-                        <h3>Maya 3D建模演示</h3>
+                        <h3>Maya A建模演示</h3>
                     </div>
                     <div class="modal-video-container">
                         <video src="image/sketch/WeChat_20250303101335.mp4" controls poster="image/sketch/WeChat_20250303101335.mp4#t=99999">
@@ -339,9 +206,30 @@
                         <h3>速写过程展示</h3>
                     </div>
                 </div>
-                <div class="modal-description">
+                <div id="modalDescription" class="modal-description">
                     <h3>Maya 3D建模</h3>
                     <p>3D建模课程作业展示，包含建模过程和速写创作过程。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 英文项目详情模态框 -->
+    <div class="project-modal" id="enProjectModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="document.getElementById('enProjectModal').style.display='none';">&times;</span>
+            <div class="modal-body">
+                <h2 class="modal-title">Project Details (English)</h2>
+                <div id="enModalGallery" class="modal-gallery">
+                    <!-- 图片/视频在这里动态加载 -->
+                </div>
+                <div id="enModalDescription" class="modal-description">
+                    <!-- 英文项目描述在这里动态加载 -->
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="document.getElementById('enProjectModal').style.display='none'; document.getElementById('projectModal').style.display='flex';" style="padding: 8px 15px; background: #2a2a2a; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer;">
+                        返回中文版 / Back to Chinese
+                    </button>
                 </div>
             </div>
         </div>

@@ -1134,164 +1134,1222 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 语言切换功能 - 简化版本
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('初始化语言切换功能');
-        
-        // 获取所有语言切换按钮
-        const langButtons = document.querySelectorAll('.lang-btn');
-        
-        // 从本地存储获取当前语言，默认为中文
+    // 全局通用翻译对象
+    const globalTranslations = {
+        'zh': {
+            'nav-home': '首页',
+            'nav-about': '关于我',
+            'nav-portfolio': '作品集',
+            'nav-contact': '联系方式',
+            'resume-cn': '简历(中文)',
+            'resume-en': 'Resume(EN)',
+            'contact-title': 'CONTACT ME',
+            'contact-content': '若您对我的作品感兴趣，或有任何合作机会，请点击下方按钮了解更多联系方式',
+            'thanks-title': '感谢',
+            'thanks-content': '感谢您的留言，我会尽快回复。',
+            'back-home': '返回首页',
+            'about-title': '关于我',
+            'about-content': '我是一名充满热情的数字艺术家，专注于概念设计和插画创作。我的作品融合了传统艺术与数字技术，致力于创造独特的视觉体验。',
+            'project-details': '项目详情',
+            'portfolio-title': '作品集',
+            'tab-all': '全部',
+            'tab-personal': '个人作品',
+            'tab-school': '学校作品',
+            'tab-sketch': '速写',
+            'hero-greeting': '你好，我是 <span class="highlight">Shijie Lin</span>',
+            'hero-subtitle1': '插画师',
+            'hero-subtitle2': '虚拟开发',
+            'hero-subtitle3': '概念设计师',
+            'hero-cta': '查看我的作品',
+            'intro-button': '进入作品集',
+            'view-portfolio': '查看我的作品集',
+            // 技能展示区域翻译
+            'skills-showcase-title': '我的专业领域',
+            'design-process-title': '设计流程',
+            'design-process-desc': '从概念构思到最终作品，我的设计流程注重细节与创新。每个项目都经过充分研究、草图探索、迭代优化和精细执行，确保作品既满足功能需求又具备艺术价值。',
+            'technical-skills-title': '专业技能',
+            'technical-skills-desc': '熟练运用数字绘画技术与3D建模工具，将创意转化为视觉作品。精通透视、色彩理论和构图原则，能够在不同艺术风格间自如转换，为项目带来独特的视觉表达。',
+            'creative-philosophy-title': '创作理念',
+            'creative-philosophy-desc': '我相信艺术是连接情感与想象的桥梁。我的创作融合东西方美学，注重叙事性与氛围营造，通过细节与象征元素赋予作品层次感和共鸣，让观者在视觉体验中产生情感连接。',
+            'years-experience': '年专业经验',
+            'completed-projects': '完成项目',
+            'client-satisfaction': '客户满意度',
+            // 关于页面新增翻译
+            'about-intro': '我是林世杰，ArtCenter College of Design 娱乐设计专业在读生，专注游戏与影视领域的角色/场景概念设计，会用3D建模（Blender/Maya）与数字绘画（Photoshop/Procreate）融合，曾为商业项目提升视觉辨识度并实现100%交付满意度。希望你会喜欢我的作品。',
+            'about-title-role': '概念艺术家 / 视觉叙事设计师',
+            'about-location': '📍 上海 · Los Angeles | 🎓 ArtCenter College of Design 在读',
+            'about-traits-title': '🌟 个人特质',
+            'trait-1': '快速学习者',
+            'trait-2': '热爱探索新技术',
+            'trait-3': '创意思维活跃',
+            'trait-4': '游戏文化爱好者',
+            'trait-5': '娱乐产业研究者',
+            'trait-6': '跨媒体创作者',
+            'services-title': '🎯 专业服务',
+            'service-1-title': '角色/场景概念设计',
+            'service-1-desc': '专注于创造独特而富有生命力的角色与场景设计',
+            'service-2-title': '世界观视觉开发',
+            'service-2-desc': '擅长融合东方传统美学与现代数字技术',
+            'service-3-title': '创意设计协作',
+            'service-3-desc': '追求高品质的视觉呈现与艺术创新',
+            'skills-title': '🛠️ 技能专长',
+            'software-title': '软件工具',
+            'art-skills-title': '艺术技能',
+            'art-skill-1': '数字绘画',
+            'art-skill-2': '3D建模',
+            'art-skill-3': '视觉叙事',
+            'art-skill-4': '色彩理论',
+            'achievements-title': '🏆 主要成就',
+            'achievement-1': 'ArtCenter Merit 奖学金获得者',
+            'achievement-2': '个人插画委托项目 100%满意度交付',
+            'achievement-3': '原创角色设计入选校级艺术展览',
+            'portfolio-title': '作品集',
+            'tab-all': '全部',
+            'tab-personal': '个人作品',
+            'tab-school': '学校作品',
+            'tab-sketch': '速写',
+            'back-home': '返回主页',
+            'project-details': '项目详情',
+            
+            // 作品项目标题和描述
+            'artist-title': '艺术家',
+            'artist-desc': '原创角色设计',
+            'unknown-sphere-title': '未知新球',
+            'unknown-sphere-desc': '未来科技概念场景',
+            'sakura-village-title': '樱花村',
+            'sakura-village-desc': '环境概念设计',
+            'world-tree-title': '世界树',
+            'world-tree-desc': '概念设计',
+            'temple-title': '寺庙',
+            'temple-desc': '建筑概念设计',
+            'abandoned-town-title': '废弃小镇',
+            'abandoned-town-desc': '个人概念设计作品',
+            'mysterious-forest-title': '神秘森林',
+            'mysterious-forest-desc': '个人环境设计作品',
+            'vis-dev-title': '视觉开发全集',
+            'vis-dev-desc': '角色、道具与环境',
+            'creative-perspective-title': '创意透视流程',
+            'creative-perspective-desc': '从草图到最终作品',
+            'character-sketch-title': '角色素描',
+            'character-sketch-desc': '设计与动作表情研究',
+            'bg-painting-title': '背景绘画',
+            'bg-painting-desc': 'ArtCenter 课程作业',
+            'creative-perspective-simple-title': '创意透视',
+            'creative-perspective-simple-desc': '环境设计课程作业',
+            'maya-3d-title': 'Maya 3D建模',
+            'maya-3d-desc': '3D建模课程作业',
+            'vis-dev-simple-title': '视觉开发',
+            'vis-dev-simple-desc': '视觉开发课程作业',
+            'cat-diary-title': '猫咪日记',
+            'cat-diary-desc': '角色设计课程作业',
+            'photoshop-basics-title': 'Photoshop基础',
+            'photoshop-basics-desc': '数字绘画课程作业',
+            'sketch-video1-title': '速写过程1',
+            'sketch-video1-desc': '创作过程记录',
+            'sketch-video2-title': '速写过程2',
+            'sketch-video2-desc': '创作过程记录',
+        },
+        'en': {
+            'nav-home': 'Home',
+            'nav-about': 'About',
+            'nav-portfolio': 'Portfolio',
+            'nav-contact': 'Contact',
+            'resume-cn': 'Resume(CN)',
+            'resume-en': 'Resume(EN)',
+            'contact-title': 'CONTACT ME',
+            'contact-content': 'If you are interested in my work or have any collaboration opportunities, please click the button below to learn more about how to contact me.',
+            'thanks-title': 'Thank You',
+            'thanks-content': 'Thank you for your message. I will get back to you soon.',
+            'back-home': 'Back to Home',
+            'about-title': 'About Me',
+            'about-content': 'I am a passionate digital artist focused on concept design and illustration. My work combines traditional art with digital technology, creating unique visual experiences.',
+            'project-details': 'Project Details',
+            'portfolio-title': 'Portfolio',
+            'tab-all': 'All',
+            'tab-personal': 'Personal Works',
+            'tab-school': 'School Projects',
+            'tab-sketch': 'Sketches',
+            'hero-greeting': 'Hello, I am <span class="highlight">Shijie Lin</span>',
+            'hero-subtitle1': 'Illustrator',
+            'hero-subtitle2': 'Virtual Developer',
+            'hero-subtitle3': 'Concept Designer',
+            'hero-cta': 'View My Work',
+            'intro-button': 'Enter Portfolio',
+            'view-portfolio': 'View My Portfolio',
+            // Skills showcase translations
+            'skills-showcase-title': 'My Expertise',
+            'design-process-title': 'Design Process',
+            'design-process-desc': 'From concept to final artwork, my design process emphasizes detail and innovation. Each project undergoes thorough research, sketch exploration, iterative refinement, and meticulous execution to ensure both functional requirements and artistic value.',
+            'technical-skills-title': 'Technical Skills',
+            'technical-skills-desc': 'Proficient in digital painting techniques and 3D modeling tools, I transform creative ideas into visual works. Mastering perspective, color theory, and composition principles, I navigate different artistic styles to bring unique visual expressions to projects.',
+            'creative-philosophy-title': 'Creative Philosophy',
+            'creative-philosophy-desc': 'I believe art bridges emotions and imagination. My work blends Eastern and Western aesthetics, focusing on narrative and atmosphere. Through details and symbolic elements, I create depth and resonance, fostering emotional connections with viewers.',
+            'years-experience': 'Years Experience',
+            'completed-projects': 'Projects Completed',
+            'client-satisfaction': 'Client Satisfaction',
+            // About page new translations
+            'about-intro': 'I am Shijie Lin, an Entertainment Design student at ArtCenter College of Design, focusing on character/environment concept design for games and film. I combine 3D modeling (Blender/Maya) with digital painting (Photoshop/Procreate), and have achieved 100% satisfaction on commercial project deliveries. I hope you enjoy my work.',
+            'about-title-role': 'Concept Artist / Visual Storyteller',
+            'about-location': '📍 Shanghai · Los Angeles | 🎓 Studying at ArtCenter College of Design',
+            'about-traits-title': '🌟 Personal Traits',
+            'trait-1': 'Fast Learner',
+            'trait-2': 'Tech Explorer',
+            'trait-3': 'Creative Thinker',
+            'trait-4': 'Gaming Enthusiast',
+            'trait-5': 'Entertainment Industry Researcher',
+            'trait-6': 'Cross-media Creator',
+            'services-title': '🎯 Professional Services',
+            'service-1-title': 'Character/Environment Concept Design',
+            'service-1-desc': 'Creating unique and vibrant character and environment designs',
+            'service-2-title': 'World-building Visual Development',
+            'service-2-desc': 'Blending Eastern traditional aesthetics with modern digital technology',
+            'service-3-title': 'Creative Design Collaboration',
+            'service-3-desc': 'Pursuing high-quality visual presentation and artistic innovation',
+            'skills-title': '🛠️ Skills & Expertise',
+            'software-title': 'Software Tools',
+            'art-skills-title': 'Art Skills',
+            'art-skill-1': 'Digital Painting',
+            'art-skill-2': '3D Modeling',
+            'art-skill-3': 'Visual Storytelling',
+            'art-skill-4': 'Color Theory',
+            'achievements-title': '🏆 Key Achievements',
+            'achievement-1': 'ArtCenter Merit Scholarship Recipient',
+            'achievement-2': '100% Satisfaction Rate on Personal Illustration Commissions',
+            'achievement-3': 'Original Character Design Selected for School Art Exhibition',
+            'portfolio-title': 'Portfolio',
+            'tab-all': 'All',
+            'tab-personal': 'Personal',
+            'tab-school': 'School',
+            'tab-sketch': 'Sketches',
+            'back-home': 'Back to Home',
+            'project-details': 'Project Details',
+            
+            // 作品项目标题和描述（英文）
+            'artist-title': 'Artist',
+            'artist-desc': 'Original Character Design',
+            'unknown-sphere-title': 'Unknown Sphere',
+            'unknown-sphere-desc': 'Futuristic Concept Scene',
+            'sakura-village-title': 'Sakura Village',
+            'sakura-village-desc': 'Environmental Concept Design',
+            'world-tree-title': 'World Tree',
+            'world-tree-desc': 'Concept Design',
+            'temple-title': 'Temple',
+            'temple-desc': 'Architectural Concept Design',
+            'abandoned-town-title': 'Abandoned Town',
+            'abandoned-town-desc': 'Personal Concept Design',
+            'mysterious-forest-title': 'Mysterious Forest',
+            'mysterious-forest-desc': 'Personal Environment Design',
+            'vis-dev-title': 'Visual Development Collection',
+            'vis-dev-desc': 'Characters, Props & Environments',
+            'creative-perspective-title': 'Creative Perspective Process',
+            'creative-perspective-desc': 'From Sketch to Final Work',
+            'character-sketch-title': 'Character Sketches',
+            'character-sketch-desc': 'Design & Expression Studies',
+            'bg-painting-title': 'Background Painting',
+            'bg-painting-desc': 'ArtCenter Course Assignment',
+            'creative-perspective-simple-title': 'Creative Perspective',
+            'creative-perspective-simple-desc': 'Environment Design Course',
+            'maya-3d-title': 'Maya 3D Modeling',
+            'maya-3d-desc': '3D Modeling Course Project',
+            'vis-dev-simple-title': 'Visual Development',
+            'vis-dev-simple-desc': 'Visual Development Course',
+            'cat-diary-title': 'Cat Diary',
+            'cat-diary-desc': 'Character Design Course',
+            'photoshop-basics-title': 'Photoshop Fundamentals',
+            'photoshop-basics-desc': 'Digital Painting Course',
+            'sketch-video1-title': 'Sketching Process 1',
+            'sketch-video1-desc': 'Creation Process Recording',
+            'sketch-video2-title': 'Sketching Process 2',
+            'sketch-video2-desc': 'Creation Process Recording',
+        }
+    };
+
+    // 统一的翻译更新函数
+    function updateAllTranslations() {
+        // 从本地存储获取当前语言设置
         const currentLang = localStorage.getItem('preferredLanguage') || 'zh';
-        console.log('当前语言设置:', currentLang);
+        console.log('应用全局翻译 - 当前语言:', currentLang);
         
-        // 更新按钮状态
-        langButtons.forEach(btn => {
+        // 翻译所有有data-translate属性的元素
+        document.querySelectorAll('[data-translate]').forEach(element => {
+            const key = element.getAttribute('data-translate');
+            if (globalTranslations[currentLang] && globalTranslations[currentLang][key]) {
+                // 如果包含HTML，使用innerHTML，否则使用textContent
+                if (globalTranslations[currentLang][key].includes('<')) {
+                    element.innerHTML = globalTranslations[currentLang][key];
+                } else {
+                    element.textContent = globalTranslations[currentLang][key];
+                }
+                console.log(`已翻译: ${key} -> ${globalTranslations[currentLang][key].substring(0, 15)}${globalTranslations[currentLang][key].length > 15 ? '...' : ''}`);
+            }
+        });
+        
+        // 更新所有语言按钮的状态
+        document.querySelectorAll('.lang-btn').forEach(btn => {
             if (btn.getAttribute('data-lang') === currentLang) {
                 btn.classList.add('active');
             } else {
                 btn.classList.remove('active');
             }
-            
-            // 添加点击事件
-            btn.addEventListener('click', function() {
-                const lang = this.getAttribute('data-lang');
-                console.log('点击语言按钮:', lang);
-                
-                // 存储语言选择
-                localStorage.setItem('preferredLanguage', lang);
-                
-                // 简单粗暴地刷新页面应用新语言
-                location.reload();
-            });
         });
-    });
+    }
 
-    // 立即检查语言切换功能是否已加载
-    console.log('-----------------------------------------------------');
-    console.log('脚本加载完成，检查语言切换功能状态:');
-    console.log('找到语言按钮数量:', document.querySelectorAll('.lang-btn').length);
-    console.log('找到可翻译元素数量:', document.querySelectorAll('[data-translate]').length);
-    console.log('当前保存的语言设置:', localStorage.getItem('preferredLanguage') || '未设置（默认：zh）');
-    console.log('-----------------------------------------------------');
+    // 确保语言设置在整个网站保持一致
+    function initTranslation() {
+        // 从本地存储获取当前语言设置
+        const currentLang = localStorage.getItem('preferredLanguage') || 'zh';
+        console.log('初始化翻译 - 检测到语言:', currentLang);
 
-    // 强制触发语言检查和应用
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-            const savedLang = localStorage.getItem('preferredLanguage') || 'zh';
-            console.log('DOMContentLoaded后再次检查语言:', savedLang);
+        // 设置HTML语言属性
+        document.documentElement.lang = currentLang;
+        
+        // 立即应用翻译
+        updateAllTranslations();
+        
+        // 设置所有语言按钮状态
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            // 清除所有之前的事件监听器
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
             
-            // 立即更新所有语言按钮状态
-            const langButtons = document.querySelectorAll('.lang-btn');
-            langButtons.forEach(btn => {
-                if (btn.getAttribute('data-lang') === savedLang) {
-                    btn.classList.add('active');
-                    console.log('手动激活按钮:', btn);
-                } else {
-                    btn.classList.remove('active');
-                }
-                
-                // 重新绑定点击事件，确保每个按钮都能响应
-                btn.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    console.log('点击语言按钮:', lang);
-                    localStorage.setItem('preferredLanguage', lang);
-                    
-                    // 刷新页面以应用新语言
-                    window.location.reload();
-                });
-            });
-        }, 1000);
-    });
-
-    // 增强语言切换的调试功能
-    window.addEventListener('DOMContentLoaded', function() {
-        console.log('===== 语言切换增强调试 =====');
-        
-        // 为所有语言按钮添加明显的视觉反馈
-        const allLangButtons = document.querySelectorAll('.lang-btn');
-        
-        console.log(`找到 ${allLangButtons.length} 个语言按钮`);
-        
-        // 记录当前语言设置
-        const currentLanguage = localStorage.getItem('preferredLanguage') || 'zh';
-        console.log(`当前语言设置: ${currentLanguage}`);
-        
-        allLangButtons.forEach(btn => {
-            // 添加明显的视觉样式
-            btn.style.transition = 'all 0.3s ease';
-            
-            // 设置当前语言按钮的活动状态
-            if (btn.getAttribute('data-lang') === currentLanguage) {
-                btn.classList.add('active');
-                console.log(`激活语言按钮: ${btn.getAttribute('data-lang')}`);
+            // 设置活动状态
+            if (newBtn.getAttribute('data-lang') === currentLang) {
+                newBtn.classList.add('active');
             } else {
-                btn.classList.remove('active');
+                newBtn.classList.remove('active');
             }
             
-            // 添加点击事件监听器（覆盖而非追加）
-            btn.addEventListener('click', function(e) {
+            // 添加新的事件监听器
+            newBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
                 const lang = this.getAttribute('data-lang');
-                console.log(`点击语言按钮: ${lang} (当前页面: ${window.location.pathname})`);
+                console.log(`点击语言按钮: ${lang}`);
                 
                 // 保存语言设置
                 localStorage.setItem('preferredLanguage', lang);
                 
-                // 添加一个时间戳
-                localStorage.setItem('languageChangeTime', new Date().getTime());
-                
-                // 立即刷新页面
-                console.log('准备刷新页面...');
+                // 刷新页面以应用新语言
                 window.location.reload();
                 
-                return false;  // 确保事件不继续传播
-            }, true);  // 使用捕获阶段
+                return false;
+            });
         });
+    }
+
+    // 在DOM加载完成后立即初始化翻译
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTranslation);
+    } else {
+        // 如果DOM已经加载完成，立即执行
+        initTranslation();
+    }
+
+    // 为了确保翻译在完全加载后正确应用
+    window.addEventListener('load', function() {
+        console.log('Window load: 再次检查并应用翻译');
+        // 延迟执行以确保所有DOM元素都已完全加载和渲染
+        setTimeout(updateAllTranslations, 100);
+        
+        // 添加技能展示区域进度条动画
+        const progressBars = document.querySelectorAll('.progress-bar');
+        const skillsSection = document.getElementById('skills-showcase');
+        
+        if (skillsSection && progressBars.length > 0) {
+            // 初始化进度条宽度为0
+            progressBars.forEach(bar => {
+                bar.style.width = '0%';
+            });
+            
+            // 检查元素是否在视口中
+            function isElementInViewport(el) {
+                const rect = el.getBoundingClientRect();
+                return (
+                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+                    rect.bottom >= 0
+                );
+            }
+            
+            // 动画函数
+            function animateProgressBars() {
+                if (isElementInViewport(skillsSection)) {
+                    progressBars.forEach(bar => {
+                        const targetWidth = bar.getAttribute('style').split('width:')[1].trim().split('%')[0];
+                        bar.style.width = targetWidth + '%';
+                    });
+                    // 移除滚动监听，避免重复触发
+                    window.removeEventListener('scroll', animateProgressBars);
+                }
+            }
+            
+            // 添加滚动监听
+            window.addEventListener('scroll', animateProgressBars);
+            
+            // 初始检查
+            animateProgressBars();
+        }
     });
 
-    // 在文件底部添加一个立即执行的函数
-    (function() {
-        console.log('直接添加语言切换功能');
+    // 添加调试函数
+    window.forceTranslate = function(lang) {
+        if (lang && (lang === 'zh' || lang === 'en')) {
+            localStorage.setItem('preferredLanguage', lang);
+            updateAllTranslations();
+            console.log(`已强制切换语言到: ${lang}`);
+        } else {
+            console.log('当前语言设置:', localStorage.getItem('preferredLanguage') || 'zh');
+            updateAllTranslations();
+        }
+    };
+
+    // OpenModal函数应该在全局作用域定义，以便在所有页面使用
+    function openModal(imageSrc, imageAlt, title, description) {
+        console.log('Opening modal for:', title);
+        console.log('Image alt:', imageAlt);
         
-        // 获取特定的语言按钮
-        const zhButton = document.getElementById('lang-zh');
-        const enButton = document.getElementById('lang-en');
+        // 保存当前项目信息，以便语言切换时重用
+        const currentModalInfo = {
+            imageSrc: imageSrc,
+            imageAlt: imageAlt,
+            title: title,
+            description: description
+        };
+        window.currentModalInfo = currentModalInfo;
         
-        // 如果找到了特定按钮，添加直接的点击事件
-        if (zhButton) {
-            console.log('找到中文按钮');
-            zhButton.onclick = function(e) {
-                e.preventDefault();
-                console.log('点击中文按钮');
-                localStorage.setItem('preferredLanguage', 'zh');
-                window.location.reload();
-                return false;
+        // 获取全局当前语言
+        const currentLang = localStorage.getItem('preferredLanguage') || 'zh';
+        console.log('Current language in modal:', currentLang);
+        
+        const projectModal = document.getElementById('projectModal');
+        const modalGallery = document.getElementById('modalGallery');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalTitle = document.querySelector('.modal-title');
+        
+        if (!projectModal || !modalGallery || !modalDescription) {
+            console.error('Modal elements not found');
+            return;
+        }
+        
+        // 清空旧内容
+        modalGallery.innerHTML = '';
+        modalDescription.innerHTML = '';
+        
+        // 添加图片或视频
+        if (imageSrc) {
+            if (imageSrc.includes('.mp4')) {
+                // 如果是视频
+                const videoContainer = document.createElement('div');
+                videoContainer.className = 'modal-video-container';
+                
+                const video = document.createElement('video');
+                video.src = imageSrc;
+                video.controls = true;
+                
+                const poster = imageSrc.includes('#t=') ? imageSrc : imageSrc.replace('.mp4', '.png');
+                video.poster = poster;
+                
+                videoContainer.appendChild(video);
+                modalGallery.appendChild(videoContainer);
+            } else {
+                // 如果是图片
+                const img = document.createElement('img');
+                img.src = imageSrc;
+                img.alt = imageAlt || title;
+                img.className = 'full-width-image';
+                modalGallery.appendChild(img);
+            }
+        }
+        
+        // 创建并添加切换内容按钮（简单直接的解决方案）
+        const forceZhButton = document.createElement('button');
+        forceZhButton.textContent = '中文内容';
+        forceZhButton.style.padding = '8px 15px';
+        forceZhButton.style.margin = '10px 5px';
+        forceZhButton.style.background = '#2a2a2a';
+        forceZhButton.style.color = '#fff';
+        forceZhButton.style.border = '1px solid #555';
+        forceZhButton.style.borderRadius = '4px';
+        forceZhButton.style.cursor = 'pointer';
+        forceZhButton.addEventListener('click', function() {
+            const key = imageAlt || title;
+            const content = getZhContent(key);
+            if (content) {
+                modalDescription.innerHTML = content;
+                console.log('强制切换到中文内容');
+            }
+        });
+        
+        const forceEnButton = document.createElement('button');
+        forceEnButton.textContent = 'English Version';
+        forceEnButton.style.padding = '8px 15px';
+        forceEnButton.style.margin = '10px 5px';
+        forceEnButton.style.background = '#2a2a2a';
+        forceEnButton.style.color = '#fff';
+        forceEnButton.style.border = '1px solid #555';
+        forceEnButton.style.borderRadius = '4px';
+        forceEnButton.style.cursor = 'pointer';
+        forceEnButton.addEventListener('click', function() {
+            // 关闭当前模态框
+            projectModal.style.display = 'none';
+            
+            // 显示英文版模态框
+            openEnglishModal(imageSrc, imageAlt, title, description);
+        });
+        
+        // 添加按钮容器
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.textAlign = 'center';
+        buttonContainer.style.marginBottom = '15px';
+        buttonContainer.appendChild(forceZhButton);
+        buttonContainer.appendChild(forceEnButton);
+        
+        // 将按钮添加到模态框
+        modalDescription.parentNode.insertBefore(buttonContainer, modalDescription);
+        
+        // 更新模态框内容的函数
+        function updateModalContentWithLanguage(lang) {
+            // 更新标题翻译
+            if (modalTitle) {
+                modalTitle.textContent = lang === 'zh' ? '项目详情' : 'Project Details';
+            }
+            
+            // 清空描述内容，以便重新填充
+            modalDescription.innerHTML = '';
+            
+            // 获取当前项目信息
+            const info = window.currentModalInfo || {};
+            const key = info.imageAlt || info.title;
+            
+            console.log('正在渲染内容，键名:', key, '语言:', lang);
+            
+            let content = null;
+            
+            // 根据语言选择内容
+            if (lang === 'zh') {
+                // 中文内容
+                if (key) content = getZhContent(key);
+            } else {
+                // 英文内容
+                if (key) {
+                    // 1. 尝试直接用键名查找
+                    content = getEnContent(key);
+                    
+                    // 2. 如果找不到，尝试翻译后查找
+                    if (!content) {
+                        const enKey = translateTitleToEn(key);
+                        if (enKey && enKey !== key) {
+                            content = getEnContent(enKey);
+                            console.log('尝试翻译键名查找:', key, '->', enKey, '结果:', !!content);
+                        }
+                    }
+                }
+            }
+            
+            // 如果找到了内容，显示它
+            if (content) {
+                modalDescription.innerHTML = content;
+                console.log('找到并显示内容');
+            } else {
+                // 如果没找到内容，使用基本描述
+                console.log('未找到内容，使用基本描述');
+                
+                if (lang === 'zh') {
+                    // 中文基本描述
+                    modalDescription.innerHTML = `
+                        <h3>${info.title || ''} <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                        <p>${info.description || '暂无详细描述'}</p>
+                    `;
+                } else {
+                    // 英文基本描述
+                    const enTitle = translateTitleToEn(info.title) || info.title || '';
+                    const enDesc = translateDescToEn(info.description) || info.description || 'No detailed description available';
+                    
+                    modalDescription.innerHTML = `
+                        <h3>${enTitle} <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                        <p>${enDesc}</p>
+                    `;
+                }
+            }
+            
+            // 更新语言按钮状态
+            const zhBtn = document.querySelector('.modal-lang-btn[data-lang="zh"]');
+            const enBtn = document.querySelector('.modal-lang-btn[data-lang="en"]');
+            
+            if (zhBtn && enBtn) {
+                if (lang === 'zh') {
+                    zhBtn.classList.add('active');
+                    enBtn.classList.remove('active');
+                } else {
+                    zhBtn.classList.remove('active');
+                    enBtn.classList.add('active');
+                }
+            }
+        }
+        
+        // 首次渲染内容
+        updateModalContentWithLanguage(currentLang);
+        
+        // 显示模态框
+        projectModal.style.display = 'flex';
+        
+        // 关闭模态框的点击事件
+        const closeModal = document.querySelector('.close-modal');
+        if (closeModal) {
+            closeModal.onclick = function() {
+                projectModal.style.display = 'none';
+                
+                // 如果有视频，暂停视频播放
+                const videos = projectModal.querySelectorAll('video');
+                videos.forEach(video => {
+                    video.pause();
+                });
             };
         }
         
-        if (enButton) {
-            console.log('找到英文按钮');
-            enButton.onclick = function(e) {
-                e.preventDefault();
-                console.log('点击英文按钮');
-                localStorage.setItem('preferredLanguage', 'en');
-                window.location.reload();
-                return false;
-            };
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            if (event.target === projectModal) {
+                projectModal.style.display = 'none';
+                
+                // 如果有视频，暂停视频播放
+                const videos = projectModal.querySelectorAll('video');
+                videos.forEach(video => {
+                    video.pause();
+                });
+            }
+        };
+    }
+
+    // 添加一个专门用于显示英文模态框的函数
+    function openEnglishModal(imageSrc, imageAlt, title, description) {
+        console.log('打开英文模态框:', title);
+        
+        const enProjectModal = document.getElementById('enProjectModal');
+        const enModalGallery = document.getElementById('enModalGallery');
+        const enModalDescription = document.getElementById('enModalDescription');
+        
+        if (!enProjectModal || !enModalGallery || !enModalDescription) {
+            console.error('找不到英文模态框元素');
+            return;
         }
         
-        // 为所有按钮设置当前语言的视觉状态
-        const currentLanguage = localStorage.getItem('preferredLanguage') || 'zh';
-        if (currentLanguage === 'zh' && zhButton) {
-            zhButton.classList.add('active');
-            if (enButton) enButton.classList.remove('active');
-        } else if (currentLanguage === 'en' && enButton) {
-            enButton.classList.add('active');
-            if (zhButton) zhButton.classList.remove('active');
+        // 清空旧内容
+        enModalGallery.innerHTML = '';
+        enModalDescription.innerHTML = '';
+        
+        // 添加图片或视频
+        if (imageSrc) {
+            if (imageSrc.includes('.mp4')) {
+                // 如果是视频
+                const videoContainer = document.createElement('div');
+                videoContainer.className = 'modal-video-container';
+                
+                const video = document.createElement('video');
+                video.src = imageSrc;
+                video.controls = true;
+                
+                const poster = imageSrc.includes('#t=') ? imageSrc : imageSrc.replace('.mp4', '.png');
+                video.poster = poster;
+                
+                videoContainer.appendChild(video);
+                enModalGallery.appendChild(videoContainer);
+            } else {
+                // 如果是图片
+                const img = document.createElement('img');
+                img.src = imageSrc;
+                img.alt = imageAlt || title;
+                img.className = 'full-width-image';
+                enModalGallery.appendChild(img);
+            }
         }
-    })();
+        
+        // 获取英文内容
+        const key = imageAlt || title;
+        let enContent = null;
+        
+        // 尝试直接获取英文内容
+        enContent = getEnContent(key);
+        
+        // 如果找不到，尝试翻译后查找
+        if (!enContent) {
+            const enKey = translateTitleToEn(key);
+            if (enKey && enKey !== key) {
+                enContent = getEnContent(enKey);
+                console.log('翻译键名获取英文内容:', key, '->', enKey, '结果:', !!enContent);
+            }
+        }
+        
+        // 显示内容
+        if (enContent) {
+            enModalDescription.innerHTML = enContent;
+            console.log('找到并显示英文内容');
+        } else {
+            // 英文基本描述
+            const enTitle = translateTitleToEn(title) || title || '';
+            const enDesc = translateDescToEn(description) || description || 'No detailed description available';
+            
+            enModalDescription.innerHTML = `
+                <h3>${enTitle} <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                <p>${enDesc}</p>
+            `;
+            console.log('未找到预定义英文内容，显示基本描述');
+        }
+        
+        // 显示英文模态框
+        enProjectModal.style.display = 'flex';
+        
+        // 点击英文模态框外部关闭
+        window.addEventListener('click', function(event) {
+            if (event.target === enProjectModal) {
+                enProjectModal.style.display = 'none';
+                
+                // 如果有视频，暂停视频播放
+                const videos = enProjectModal.querySelectorAll('video');
+                videos.forEach(video => {
+                    video.pause();
+                });
+            }
+        });
+    }
+
+    // 添加模态框语言切换按钮的样式
+    document.addEventListener('DOMContentLoaded', function() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .modal-language-selector {
+                display: flex;
+                position: absolute;
+                top: 20px;
+                right: 60px;
+                z-index: 10;
+            }
+            .modal-lang-btn {
+                background: rgba(30, 30, 35, 0.7);
+                color: #89CFF0;
+                border: 1px solid rgba(137, 207, 240, 0.3);
+                padding: 5px 10px;
+                margin-left: 5px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            .modal-lang-btn.active {
+                background: #89CFF0;
+                color: #1a1a1a;
+            }
+            .modal-lang-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 8px rgba(137, 207, 240, 0.4);
+            }
+            .modal-content {
+                position: relative;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... 原有代码 ...
+
+        // 在全局作用域检查并注册项目点击事件
+        function registerProjectEvents() {
+            // 注册作品集项目点击事件（在index页面上）
+            const portfolioItems = document.querySelectorAll('.portfolio-item');
+            
+            if (portfolioItems.length > 0) {
+                console.log('Registering click events for', portfolioItems.length, 'portfolio items');
+                
+                portfolioItems.forEach(item => {
+                    // 避免重复添加事件监听器
+                    if (!item.hasAttribute('data-event-registered')) {
+                        item.setAttribute('data-event-registered', 'true');
+                        
+                        item.addEventListener('click', function() {
+                            const imgElement = this.querySelector('img') || this.querySelector('video');
+                            const imgSrc = imgElement?.src;
+                            // 确保获取正确的alt文本用于内容识别
+                            const imgAlt = imgElement?.alt || imgElement?.getAttribute('data-content-key');
+                            const title = this.querySelector('.portfolio-overlay h3').textContent;
+                            const desc = this.querySelector('.portfolio-overlay p').textContent;
+                            
+                            console.log('Opening modal with:', {imgSrc, imgAlt, title, desc});
+                            openModal(imgSrc, imgAlt, title, desc);
+                        });
+                        
+                        // 添加cursor-pointer类以显示点击效果
+                        item.classList.add('cursor-pointer');
+                    }
+                });
+            }
+        }
+        
+        // 页面加载后执行一次
+        registerProjectEvents();
+        
+        // ... 继续原有代码 ...
+    });
+
+    // 添加英文内容获取函数
+    function getEnContent(key) {
+        console.log("获取英文内容，键名:", key);
+        // 根据key返回对应的英文内容HTML
+        switch(key) {
+            case '艺术家':
+            case 'Artist':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This is an original character design project that explores unique artistic styles and character representation.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>This character embodies my artistic style, combining elegance with expressiveness. I aimed to create a character with a strong personality and visual impact, while keeping a sense of mystery and depth.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I utilized advanced digital painting techniques, focusing on color harmony, lighting, and detailed rendering. The character design process involved extensive research and multiple iterations to achieve the perfect balance between aesthetics and character storytelling.</p>
+                `;
+
+            case '未知新球':
+            case 'Unknown Sphere':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This is a futuristic concept scene exploring the interaction between technology and natural environments.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "Unknown Sphere" concept explores the mystery of advanced technology in natural settings. The design aims to create a sense of wonder and scientific curiosity through the contrast between the organic forest environment and the geometric, technological sphere.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I focused on creating a realistic lighting scenario with dramatic fog effects to enhance the mysterious atmosphere. The technical challenge involved balancing the organic forest elements with the hard-surface design of the sphere, while maintaining visual coherence through color harmony and atmospheric perspective.</p>
+                `;
+
+            case '樱花村':
+            case 'Sakura Village':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This environmental concept design depicts a traditional Japanese village during cherry blossom season.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "Sakura Village" concept explores the beauty of traditional Japanese architecture harmoniously integrated with the natural environment. I wanted to capture the tranquil and poetic atmosphere of a village during cherry blossom season, emphasizing the cultural significance and aesthetic value of such seasonal moments.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I carefully constructed the architectural elements following traditional Japanese design principles, while giving special attention to the lighting and atmospheric effects. The pink hues of the cherry blossoms were balanced with the earthy tones of the buildings, creating a harmonious color palette that enhances the emotional impact of the scene.</p>
+                `;
+
+            case '世界树':
+            case 'World Tree':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This concept design explores the mythological World Tree, blending magical elements with fantasy aesthetics.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "World Tree" concept is inspired by various mythologies where a cosmic tree connects different realms of existence. I aimed to create a design that feels both ancient and magical, emphasizing the tree's role as a bridge between worlds through its luminous features and imposing scale.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I employed advanced lighting techniques to create the ethereal glow emanating from the tree. The composition was carefully planned to emphasize the massive scale of the tree, while intricate details were added to convey its organic and magical nature. The color palette was chosen to enhance the mystical atmosphere of the scene.</p>
+                `;
+
+            case '寺庙':
+            case 'Temple':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This architectural concept design explores traditional Eastern temple architecture in a contemporary interpretation.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The temple design is inspired by traditional Eastern sacred architecture, particularly drawing from Chinese and Japanese aesthetic principles. I wanted to create a space that conveys spiritual tranquility while incorporating subtle contemporary design elements that respect the traditional forms.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>The design process involved extensive research on architectural proportions and decorative elements typical in temple construction. Particular attention was paid to the lighting design, using natural light sources to enhance the spatial quality and spiritual atmosphere of the temple. The color palette was deliberately restrained to evoke serenity and contemplation.</p>
+                `;
+
+            case '废弃小镇':
+            case 'Abandoned Town':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This is a personal environment concept design project, exploring the stories and emotions contained within abandoned urban spaces.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>Through this work, I wanted to express the aesthetics of time passing and traces of human activity. The abandoned buildings and gradually encroaching natural elements create a unique visual tension, prompting viewers to reflect on the past and future.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>During the creation process, I paid special attention to the treatment of light and shadow and the creation of atmosphere. Through detailed textures and careful rendering, I gave this abandoned space life and a sense of story. The choice of color tones was also carefully considered to enhance the emotional expression of the scene.</p>
+                `;
+
+            case '森林':
+            case 'Mysterious Forest':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2025</span></h3>
+                    <p>This is a personal environment concept design project, exploring the visual representation and atmosphere creation of a mysterious forest.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>Through this work, I wanted to express the mystery and vitality of nature. The dense vegetation, unique lighting, and treatment of fog together create a forest world that is both dreamlike and real, guiding viewers into a space full of imagination.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>During the creation process, I focused particularly on the effect of light penetrating through leaves and the expression of spatial layering. Through fine brushwork and color gradients, I created a deep yet vibrant forest atmosphere, allowing viewers to feel the mystery and tranquility of nature.</p>
+                `;
+
+            case '视觉开发全集':
+            case 'Visual Development Collection':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This project involves selecting a movie and designing a series of props, with the challenge of maintaining a unified style across all designs.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The key challenge in this project was ensuring stylistic unity across all props. Each item needed to appear as if it belonged to the same world view and aligned with the overall aesthetics of the chosen movie, while still maintaining its unique characteristics and purpose.</p>
+                    
+                    <h3>Workflow</h3>
+                    <p>The process involved analyzing the visual style of the selected movie, creating concept sketches, and ensuring each prop was both unique and cohesive with the overall design. This project demonstrates the ability to maintain consistent design language across multiple items while serving the narrative needs of a larger world-building context.</p>
+                `;
+
+            case '创意透视流程':
+            case 'Creative Perspective Process':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This project required the use of five-point perspective to create a cyberpunk world scene featuring two characters on a train.</p>
+                    
+                    <h3>Design Choice</h3>
+                    <p>I chose to create a dynamic scene of characters on a futuristic train in a cyberpunk city, utilizing five-point perspective to enhance the dramatic visual impact. This assignment challenged me to apply complex perspective techniques to create an immersive and visually compelling environment.</p>
+                    
+                    <h3>Technical Points</h3>
+                    <p>The project showcases the application of five-point curvilinear perspective, which is particularly effective for creating dramatic wide-angle views. The perspective technique helps create a sense of immersion and depth, while the character placement on the train adds narrative interest and scale reference to the scene. The process from initial sketch to final rendering demonstrates my methodical approach to complex illustration challenges.</p>
+                `;
+
+            case '角色素描':
+            case 'Character Sketches':
+                return `
+                    <h3>Character Sketch Study <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This project showcases the sketching process for character design and action/expression studies. Through sketching, I deeply explored the character's appearance features and dynamic postures, laying the foundation for subsequent character creation.</p>
+                    
+                    <h3>Design Points</h3>
+                    <p>The project contains two main parts: overall character design and detailed action/expression studies. Through precise sketching of character proportions, clothing, and features, as well as exploration of various expressions and action postures, it comprehensively demonstrates the fundamental work of character design.</p>
+                `;
+
+            case 'Photoshop基础':
+            case 'Photoshop Fundamentals':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This course project focuses on mastering fundamental Photoshop techniques essential for digital painting and image editing.</p>
+                    
+                    <h3>Learning Objectives</h3>
+                    <p>The main goal was to develop proficiency in Photoshop's core tools and workflows, including layer management, masking, adjustment layers, and digital painting techniques. These skills form the foundation for more advanced digital art creation.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>The project involved practical exercises in color correction, compositing, and digital painting techniques. Special attention was given to understanding non-destructive workflows and efficient file organization methods that support professional-level digital art production.</p>
+                `;
+
+            case '猫咪日记':
+            case 'Cat Diary':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This character design course project focuses on creating appealing animal characters with distinctive personalities and narrative potential.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "Cat Diary" project explores the charming and diverse personalities of cats through stylized character design. I aimed to create characters that balance anthropomorphic qualities with authentic feline characteristics, resulting in relatable yet distinctly cat-like personalities.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I focused on expressive line work and simplified forms to convey personality through posture and facial expressions. The character designs incorporate principles of appeal and readability, ensuring each cat has a distinct silhouette and instantly recognizable traits. The simplified style allows for efficient animation potential while maintaining character depth.</p>
+                `;
+
+            default:
+                return null;
+        }
+    }
+
+    // 添加标题和描述翻译函数
+    function translateTitleToEn(zhTitle) {
+        // 标题翻译映射
+        const titleMap = {
+            '艺术家': 'Artist',
+            '未知新球': 'Unknown Sphere',
+            '樱花村': 'Sakura Village',
+            '世界树': 'World Tree',
+            '寺庙': 'Temple',
+            '废弃小镇': 'Abandoned Town',
+            '森林': 'Mysterious Forest',
+            '视觉开发全集': 'Visual Development Collection',
+            '创意透视流程': 'Creative Perspective Process',
+            '角色素描': 'Character Sketches',
+            'Photoshop基础': 'Photoshop Fundamentals',
+            '猫咪日记': 'Cat Diary',
+            '速写视频': 'Sketching Process 1',
+            '速写视频2': 'Sketching Process 2'
+        };
+        
+        return titleMap[zhTitle] || zhTitle;
+    }
+
+    function translateDescToEn(zhDesc) {
+        // 描述翻译映射
+        const descMap = {
+            '原创角色设计': 'Original Character Design',
+            '未来概念场景': 'Futuristic Concept Scene',
+            '环境概念设计': 'Environmental Concept Design',
+            '概念设计': 'Concept Design',
+            '建筑概念设计': 'Architectural Concept Design',
+            '个人概念设计': 'Personal Concept Design',
+            '个人环境设计': 'Personal Environment Design',
+            '神秘森林概念设计': 'Mysterious Forest Concept Design',
+            '角色、道具与环境': 'Characters, Props & Environments',
+            '从草图到成品': 'From Sketch to Final Work',
+            '设计与表情研究': 'Design & Expression Studies',
+            'ArtCenter课程作业': 'ArtCenter Course Assignment',
+            '环境设计课程': 'Environment Design Course',
+            '3D建模课程项目': '3D Modeling Course Project',
+            '视觉开发课程': 'Visual Development Course',
+            '角色设计课程': 'Character Design Course',
+            '数字绘画课程': 'Digital Painting Course',
+            '创作过程记录': 'Creation Process Recording'
+        };
+        
+        return descMap[zhDesc] || zhDesc;
+    }
+
+    // 添加中文内容获取函数（在添加了getEnContent函数的同位置添加）
+    function getZhContent(key) {
+        // 根据key返回对应的中文内容HTML
+        switch(key) {
+            case '艺术家':
+            case 'Artist':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                    <p>这是一个原创角色设计项目，探索了独特的艺术风格和角色表现。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>这个角色体现了我的艺术风格，融合了优雅与表现力。我旨在创造一个具有鲜明个性和视觉冲击力的角色，同时保持一定的神秘感和深度。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>我运用了高级数字绘画技术，注重色彩和谐、光影处理和细节刻画。角色设计过程包括大量研究和多次迭代，以达到美学与角色叙事的完美平衡。</p>
+                `;
+
+            case '未知新球':
+            case 'Unknown Sphere':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                    <p>这是一个未来概念场景设计，探索了科技与自然环境的交互。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>"未知新球"概念探索了先进技术在自然环境中的神秘感。设计旨在通过有机森林环境与几何、技术感球体的对比，创造一种奇妙感和科学好奇心。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>我专注于创造一个真实的光照场景，配合戏剧性的雾气效果来增强神秘氛围。技术挑战在于平衡有机的森林元素与硬表面的球体设计，同时通过色彩和谐与大气透视保持视觉连贯性。</p>
+                `;
+
+            case '樱花村':
+            case 'Sakura Village':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                    <p>这个环境概念设计描绘了樱花季节的传统日本村庄。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>"樱花村"概念探索了传统日本建筑与自然环境和谐融合的美感。我想捕捉樱花季节村庄的宁静与诗意氛围，强调这种季节性时刻的文化意义和美学价值。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>我按照传统日本设计原则精心构建了建筑元素，同时特别关注光照和大气效果。樱花的粉色调与建筑的土色调形成平衡，创造出和谐的色彩搭配，增强了场景的情感冲击力。</p>
+                `;
+
+            case '世界树':
+            case 'World Tree':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                    <p>这个概念设计探索了神话中的世界树，融合了魔法元素与奇幻美学。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>"世界树"概念受到各种神话的启发，其中宇宙树连接不同的存在领域。我旨在创造一个既古老又充满魔力的设计，通过其发光特性和宏伟规模强调树木作为世界桥梁的角色。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>我使用了高级光照技术来创造树木散发的空灵光芒。构图经过精心规划，以强调树木的巨大规模，同时添加了精细的细节来表现其有机和魔法特性。色彩的选择旨在增强场景的神秘氛围。</p>
+                `;
+
+            case '寺庙':
+            case 'Temple':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+                    <p>这个建筑概念设计探索了当代诠释的传统东方寺庙建筑。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>寺庙设计受到传统东方神圣建筑的启发，特别借鉴了中国和日本的美学原则。我想创造一个传达精神宁静的空间，同时融入尊重传统形式的微妙现代设计元素。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>设计过程涉及广泛研究寺庙建筑中典型的比例和装饰元素。特别关注光照设计，使用自然光源提升空间品质和寺庙的精神氛围。色彩搭配刻意克制，以唤起宁静和沉思。</p>
+                `;
+
+            case '废弃小镇':
+            case 'Abandoned Town':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+                    <p>这是我的个人环境概念设计项目，探索被遗弃的城镇空间所蕴含的故事与情感。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>通过这个作品，我想表达时间流逝和人类活动痕迹的美学。废弃的建筑与逐渐侵蚀的自然元素形成了一种独特的视觉张力，引发观者对过去与未来的思考。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>在创作过程中，我特别注重光影的处理和氛围的营造，通过精细的细节和纹理表现，赋予这个废弃空间以生命力和故事感。色调的选择也经过精心考量，以增强场景的情感表达。</p>
+                `;
+
+            case '森林':
+            case 'Mysterious Forest':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2025年</span></h3>
+                    <p>这是我的个人环境概念设计项目，探索神秘森林的视觉表现与氛围营造。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>通过这个作品，我想表达自然的神秘与生命力。茂密的植被、独特的光线和雾气的处理，共同创造出一个既梦幻又真实的森林世界，引导观者进入一个充满想象的空间。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>在创作过程中，我特别关注光线穿透树叶的效果和空间层次感的表现。通过精细的笔触和色彩渐变，营造出深邃而又充满活力的森林氛围，让观者能够感受到自然的神秘与宁静。</p>
+                `;
+
+            case '视觉开发全集':
+            case 'Visual Development Collection':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                    <p>这个项目涉及选择一部电影并设计一系列道具，同时面临保持所有设计统一风格的挑战。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>这个项目的关键挑战是确保所有道具的风格统一。每件物品都需要看起来像是属于同一个世界观，并与所选电影的整体美学保持一致，同时仍然保持其独特的特点和用途。</p>
+                    
+                    <h3>工作流程</h3>
+                    <p>该过程包括分析所选电影的视觉风格，创建概念草图，并确保每个道具既独特又与整体设计协调一致。这个项目展示了在服务于更大世界观搭建背景的叙事需求时，能够在多个项目中保持一致的设计语言。</p>
+                `;
+
+            case '创意透视流程':
+            case 'Creative Perspective Process':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                    <p>这个项目要求使用五点透视法创建一个赛博朋克世界场景，其中有两个角色在火车上。</p>
+                    
+                    <h3>设计选择</h3>
+                    <p>我选择创建角色在赛博朋克城市中未来主义火车上的动态场景，利用五点透视增强戏剧性视觉冲击力。这个作业挑战我应用复杂的透视技术创建身临其境且视觉引人入胜的环境。</p>
+                    
+                    <h3>技术要点</h3>
+                    <p>该项目展示了五点曲线透视的应用，这对创建戏剧性广角视图特别有效。透视技术有助于创造沉浸感和深度感，而角色在火车上的放置增加了叙事兴趣和场景的比例参考。从初始草图到最终渲染的过程展示了我对复杂插图挑战的方法论。</p>
+                `;
+
+            case '角色素描':
+            case 'Character Sketches':
+                return `
+                    <h3>角色素描研究 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+                    <p>这个项目展示了角色设计和动作表情研究的素描过程。通过素描深入研究角色的外观特征以及动态姿态，为后续的角色创作奠定基础。</p>
+                    
+                    <h3>设计要点</h3>
+                    <p>项目包含两个主要部分：角色整体设计和动作表情细节研究。通过对角色比例、服装和特征的精确素描，以及对各种表情和动作姿态的探索，全面展示了角色设计的基础工作。</p>
+                `;
+
+            case 'Photoshop基础':
+            case 'Photoshop Fundamentals':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+                    <p>这个课程项目专注于掌握数字绘画和图像编辑必备的基础Photoshop技术。</p>
+                    
+                    <h3>学习目标</h3>
+                    <p>主要目标是熟练掌握Photoshop的核心工具和工作流程，包括图层管理、蒙版、调整图层和数字绘画技术。这些技能为更高级的数字艺术创作奠定了基础。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>项目包括色彩校正、合成和数字绘画技术的实践练习。特别注重理解非破坏性工作流程和支持专业级数字艺术制作的高效文件组织方法。</p>
+                `;
+
+            case '猫咪日记':
+            case 'Cat Diary':
+                return `
+                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+                    <p>这个角色设计课程项目专注于创造具有鲜明个性和叙事潜力的动物角色。</p>
+                    
+                    <h3>设计理念</h3>
+                    <p>"猫咪日记"项目通过风格化的角色设计探索猫咪的迷人和多样性格。我旨在创造平衡拟人化特质与真实猫科特征的角色，从而形成既亲切又独特猫咪性格。</p>
+                    
+                    <h3>技术实现</h3>
+                    <p>我专注于富有表现力的线条和简化形式，通过姿势和面部表情传达性格。角色设计融合了吸引力和可读性原则，确保每只猫都有独特的轮廓和容易识别的特征。简化的风格允许高效的动画潜力，同时保持角色深度。</p>
+                `;
+
+            default:
+                return null;
+        }
+    }
+
+    // 添加调试函数，便于测试
+    window.debugModalInfo = function() {
+        console.log("当前模态框信息:", window.currentModalInfo);
+        const lang = localStorage.getItem('preferredLanguage') || 'zh';
+        console.log("当前语言:", lang);
+        return {
+            modalInfo: window.currentModalInfo,
+            language: lang
+        };
+    };
+    
+    // 当页面加载完成时，检查语言设置并应用
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("页面加载完成，初始化翻译");
+        
+        // 初始化翻译
+        initTranslation();
+        
+        // 注册作品项目点击事件
+        registerProjectEvents();
+        
+        // 当模态框显示时，确保内容匹配当前语言
+        const projectModal = document.getElementById('projectModal');
+        if (projectModal) {
+            projectModal.addEventListener('show', function() {
+                const lang = localStorage.getItem('preferredLanguage') || 'zh';
+                console.log("模态框显示，当前语言:", lang);
+                
+                // 如果有当前项目信息，更新模态框内容
+                if (window.currentModalInfo) {
+                    updateModalContentWithLanguage(lang);
+                }
+            });
+        }
+    });
+    
+    // 添加全局翻译更新钩子
+    const originalUpdateAllTranslations = updateAllTranslations;
+    updateAllTranslations = function() {
+        // 调用原始翻译函数
+        originalUpdateAllTranslations();
+        
+        // 如果模态框正在显示，更新其内容
+        const projectModal = document.getElementById('projectModal');
+        if (projectModal && projectModal.style.display === 'flex' && window.currentModalInfo) {
+            const lang = localStorage.getItem('preferredLanguage') || 'zh';
+            console.log("全局翻译更新，更新模态框内容，语言:", lang);
+            updateModalContentWithLanguage(lang);
+        }
+    };
+
+    // 添加一个全局测试函数，方便在控制台中调试内容获取和显示
+    window.testContent = function(key, lang) {
+        console.log(`测试内容: key=${key}, language=${lang}`);
+        
+        // 根据语言获取内容
+        let content = null;
+        if (lang === 'zh' || lang === 'cn') {
+            content = getZhContent(key);
+            console.log('中文内容:', !!content);
+        } else {
+            content = getEnContent(key);
+            if (!content) {
+                // 尝试翻译后查找
+                const enKey = translateTitleToEn(key);
+                content = getEnContent(enKey);
+                console.log('尝试翻译键名:', key, '->', enKey, '结果:', !!content);
+            }
+            console.log('英文内容:', !!content);
+        }
+        
+        // 显示内容
+        if (content) {
+            console.log('内容预览:', content.substring(0, 100) + '...');
+            return {
+                success: true,
+                content: content,
+                preview: content.substring(0, 100) + '...'
+            };
+        } else {
+            console.log('未找到内容');
+            return {
+                success: false,
+                message: '未找到内容'
+            };
+        }
+    };
 });
 
