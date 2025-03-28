@@ -532,5 +532,26 @@
             </div>
         </div>
     </div>
+    
+    <!-- 英文项目详情模态框 -->
+    <div class="project-modal" id="enProjectModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="document.getElementById('enProjectModal').style.display='none';">&times;</span>
+            <div class="modal-body">
+                <h2 class="modal-title">Project Details (English)</h2>
+                <div id="enModalGallery" class="modal-gallery">
+                    <!-- 图片/视频在这里动态加载 -->
+                </div>
+                <div id="enModalDescription" class="modal-description">
+                    <!-- 英文项目描述在这里动态加载 -->
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="document.getElementById('enProjectModal').style.display='none'; document.getElementById('projectModal').style.display='flex';" style="padding: 8px 15px; background: #2a2a2a; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer;">
+                        返回中文版 / Back to Chinese
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 

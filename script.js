@@ -1812,6 +1812,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    
+    // 将函数设为全局可访问
+    window.openEnglishModal = openEnglishModal;
 
     // 添加模态框语言切换按钮的样式
     document.addEventListener('DOMContentLoaded', function() {
@@ -2350,6 +2353,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 message: '未找到内容'
             };
         }
+    };
+
+    // 在页面加载完成后添加英文按钮事件
+    document.addEventListener('DOMContentLoaded', function() {
+        // 为所有具有id="showEnglishBtn"的按钮添加点击事件
+        const showEnglishBtns = document.querySelectorAll('#showEnglishBtn');
+        
+        showEnglishBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 获取当前打开的模态框信息
+                const info = window.currentModalInfo || {};
+                
+                // 隐藏中文模态框
+                const projectModal = document.getElementById('projectModal');
+                if (projectModal) {
+                    projectModal.style.display = 'none';
+                }
+                
+                // 显示英文模态框
+                openEnglishModal(info.imageSrc, info.imageAlt, info.title, info.description);
+            });
+        });
+    });
+
+    // 添加一个全局函数，用于测试所有英文内容
+    window.showAllEnContent = function() {
+        // 创建获取所有英文内容的测试列表
+        const testKeys = [
+            '艺术家', 'Artist',
+            '未知新球', 'Unknown Sphere',
+            '樱花村', 'Sakura Village',
+            '世界树', 'World Tree',
+            '寺庙', 'Temple',
+            '废弃小镇', 'Abandoned Town',
+            '森林', 'Mysterious Forest',
+            '视觉开发全集', 'Visual Development Collection',
+            '创意透视流程', 'Creative Perspective Process',
+            '角色素描', 'Character Sketches',
+            'Photoshop基础', 'Photoshop Fundamentals',
+            '猫咪日记', 'Cat Diary',
+            '速写视频', 'Sketching Process 1',
+            '速写视频2', 'Sketching Process 2',
+            'Maya 3D', 'Maya 3D Modeling',
+            '背景绘画', 'Background Painting'
+        ];
+        
+        // 测试结果
+        const results = {};
+        
+        // 测试每个键
+        for (const key of testKeys) {
+            const content = getEnContent(key);
+            results[key] = {
+                hasContent: !!content,
+                preview: content ? content.substring(0, 100) + '...' : 'No content found'
+            };
+        }
+        
+        console.table(results);
+        return results;
     };
 });
 
