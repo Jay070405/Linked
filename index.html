@@ -206,11 +206,6 @@
                         <h3>速写过程展示</h3>
                     </div>
                 </div>
-                <div style="text-align: center; margin-top: 10px; margin-bottom: 15px;">
-                    <button id="showEnglishBtn" style="padding: 8px 15px; background: #2a2a2a; color: #fff; border: 1px solid #555; border-radius: 4px; cursor: pointer;">
-                        English Version
-                    </button>
-                </div>
                 <div id="modalDescription" class="modal-description">
                     <h3>Maya 3D建模</h3>
                     <p>3D建模课程作业展示，包含建模过程和速写创作过程。</p>
@@ -289,68 +284,6 @@
                     document.body.style.overflow = '';
                 });
             });
-
-            // 添加英文模态框按钮事件
-            const showEnglishBtn = document.getElementById('showEnglishBtn');
-            if (showEnglishBtn) {
-                showEnglishBtn.addEventListener('click', function() {
-                    // 隐藏中文模态框
-                    const projectModal = document.getElementById('projectModal');
-                    if (projectModal) {
-                        projectModal.style.display = 'none';
-                    }
-                    
-                    // 显示英文模态框
-                    const enProjectModal = document.getElementById('enProjectModal');
-                    if (enProjectModal && window.currentModalInfo) {
-                        // 获取当前模态框信息
-                        const info = window.currentModalInfo;
-                        
-                        // 调用openEnglishModal函数显示英文内容
-                        if (typeof window.openEnglishModal === 'function') {
-                            window.openEnglishModal(info.imageSrc, info.imageAlt, info.title, info.description);
-                        } else {
-                            // 如果函数不存在，手动填充内容
-                            const enModalGallery = document.getElementById('enModalGallery');
-                            const enModalDescription = document.getElementById('enModalDescription');
-                            
-                            if (enModalGallery && info.imageSrc) {
-                                // 填充图片/视频
-                                if (info.imageSrc.includes('.mp4')) {
-                                    enModalGallery.innerHTML = `
-                                        <div class="modal-video-container">
-                                            <video src="${info.imageSrc}" controls>
-                                                <source src="${info.imageSrc}" type="video/mp4">
-                                            </video>
-                                        </div>
-                                    `;
-                                } else {
-                                    enModalGallery.innerHTML = `
-                                        <img src="${info.imageSrc}" alt="${info.title}" class="full-width-image">
-                                    `;
-                                }
-                            }
-                            
-                            if (enModalDescription) {
-                                // 尝试获取英文内容
-                                const enTitle = info.title;
-                                enModalDescription.innerHTML = `
-                                    <h3>${enTitle}</h3>
-                                    <p>${info.description || ''}</p>
-                                    <p>Please check the console for more English content details.</p>
-                                `;
-                                
-                                // 在控制台输出提示
-                                console.log('当前项目信息:', info);
-                                console.log('请使用 testContent("' + info.title + '", "en") 测试英文内容');
-                            }
-                            
-                            // 显示英文模态框
-                            enProjectModal.style.display = 'flex';
-                        }
-                    }
-                });
-            }
         });
     </script>
 </body>

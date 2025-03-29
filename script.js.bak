@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.style.overflow = 'auto';
             
             // 确保内容可见
-    const contentWrapper = document.querySelector('.content-wrapper');
+            const contentWrapper = document.querySelector('.content-wrapper');
             if (contentWrapper) {
                 contentWrapper.style.opacity = '1';
                 contentWrapper.style.visibility = 'visible';
@@ -93,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // 确保内容初始隐藏
             const contentWrapper = document.querySelector('.content-wrapper');
             if (contentWrapper) {
-    contentWrapper.style.opacity = '0';
-    contentWrapper.style.visibility = 'hidden';
+                contentWrapper.style.opacity = '0';
+                contentWrapper.style.visibility = 'hidden';
             }
             
             const startButton = document.querySelector('.start-button');
@@ -102,15 +102,15 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (startButton) {
                 startButton.addEventListener('click', function() {
-        introCircle.classList.add('animate-circle');
+                    introCircle.classList.add('animate-circle');
                     setTimeout(function() {
-            introAnimation.classList.add('animate-intro');
+                        introAnimation.classList.add('animate-intro');
                         document.body.style.overflow = 'auto';
-            
-            // 显示内容
+                        
+                        // 显示内容
                         if (contentWrapper) {
                             contentWrapper.style.opacity = '1';
-            contentWrapper.style.visibility = 'visible';
+                            contentWrapper.style.visibility = 'visible';
                         }
                         
                         // 添加樱花动画
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 添加滚动监听函数
-                addScrollListeners();
+    addScrollListeners();
 
     // 添加滚动监听函数
     function addScrollListeners() {
@@ -196,11 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // 设置所有项目为可见
-    portfolioItems.forEach(item => {
-        item.style.display = 'block';
-        item.style.opacity = '1';
-        item.style.transform = 'scale(1)';
-    });
+        portfolioItems.forEach(item => {
+            item.style.display = 'block';
+            item.style.opacity = '1';
+            item.style.transform = 'scale(1)';
+        });
     }
     
     portfolioTabs.forEach(tab => {
@@ -213,23 +213,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const category = tab.dataset.category;
             
             // 处理所有类别，包括速写类别
-                portfolioItems.forEach(item => {
-                    if (category === 'all' || item.dataset.category.includes(category)) {
+            portfolioItems.forEach(item => {
+                if (category === 'all' || item.dataset.category.includes(category)) {
                     // 显示匹配的项目
-                        item.style.display = 'block';
-                        setTimeout(() => {
-                            item.style.opacity = '1';
-                            item.style.transform = 'scale(1)';
-                        }, 50);
-                    } else {
+                    item.style.display = 'block';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1)';
+                    }, 50);
+                } else {
                     // 隐藏不匹配的项目
-                        item.style.opacity = '0';
-                        item.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            item.style.display = 'none';
-                        }, 500);
-                    }
-                });
+                    item.style.opacity = '0';
+                    item.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 500);
+                }
+            });
             
             // 更新作品编号
             updatePortfolioNumbers();
@@ -316,99 +316,99 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             } else {
                 // 其他作品的处理保持不变
-            switch (altText) {
-                case '背景绘画':
-                    // 使用已有的背景绘画模态框内容
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay.png" alt="背景绘画" class="full-width-image">
-                            <div class="image-caption">白天场景</div>
-                        </div>
-                        <div class="modal-image-container">
-                            <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay_JB-copy-(1).png" alt="背景绘画夜晚" class="full-width-image">
-                            <div class="image-caption">夜晚场景</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                switch (altText) {
+                    case '背景绘画':
+                        // 使用已有的背景绘画模态框内容
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay.png" alt="背景绘画" class="full-width-image">
+                                <div class="image-caption">白天场景</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/24FA_MonBGptg_Wk12_v02_Jay_JB-copy-(1).png" alt="背景绘画夜晚" class="full-width-image">
+                                <div class="image-caption">夜晚场景</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
-                        <p>该项目的要求是在同一个场景中创作白天和夜晚两个版本，展示不同光照条件下的环境氛围变化。</p>
+                            <p>该项目的要求是在同一个场景中创作白天和夜晚两个版本，展示不同光照条件下的环境氛围变化。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>这个场景描绘了一位魔法师来到宁静的雪村。白天版本展现了明亮、清新的氛围，而夜晚版本则通过月光和魔法元素的光芒创造出神秘而梦幻的感觉。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>通过精心设计的光影处理和色彩选择，我成功地在保持场景一致性的同时，展现了白天与夜晚截然不同的视觉效果和情感氛围。</p>
+                        `;
+                        break;
                         
-                        <h3>设计理念</h3>
-                        <p>这个场景描绘了一位魔法师来到宁静的雪村。白天版本展现了明亮、清新的氛围，而夜晚版本则通过月光和魔法元素的光芒创造出神秘而梦幻的感觉。</p>
+                    case '猫咪日记':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/cat diary (1).png" alt="猫咪日记" class="full-width-image">
+                                <div class="image-caption">猫咪日记项目</div>
+                            </div>
+                        `;
                         
-                        <h3>技术实现</h3>
-                        <p>通过精心设计的光影处理和色彩选择，我成功地在保持场景一致性的同时，展现了白天与夜晚截然不同的视觉效果和情感氛围。</p>
-                    `;
-                    break;
-                    
-                case '猫咪日记':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/cat diary (1).png" alt="猫咪日记" class="full-width-image">
-                            <div class="image-caption">猫咪日记项目</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
-                        <p>这是一个journalism课程作业，要求我们用身边日常生活中的事物创作一个journalism项目。</p>
+                            <p>这是一个journalism课程作业，要求我们用身边日常生活中的事物创作一个journalism项目。</p>
+                            
+                            <h3>创作理念</h3>
+                            <p>我选择了记录我家猫咪的日常生活作为主题，通过观察和记录它的行为、习惯和有趣瞬间，创作了这本猫咪日记。</p>
+                            
+                            <h3>表现手法</h3>
+                            <p>我使用了温暖的色调和生动的描绘方式，真实记录猫咪的日常，展现宠物与主人之间的情感联系，以及猫咪独特的个性和魅力。</p>
+                        `;
+                        break;
                         
-                        <h3>创作理念</h3>
-                        <p>我选择了记录我家猫咪的日常生活作为主题，通过观察和记录它的行为、习惯和有趣瞬间，创作了这本猫咪日记。</p>
+                    case 'Photoshop基础':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/class_work photoshop fundomental.png" alt="Photoshop基础" class="full-width-image">
+                                <div class="image-caption">数字绘画作品</div>
+                            </div>
+                        `;
                         
-                        <h3>表现手法</h3>
-                        <p>我使用了温暖的色调和生动的描绘方式，真实记录猫咪的日常，展现宠物与主人之间的情感联系，以及猫咪独特的个性和魅力。</p>
-                    `;
-                    break;
-                    
-                case 'Photoshop基础':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/class_work photoshop fundomental.png" alt="Photoshop基础" class="full-width-image">
-                            <div class="image-caption">数字绘画作品</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
-                        <p>这是Photoshop数字绘画基础课程的作业，旨在掌握软件的核心功能和数字绘画的基本技巧。</p>
+                            <p>这是Photoshop数字绘画基础课程的作业，旨在掌握软件的核心功能和数字绘画的基本技巧。</p>
+                            
+                            <h3>技术要点</h3>
+                            <p>在这个项目中，我运用了图层管理、混合模式、画笔技巧和色彩调整等Photoshop核心功能，创作了这幅数字插画。</p>
+                            
+                            <h3>学习收获</h3>
+                            <p>通过这个项目，我主要想要练习如何使用Photoshop的各种工具和技术来创造更好的画质感。特别是在光影处理、纹理表现和色彩过渡方面，我尝试了多种方法来提升作品的视觉质量和真实感。</p>
+                        `;
+                        break;
                         
-                        <h3>技术要点</h3>
-                        <p>在这个项目中，我运用了图层管理、混合模式、画笔技巧和色彩调整等Photoshop核心功能，创作了这幅数字插画。</p>
+                    case '创意透视':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/Screenshot 2025-03-01 212506.png" alt="创意透视" class="full-width-image">
+                                <div class="image-caption">成品</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/school/creative prespetive.jpg" alt="创意透视过程" class="full-width-image">
+                                <div class="image-caption">过程</div>
+                            </div>
+                        `;
                         
-                        <h3>学习收获</h3>
-                        <p>通过这个项目，我主要想要练习如何使用Photoshop的各种工具和技术来创造更好的画质感。特别是在光影处理、纹理表现和色彩过渡方面，我尝试了多种方法来提升作品的视觉质量和真实感。</p>
-                    `;
-                    break;
-                    
-                case '创意透视':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/Screenshot 2025-03-01 212506.png" alt="创意透视" class="full-width-image">
-                            <div class="image-caption">成品</div>
-                        </div>
-                        <div class="modal-image-container">
-                            <img src="image/school/creative prespetive.jpg" alt="创意透视过程" class="full-width-image">
-                            <div class="image-caption">过程</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
-                        <p>这是环境设计课程的作业，要求运用透视原理创建具有空间感和深度的场景。通过这个项目，我学习了解人物和场景大小关系，并利用SketchUp这个3D软件来确认船的透视。在获取3D船模型的基础上，我设计了自己的概念，最终完成了这幅作品。</p>
-                        
-                        <h3>设计理念</h3>
-                        <p>我创作了这个未来城市场景，表现了一个绝大部分人们都被统治的世界。通过精确的透视关系和光影处理，营造出既宏大又压抑的视觉体验。</p>
-                        
-                        <h3>技术挑战</h3>
-                        <p>项目中最大的挑战是处理复杂的透视关系和多点光源。通过反复研究和实践，结合SketchUp软件的辅助，我成功地解决了这些问题，使画面既符合透视规律又具有艺术表现力。</p>
-                    `;
-                    break;
+                            <p>这是环境设计课程的作业，要求运用透视原理创建具有空间感和深度的场景。通过这个项目，我学习了解人物和场景大小关系，并利用SketchUp这个3D软件来确认船的透视。在获取3D船模型的基础上，我设计了自己的概念，最终完成了这幅作品。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>我创作了这个未来城市场景，表现了一个绝大部分人们都被统治的世界。通过精确的透视关系和光影处理，营造出既宏大又压抑的视觉体验。</p>
+                            
+                            <h3>技术挑战</h3>
+                            <p>项目中最大的挑战是处理复杂的透视关系和多点光源。通过反复研究和实践，结合SketchUp软件的辅助，我成功地解决了这些问题，使画面既符合透视规律又具有艺术表现力。</p>
+                        `;
+                        break;
                     
                     case '创意透视流程':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
                                 <img src="image/school/creative prespetive (3).png" alt="创意透视草图阶段" class="full-width-image">
                                 <div class="image-caption">过程 - 初期草图</div>
                             </div>
@@ -419,17 +419,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="modal-image-container">
                                 <img src="image/school/creative prespetvie.png" alt="创意透视最终作品" class="full-width-image">
                                 <div class="image-caption">最终渲染</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这个项目的要求是使用5点透视技术创作一个场景。我选择了设计一个赛博朋克风格的未来世界，通过精确的透视关系展现出宏大的城市景观。</p>
                             
                             <h3>创意透视流程展示</h3>
                             <p>这个项目展示了创意透视作品从初期草图到最终渲染的完整流程。通过三个关键阶段的展示，可以清晰地看到作品的演变过程。</p>
-                        
-                        <h3>技术要点</h3>
+                            
+                            <h3>技术要点</h3>
                             <p>我运用了5点透视技术，将建筑元素通过精确的扭曲和变形创造出视觉冲击力。为了表现人物在这个宏大场景中的比例，我特意设计了火车上的两个角色，让观众能够直观地感受到环境的庞大规模。从初期草图的构思，到线稿的精确处理，再到最终的细节渲染，每一步都展示了不同的技术运用。</p>
                         `;
                         break;
@@ -475,13 +475,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             <h3>技术实现</h3>
                             <p>作品采用了多种技法和工具，包括数字绘画、3D辅助和概念设计方法。我特别关注光影处理、材质表现和空间构成，确保设计既具有视觉吸引力又符合实际功能需求。</p>
-                    `;
-                    break;
-                    
-                case '视觉开发':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/school/vis dev.jpg" alt="视觉开发" class="full-width-image">
+                        `;
+                        break;
+                        
+                    case '视觉开发':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/school/vis dev.jpg" alt="视觉开发" class="full-width-image">
                                 <div class="image-caption">视觉开发作品 1</div>
                             </div>
                             <div class="modal-image-container">
@@ -495,116 +495,116 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="modal-image-container">
                                 <img src="image/school/vis dev 5.jpg" alt="视觉开发 5" class="full-width-image">
                                 <div class="image-caption">视觉开发作品 4</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
                             <p>这是视觉开发课程的作业，要求选择一部电影，并为其设计一系列道具。</p>
-                        
-                        <h3>设计理念</h3>
+                            
+                            <h3>设计理念</h3>
                             <p>在这个项目中，我为选定的电影设计了多种不同的道具。最大的挑战是确保所有道具在风格上保持统一性，使它们看起来像是来自同一个世界观，符合电影的整体美学和氛围。</p>
-                        
-                        <h3>工作流程</h3>
+                            
+                            <h3>工作流程</h3>
                             <p>我首先分析了电影的视觉风格和色彩方案，然后设计了多个概念草图。通过反复修改和调整，确保每个道具既有独特性又与整体风格协调一致，最终呈现出一套风格统一的道具设计。</p>
-                    `;
-                    break;
-                    
-                case '艺术家':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/artist (1).png" alt="艺术家" class="full-width-image">
-                            <div class="image-caption">角色设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                        `;
+                        break;
+                        
+                    case '艺术家':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/artist (1).png" alt="艺术家" class="full-width-image">
+                                <div class="image-caption">角色设计</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>设计理念 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这是一个3D和人物练习项目，通过结合3D建模和数字绘画来创作一个完整的场景。</p>
-                        
-                        <h3>技术实现</h3>
+                            
+                            <h3>技术实现</h3>
                             <p>我首先使用3D软件建模制作了一个钢琴模型，然后将其导入到Photoshop中。在PS中进行了场景的细化处理，添加了人物形象，并通过光影和色彩的调整，营造出温暖而富有艺术感的氛围。</p>
-                    `;
-                    break;
-                    
+                        `;
+                        break;
+                        
                     case '未知新球':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
                                 <img src="image/personal/personal project.jpg" alt="未知新球" class="full-width-image">
                                 <div class="image-caption">未来科技概念场景</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
                             <p>这是一个未来科技概念场景设计项目，探索了一个神秘的未知星球。</p>
-                    `;
-                    break;
-                    
-                case '樱花村':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/sakura-villege.png" alt="樱花村" class="full-width-image">
-                            <div class="image-caption">环境概念设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                        `;
+                        break;
+                        
+                    case '樱花村':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/sakura-villege.png" alt="樱花村" class="full-width-image">
+                                <div class="image-caption">环境概念设计</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
-                        <p>这是我的个人环境概念设计项目，灵感来源于日本传统村落和樱花季节的美丽景色。</p>
+                            <p>这是我的个人环境概念设计项目，灵感来源于日本传统村落和樱花季节的美丽景色。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>我想通过这个作品捕捉樱花盛开时的宁静与梦幻，同时展现传统建筑与自然景观的和谐共存。柔和的色调和飘落的花瓣创造出一种超脱现实的氛围。</p>
+                            
+                            <h3>技术实现</h3>
+                            <p>这幅作品采用了数字绘画技术，特别注重光影效果和氛围营造。通过精细的笔触和层次感的处理，呈现出樱花飘落的动态美感和空间的深度。</p>
+                        `;
+                        break;
                         
-                        <h3>设计理念</h3>
-                        <p>我想通过这个作品捕捉樱花盛开时的宁静与梦幻，同时展现传统建筑与自然景观的和谐共存。柔和的色调和飘落的花瓣创造出一种超脱现实的氛围。</p>
+                    case '世界树':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/world tree.png" alt="世界树" class="full-width-image">
+                                <div class="image-caption">概念设计</div>
+                            </div>
+                        `;
                         
-                        <h3>技术实现</h3>
-                        <p>这幅作品采用了数字绘画技术，特别注重光影效果和氛围营造。通过精细的笔触和层次感的处理，呈现出樱花飘落的动态美感和空间的深度。</p>
-                    `;
-                    break;
-                    
-                case '世界树':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/world tree.png" alt="世界树" class="full-width-image">
-                            <div class="image-caption">概念设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
-                        <p>这是我的个人概念设计项目，探索世界树这一神话元素在现代视觉语言中的表达。</p>
-                        
-                        <h3>设计理念</h3>
+                            <p>这是我的个人概念设计项目，探索世界树这一神话元素在现代视觉语言中的表达。</p>
+                            
+                            <h3>设计理念</h3>
                             <p>世界树在许多文化中都是连接天地的象征。在这个作品中，我尝试将这一古老概念与魔法元素结合，创造出一个既神秘又宏大的视觉形象。</p>
+                            
+                            <h3>创作过程</h3>
+                            <p>从初期构思到最终呈现，我注重树木的生命力和神秘感的表达。通过特殊的光效和构图，强调了世界树的宏伟与超凡，同时保留了自然生长的有机感。</p>
+                        `;
+                        break;
                         
-                        <h3>创作过程</h3>
-                        <p>从初期构思到最终呈现，我注重树木的生命力和神秘感的表达。通过特殊的光效和构图，强调了世界树的宏伟与超凡，同时保留了自然生长的有机感。</p>
-                    `;
-                    break;
-                    
-                case '寺庙':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/寺庙草稿.jpg" alt="寺庙" class="full-width-image">
-                            <div class="image-caption">完成品</div>
-                        </div>
-                        <div class="modal-image-container">
-                            <img src="image/personal/na_shi-.jpg" alt="那时" class="full-width-image">
-                            <div class="image-caption">过程</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                    case '寺庙':
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <img src="image/personal/寺庙草稿.jpg" alt="寺庙" class="full-width-image">
+                                <div class="image-caption">完成品</div>
+                            </div>
+                            <div class="modal-image-container">
+                                <img src="image/personal/na_shi-.jpg" alt="那时" class="full-width-image">
+                                <div class="image-caption">过程</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
-                        <p>这是一个融合东方传统美学与现代数字技术的概念设计项目。灵感来源于中国古代寺庙建筑与自然景观的和谐统一。</p>
+                            <p>这是一个融合东方传统美学与现代数字技术的概念设计项目。灵感来源于中国古代寺庙建筑与自然景观的和谐统一。</p>
+                            
+                            <h3>创作过程</h3>
+                            <p>从初期草图到最终渲染，整个过程注重细节与氛围的营造。通过多层次的光影处理，展现出空间的深度与神秘感。</p>
+                            
+                            <h3>设计理念</h3>
+                            <p>想设计一个低角度视角(Low Angle Shot)来呈现这座荒废的寺庙，通过这种视角增强建筑的宏伟感和神秘氛围，同时展现岁月流逝的痕迹与自然侵蚀的美感。</p>
+                        `;
+                        break;
                         
-                        <h3>创作过程</h3>
-                        <p>从初期草图到最终渲染，整个过程注重细节与氛围的营造。通过多层次的光影处理，展现出空间的深度与神秘感。</p>
-                        
-                        <h3>设计理念</h3>
-                        <p>想设计一个低角度视角(Low Angle Shot)来呈现这座荒废的寺庙，通过这种视角增强建筑的宏伟感和神秘氛围，同时展现岁月流逝的痕迹与自然侵蚀的美感。</p>
-                    `;
-                    break;
-                    
                     case '废弃小镇':
                         modalGallery.innerHTML = `
                             <div class="modal-image-container">
@@ -645,31 +645,31 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         break;
                         
-                case '速写视频':
-                case '速写视频2':
-                    // 视频项目的处理
-                    const videoSrc = imgElement.getAttribute('src');
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <video src="${videoSrc}" controls autoplay muted class="full-width-image">
-                                您的浏览器不支持视频标签。
-                            </video>
-                            <div class="image-caption">创作过程视频</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
+                    case '速写视频':
+                    case '速写视频2':
+                        // 视频项目的处理
+                        const videoSrc = imgElement.getAttribute('src');
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                <video src="${videoSrc}" controls autoplay muted class="full-width-image">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                                <div class="image-caption">创作过程视频</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
                             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
-                        <p>这是我的速写创作过程记录，展示了从构思到完成的整个绘画流程。</p>
+                            <p>这是我的速写创作过程记录，展示了从构思到完成的整个绘画流程。</p>
+                            
+                            <h3>创作方法</h3>
+                            <p>视频记录了我的数字绘画过程，包括线稿绘制、基础上色、细节刻画和最终效果调整等阶段。</p>
+                            
+                            <h3>技术要点</h3>
+                            <p>在创作过程中，我运用了多种数字绘画技巧，包括图层管理、画笔技法和色彩调整等，展示了专业数字艺术工作流程。</p>
+                        `;
+                        break;
                         
-                        <h3>创作方法</h3>
-                        <p>视频记录了我的数字绘画过程，包括线稿绘制、基础上色、细节刻画和最终效果调整等阶段。</p>
-                        
-                        <h3>技术要点</h3>
-                        <p>在创作过程中，我运用了多种数字绘画技巧，包括图层管理、画笔技法和色彩调整等，展示了专业数字艺术工作流程。</p>
-                    `;
-                    break;
-                    
                     case '角色素描':
                         modalGallery.innerHTML = `
                             <div class="modal-image-container">
@@ -691,30 +691,30 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         break;
                         
-                default:
-                    // 默认情况下显示基本信息
-                    const imgSrc = isVideo ? imgElement.getAttribute('src') : imgElement.getAttribute('src');
-                    const mediaElement = isVideo ? 
-                        `<video src="${imgSrc}" controls autoplay muted class="full-width-image">
-                            您的浏览器不支持视频标签。
-                         </video>` : 
-                        `<img src="${imgSrc}" alt="${altText}" class="full-width-image">`;
-                    
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            ${mediaElement}
-                            <div class="image-caption">${overlayTitle}</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                        <h3>项目信息</h3>
-                        <p>${overlayTitle} - ${overlayCategory}</p>
+                    default:
+                        // 默认情况下显示基本信息
+                        const imgSrc = isVideo ? imgElement.getAttribute('src') : imgElement.getAttribute('src');
+                        const mediaElement = isVideo ? 
+                            `<video src="${imgSrc}" controls autoplay muted class="full-width-image">
+                                您的浏览器不支持视频标签。
+                             </video>` : 
+                            `<img src="${imgSrc}" alt="${altText}" class="full-width-image">`;
                         
-                        <h3>详细描述</h3>
-                        <p>这是我的${overlayCategory}作品，展示了我在${overlayTitle}方面的创作能力和技术水平。</p>
-                    `;
-                    break;
+                        modalGallery.innerHTML = `
+                            <div class="modal-image-container">
+                                ${mediaElement}
+                                <div class="image-caption">${overlayTitle}</div>
+                            </div>
+                        `;
+                        
+                        modalDescription.innerHTML = `
+                            <h3>项目信息</h3>
+                            <p>${overlayTitle} - ${overlayCategory}</p>
+                            
+                            <h3>详细描述</h3>
+                            <p>这是我的${overlayCategory}作品，展示了我在${overlayTitle}方面的创作能力和技术水平。</p>
+                        `;
+                        break;
                 }
             }
             
@@ -785,36 +785,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (portfolioSection) {
             const portfolioPosition = portfolioSection.getBoundingClientRect().top;
             const screenPosition = window.innerHeight * 0.7; // 当作品集部分进入视口的70%位置时
-        
-        // 获取樱花容器
+            
+            // 获取樱花容器
             const sakuraContainer = document.querySelector('.sakura-container');
             
             // 如果滚动到作品集部分，则淡出并最终移除樱花效果
             if (portfolioPosition < screenPosition) {
                 if (sakuraContainer && sakuraVisible) {
                     sakuraVisible = false;
-                sakuraContainer.style.opacity = '0';
-                
-                // 延迟后完全移除樱花容器
-                setTimeout(() => {
-                    // 清除定时器
-                    if (sakuraContainer && sakuraContainer.dataset.intervalId) {
-                        clearInterval(parseInt(sakuraContainer.dataset.intervalId));
-                    }
-                    // 移除容器
-                    if (sakuraContainer && sakuraContainer.parentNode) {
-                        sakuraContainer.remove();
-                    }
-                }, 1000);
-            }
-        } else {
+                    sakuraContainer.style.opacity = '0';
+                    
+                    // 延迟后完全移除樱花容器
+                    setTimeout(() => {
+                        // 清除定时器
+                        if (sakuraContainer && sakuraContainer.dataset.intervalId) {
+                            clearInterval(parseInt(sakuraContainer.dataset.intervalId));
+                        }
+                        // 移除容器
+                        if (sakuraContainer && sakuraContainer.parentNode) {
+                            sakuraContainer.remove();
+                        }
+                    }, 1000);
+                }
+            } else {
                 // 如果向上滚动离开作品集部分，且樱花容器不存在，则重新创建
                 if (!sakuraContainer && !sakuraVisible && isHomePage()) {
                     sakuraVisible = true;
-                // 重新创建樱花效果
+                    // 重新创建樱花效果
                     showCherryBlossoms();
+                }
             }
-        }
         }
         
         // ... existing scroll event code ...
@@ -2107,172 +2107,166 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 添加英文内容获取函数
     function getEnContent(key) {
-        const translations = {
-            // Navigation
-            'nav-home': 'Home',
-            'nav-about': 'About Me',
-            'nav-portfolio': 'Portfolio',
-            'nav-contact': 'Contact',
-            
-            // Main sections
-            'about-title': 'About Me',
-            'about-subtitle': 'Digital Artist & Concept Designer',
-            'about-description': 'I am a passionate digital artist and concept designer, dedicated to creating unique visual experiences through digital art and design.',
-            
-            // Portfolio section
-            'portfolio-title': 'Portfolio',
-            'portfolio-subtitle': 'My Works',
-            'portfolio-description': 'A collection of my digital artworks and concept designs, showcasing my creative journey and artistic vision.',
-            
-            // Contact section
-            'contact-title': 'Contact',
-            'contact-subtitle': 'Get in Touch',
-            'contact-description': 'Feel free to reach out to me for collaborations, inquiries, or just to say hello.',
-            'contact-name': 'Name',
-            'contact-email': 'Email',
-            'contact-message': 'Message',
-            'contact-send': 'Send Message',
-            
-            // Footer
-            'footer-copyright': '© 2024 Shijie Lin. All rights reserved.',
-            'footer-email': 'Email',
-            'footer-phone': 'Phone',
-            'footer-address': 'Address',
-            'footer-social': 'Social Media',
-            
-            // Project titles
-            'project-artist': 'Artist',
-            'project-unknown-sphere': 'Unknown Sphere',
-            'project-sakura': 'Sakura Village',
-            'project-world-tree': 'World Tree',
-            'project-temple': 'Temple',
-            'project-forest': 'Mysterious Forest',
-            
-            // Project descriptions
-            'project-artist-desc': 'Original character design exploring the fusion of traditional Asian aesthetics with contemporary digital art techniques.',
-            'project-unknown-sphere-desc': 'A futuristic concept scene that integrates advanced technology with natural environments.',
-            'project-sakura-desc': 'A traditional Japanese village scene during cherry blossom season, capturing the essence of cultural heritage.',
-            'project-world-tree-desc': 'A mythological World Tree concept that connects different realms through contemporary fantasy interpretation.',
-            'project-temple-desc': 'An architectural concept design exploring the intersection of traditional Eastern temple architecture and contemporary interpretation.',
-            'project-forest-desc': 'A mysterious forest environment concept that balances natural realism with ethereal elements.',
-            
-            // Modal content
-            'modal-close': 'Close',
-            'modal-switch-lang': 'Switch Language',
-            'modal-switch-zh': '中文',
-            'modal-switch-en': 'English',
-            'modal-back': 'Back to Home',
-            'modal-project-details': 'Project Details',
-            'modal-project-details-en': 'Project Details (English)',
-            'modal-switch-to-zh': 'Switch to Chinese Version',
-            'modal-switch-to-en': 'Switch to English Version',
-            
-            // Progress bars
-            'progress-digital-art': 'Digital Art',
-            'progress-concept-design': 'Concept Design',
-            'progress-illustration': 'Illustration',
-            'progress-3d-modeling': '3D Modeling',
-            
-            // Contact form
-            'contact-form-name': 'Your Name',
-            'contact-form-email': 'Your Email',
-            'contact-form-message': 'Your Message',
-            'contact-form-send': 'Send Message',
-            'contact-form-success': 'Message sent successfully!',
-            'contact-form-error': 'Failed to send message. Please try again.',
-            
-            // Social media
-            'social-weibo': 'Weibo',
-            'social-bilibili': 'Bilibili',
-            'social-artstation': 'ArtStation',
-            'social-email': 'Email',
-            
-            // Loading
-            'loading-text': 'Loading...',
-            
-            // Error messages
-            'error-loading': 'Error loading content',
-            'error-sending': 'Error sending message',
-            
-            // Success messages
-            'success-sending': 'Message sent successfully',
-            
-            // Placeholders
-            'placeholder-name': 'Enter your name',
-            'placeholder-email': 'Enter your email',
-            'placeholder-message': 'Enter your message',
-            
-            // Buttons
-            'button-send': 'Send',
-            'button-cancel': 'Cancel',
-            'button-close': 'Close',
-            'button-back': 'Back',
-            'button-next': 'Next',
-            'button-submit': 'Submit',
-            
-            // Modal content
-            'modal-content-artist': `
-                <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-                <p>This original character design project explores the fusion of traditional Asian aesthetics with contemporary digital art techniques. The work aims to create a character that embodies both cultural heritage and modern artistic expression, while maintaining a unique visual identity.</p>
-                
-                <h3>Design Philosophy</h3>
-                <p>The design approach focuses on creating a harmonious blend of classical elegance and modern expression. By incorporating traditional Asian design elements with contemporary digital art techniques, the character design seeks to bridge the gap between heritage and innovation. The goal is to create a character that feels both timeless and contemporary, while maintaining cultural authenticity.</p>
-                
-                <h3>Technical Implementation</h3>
-                <p>The artwork was created using advanced digital painting techniques, with particular attention to color harmonies and dynamic lighting. The character's design incorporates carefully researched traditional elements, while the rendering process emphasizes clean lines and sophisticated color transitions. Special focus was placed on creating a balanced composition that guides the viewer's attention through the character's key features and expressions.</p>
-            `,
-            'modal-content-unknown-sphere': `
-                <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-                <p>This futuristic concept scene explores the integration of advanced technology with natural environments. The project aims to create a vision of the future where technological advancement and natural preservation coexist in harmony, while maintaining a sense of wonder and exploration.</p>
-                
-                <h3>Design Philosophy</h3>
-                <p>The design approach focuses on creating a balanced relationship between technological elements and natural forms. By carefully integrating futuristic architectural elements with organic shapes and natural lighting, the scene creates a sense of harmony between human innovation and environmental preservation. The composition emphasizes the coexistence of artificial and natural elements, suggesting a future where technology enhances rather than replaces nature.</p>
-                
-                <h3>Technical Implementation</h3>
-                <p>The artwork was executed using advanced digital painting techniques, with particular emphasis on atmospheric perspective and volumetric lighting. The scene's depth was created through careful layering of environmental elements, while the lighting design emphasizes the interaction between natural and artificial light sources. Special attention was paid to creating convincing fog effects and maintaining visual coherence across different areas of the composition.</p>
-            `,
-            'modal-content-sakura': `
-                <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-                <p>This traditional Japanese village scene captures the essence of cultural heritage during cherry blossom season. The project aims to create an immersive environment that celebrates the beauty of traditional architecture and natural phenomena, while maintaining historical accuracy and cultural authenticity.</p>
-                
-                <h3>Design Philosophy</h3>
-                <p>The design approach focuses on creating a harmonious integration of traditional architecture with the natural landscape. By carefully considering the relationship between built structures and natural elements, the scene creates a sense of peaceful contemplation and cultural appreciation. The composition emphasizes the poetic interaction between human-made elements and natural beauty, particularly during the cherry blossom season.</p>
-                
-                <h3>Technical Implementation</h3>
-                <p>The artwork was created through extensive research into traditional Japanese architecture and cultural elements. The rendering process employed advanced digital painting techniques to capture the delicate interplay of light and shadow, while the color palette was carefully chosen to reflect the seasonal changes and atmospheric conditions. Special attention was paid to creating convincing architectural details and maintaining the authentic feel of the traditional village setting.</p>
-            `,
-            'modal-content-world-tree': `
-                <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-                <p>This mythological World Tree concept explores the universal symbol of connection between different realms. The project aims to create a contemporary interpretation of this ancient archetype, while maintaining its spiritual significance and universal appeal.</p>
-                
-                <h3>Design Philosophy</h3>
-                <p>The design approach synthesizes various mythological interpretations of the World Tree, creating a unique vision that bridges different cultural perspectives. By incorporating both physical and metaphysical elements, the design seeks to convey the tree's role as a bridge between worlds while maintaining its natural beauty and organic form.</p>
-                
-                <h3>Technical Implementation</h3>
-                <p>The artwork was created using advanced digital painting techniques, with particular emphasis on creating a sense of scale and ethereal quality. The tree's design incorporates carefully researched mythological elements, while the lighting design emphasizes its monumental presence and spiritual significance. Special attention was paid to creating a balanced composition that guides the viewer's attention through the tree's various levels and branches.</p>
-            `,
-            'modal-content-temple': `
-                <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
-                <p>This architectural concept design explores the intersection of traditional Eastern temple architecture and contemporary interpretation, focusing on creating a space that honors historical design principles while incorporating subtle modern elements. The project examines how sacred architecture can maintain its spiritual essence while adapting to contemporary aesthetic sensibilities.</p>
-                
-                <h3>Design Philosophy</h3>
-                <p>Drawing inspiration from both Chinese and Japanese architectural traditions, the temple design seeks to create a contemplative space that bridges past and present. The low-angle perspective was specifically chosen to emphasize the temple's monumentality while capturing the poetic interaction between architecture and natural elements. The design carefully balances traditional architectural elements with contemporary spatial concepts, creating a harmonious dialogue between heritage and innovation.</p>
-                
-                <h3>Technical Implementation</h3>
-                <p>The project required extensive research into traditional temple architecture, including studies of proportions, ornamental details, and construction methods. The rendering process employed advanced lighting techniques to capture both the physical presence of the structure and its spiritual atmosphere. Particular attention was paid to the weathering effects and natural patina, suggesting the passage of time while maintaining the temple's dignified presence. The color palette was deliberately restrained, using subtle variations in tone and texture to create depth and emphasize the interplay of light and shadow.</p>
-            `,
-            'modal-content-forest': `
-                <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2025</span></h3>
-                <p>This personal environment concept design explores the enchanting qualities of a mysterious forest, focusing on creating an atmosphere that balances natural realism with ethereal elements. The project aims to capture the forest's inherent mystery while maintaining botanical authenticity in its representation.</p>
-                
-                <h3>Design Philosophy</h3>
-                <p>The design approach focuses on creating a multi-layered environment where reality and mystery intertwine. By carefully orchestrating the interplay of light, vegetation, and atmospheric effects, the composition creates a space that feels both grounded in natural observation and elevated by artistic interpretation. The design emphasizes the forest's role as both a physical environment and a gateway to imagination.</p>
-                
-                <h3>Technical Implementation</h3>
-                <p>The artwork was executed using advanced digital painting techniques, with particular emphasis on creating convincing volumetric lighting through the forest canopy. Multiple layers of vegetation were carefully crafted to create depth and dimension, while atmospheric effects were meticulously developed to enhance the sense of mystery. The color palette was strategically chosen to support both the natural aspects of the forest and its mysterious qualities, with careful attention to the way light interacts with foliage, mist, and shadows at different depths within the scene.</p>
-            `
-        };
-        return translations[key] || key;
+        console.log("Getting English content for key:", key);
+        // 根据key返回对应的英文内容HTML
+        switch(key) {
+            case '艺术家':
+            case 'Artist':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This is an original character design project that explores unique artistic styles and character representation.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>This character embodies my artistic style, combining elegance with expressiveness. I aimed to create a character with a strong personality and visual impact, while keeping a sense of mystery and depth.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I utilized advanced digital painting techniques, focusing on color harmony, lighting, and detailed rendering. The character design process involved extensive research and multiple iterations to achieve the perfect balance between aesthetics and character storytelling.</p>
+                `;
+
+            case '未知新球':
+            case 'Unknown Sphere':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This is a futuristic concept scene exploring the interaction between technology and natural environments.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "Unknown Sphere" concept explores the mystery of advanced technology in natural settings. The design aims to create a sense of wonder and scientific curiosity through the contrast between the organic forest environment and the geometric, technological sphere.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I focused on creating a realistic lighting scenario with dramatic fog effects to enhance the mysterious atmosphere. The technical challenge involved balancing the organic forest elements with the hard-surface design of the sphere, while maintaining visual coherence through color harmony and atmospheric perspective.</p>
+                `;
+
+            case '樱花村':
+            case 'Sakura Village':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This environmental concept design depicts a traditional Japanese village during cherry blossom season.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "Sakura Village" concept explores the beauty of traditional Japanese architecture harmoniously integrated with the natural environment. I wanted to capture the tranquil and poetic atmosphere of a village during cherry blossom season, emphasizing the cultural significance and aesthetic value of such seasonal moments.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I carefully constructed the architectural elements following traditional Japanese design principles, while giving special attention to the lighting and atmospheric effects. The pink hues of the cherry blossoms were balanced with the earthy tones of the buildings, creating a harmonious color palette that enhances the emotional impact of the scene.</p>
+                `;
+
+            case '世界树':
+            case 'World Tree':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This concept design explores the mythological World Tree, blending magical elements with fantasy aesthetics.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "World Tree" concept is inspired by various mythologies where a cosmic tree connects different realms of existence. I aimed to create a design that feels both ancient and magical, emphasizing the tree's role as a bridge between worlds through its luminous features and imposing scale.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I employed advanced lighting techniques to create the ethereal glow emanating from the tree. The composition was carefully planned to emphasize the massive scale of the tree, while intricate details were added to convey its organic and magical nature. The color palette was chosen to enhance the mystical atmosphere of the scene.</p>
+                `;
+
+            case '寺庙':
+            case 'Temple':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This architectural concept design explores traditional Eastern temple architecture in a contemporary interpretation.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The temple design is inspired by traditional Eastern sacred architecture, particularly drawing from Chinese and Japanese aesthetic principles. I wanted to create a space that conveys spiritual tranquility while incorporating subtle contemporary design elements that respect the traditional forms.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>The design process involved extensive research on architectural proportions and decorative elements typical in temple construction. Particular attention was paid to the lighting design, using natural light sources to enhance the spatial quality and spiritual atmosphere of the temple. The color palette was deliberately restrained to evoke serenity and contemplation.</p>
+                `;
+
+            case '废弃小镇':
+            case 'Abandoned Town':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This is a personal environment concept design project, exploring the stories and emotions contained within abandoned urban spaces.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>Through this work, I wanted to express the aesthetics of time passing and traces of human activity. The abandoned buildings and gradually encroaching natural elements create a unique visual tension, prompting viewers to reflect on the past and future.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>During the creation process, I paid special attention to the treatment of light and shadow and the creation of atmosphere. Through detailed textures and careful rendering, I gave this abandoned space life and a sense of story. The choice of color tones was also carefully considered to enhance the emotional expression of the scene.</p>
+                `;
+
+            case '森林':
+            case 'Mysterious Forest':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2025</span></h3>
+                    <p>This is a personal environment concept design project, exploring the visual representation and atmosphere creation of a mysterious forest.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>Through this work, I wanted to express the mystery and vitality of nature. The dense vegetation, unique lighting, and treatment of fog together create a forest world that is both dreamlike and real, guiding viewers into a space full of imagination.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>During the creation process, I focused particularly on the effect of light penetrating through leaves and the expression of spatial layering. Through fine brushwork and color gradients, I created a deep yet vibrant forest atmosphere, allowing viewers to feel the mystery and tranquility of nature.</p>
+                `;
+
+            case '视觉开发全集':
+            case 'Visual Development Collection':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This project involves selecting a movie and designing a series of props, with the challenge of maintaining a unified style across all designs.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The key challenge in this project was ensuring stylistic unity across all props. Each item needed to appear as if it belonged to the same world view and aligned with the overall aesthetics of the chosen movie, while still maintaining its unique characteristics and purpose.</p>
+                    
+                    <h3>Workflow</h3>
+                    <p>The process involved analyzing the visual style of the selected movie, creating concept sketches, and ensuring each prop was both unique and cohesive with the overall design. This project demonstrates the ability to maintain consistent design language across multiple items while serving the narrative needs of a larger world-building context.</p>
+                `;
+
+            case '创意透视流程':
+            case 'Creative Perspective Process':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This project required the use of five-point perspective to create a cyberpunk world scene featuring two characters on a train.</p>
+                    
+                    <h3>Design Choice</h3>
+                    <p>I chose to create a dynamic scene of characters on a futuristic train in a cyberpunk city, utilizing five-point perspective to enhance the dramatic visual impact. This assignment challenged me to apply complex perspective techniques to create an immersive and visually compelling environment.</p>
+                    
+                    <h3>Technical Points</h3>
+                    <p>The project showcases the application of five-point curvilinear perspective, which is particularly effective for creating dramatic wide-angle views. The perspective technique helps create a sense of immersion and depth, while the character placement on the train adds narrative interest and scale reference to the scene. The process from initial sketch to final rendering demonstrates my methodical approach to complex illustration challenges.</p>
+                `;
+
+            case '角色素描':
+            case 'Character Sketches':
+                return `
+                    <h3>Character Sketch Study <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
+                    <p>This project showcases the sketching process for character design and action/expression studies. Through sketching, I deeply explored the character's appearance features and dynamic postures, laying the foundation for subsequent character creation.</p>
+                    
+                    <h3>Design Points</h3>
+                    <p>The project contains two main parts: overall character design and detailed action/expression studies. Through precise sketching of character proportions, clothing, and features, as well as exploration of various expressions and action postures, it comprehensively demonstrates the fundamental work of character design.</p>
+                `;
+
+            case 'Photoshop基础':
+            case 'Photoshop Fundamentals':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This course project focuses on mastering fundamental Photoshop techniques essential for digital painting and image editing.</p>
+                    
+                    <h3>Learning Objectives</h3>
+                    <p>The main goal was to develop proficiency in Photoshop's core tools and workflows, including layer management, masking, adjustment layers, and digital painting techniques. These skills form the foundation for more advanced digital art creation.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>The project involved practical exercises in color correction, compositing, and digital painting techniques. Special attention was given to understanding non-destructive workflows and efficient file organization methods that support professional-level digital art production.</p>
+                `;
+
+            case '猫咪日记':
+            case 'Cat Diary':
+                return `
+                    <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
+                    <p>This character design course project focuses on creating appealing animal characters with distinctive personalities and narrative potential.</p>
+                    
+                    <h3>Design Philosophy</h3>
+                    <p>The "Cat Diary" project explores the charming and diverse personalities of cats through stylized character design. I aimed to create characters that balance anthropomorphic qualities with authentic feline characteristics, resulting in relatable yet distinctly cat-like personalities.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>I focused on expressive line work and simplified forms to convey personality through posture and facial expressions. The character designs incorporate principles of appeal and readability, ensuring each cat has a distinct silhouette and instantly recognizable traits. The simplified style allows for efficient animation potential while maintaining character depth.</p>
+                `;
+
+            default:
+                console.log("No English content found for key:", key);
+                return null;
+        }
     }
 
     function getZhContent(key) {
@@ -2599,13 +2593,13 @@ const contentData = {
         `,
         en: `
             <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-            <p>This environmental concept design captures the essence of a traditional Japanese village during cherry blossom season, exploring the delicate relationship between architectural heritage and natural beauty. The project aims to create an immersive atmosphere that transports viewers into a world where time seems to stand still.</p>
+            <p>This environmental concept design depicts a traditional Japanese village during cherry blossom season.</p>
             
             <h3>Design Philosophy</h3>
-            <p>The "Sakura Village" concept delves deep into the harmonious integration of traditional Japanese architecture with the surrounding landscape. Each architectural element was carefully considered to reflect authentic building techniques while creating a composition that emphasizes the ephemeral beauty of cherry blossoms. The design seeks to evoke a sense of peaceful contemplation and cultural appreciation.</p>
+            <p>The "Sakura Village" concept explores the beauty of traditional Japanese architecture harmoniously integrated with the natural environment. I wanted to capture the tranquil and poetic atmosphere of a village during cherry blossom season, emphasizing the cultural significance and aesthetic value of such seasonal moments.</p>
             
             <h3>Technical Implementation</h3>
-            <p>The creation process involved extensive research into traditional Japanese architecture and the behavior of light through cherry blossom canopies. Advanced digital painting techniques were employed to capture the interplay of natural and architectural elements, with particular attention to atmospheric perspective and the subtle gradation of light. The color palette was meticulously crafted to balance the warm tones of traditional architecture with the delicate pink hues of cherry blossoms, creating a cohesive and emotionally resonant scene.</p>
+            <p>I carefully constructed the architectural elements following traditional Japanese design principles, while giving special attention to the lighting and atmospheric effects. The pink hues of the cherry blossoms were balanced with the earthy tones of the buildings, creating a harmonious color palette that enhances the emotional impact of the scene.</p>
         `
     },
     '世界树': {
@@ -2621,18 +2615,18 @@ const contentData = {
         `,
         en: `
             <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-            <p>This concept design explores the mythological World Tree, a universal symbol found in various cultures that connects different realms of existence. The project reimagines this ancient concept through a contemporary fantasy lens, incorporating elements of magic and natural wonder.</p>
+            <p>This concept design explores the mythological World Tree, blending magical elements with fantasy aesthetics.</p>
             
             <h3>Design Philosophy</h3>
-            <p>The World Tree design synthesizes various mythological interpretations while creating a unique visual identity. The massive scale and ethereal qualities of the tree were carefully balanced to convey both its physical presence and spiritual significance. Particular attention was paid to the integration of magical elements, suggesting the tree's role as a conduit between different realms of existence.</p>
+            <p>The "World Tree" concept is inspired by various mythologies where a cosmic tree connects different realms of existence. I aimed to create a design that feels both ancient and magical, emphasizing the tree's role as a bridge between worlds through its luminous features and imposing scale.</p>
             
             <h3>Technical Implementation</h3>
-            <p>The artwork was created using a combination of advanced digital painting techniques and custom brush development to achieve the desired ethereal effects. The lighting design was particularly challenging, requiring multiple layers to create the impression of inner luminescence while maintaining realistic environmental lighting. Careful attention was paid to the scale relationships between the tree and surrounding elements to emphasize its monumental presence, while intricate details in the bark texture and magical emanations add depth and visual interest at various viewing distances.</p>
+            <p>I employed advanced lighting techniques to create the ethereal glow emanating from the tree. The composition was carefully planned to emphasize the massive scale of the tree, while intricate details were added to convey its organic and magical nature. The color palette was chosen to enhance the mystical atmosphere of the scene.</p>
         `
     },
     '寺庙': {
         zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
             <p>这是一个建筑概念设计，探索传统东方寺庙建筑的当代诠释。</p>
             
             <h3>设计理念</h3>
@@ -2654,7 +2648,7 @@ const contentData = {
     },
     '废弃小镇': {
         zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
             <p>这是一个个人环境概念设计项目，探索废弃城市空间中的故事和情感。</p>
             
             <h3>设计理念</h3>
@@ -2676,7 +2670,7 @@ const contentData = {
     },
     '森林': {
         zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2025年</span></h3>
+            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2025</span></h3>
             <p>这是一个个人环境概念设计项目，探索神秘森林的视觉表现和氛围营造。</p>
             
             <h3>设计理念</h3>
@@ -2698,7 +2692,7 @@ const contentData = {
     },
     '视觉开发全集': {
         zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
             <p>这个项目涉及选择一部电影并设计一系列道具，挑战在于保持所有设计的统一风格。</p>
             
             <h3>设计理念</h3>
@@ -2720,7 +2714,7 @@ const contentData = {
     },
     '创意透视流程': {
         zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
             <p>这个项目要求使用五点透视来创建一个赛博朋克世界场景，包含火车上的两个角色。</p>
             
             <h3>设计选择</h3>
@@ -2742,7 +2736,7 @@ const contentData = {
     },
     '角色素描': {
         zh: `
-            <h3>角色素描研究 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
+            <h3>角色素描研究 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
             <p>这个项目展示了角色设计和动作/表情研究的素描过程。通过素描，我深入探索了角色的外观特征和动态姿势，为后续的角色创作奠定基础。</p>
             
             <h3>设计要点</h3>
@@ -2758,7 +2752,7 @@ const contentData = {
     },
     'Photoshop基础': {
         zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
             <p>这个课程项目专注于掌握数字绘画和图像编辑所需的基本Photoshop技术。</p>
             
             <h3>学习目标</h3>
@@ -2780,7 +2774,7 @@ const contentData = {
     },
     '猫咪日记': {
         zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023年</span></h3>
+            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2023</span></h3>
             <p>这个角色设计课程项目专注于创造具有独特个性和叙事潜力的可爱动物角色。</p>
             
             <h3>设计理念</h3>
@@ -2809,6 +2803,7 @@ const titleMap = {
     '樱花村': 'Sakura Village',
     '世界树': 'World Tree',
     '寺庙': 'Temple',
+    '废弃小镇': 'Abandoned Town',
     '森林': 'Mysterious Forest',
     '视觉开发全集': 'Visual Development Collection',
     '创意透视流程': 'Creative Perspective Process',
