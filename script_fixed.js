@@ -510,22 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                         break;
                         
-                    case '艺术家':
-                        modalGallery.innerHTML = `
-                            <div class="modal-image-container">
-                                <img src="image/personal/artist (1).png" alt="艺术家" class="full-width-image">
-                                <div class="image-caption">角色设计</div>
-                            </div>
-                        `;
-                        
-                        modalDescription.innerHTML = `
-                            <h3>设计理念 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
-                            <p>这是一个3D和人物练习项目，通过结合3D建模和数字绘画来创作一个完整的场景。</p>
-                            
-                            <h3>技术实现</h3>
-                            <p>我首先使用3D软件建模制作了一个钢琴模型，然后将其导入到Photoshop中。在PS中进行了场景的细化处理，添加了人物形象，并通过光影和色彩的调整，营造出温暖而富有艺术感的氛围。</p>
-                        `;
-                        break;
                         
                     case '未知新球':
                         modalGallery.innerHTML = `
@@ -1225,8 +1209,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'project-details': '项目详情',
             
             // 作品项目标题和描述
-            'artist-title': '艺术家',
-            'artist-desc': '原创角色设计',
             'unknown-sphere-title': '未知新球',
             'unknown-sphere-desc': '未来科技概念场景',
             'sakura-village-title': '樱花村',
@@ -1338,8 +1320,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'project-details': 'Project Details',
             
             // 作品项目标题和描述（英文）
-            'artist-title': 'Artist',
-            'artist-desc': 'Original Character Design',
             'unknown-sphere-title': 'Unknown Sphere',
             'unknown-sphere-desc': 'Futuristic Concept Scene',
             'sakura-village-title': 'Sakura Village',
@@ -2110,8 +2090,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Getting English content for key:", key);
         // 根据key返回对应的英文内容HTML
         switch(key) {
-            case '艺术家':
-            case 'Artist':
                 return `
                     <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
                     <p>This is an original character design project that explores unique artistic styles and character representation.</p>
@@ -2273,7 +2251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Getting Chinese content for key:", key);
         // 根据key返回对应的中文内容HTML
         switch(key) {
-            case '艺术家':
                 return `
                     <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
                     <p>这是一个原创角色设计项目，探索独特的艺术风格和角色表现。</p>
@@ -2536,7 +2513,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // 全局内容数据：中英文项目描述
 const contentData = {
     // 使用项目标题作为键名
-    '艺术家': {
         zh: `
             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
             <p>这是一个原创角色设计项目，探索独特的艺术风格和角色表现。</p>
@@ -2798,7 +2774,6 @@ const contentData = {
 
 // 英文标题映射
 const titleMap = {
-    '艺术家': 'Artist',
     '未知新球': 'Unknown Sphere',
     '樱花村': 'Sakura Village',
     '世界树': 'World Tree',

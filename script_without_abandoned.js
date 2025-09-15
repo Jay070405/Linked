@@ -1,4 +1,4 @@
-﻿/*
+/*
  * é¡¹ç›®è¯¦æƒ…è¯­è¨€åˆ‡æ¢åŠŸèƒ½
  * 
  * è¿™ä¸ªæ–‡ä»¶åŒ…å«äº†ä¸€ä¸ªæ–°çš„é¡¹ç›®è¯¦æƒ…æ¨¡æ€æ¡†çš„å®žçŽ°ï¼Œç¡®ä¿ä¸­è‹±æ–‡å†…å®¹èƒ½å¤Ÿæ­£ç¡®æ˜¾ç¤ºã€‚
@@ -1225,8 +1225,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'project-details': 'é¡¹ç›®è¯¦æƒ…',
             
             // ä½œå“é¡¹ç›®æ ‡é¢˜å’Œæè¿°
-            'artist-title': 'è‰ºæœ¯å®¶',
-            'artist-desc': 'åŽŸåˆ›è§’è‰²è®¾è®¡',
             'unknown-sphere-title': 'æœªçŸ¥æ–°çƒ',
             'unknown-sphere-desc': 'æœªæ¥ç§‘æŠ€æ¦‚å¿µåœºæ™¯',
             'sakura-village-title': 'æ¨±èŠ±æ‘',
@@ -1338,8 +1336,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'project-details': 'Project Details',
             
             // ä½œå“é¡¹ç›®æ ‡é¢˜å’Œæè¿°ï¼ˆè‹±æ–‡ï¼‰
-            'artist-title': 'Artist',
-            'artist-desc': 'Original Character Design',
             'unknown-sphere-title': 'Unknown Sphere',
             'unknown-sphere-desc': 'Futuristic Concept Scene',
             'sakura-village-title': 'Sakura Village',

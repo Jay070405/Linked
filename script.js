@@ -510,22 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     break;
                     
-                case '艺术家':
-                    modalGallery.innerHTML = `
-                        <div class="modal-image-container">
-                            <img src="image/personal/artist (1).png" alt="艺术家" class="full-width-image">
-                            <div class="image-caption">角色设计</div>
-                        </div>
-                    `;
-                    
-                    modalDescription.innerHTML = `
-                            <h3>设计理念 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024年</span></h3>
-                            <p>这是一个3D和人物练习项目，通过结合3D建模和数字绘画来创作一个完整的场景。</p>
-                        
-                        <h3>技术实现</h3>
-                            <p>我首先使用3D软件建模制作了一个钢琴模型，然后将其导入到Photoshop中。在PS中进行了场景的细化处理，添加了人物形象，并通过光影和色彩的调整，营造出温暖而富有艺术感的氛围。</p>
-                    `;
-                    break;
                     
                     case '未知新球':
                     modalGallery.innerHTML = `
@@ -642,9 +626,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             <h3>技术实现</h3>
                             <p>在创作过程中，我特别关注光线穿透树叶的效果和空间层次感的表现。通过精细的笔触和色彩渐变，营造出深邃而又充满活力的森林氛围，让观者能够感受到自然的神秘与宁静。</p>
-                        `;
-                        break;
-                        
+                    `;
+                    break;
+                    
                 case '速写视频':
                 case '速写视频2':
                     // 视频项目的处理
@@ -688,9 +672,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             <h3>设计要点</h3>
                             <p>项目包含两个主要部分：角色整体设计和动作表情细节研究。通过对角色比例、服装和特征的精确素描，以及对各种表情和动作姿态的探索，全面展示了角色设计的基础工作。</p>
-                        `;
-                        break;
-                        
+                    `;
+                    break;
+                    
                 default:
                     // 默认情况下显示基本信息
                     const imgSrc = isVideo ? imgElement.getAttribute('src') : imgElement.getAttribute('src');
@@ -1225,8 +1209,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'project-details': '项目详情',
             
             // 作品项目标题和描述
-            'artist-title': '艺术家',
-            'artist-desc': '原创角色设计',
             'unknown-sphere-title': '未知新球',
             'unknown-sphere-desc': '未来科技概念场景',
             'sakura-village-title': '樱花村',
@@ -1338,8 +1320,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'project-details': 'Project Details',
             
             // 作品项目标题和描述（英文）
-            'artist-title': 'Artist',
-            'artist-desc': 'Original Character Design',
             'unknown-sphere-title': 'Unknown Sphere',
             'unknown-sphere-desc': 'Futuristic Concept Scene',
             'sakura-village-title': 'Sakura Village',
@@ -2141,7 +2121,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'footer-social': 'Social Media',
             
             // Project titles
-            'project-artist': 'Artist',
             'project-unknown-sphere': 'Unknown Sphere',
             'project-sakura': 'Sakura Village',
             'project-world-tree': 'World Tree',
@@ -2149,7 +2128,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'project-forest': 'Mysterious Forest',
             
             // Project descriptions
-            'project-artist-desc': 'Original character design exploring the fusion of traditional Asian aesthetics with contemporary digital art techniques.',
             'project-unknown-sphere-desc': 'A futuristic concept scene that integrates advanced technology with natural environments.',
             'project-sakura-desc': 'A traditional Japanese village scene during cherry blossom season, capturing the essence of cultural heritage.',
             'project-world-tree-desc': 'A mythological World Tree concept that connects different realms through contemporary fantasy interpretation.',
@@ -2211,16 +2189,6 @@ document.addEventListener('DOMContentLoaded', () => {
             'button-submit': 'Submit',
             
             // Modal content
-            'modal-content-artist': `
-                <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-                <p>This original character design project explores the fusion of traditional Asian aesthetics with contemporary digital art techniques. The work aims to create a character that embodies both cultural heritage and modern artistic expression, while maintaining a unique visual identity.</p>
-                
-                <h3>Design Philosophy</h3>
-                <p>The design approach focuses on creating a harmonious blend of classical elegance and modern expression. By incorporating traditional Asian design elements with contemporary digital art techniques, the character design seeks to bridge the gap between heritage and innovation. The goal is to create a character that feels both timeless and contemporary, while maintaining cultural authenticity.</p>
-                
-                <h3>Technical Implementation</h3>
-                <p>The artwork was created using advanced digital painting techniques, with particular attention to color harmonies and dynamic lighting. The character's design incorporates carefully researched traditional elements, while the rendering process emphasizes clean lines and sophisticated color transitions. Special focus was placed on creating a balanced composition that guides the viewer's attention through the character's key features and expressions.</p>
-            `,
             'modal-content-unknown-sphere': `
                 <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
                 <p>This futuristic concept scene explores the integration of advanced technology with natural environments. The project aims to create a vision of the future where technological advancement and natural preservation coexist in harmony, while maintaining a sense of wonder and exploration.</p>
@@ -2279,17 +2247,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Getting Chinese content for key:", key);
         // 根据key返回对应的中文内容HTML
         switch(key) {
-            case '艺术家':
-                return `
-                    <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-                    <p>这是一个原创角色设计项目，探索独特的艺术风格和角色表现。</p>
-                    
-                    <h3>设计理念</h3>
-                    <p>这个角色体现了我的艺术风格，将优雅与表现力相结合。我旨在创造一个具有强烈个性和视觉冲击力的角色，同时保持神秘感和深度。</p>
-                    
-                    <h3>技术实现</h3>
-                    <p>我运用了先进的数字绘画技术，注重色彩和谐、光影和细节渲染。角色设计过程涉及广泛的研究和多次迭代，以达到美学和角色叙事的完美平衡。</p>
-                `;
 
             case '未知新球':
                 return `
@@ -2542,28 +2499,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // 全局内容数据：中英文项目描述
 const contentData = {
     // 使用项目标题作为键名
-    '艺术家': {
-        zh: `
-            <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-            <p>这是一个原创角色设计项目，探索独特的艺术风格和角色表现。</p>
-            
-            <h3>设计理念</h3>
-            <p>这个角色体现了我的艺术风格，将优雅与表现力相结合。我旨在创造一个具有强烈个性和视觉冲击力的角色，同时保持神秘感和深度。</p>
-            
-            <h3>技术实现</h3>
-            <p>我运用了先进的数字绘画技术，注重色彩和谐、光影和细节渲染。角色设计过程涉及广泛的研究和多次迭代，以达到美学和角色叙事的完美平衡。</p>
-        `,
-        en: `
-            <h3>Project Background <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
-            <p>This is an original character design project that explores unique artistic styles and character representation.</p>
-            
-            <h3>Design Philosophy</h3>
-            <p>This character embodies my artistic style, combining elegance with expressiveness. I aimed to create a character with a strong personality and visual impact, while keeping a sense of mystery and depth.</p>
-            
-            <h3>Technical Implementation</h3>
-            <p>I utilized advanced digital painting techniques, focusing on color harmony, lighting, and detailed rendering. The character design process involved extensive research and multiple iterations to achieve the perfect balance between aesthetics and character storytelling.</p>
-        `
-    },
     '未知新球': {
         zh: `
             <h3>项目背景 <span style="font-size: 0.9rem; font-weight: normal; color: #888;">2024</span></h3>
@@ -2804,7 +2739,6 @@ const contentData = {
 
 // 英文标题映射
 const titleMap = {
-    '艺术家': 'Artist',
     '未知新球': 'Unknown Sphere',
     '樱花村': 'Sakura Village',
     '世界树': 'World Tree',
