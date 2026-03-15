@@ -47,15 +47,14 @@ const SheetTrigger = React.forwardRef<
   React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
 >(({ className, asChild, onClick, children, ...props }, ref) => {
   const { onOpenChange } = useSheet()
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     onOpenChange(true)
     onClick?.(e)
   }
   if (asChild && React.isValidElement(children)) {
-    const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>
+    const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void }>
     return React.cloneElement(child, {
-      ref: ref as React.Ref<HTMLButtonElement>,
-      onClick: (e: React.MouseEvent) => {
+      onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
         handleClick(e)
         child.props?.onClick?.(e)
       },
