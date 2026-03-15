@@ -45,7 +45,7 @@ export function Nav() {
         </Link>
         <nav className="hidden sm:block">{navLinks}</nav>
         <Sheet open={open} onOpenChange={setOpen} side="right">
-          <SheetTrigger asChild className="sm:hidden">
+          <SheetTrigger className="sm:hidden">
             <Button variant="ghost" size="icon" aria-label="打开菜单">
               <Menu className="h-5 w-5" />
             </Button>
