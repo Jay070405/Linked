@@ -1,5 +1,5 @@
 ---
-description: "Production-grade engineering standards: step-by-step reasoning, complete implementations (no placeholders), minimal targeted changes, root cause debugging, proper error handling, and maintainable code. Apply when writing, editing, debugging, or refactoring any code."
+description: 
 alwaysApply: true
 ---
 
