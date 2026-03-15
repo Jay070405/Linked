@@ -44,20 +44,33 @@ function Sheet({ open = false, onOpenChange, side = "right", children }: SheetPr
 
 const SheetTrigger = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, onClick, ...props }, ref) => {
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
+>(({ className, asChild, onClick, children, ...props }, ref) => {
   const { onOpenChange } = useSheet()
+  const handleClick = (e: React.MouseEvent) => {
+    onOpenChange(true)
+    onClick?.(e)
+  }
+  if (asChild && React.isValidElement(children)) {
+    const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>
+    return React.cloneElement(child, {
+      ref: ref as React.Ref<HTMLButtonElement>,
+      onClick: (e: React.MouseEvent) => {
+        handleClick(e)
+        child.props?.onClick?.(e)
+      },
+    })
+  }
   return (
     <button
       ref={ref}
       type="button"
       className={cn(className)}
-      onClick={(e) => {
-        onOpenChange(true)
-        onClick?.(e)
-      }}
+      onClick={handleClick}
       {...props}
-    />
+    >
+      {children}
+    </button>
   )
 })
 SheetTrigger.displayName = "SheetTrigger"
