@@ -8,8 +8,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600&family=Syne:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
+  <!-- GSAP: 动画引擎 + 滚动触发 -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 </head>
 <body>
+  <div class="noise-overlay" aria-hidden="true"></div>
   <nav class="nav" id="nav">
     <div class="nav-container container">
       <a href="index.html" class="nav-logo">Shijie Lin</a>
@@ -24,18 +28,41 @@
   </nav>
 
   <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <h1>Shijie Lin</h1>
-        <p class="hero-tagline">视觉开发与概念艺术 · Visual Development & Concept Art</p>
-        <div class="hero-actions">
-          <a href="portfolio.html" class="btn btn-primary">查看作品集</a>
-          <a href="resume/简历 中文.pdf" class="btn btn-secondary" download>简历 (中文)</a>
-          <a href="resume/简历 _1_ (1).pdf" class="btn btn-secondary" download>Resume (EN)</a>
+    <section class="hero hero-3d" id="hero-3d">
+      <div class="hero-parallax-scene" aria-hidden="true">
+        <!-- 可选：将生成的 hero-bg-atmosphere.png 放到 image/ 下即可启用 -->
+        <div class="parallax-layer parallax-layer-img" data-depth="0.12"></div>
+        <div class="parallax-layer parallax-layer-bg" data-depth="0.15"></div>
+        <div class="parallax-layer parallax-layer-mid" data-depth="0.08">
+          <div class="hero-glow hero-glow-1"></div>
+          <div class="hero-glow hero-glow-2"></div>
+        </div>
+        <div class="hero-shapes" aria-hidden="true">
+          <svg class="hero-shapes-svg" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0"/><stop offset="50%" stop-color="var(--accent)" stop-opacity="0.15"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="2" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <path class="hero-line hero-line-1" d="M0 400 Q300 200 600 400 T1200 400" stroke="url(#lineGrad)" stroke-width="1" stroke-dasharray="8 12"/>
+            <path class="hero-line hero-line-2" d="M0 500 Q400 300 800 500 T1600 500" stroke="url(#lineGrad)" stroke-width="1" stroke-dasharray="6 10"/>
+            <circle class="hero-dot hero-dot-1" cx="200" cy="200" r="2" fill="var(--accent)" opacity="0.4"/>
+            <circle class="hero-dot hero-dot-2" cx="1000" cy="150" r="1.5" fill="var(--accent)" opacity="0.35"/>
+            <circle class="hero-dot hero-dot-3" cx="150" cy="600" r="1" fill="var(--accent)" opacity="0.3"/>
+            <circle class="hero-dot hero-dot-4" cx="950" cy="650" r="2" fill="var(--accent)" opacity="0.25"/>
+          </svg>
         </div>
       </div>
-      <div class="hero-showcase">
-        <div class="parallax-wrap" data-parallax="0.25">
+      <div class="container hero-inner">
+        <h1 class="hero-title" id="hero-title">Shijie Lin</h1>
+        <p class="hero-tagline hero-tagline-gsap">视觉开发与概念艺术 · Visual Development & Concept Art</p>
+        <div class="hero-actions">
+          <a href="portfolio.html" class="btn btn-primary btn-micro btn-magnetic">查看作品集</a>
+          <a href="resume/简历 中文.pdf" class="btn btn-secondary btn-micro btn-magnetic" download>简历 (中文)</a>
+          <a href="resume/简历 _1_ (1).pdf" class="btn btn-secondary btn-micro btn-magnetic" download>Resume (EN)</a>
+        </div>
+      </div>
+      <div class="hero-showcase parallax-wrap-3d" data-parallax="0.25" data-tilt-layer id="hero-showcase">
+        <div class="hero-showcase-inner">
           <img src="image/personal/world tree.png" alt="Work showcase">
         </div>
       </div>
@@ -49,5 +76,6 @@
   </main>
 
   <script src="js/main.js"></script>
+  <script src="js/gsap-hero.js"></script>
 </body>
 </html>
