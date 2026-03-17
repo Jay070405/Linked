@@ -5,7 +5,6 @@ export const personal: PortfolioItem[] = [
   { src: "/image/personal/sakura-villege.png", alt: "Sakura Village", type: "image" },
   { src: "/image/personal/world tree.png", alt: "World Tree", type: "image" },
   { src: "/image/personal/artist (1).png", alt: "Artist", type: "image" },
-  { src: "/image/personal/na_shi-.jpg", alt: "Na Shi", type: "image" },
   { src: "/image/personal/shijie-lin-screenshot-2024-04-05-184805.jpg", alt: "Work", type: "image" },
   { src: "/image/personal/shijie-lin-screenshot-2024-04-05-184825.jpg", alt: "Work", type: "image" },
   { src: "/image/personal/Screenshot 2025-02-11 114214.png", alt: "Screenshot", type: "image" },
