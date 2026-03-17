@@ -1,0 +1,473 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 240 10% 2%;
+    --bg-elevated: 240 8% 5%;
+    --bg-card: 240 7% 7%;
+    --fg: 40 8% 90%;
+    --fg-muted: 240 4% 45%;
+    --fg-subtle: 240 4% 25%;
+    --accent: 38 50% 61%;
+    --border: 240 8% 12%;
+    --glow: 38 60% 55%;
+    --radius: 0.375rem;
+  }
+
+  body {
+    @apply text-fg antialiased;
+    overflow-x: hidden;
+    cursor: none;
+    background: linear-gradient(
+      180deg,
+      hsl(240 12% 4%) 0%,
+      hsl(240 10% 3%) 50%,
+      hsl(240 8% 2.5%) 100%
+    );
+  }
+
+  ::selection {
+    background-color: hsl(var(--accent) / 0.3);
+    color: hsl(var(--fg));
+  }
+
+  section[id] {
+    scroll-margin-top: 80px;
+  }
+
+  a, button, [data-cursor-hover] {
+    cursor: none;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   Grid Backgrounds
+   ══════════════════════════════════════════════ */
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.bg-grid-masked {
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 10%, transparent 70%);
+  mask-image: radial-gradient(ellipse at 50% 40%, black 10%, transparent 70%);
+}
+
+.hero-3d-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+  will-change: auto;
+}
+
+.works-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ══════════════════════════════════════════════
+   Section background — gradient + grid (no pure black)
+   ══════════════════════════════════════════════ */
+
+.section-bg {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    hsl(240 12% 4%) 0%,
+    hsl(240 10% 3%) 50%,
+    hsl(240 8% 2.5%) 100%
+  );
+}
+
+.section-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════
+   Film-grain noise overlay (GPU-optimized)
+   ══════════════════════════════════════════════ */
+
+.film-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.022;
+  contain: strict;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  transform: translateZ(0);
+}
+
+/* ══════════════════════════════════════════════
+   Vignette
+   ══════════════════════════════════════════════ */
+
+.vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 30%, hsl(240 8% 2.5%) 100%);
+}
+
+/* ══════════════════════════════════════════════
+   3D Section Title Text
+   ══════════════════════════════════════════════ */
+
+.text-3d {
+  color: transparent;
+  -webkit-text-stroke: 0.8px rgba(255, 255, 255, 0.025);
+  position: relative;
+}
+
+.text-3d-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.text-3d-layer:nth-child(1) {
+  color: transparent;
+  -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.015);
+  transform: translate(1.5px, 1.5px);
+}
+
+.text-3d-layer:nth-child(2) {
+  color: transparent;
+  -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.008);
+  transform: translate(3px, 3px);
+}
+
+.text-3d-layer:nth-child(3) {
+  color: transparent;
+  -webkit-text-stroke: 0.4px rgba(255, 255, 255, 0.004);
+  transform: translate(4.5px, 4.5px);
+}
+
+/* ══════════════════════════════════════════════
+   Liquid / Blob Animations
+   ══════════════════════════════════════════════ */
+
+@keyframes blob-morph-1 {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: translate(20px, -30px) scale(1.05);
+  }
+  50% {
+    border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%;
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  75% {
+    border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%;
+    transform: translate(10px, -10px) scale(1.02);
+  }
+}
+
+@keyframes blob-morph-2 {
+  0%, 100% {
+    border-radius: 40% 60% 60% 40% / 40% 60% 40% 60%;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: translate(-30px, 20px) scale(1.08) rotate(3deg);
+  }
+  66% {
+    border-radius: 50% 50% 40% 60% / 30% 70% 30% 70%;
+    transform: translate(20px, -20px) scale(0.92) rotate(-2deg);
+  }
+}
+
+@keyframes blob-morph-3 {
+  0%, 100% {
+    border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  20% {
+    border-radius: 70% 30% 50% 50% / 30% 70% 50% 50%;
+    transform: translate(15px, -25px) scale(1.06) rotate(2deg);
+  }
+  40% {
+    border-radius: 40% 60% 70% 30% / 60% 40% 30% 70%;
+    transform: translate(-25px, 10px) scale(0.94) rotate(-3deg);
+  }
+  60% {
+    border-radius: 60% 40% 40% 60% / 40% 60% 60% 40%;
+    transform: translate(10px, 20px) scale(1.03) rotate(1deg);
+  }
+  80% {
+    border-radius: 30% 70% 60% 40% / 70% 30% 40% 60%;
+    transform: translate(-10px, -15px) scale(0.97) rotate(-1deg);
+  }
+}
+
+.animate-blob-1 {
+  animation: blob-morph-1 14s ease-in-out infinite;
+  will-change: border-radius, transform;
+}
+
+.animate-blob-2 {
+  animation: blob-morph-2 18s ease-in-out infinite;
+  will-change: border-radius, transform;
+}
+
+.animate-blob-3 {
+  animation: blob-morph-3 22s ease-in-out infinite;
+  will-change: border-radius, transform;
+}
+
+/* ══════════════════════════════════════════════
+   Gradient Flow Animation
+   ══════════════════════════════════════════════ */
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-flow {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════
+   Glow pulse
+   ══════════════════════════════════════════════ */
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 6s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════
+   Float animation
+   ══════════════════════════════════════════════ */
+
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════
+   3D Carousel Cards — ALCHE-style glass/reflective
+   ══════════════════════════════════════════════ */
+
+.carousel-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 12px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(120, 140, 200, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+    0 0 80px -20px rgba(100, 120, 180, 0.08);
+  cursor: none;
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+  will-change: transform;
+}
+
+.carousel-card-inner:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(140, 160, 220, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 0 100px -15px rgba(100, 120, 180, 0.12),
+    0 0 60px -15px rgba(180, 160, 100, 0.06);
+}
+
+.carousel-card-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.04) 42%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 58%,
+    transparent 65%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.carousel-card-inner:hover .carousel-card-shine {
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════════
+   Sparkle animation
+   ══════════════════════════════════════════════ */
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle 3.5s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════
+   3D Skill Tags — Hover lift effect
+   ══════════════════════════════════════════════ */
+
+.skill-tag-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, color 0.4s ease, background 0.4s ease;
+}
+
+.skill-tag-3d:hover {
+  transform: perspective(400px) translateZ(10px) rotateX(-3deg);
+  box-shadow: 0 8px 25px -5px hsl(var(--glow) / 0.12);
+}
+
+/* ══════════════════════════════════════════════
+   3D Skill Cards
+   ══════════════════════════════════════════════ */
+
+.skill-card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease, background 0.5s ease;
+}
+
+.skill-card-3d:hover {
+  transform: perspective(600px) translateZ(8px) rotateX(-2deg) rotateY(2deg);
+  box-shadow: 0 12px 30px -8px hsl(var(--glow) / 0.1);
+}
+
+/* ══════════════════════════════════════════════
+   3D Contact Button
+   ══════════════════════════════════════════════ */
+
+.contact-btn-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+}
+
+.contact-btn-3d:hover {
+  transform: perspective(500px) translateZ(12px) rotateX(-2deg);
+  box-shadow:
+    0 12px 40px -8px hsl(var(--glow) / 0.2),
+    0 0 60px -15px hsl(var(--glow) / 0.1);
+}
+
+/* ══════════════════════════════════════════════
+   Custom scrollbar
+   ══════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--bg));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--fg-subtle));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--fg-muted));
+}
+
+/* ══════════════════════════════════════════════
+   Custom cursor — hide on touch/mobile
+   ══════════════════════════════════════════════ */
+
+@media (pointer: coarse) {
+  body {
+    cursor: auto !important;
+  }
+  a, button, [data-cursor-hover] {
+    cursor: auto !important;
+  }
+  .custom-cursor,
+  .custom-cursor-glow {
+    display: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   Section edge blending
+   ══════════════════════════════════════════════ */
+
+.section-edge-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, hsl(240 8% 2.5%), transparent);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.section-edge-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to top, hsl(240 8% 2.5%), transparent);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ══════════════════════════════════════════════
+   Reduced motion
+   ══════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
