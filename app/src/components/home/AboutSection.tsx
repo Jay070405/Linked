@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import Link from "next/link"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger"
+import ScrollReveal from "@/components/ScrollReveal"
 
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -95,9 +96,16 @@ export function AboutSection() {
         </p>
 
         {/* Statement */}
-        <h2 className="ab-reveal font-heading text-2xl md:text-3xl lg:text-4xl tracking-[0.04em] text-fg leading-[1.25] mb-10">
+        <ScrollReveal
+          baseOpacity={0.08}
+          baseRotation={2}
+          blurStrength={3}
+          enableBlur={true}
+          containerClassName="ab-reveal-skip mb-10"
+          textClassName="font-heading text-2xl md:text-3xl lg:text-4xl tracking-[0.04em] text-fg leading-[1.25]"
+        >
           I craft worlds that exist between imagination and reality.
-        </h2>
+        </ScrollReveal>
 
         {/* Body text — editorial, generous whitespace */}
         <div className="ab-reveal space-y-6 mb-14">
