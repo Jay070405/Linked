@@ -17,6 +17,7 @@ export function LogoSkillsTransition() {
   const cnRef = useRef<HTMLParagraphElement>(null)
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([])
   const zoomOverlayRef = useRef<HTMLDivElement>(null)
+  const apertureRef = useRef<HTMLDivElement>(null)
 
   const [scrollProgress, setScrollProgress] = useState(0)
 
@@ -140,6 +141,26 @@ export function LogoSkillsTransition() {
         { opacity: 1, duration: 0.10, ease: "power2.inOut" },
         0.90
       )
+
+      // Aperture mask — opens from center, gentle start accelerating end
+      const apertureEl = apertureRef.current
+      if (apertureEl) {
+        tl.fromTo(
+          { radius: 0 },
+          {
+            radius: 120,
+            duration: 0.08,
+            ease: "power2.in",
+            onUpdate: function (this: gsap.core.Tween) {
+              const r = (this.targets()[0] as { radius: number }).radius
+              const grad = `radial-gradient(circle, transparent ${r}%, black ${r + 8}%)`
+              apertureEl.style.maskImage = grad
+              apertureEl.style.webkitMaskImage = grad
+            },
+          },
+          0.90
+        )
+      }
     }, sectionRef)
 
     return () => ctx.revert()
@@ -207,6 +228,17 @@ export function LogoSkillsTransition() {
           {SKILLS_CN}
         </p>
       </div>
+
+      {/* Aperture reveal mask — opens from center */}
+      <div
+        ref={apertureRef}
+        className="absolute inset-0 z-[28] pointer-events-none"
+        style={{
+          background: "hsl(240 10% 2%)",
+          maskImage: "radial-gradient(circle, transparent 0%, black 0%)",
+          WebkitMaskImage: "radial-gradient(circle, transparent 0%, black 0%)",
+        }}
+      />
 
       {/* Exit overlay */}
       <div
