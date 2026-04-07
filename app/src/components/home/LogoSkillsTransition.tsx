@@ -75,7 +75,7 @@ export function LogoSkillsTransition() {
         0
       )
 
-      // Phase 1 (0 – 0.15): Logo scales in
+      // Phase 1 (0.00–0.15): Logo scales in
       tl.fromTo(
         canvasWrapRef.current,
         { opacity: 0, scale: 0.6 },
@@ -83,7 +83,7 @@ export function LogoSkillsTransition() {
         0
       )
 
-      // Phase 2 (0.15 – 0.45): Typewriter "SKILLS" text reveal
+      // Phase 2 (0.15–0.40): Typewriter "SKILLS" text reveal
       tl.fromTo(
         titleWrapRef.current,
         { opacity: 0 },
@@ -105,38 +105,40 @@ export function LogoSkillsTransition() {
         subtitleRef.current,
         { opacity: 0, y: 18 },
         { opacity: 0.6, y: 0, duration: 0.06, ease: "power2.out" },
-        0.38
+        0.34
       )
 
       tl.fromTo(
         cnRef.current,
         { opacity: 0, y: 12 },
         { opacity: 0.4, y: 0, duration: 0.05, ease: "power2.out" },
-        0.42
+        0.38
       )
 
-      // Phase 3 (0.45 – 0.62): Hold — text + logo visible
+      // Phase 3 (0.40–0.58): Hold — text + logo visible, calm breathing
 
-      // Phase 4 (0.62 – 0.78): Fade out text, logo explodes via scrollProgress
+      // Phase 4 (0.58–0.72): Fade out text
       tl.to(
         [subtitleRef.current, cnRef.current],
-        { opacity: 0, y: -20, duration: 0.04, ease: "power2.in" },
-        0.62
+        { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" },
+        0.58
       )
 
       letterRefs.current.forEach((letter) => {
         if (!letter) return
-        tl.to(letter, { opacity: 0, duration: 0.03, ease: "power2.in" }, 0.64)
+        tl.to(letter, { opacity: 0, duration: 0.04, ease: "power2.in" }, 0.62)
       })
 
-      tl.to(titleWrapRef.current, { opacity: 0, duration: 0.03 }, 0.66)
+      tl.to(titleWrapRef.current, { opacity: 0, duration: 0.04 }, 0.66)
 
-      // Dark overlay — logo explosion handles its own fade via particle alpha
+      // Phase 5 (0.64–0.92): Particle explosion — driven by scrollProgress in p5 sketch
+
+      // Phase 6 (0.88–1.00): Dark overlay fades in
       tl.fromTo(
         zoomOverlayRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 0.12, ease: "power2.inOut" },
-        0.78
+        { opacity: 1, duration: 0.10, ease: "power2.inOut" },
+        0.90
       )
     }, sectionRef)
 
