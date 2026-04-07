@@ -93,7 +93,12 @@ const ScrollReveal = ({
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Only kill ScrollTriggers owned by this component's element
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.trigger === el || el.contains(trigger.trigger)) {
+          trigger.kill();
+        }
+      });
     };
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
 
