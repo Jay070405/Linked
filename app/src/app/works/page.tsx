@@ -104,22 +104,26 @@ export default function WorksPage() {
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
           <aside className="lg:w-52 shrink-0 lg:sticky lg:top-28 lg:self-start">
             <nav className="flex flex-wrap lg:flex-col gap-1">
-              {categories.map(({ key, label }) => {
-                const count = getCategoryCount(key)
-                if (count === 0 && key !== "all") return null
+              {categories.map((cat) => {
+                const count = getCategoryCount(cat.key)
+                if (count === 0 && cat.key !== "all") return null
+                const isActive = activeFilter === cat.key
                 return (
                   <button
-                    key={key}
-                    onClick={() => setActiveFilter(key)}
+                    key={cat.key}
+                    onClick={() => setActiveFilter(cat.key)}
                     className={cn(
-                      "text-left text-sm tracking-[0.04em] px-2 py-1.5 rounded-sm transition-all duration-300",
-                      activeFilter === key
-                        ? "text-fg font-medium"
-                        : "text-fg-muted hover:text-fg/80"
+                      "relative px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] font-mono transition-all duration-300",
+                      isActive
+                        ? "text-fg bg-white/[0.06] rounded-sm"
+                        : "text-fg-muted/50 hover:text-fg-muted"
                     )}
                   >
-                    {label}{" "}
-                    <span className="text-[10px] text-fg-subtle ml-1">
+                    {cat.label}
+                    <span className={cn(
+                      "ml-1.5 text-[9px] transition-opacity duration-300",
+                      isActive ? "text-fg-muted" : "text-fg-subtle/30"
+                    )}>
                       [{count}]
                     </span>
                   </button>
@@ -158,6 +162,28 @@ export default function WorksPage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                     <div className="absolute inset-0 border border-white/0 rounded-sm transition-all duration-500 group-hover:border-white/[0.08]" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-sm">
+                      {(work.role || work.tools?.length || work.mood?.length) ? (
+                        <>
+                          {work.role && (
+                            <p className="text-[10px] tracking-[0.15em] text-white/70 mb-1.5">{work.role}</p>
+                          )}
+                          <div className="flex flex-wrap gap-1">
+                            {work.tools?.map((tool) => (
+                              <span key={tool} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 border border-white/10 rounded-sm text-white/50 font-mono">{tool}</span>
+                            ))}
+                            {work.mood?.map((m) => (
+                              <span key={m} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 bg-white/[0.06] rounded-sm text-white/40 font-mono">{m}</span>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm tracking-[0.02em] text-white/90 font-heading">{work.title}</p>
+                          <p className="text-[10px] tracking-[0.15em] text-white/50 mt-1">{work.category}</p>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </BorderGlow>
 
