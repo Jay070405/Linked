@@ -2,123 +2,149 @@
 
 import { useEffect, useRef } from "react"
 import Link from "next/link"
-
-const statement =
-  "I craft worlds that exist between imagination and reality."
-
-const images = [
-  { src: "/image/personal/sakura-villege.png", alt: "Sakura Village" },
-  { src: "/image/personal/artist%20(1).png", alt: "Self Portrait" },
-  { src: "/image/personal/world%20tree.png", alt: "World Tree" },
-  { src: "/image/personal/%E5%AF%BA%E5%BA%99%E8%8D%89%E7%A8%BF.jpg", alt: "Temple Sketch" },
-]
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger"
 
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const mouseRef = useRef({ x: 0, y: 0, tx: 0, ty: 0 })
-  const rafRef = useRef(0)
 
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mouseRef.current.tx = (e.clientX / window.innerWidth) * 2 - 1
-      mouseRef.current.ty = (e.clientY / window.innerHeight) * 2 - 1
-    }
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
-    const tick = () => {
-      const m = mouseRef.current
-      m.x = lerp(m.x, m.tx, 0.04)
-      m.y = lerp(m.y, m.ty, 0.04)
+    gsap.registerPlugin(ScrollTrigger)
 
-      const cards = sectionRef.current?.querySelectorAll(".ab-img") as NodeListOf<HTMLElement> | undefined
-      cards?.forEach((card, i) => {
-        const d = [1, 0.6, 0.8, 0.5][i] || 0.7
-        card.style.transform = `translate(${m.x * 12 * d}px, ${m.y * 8 * d}px) perspective(600px) rotateY(${m.x * 4 * d}deg) rotateX(${m.y * -3 * d}deg)`
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (prefersReduced) return
+
+    const ctx = gsap.context(() => {
+      const reveals = sectionRef.current?.querySelectorAll(".ab-reveal")
+      if (!reveals?.length) return
+
+      reveals.forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 28 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: i * 0.06,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        )
       })
+    }, sectionRef)
 
-      rafRef.current = requestAnimationFrame(tick)
-    }
-    window.addEventListener("mousemove", onMove, { passive: true })
-    rafRef.current = requestAnimationFrame(tick)
-
-    return () => {
-      window.removeEventListener("mousemove", onMove)
-      cancelAnimationFrame(rafRef.current)
-    }
+    return () => ctx.revert()
   }, [])
 
   return (
     <section
-      id="about"
+      id="practice"
       ref={sectionRef}
-      className="relative py-28 md:py-40 overflow-hidden"
+      className="relative py-32 md:py-44 overflow-hidden"
       style={{ zIndex: 30, position: "relative" }}
     >
+      {/* Quiet section background */}
       <div className="absolute inset-0 section-bg" />
-      {/* Top gradient edge — blends with CinematicTransition above */}
       <div className="section-edge-top" />
-      {/* Bottom gradient edge — blends with Contact below */}
-      <div className="section-edge-bottom" />
 
-      {/* Ambient blobs */}
-      <div className="absolute top-[25%] left-[5%] w-[35vw] h-[35vw] max-w-[450px] max-h-[450px] rounded-full animate-blob-2 pointer-events-none" style={{ background: "radial-gradient(circle, hsl(38 50% 61% / 0.04), transparent 70%)" }} />
-      <div className="absolute bottom-[15%] right-[8%] w-[28vw] h-[28vw] max-w-[350px] max-h-[350px] rounded-full animate-blob-3 pointer-events-none" style={{ background: "radial-gradient(circle, hsl(260 30% 50% / 0.03), transparent 70%)" }} />
+      {/* Atmospheric curved loop — background layer */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.08]">
+        <svg
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%]"
+          viewBox="0 0 1000 600"
+          fill="none"
+        >
+          <path
+            d="M-50,300 Q250,100 500,300 T1050,300"
+            stroke="rgba(255,255,255,0.3)"
+            strokeWidth="0.5"
+            fill="none"
+          >
+            <animate
+              attributeName="d"
+              values="M-50,300 Q250,100 500,300 T1050,300;M-50,300 Q250,500 500,300 T1050,300;M-50,300 Q250,100 500,300 T1050,300"
+              dur="20s"
+              repeatCount="indefinite"
+            />
+          </path>
+          <path
+            d="M-50,320 Q300,150 550,320 T1050,320"
+            stroke="rgba(255,255,255,0.2)"
+            strokeWidth="0.5"
+            fill="none"
+          >
+            <animate
+              attributeName="d"
+              values="M-50,320 Q300,150 550,320 T1050,320;M-50,320 Q300,480 550,320 T1050,320;M-50,320 Q300,150 550,320 T1050,320"
+              dur="25s"
+              repeatCount="indefinite"
+            />
+          </path>
+        </svg>
+      </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Layout: left text + right mosaic */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
-          {/* Left: Text */}
-          <div>
-            <p className="text-[10px] font-medium uppercase tracking-[0.45em] text-accent mb-8">
-              About
-            </p>
+      <div className="relative z-10 mx-auto max-w-[860px] px-6 lg:px-10">
+        {/* Label */}
+        <p className="ab-reveal text-[10px] font-medium uppercase tracking-[0.45em] text-accent/70 mb-10">
+          Philosophy & Practice
+        </p>
 
-            <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl tracking-[0.06em] text-fg leading-[1.15] mb-8">
-              {statement}
-            </h2>
+        {/* Statement */}
+        <h2 className="ab-reveal font-heading text-2xl md:text-3xl lg:text-4xl tracking-[0.04em] text-fg leading-[1.25] mb-10">
+          I craft worlds that exist between imagination and reality.
+        </h2>
 
-            <p className="text-sm md:text-base leading-[1.8] text-fg-muted mb-6 max-w-lg">
-              Specializing in fantasy worldbuilding, environment design, and cinematic illustration.
-              My work spans concept art, visual development, and narrative-driven imagery.
-            </p>
+        {/* Body text — editorial, generous whitespace */}
+        <div className="ab-reveal space-y-6 mb-14">
+          <p className="text-[0.95rem] md:text-base leading-[1.85] text-fg-muted max-w-[640px]">
+            Specializing in fantasy worldbuilding, environment design, and cinematic illustration.
+            My work spans concept art, visual development, and narrative-driven imagery — each piece
+            a fragment of a larger story.
+          </p>
+          <p className="text-[0.95rem] md:text-base leading-[1.85] text-fg-muted max-w-[640px]">
+            I draw from Eastern and Western mythology, architectural history, and the natural world.
+            The best concept art makes you feel like you&apos;ve been to a place you can&apos;t quite remember.
+          </p>
+        </div>
 
-            <p className="text-sm md:text-base leading-[1.8] text-fg-muted mb-10 max-w-lg">
-              Currently focused on building immersive visual worlds through digital painting,
-              3D exploration, and cross-media visual development.
-            </p>
-
-            <Link
-              href="/about"
-              className="group inline-flex items-center gap-3 border border-white/[0.1] rounded-sm px-6 py-3.5 text-xs tracking-[0.2em] text-fg-muted transition-all duration-500 hover:border-accent/30 hover:text-fg hover:shadow-[0_0_30px_-8px_hsl(var(--glow)/0.15)] hover:-translate-y-0.5"
+        {/* Approach — quiet cards */}
+        <div className="ab-reveal grid grid-cols-1 md:grid-cols-2 gap-6 mb-14">
+          {[
+            { label: "Narrative First", text: "Every environment tells a story. I start with emotion and narrative purpose." },
+            { label: "World Logic", text: "Believable worlds need internal consistency — from geology to architecture to light." },
+            { label: "Mood & Atmosphere", text: "Color, light, and composition establish the emotional tone that draws viewers in." },
+            { label: "Cross-Media", text: "I work across 2D painting, 3D blockout, and photo-bashing to serve each piece." },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="border border-white/[0.04] rounded-sm p-5 transition-all duration-500 hover:border-white/[0.08]"
             >
-              LEARN MORE
-              <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-            </Link>
-          </div>
-
-          {/* Right: Image mosaic */}
-          <div className="relative" style={{ perspective: "800px" }}>
-            <div className="grid grid-cols-2 gap-3 md:gap-4">
-              <div className="ab-img col-span-2 relative overflow-hidden rounded-sm border border-white/[0.06] shadow-[0_8px_40px_rgba(0,0,0,0.5)]" style={{ transformStyle: "preserve-3d", willChange: "transform" }}>
-                <img src={images[0].src} alt={images[0].alt} className="w-full h-[220px] md:h-[280px] object-cover" loading="lazy" draggable={false} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-              </div>
-
-              <div className="ab-img relative overflow-hidden rounded-sm border border-white/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.4)]" style={{ transformStyle: "preserve-3d", willChange: "transform" }}>
-                <img src={images[1].src} alt={images[1].alt} className="w-full h-[180px] md:h-[220px] object-cover" loading="lazy" draggable={false} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-              </div>
-
-              <div className="ab-img relative overflow-hidden rounded-sm border border-white/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.4)]" style={{ transformStyle: "preserve-3d", willChange: "transform" }}>
-                <img src={images[2].src} alt={images[2].alt} className="w-full h-[180px] md:h-[220px] object-cover" loading="lazy" draggable={false} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-              </div>
-
-              <div className="ab-img col-span-2 relative overflow-hidden rounded-sm border border-white/[0.06] shadow-[0_8px_40px_rgba(0,0,0,0.5)]" style={{ transformStyle: "preserve-3d", willChange: "transform" }}>
-                <img src={images[3].src} alt={images[3].alt} className="w-full h-[160px] md:h-[200px] object-cover object-top" loading="lazy" draggable={false} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-              </div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-accent/60 mb-2">
+                {item.label}
+              </p>
+              <p className="text-sm leading-[1.7] text-fg-muted">
+                {item.text}
+              </p>
             </div>
-          </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="ab-reveal">
+          <Link
+            href="/about"
+            className="group inline-flex items-center gap-3 border border-white/[0.08] rounded-sm px-6 py-3.5 text-xs tracking-[0.2em] text-fg-muted transition-all duration-500 hover:border-accent/30 hover:text-fg hover:-translate-y-0.5"
+          >
+            LEARN MORE
+            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+              &rarr;
+            </span>
+          </Link>
         </div>
       </div>
     </section>
