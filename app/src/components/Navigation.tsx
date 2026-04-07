@@ -1,50 +1,60 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import gsap from "gsap"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/components/LanguageProvider"
+import { NavBrandMorph } from "@/components/home/NavBrandMorph"
 
-const navLinks = [
-  { href: "/works", label: "Works", isPage: true },
-  { href: "/about", label: "About", isPage: true },
-  { href: "#resume", label: "Skills", isPage: false },
-]
+const navLabels = {
+  en: {
+    works: "Works",
+    practice: "Practice",
+    about: "About",
+    contact: "Contact",
+    menu: "Menu",
+    close: "Close",
+  },
+  zh: {
+    works: "\u4f5c\u54c1",
+    practice: "\u7ec3\u4e60",
+    about: "\u5173\u4e8e",
+    contact: "\u8054\u7cfb",
+    menu: "\u83dc\u5355",
+    close: "\u5173\u95ed",
+  },
+} as const
 
-const sectionIds = ["hero", "works", "about", "resume", "contact"]
-const sectionLabels: Record<string, string> = {
-  hero: "TOP",
-  works: "WORKS",
-  about: "ABOUT",
-  resume: "RESUME",
-  contact: "CONTACT",
+interface NavigationProps {
+  brandMorphProgress?: number
 }
 
-export function Navigation() {
+export function Navigation({ brandMorphProgress = 0 }: NavigationProps) {
+  const { language, setLanguage } = useLanguage()
+  const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
-  const [currentSection, setCurrentSection] = useState("hero")
   const [mobileOpen, setMobileOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
+  const labels = navLabels[language]
+  const onHome = pathname === "/"
+  const effectiveBrandProgress = onHome ? brandMorphProgress : 1
 
-  const detectSection = useCallback(() => {
-    const threshold = window.innerHeight / 3
-    for (let i = sectionIds.length - 1; i >= 0; i--) {
-      const el = document.getElementById(sectionIds[i])
-      if (!el) continue
-      if (el.getBoundingClientRect().top <= threshold) {
-        setCurrentSection(sectionIds[i])
-        break
-      }
-    }
-  }, [])
+  const links = [
+    { href: "#works", label: labels.works, forceHome: true },
+    { href: "#practice", label: labels.practice, forceHome: true },
+    { href: "/about", label: labels.about, isPage: true },
+    { href: "#contact", label: labels.contact, forceHome: true },
+  ]
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 60)
-      detectSection()
-    }
+    const onScroll = () => setScrolled(window.scrollY > 18)
+
     window.addEventListener("scroll", onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener("scroll", onScroll)
-  }, [detectSection])
+  }, [])
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : ""
@@ -53,135 +63,214 @@ export function Navigation() {
     }
   }, [mobileOpen])
 
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (!headerRef.current || prefersReduced) return
+
+    gsap.fromTo(
+      headerRef.current,
+      { autoAlpha: 0, y: -18 },
+      { autoAlpha: 1, y: 0, duration: 0.72, ease: "power2.out" }
+    )
+  }, [])
+
+  const desktopLinkClass = scrolled || !onHome
+    ? "text-white/70 after:bg-white/60 hover:text-white"
+    : "text-white/64 after:bg-white/48 hover:text-white"
+
   return (
     <>
       <header
+        ref={headerRef}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-700",
+          "fixed inset-x-0 top-0 z-[90] transition-all duration-500",
           scrolled
-            ? "bg-bg/80 backdrop-blur-2xl border-b border-white/[0.04]"
+            ? "border-b border-white/10 bg-[rgba(3,3,3,0.72)] shadow-[0_24px_70px_rgba(0,0,0,0.48)] backdrop-blur-2xl"
             : "bg-transparent"
         )}
       >
-        <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-6 lg:px-10">
-          <a
-            href="#hero"
-            className="font-heading text-sm tracking-[0.25em] text-fg/90 transition-opacity duration-300 hover:opacity-60"
+        <div className="mx-auto flex h-[78px] max-w-[1640px] items-center justify-between px-5 md:px-10 xl:px-14">
+          <Link
+            href="/"
+            className="group relative flex h-11 min-w-0 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            aria-label="Jay Lin homepage"
           >
-            SHIJIE LIN
-          </a>
+            <NavBrandMorph
+              progress={effectiveBrandProgress}
+              className="relative h-11 w-[220px] md:w-[240px]"
+            />
+          </Link>
 
-          {/* Centered nav */}
-          <nav className="hidden md:block absolute left-1/2 -translate-x-1/2">
-            <ul className="flex items-center gap-10">
-              {navLinks.map(({ href, label, isPage }) => (
-                <li key={href}>
-                  {isPage ? (
-                    <Link
-                      href={href}
-                      className={cn(
-                        "relative text-[11px] font-medium tracking-[0.2em] text-fg-muted",
-                        "transition-colors duration-300 hover:text-fg",
-                        currentSection === "works" && "text-fg"
+          <div className="hidden items-center gap-8 md:flex">
+            <nav aria-label="Primary">
+              <ul className="flex items-center gap-7 lg:gap-9">
+                {links.map(({ href, label, isPage, forceHome }) => {
+                  const resolvedHref =
+                    !isPage && forceHome && pathname !== "/" ? `/${href}` : href
+
+                  return (
+                    <li key={href}>
+                      {isPage ? (
+                        <Link
+                          href={href}
+                          className={cn(
+                            "relative px-4 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 group",
+                            desktopLinkClass
+                          )}
+                        >
+                          <span className="relative z-10">{label}</span>
+                          <span className="absolute inset-0 rounded-md bg-white/[0.04] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300" />
+                        </Link>
+                      ) : (
+                        <a
+                          href={resolvedHref}
+                          className={cn(
+                            "relative px-4 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 group",
+                            desktopLinkClass
+                          )}
+                        >
+                          <span className="relative z-10">{label}</span>
+                          <span className="absolute inset-0 rounded-md bg-white/[0.04] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300" />
+                        </a>
                       )}
-                    >
-                      {label}
-                    </Link>
-                  ) : (
-                    <a
-                      href={href}
-                      className={cn(
-                        "relative text-[11px] font-medium tracking-[0.2em] text-fg-muted",
-                        "transition-colors duration-300 hover:text-fg",
-                        currentSection === href.slice(1) && "text-fg"
-                      )}
-                    >
-                      {label}
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav>
+                    </li>
+                  )
+                })}
+              </ul>
+            </nav>
 
-          {/* Contact button — top right */}
-          <a
-            href="#contact"
-            className="hidden md:flex items-center text-[11px] font-medium tracking-[0.15em] text-fg/80 border border-white/[0.12] rounded-full px-5 py-2 transition-all duration-300 hover:border-white/[0.25] hover:text-fg"
-          >
-            Contact
-          </a>
+            <div className="inline-flex items-center rounded-full border border-white/12 bg-white/[0.04] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-[0.64rem] font-medium uppercase tracking-[0.22em] transition-all duration-300",
+                  language === "en"
+                    ? "bg-white text-black"
+                    : "text-white/60 hover:text-white"
+                )}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("zh")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-[0.64rem] font-medium tracking-[0.18em] transition-all duration-300",
+                  language === "zh"
+                    ? "bg-white text-black"
+                    : "text-white/60 hover:text-white"
+                )}
+              >
+                {"\u4e2d\u6587"}
+              </button>
+            </div>
+          </div>
 
-          {/* Mobile toggle */}
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="relative z-50 flex h-8 w-8 flex-col items-center justify-center gap-[5px] md:hidden"
-            aria-label="Toggle menu"
+            type="button"
+            aria-label={mobileOpen ? labels.close : labels.menu}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((open) => !open)}
+            className="relative z-50 flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black md:hidden"
           >
-            <span
-              className={cn(
-                "block h-px w-5 bg-fg transition-all duration-500",
-                mobileOpen && "translate-y-[6px] rotate-45"
-              )}
-            />
-            <span
-              className={cn(
-                "block h-px w-5 bg-fg transition-all duration-500",
-                mobileOpen && "opacity-0"
-              )}
-            />
-            <span
-              className={cn(
-                "block h-px w-5 bg-fg transition-all duration-500",
-                mobileOpen && "-translate-y-[6px] -rotate-45"
-              )}
-            />
+            <span className="relative h-4 w-5">
+              <span
+                className={cn(
+                  "absolute left-0 top-0 block h-px w-5 bg-current transition-[transform,top] duration-300",
+                  mobileOpen && "top-[7px] rotate-45"
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute left-0 top-[7px] block h-px w-5 bg-current transition-opacity duration-300",
+                  mobileOpen && "opacity-0"
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute left-0 top-[14px] block h-px w-5 bg-current transition-[transform,top] duration-300",
+                  mobileOpen && "top-[7px] -rotate-45"
+                )}
+              />
+            </span>
           </button>
         </div>
       </header>
 
-      {/* Left section indicator */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex items-center">
-        <span
-          className="text-[9px] font-medium tracking-[0.35em] text-fg-subtle/60 uppercase"
-          style={{ writingMode: "vertical-rl" }}
-        >
-          {sectionLabels[currentSection]}
-        </span>
-      </div>
-
-      {/* Mobile overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-40 flex flex-col items-center justify-center bg-bg/[0.97] backdrop-blur-3xl transition-all duration-700 md:hidden",
-          mobileOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+          "fixed inset-0 z-[80] bg-[rgba(2,2,2,0.96)] backdrop-blur-2xl transition-[opacity,visibility] duration-500 md:hidden",
+          mobileOpen ? "visible opacity-100" : "invisible opacity-0"
         )}
       >
-        <nav className="flex flex-col items-center gap-10">
-          {[...navLinks, { href: "#contact", label: "Contact", isPage: false }].map(
-            ({ href, label, isPage }) =>
-              isPage ? (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-heading text-2xl tracking-[0.3em] text-fg-muted transition-colors duration-300 hover:text-fg"
-                >
-                  {label}
-                </Link>
-              ) : (
-                <a
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-heading text-2xl tracking-[0.3em] text-fg-muted transition-colors duration-300 hover:text-fg"
-                >
-                  {label}
-                </a>
-              )
-          )}
+        <nav className="flex min-h-screen flex-col justify-between px-6 pb-10 pt-24">
+          <div>
+            <NavBrandMorph
+              progress={effectiveBrandProgress}
+              className="relative mb-12 h-10 w-[180px]"
+            />
+
+            <div className="space-y-7">
+              {links.map(({ href, label, isPage, forceHome }) => {
+                const resolvedHref =
+                  !isPage && forceHome && pathname !== "/" ? `/${href}` : href
+
+                return isPage ? (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block w-fit font-heading text-[2.1rem] tracking-[-0.02em] text-white transition-all duration-300 hover:translate-x-1 hover:opacity-70"
+                  >
+                    {label}
+                  </Link>
+                ) : (
+                  <a
+                    key={href}
+                    href={resolvedHref}
+                    onClick={() => setMobileOpen(false)}
+                    className="block w-fit font-heading text-[2.1rem] tracking-[-0.02em] text-white transition-all duration-300 hover:translate-x-1 hover:opacity-70"
+                  >
+                    {label}
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-6 border-t border-white/10 pt-6">
+            <div className="inline-flex items-center rounded-full border border-white/12 bg-white/[0.04] p-1">
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.22em] transition-all duration-300",
+                  language === "en"
+                    ? "bg-white text-black"
+                    : "text-white/60 hover:text-white"
+                )}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("zh")}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-[0.7rem] font-medium tracking-[0.2em] transition-all duration-300",
+                  language === "zh"
+                    ? "bg-white text-black"
+                    : "text-white/60 hover:text-white"
+                )}
+              >
+                {"\u4e2d\u6587"}
+              </button>
+            </div>
+
+            <p className="max-w-[18rem] text-[0.72rem] uppercase tracking-[0.28em] text-white/42">
+              Visual Development Artist / Concept Artist
+            </p>
+          </div>
         </nav>
       </div>
     </>
