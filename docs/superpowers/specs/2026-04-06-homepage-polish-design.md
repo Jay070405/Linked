@@ -75,6 +75,10 @@ const explosionT = clamp((scrollProgress - EXPLODE_START) / (EXPLODE_END - EXPLO
 
 The next section appears before the particle flow completes. The transition lacks a cinematic release.
 
+### Which transition this addresses
+
+The original complaint ("整个粒子效果的流程还没完成，workpage 就出来了") refers to the **LogoSkillsTransition → CinematicTransition** handoff — the particle explosion completing before the next content appears. The current homepage order is Hero → WorksShowcase → LogoSkillsTransition → CinematicTransition, so WorksShowcase is *before* the particle section, not after it. The "too early" complaint is about particles being cut short by what follows them (CinematicTransition), not about WorksShowcase appearing too soon after Hero. If the Hero → Works entry timing also needs adjustment, that is a separate issue not covered here.
+
 ### Files
 
 - `app/src/components/home/LogoSkillsTransition.tsx`
@@ -132,7 +136,7 @@ Registry-first, manual fallback. Install one component at a time via `npx shadcn
 - **Apply to:** `WorksShowcase.tsx` cards, `/works` grid images, `/works/[slug]` hero image
 - Glow color: use work's `glow` value, clamp toward white/gray if too saturated
 - Glow sits on card edges, never covers artwork
-- Card radius stays at current values
+- **Radius policy:** Homepage spiral cards (`WorksShowcase`) may keep their current radius if the 3D card treatment depends on it. `/works` grid and `/works/[slug]` detail pages should use a tighter radius (~6–8px) so the glow reads as a restrained editorial accent, not a UI component demo.
 - **Fallback:** CSS `box-shadow` animation + pseudo-element edge glow
 
 ### 3c. CardNav → Navigation
@@ -146,7 +150,8 @@ Registry-first, manual fallback. Install one component at a time via `npx shadcn
 
 - Apply to headline text: "BETWEEN IMAGINATION AND REALITY," and "I BUILD WORLDS."
 - Makes typography feel dimensional/glass-like, not liquid blobs
-- Keeps existing GSAP pinned timing
+- **DOM/animation refactor required:** The current headline nodes (`lineOneRef`, `lineTwoRef`) are already animated by GSAP with blur/opacity/y/letter-spacing across the pinned timeline. FluidGlass cannot simply wrap these nodes — it will either need to own the text rendering (with GSAP driving FluidGlass props instead of direct DOM transforms) or sit as a visual layer behind/around the text while GSAP continues to animate the text nodes directly. Evaluate which approach is cleaner after inspecting the FluidGlass API. This is a small refactor, not a drop-in.
+- Keeps existing GSAP pinned timing and scroll behavior
 - **Fallback:** CSS `backdrop-filter`, subtle refraction distortion, layered transparency
 
 ### 3e. CurvedLoop → AboutSection Background
@@ -184,7 +189,9 @@ All optional. Existing items without fields work unchanged. Populate a few showc
 ### 4b. Works List Page (`/works`)
 
 - **Filter bar:** Animated count transitions, active category gets subtle highlight
-- **Card hover:** Metadata panel slides from bottom showing role + tools + mood as compact pills
+- **Card hover — two tiers:**
+  - **With metadata** (role/tools/mood populated): Panel slides from bottom showing role + tools + mood as compact pills
+  - **Without metadata** (fields missing): Lighter treatment — image brightens slightly, title + category shown in a simple overlay. No empty metadata panel.
 - **Grid entrance:** ScrollReveal stagger on cards (or existing GSAP if ScrollReveal doesn't integrate)
 
 ### 4c. Work Detail Page (`/works/[slug]`)
