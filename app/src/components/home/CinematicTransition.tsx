@@ -180,11 +180,22 @@ export function CinematicTransition() {
         />
       </div>
 
+      {/* Glass refraction layer behind typography */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div
+          className="w-[80vw] max-w-[900px] h-[30vh] rounded-full opacity-[0.03]"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(255,255,255,0.12) 0%, transparent 70%)",
+            filter: "blur(40px)",
+          }}
+        />
+      </div>
+
       {/* Typography */}
       <div
         ref={contentWrapRef}
         className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
-        style={{ opacity: 0, transform: "scale(0.96)", filter: "blur(4px)" }}
+        style={{ opacity: 0, transform: "scale(0.96)", filter: "blur(4px)", backdropFilter: "blur(1px) brightness(1.02)" }}
       >
         <p
           ref={lineOneRef}
