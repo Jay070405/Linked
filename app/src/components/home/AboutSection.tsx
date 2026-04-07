@@ -97,6 +97,7 @@ export function AboutSection() {
 
         {/* Statement */}
         <ScrollReveal
+          scrollContainerRef={null}
           baseOpacity={0.08}
           baseRotation={2}
           blurStrength={3}

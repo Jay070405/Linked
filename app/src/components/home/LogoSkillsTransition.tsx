@@ -145,14 +145,15 @@ export function LogoSkillsTransition() {
       // Aperture mask — opens from center, gentle start accelerating end
       const apertureEl = apertureRef.current
       if (apertureEl) {
-        tl.fromTo(
-          { radius: 0 },
+        const apertureProxy = { radius: 0 }
+        tl.to(
+          apertureProxy,
           {
             radius: 120,
             duration: 0.08,
             ease: "power2.in",
-            onUpdate: function (this: gsap.core.Tween) {
-              const r = (this.targets()[0] as { radius: number }).radius
+            onUpdate: () => {
+              const r = apertureProxy.radius
               const grad = `radial-gradient(circle, transparent ${r}%, black ${r + 8}%)`
               apertureEl.style.maskImage = grad
               apertureEl.style.webkitMaskImage = grad
