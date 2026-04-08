@@ -147,8 +147,8 @@ export function createLogoSkillsSketch(
       const parallaxY = ((mouseY - h / 2) / h) * PARALLAX_STRENGTH
 
       // Named explosion phase
-      const EXPLODE_START = 0.64
-      const EXPLODE_END = 0.92
+      const EXPLODE_START = 0.55
+      const EXPLODE_END = 0.90
       const rawExplosionT =
         scrollProgress <= EXPLODE_START
           ? 0
@@ -209,13 +209,13 @@ export function createLogoSkillsSketch(
 
           // Cubic easing for slow ramp-up — tunable starting point
           const easedT = explosionT * explosionT * explosionT
-          const burstDist = easedT * 180
+          const burstDist = easedT * 280
 
           const offsetX = (dx / dist) * burstDist
           const offsetY = (dy / dist) * burstDist
 
           // Extended downward drift
-          const driftY = explosionT * 60 * particle.stagger
+          const driftY = explosionT * 100 * particle.stagger
 
           drawX = (particle.x + offsetX) * dpr
           drawY = (particle.y + offsetY + driftY) * dpr

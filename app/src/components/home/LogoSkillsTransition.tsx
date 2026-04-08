@@ -17,7 +17,6 @@ export function LogoSkillsTransition() {
   const cnRef = useRef<HTMLParagraphElement>(null)
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([])
   const zoomOverlayRef = useRef<HTMLDivElement>(null)
-  const apertureRef = useRef<HTMLDivElement>(null)
 
   const [scrollProgress, setScrollProgress] = useState(0)
 
@@ -32,7 +31,7 @@ export function LogoSkillsTransition() {
     if (prefersReduced) return
 
     if (sectionRef.current) {
-      sectionRef.current.style.visibility = "hidden"
+      sectionRef.current.style.opacity = "0"
     }
 
     // Progress proxy object for GSAP to tween
@@ -43,23 +42,23 @@ export function LogoSkillsTransition() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=4800",
+          end: "+=5000",
           pin: true,
           pinSpacing: true,
-          scrub: 2.4,
+          scrub: 1.5,
           anticipatePin: 1,
           refreshPriority: -1,
           onEnter: () => {
-            if (sectionRef.current) sectionRef.current.style.visibility = "visible"
+            if (sectionRef.current) sectionRef.current.style.opacity = "1"
           },
           onLeave: () => {
-            if (sectionRef.current) sectionRef.current.style.visibility = "hidden"
+            if (sectionRef.current) sectionRef.current.style.opacity = "0"
           },
           onLeaveBack: () => {
-            if (sectionRef.current) sectionRef.current.style.visibility = "hidden"
+            if (sectionRef.current) sectionRef.current.style.opacity = "0"
           },
           onEnterBack: () => {
-            if (sectionRef.current) sectionRef.current.style.visibility = "visible"
+            if (sectionRef.current) sectionRef.current.style.opacity = "1"
           },
         },
       })
@@ -76,20 +75,20 @@ export function LogoSkillsTransition() {
         0
       )
 
-      // Phase 1 (0.00–0.15): Logo scales in
+      // Phase 1 (0.00–0.12): Logo scales in
       tl.fromTo(
         canvasWrapRef.current,
         { opacity: 0, scale: 0.6 },
-        { opacity: 1, scale: 1, duration: 0.14, ease: "power3.out" },
+        { opacity: 1, scale: 1, duration: 0.12, ease: "power3.out" },
         0
       )
 
-      // Phase 2 (0.15–0.40): Typewriter "SKILLS" text reveal
+      // Phase 2 (0.12–0.28): Typewriter "SKILLS" text reveal
       tl.fromTo(
         titleWrapRef.current,
         { opacity: 0 },
         { opacity: 1, duration: 0.02 },
-        0.15
+        0.12
       )
 
       letterRefs.current.forEach((letter, i) => {
@@ -97,71 +96,54 @@ export function LogoSkillsTransition() {
         tl.fromTo(
           letter,
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.04, ease: "power2.out" },
-          0.17 + i * 0.025
+          { opacity: 1, y: 0, duration: 0.03, ease: "power2.out" },
+          0.14 + i * 0.02
         )
       })
 
       tl.fromTo(
         subtitleRef.current,
         { opacity: 0, y: 18 },
-        { opacity: 0.6, y: 0, duration: 0.06, ease: "power2.out" },
-        0.34
+        { opacity: 0.6, y: 0, duration: 0.04, ease: "power2.out" },
+        0.24
       )
 
       tl.fromTo(
         cnRef.current,
         { opacity: 0, y: 12 },
-        { opacity: 0.4, y: 0, duration: 0.05, ease: "power2.out" },
-        0.38
+        { opacity: 0.4, y: 0, duration: 0.04, ease: "power2.out" },
+        0.27
       )
 
-      // Phase 3 (0.40–0.58): Hold — text + logo visible, calm breathing
+      // Phase 3 (0.28–0.45): Hold — logo + text visible, breathing
 
-      // Phase 4 (0.58–0.72): Fade out text
+      // Phase 4 (0.45–0.55): Fade out text
       tl.to(
         [subtitleRef.current, cnRef.current],
-        { opacity: 0, y: -20, duration: 0.06, ease: "power2.in" },
-        0.58
+        { opacity: 0, y: -20, duration: 0.05, ease: "power2.in" },
+        0.45
       )
 
       letterRefs.current.forEach((letter) => {
         if (!letter) return
-        tl.to(letter, { opacity: 0, duration: 0.04, ease: "power2.in" }, 0.62)
+        tl.to(letter, { opacity: 0, duration: 0.04, ease: "power2.in" }, 0.48)
       })
 
-      tl.to(titleWrapRef.current, { opacity: 0, duration: 0.04 }, 0.66)
+      tl.to(titleWrapRef.current, { opacity: 0, duration: 0.03 }, 0.52)
 
-      // Phase 5 (0.64–0.92): Particle explosion — driven by scrollProgress in p5 sketch
+      // Phase 5 (0.55–0.82): Particle explosion — driven by scrollProgress in p5
 
-      // Phase 6 (0.88–1.00): Dark overlay fades in
+      // Phase 6 (0.82–0.94): Particles scatter and fade (handled in p5)
+
+      // Phase 7 (0.94–1.00): Dark overlay fades in
       tl.fromTo(
         zoomOverlayRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 0.10, ease: "power2.inOut" },
-        0.90
+        { opacity: 1, duration: 0.06, ease: "power2.inOut" },
+        0.94
       )
 
-      // Aperture mask — opens from center, gentle start accelerating end
-      const apertureEl = apertureRef.current
-      if (apertureEl) {
-        const apertureProxy = { radius: 0 }
-        tl.to(
-          apertureProxy,
-          {
-            radius: 120,
-            duration: 0.08,
-            ease: "power2.in",
-            onUpdate: () => {
-              const r = apertureProxy.radius
-              const grad = `radial-gradient(circle, transparent ${r}%, black ${r + 8}%)`
-              apertureEl.style.maskImage = grad
-              apertureEl.style.webkitMaskImage = grad
-            },
-          },
-          0.90
-        )
-      }
+      // Aperture mask removed — simple overlay fade handles the transition
     }, sectionRef)
 
     return () => ctx.revert()
@@ -171,7 +153,7 @@ export function LogoSkillsTransition() {
     <section
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden"
-      style={{ zIndex: 15, position: "relative", background: "hsl(240 10% 2%)" }}
+      style={{ zIndex: 55, position: "relative", background: "hsl(240 10% 2%)" }}
     >
       {/* Subtle grid */}
       <div className="absolute inset-0 hero-3d-grid opacity-20" />
@@ -229,17 +211,6 @@ export function LogoSkillsTransition() {
           {SKILLS_CN}
         </p>
       </div>
-
-      {/* Aperture reveal mask — opens from center */}
-      <div
-        ref={apertureRef}
-        className="absolute inset-0 z-[28] pointer-events-none"
-        style={{
-          background: "hsl(240 10% 2%)",
-          maskImage: "radial-gradient(circle, transparent 0%, black 0%)",
-          WebkitMaskImage: "radial-gradient(circle, transparent 0%, black 0%)",
-        }}
-      />
 
       {/* Exit overlay */}
       <div
