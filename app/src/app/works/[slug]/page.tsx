@@ -6,13 +6,14 @@ import Link from "next/link"
 import Image from "next/image"
 import gsap from "gsap"
 import { ALL_WORKS } from "@/data/portfolio"
-import BorderGlow from "@/components/BorderGlow"
+import { useCardGlow } from "@/hooks/useCardGlow"
 
 export default function WorkDetailPage() {
   const params = useParams()
   const slug = params.slug as string
   const heroRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const { setRef: setGlowRef, handlePointerMove: onGlowMove, handlePointerLeave: onGlowLeave } = useCardGlow()
 
   const workIndex = ALL_WORKS.findIndex((w) => w.slug === slug)
   const work = ALL_WORKS[workIndex]
@@ -83,26 +84,23 @@ export default function WorkDetailPage() {
       <main className="relative z-10 pt-24 pb-20">
         {/* Hero image */}
         <div ref={heroRef} className="mx-auto max-w-[1400px] px-6 lg:px-10 mb-12 md:mb-16">
-          <BorderGlow
-            glowColor="0 0 80"
-            backgroundColor="transparent"
-            borderRadius={4}
-            glowIntensity={0.4}
-            colors={["#ffffff", "#d4d4d4", "#a3a3a3"]}
-            fillOpacity={0.02}
+          <div
+            className="relative w-full overflow-hidden rounded-sm card-glow"
+            style={{ aspectRatio: "16 / 9" }}
+            ref={(el) => setGlowRef(el, 0)}
+            onPointerMove={(e) => onGlowMove(e, 0)}
+            onPointerLeave={(e) => onGlowLeave(e, 0)}
           >
-            <div className="relative w-full overflow-hidden rounded-sm" style={{ aspectRatio: "16 / 9" }}>
-              <Image
-                src={work.src}
-                alt={work.title}
-                fill
-                sizes="(min-width: 1280px) 1400px, 95vw"
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-            </div>
-          </BorderGlow>
+            <Image
+              src={work.src}
+              alt={work.title}
+              fill
+              sizes="(min-width: 1280px) 1400px, 95vw"
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+          </div>
         </div>
 
         {/* Content */}

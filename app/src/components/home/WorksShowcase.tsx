@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { HOME_SHOWCASE_WORKS } from "@/data/portfolio"
 import { clamp } from "@/components/home/particleShapeUtils"
-import BorderGlow from "@/components/BorderGlow"
+import { useCardGlow } from "@/hooks/useCardGlow"
 
 const ITEMS = HOME_SHOWCASE_WORKS
 const COUNT = ITEMS.length
@@ -32,6 +32,7 @@ export function WorksShowcase({}: WorksShowcaseProps) {
   const cardRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const currentIndexRef = useRef(-1)
   const [activeIndex, setActiveIndex] = useState(0)
+  const { setRef: setGlowRef, handlePointerMove: onGlowMove, handlePointerLeave: onGlowLeave } = useCardGlow()
 
   const positionCards = useCallback((snappedIndex: number) => {
     cardRefs.current.forEach((card, index) => {
@@ -239,8 +240,11 @@ export function WorksShowcase({}: WorksShowcaseProps) {
               href={`/works/${item.slug}`}
               ref={(element) => {
                 cardRefs.current[index] = element
+                setGlowRef(element, index)
               }}
-              className="absolute left-1/2 top-1/2 block spiral-card-size"
+              className="absolute left-1/2 top-1/2 block spiral-card-size card-glow"
+              onPointerMove={(e) => onGlowMove(e, index)}
+              onPointerLeave={(e) => onGlowLeave(e, index)}
               style={{
                 aspectRatio: "1.62 / 1",
                 transformStyle: "preserve-3d",
@@ -251,31 +255,22 @@ export function WorksShowcase({}: WorksShowcaseProps) {
                 transition: "transform 720ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease, filter 520ms ease",
               }}
             >
-              <BorderGlow
-                glowColor="0 0 85"
-                backgroundColor="transparent"
-                borderRadius={18}
-                glowIntensity={0.6}
-                colors={["#ffffff", "#d4d4d4", "#a3a3a3"]}
-                fillOpacity={0.05}
-              >
-                <div className="absolute inset-0 rounded-[inherit] overflow-hidden">
-                  <Image
-                    src={item.src}
-                    alt={item.title}
-                    fill
-                    sizes="(min-width: 1024px) 58vw, 86vw"
-                    className="object-cover object-center"
-                    style={{ filter: "saturate(1.05) contrast(1.02)" }}
-                    loading={index <= 2 ? "eager" : "lazy"}
-                    draggable={false}
-                  />
-                  <div
-                    className="absolute inset-0 z-[1]"
-                    style={{ background: "linear-gradient(180deg, transparent 52%, rgba(2,2,2,0.5) 100%)" }}
-                  />
-                </div>
-              </BorderGlow>
+              <div className="absolute inset-0 rounded-[inherit] overflow-hidden">
+                <Image
+                  src={item.src}
+                  alt={item.title}
+                  fill
+                  sizes="(min-width: 1024px) 58vw, 86vw"
+                  className="object-cover object-center"
+                  style={{ filter: "saturate(1.05) contrast(1.02)" }}
+                  loading={index <= 2 ? "eager" : "lazy"}
+                  draggable={false}
+                />
+                <div
+                  className="absolute inset-0 z-[1]"
+                  style={{ background: "linear-gradient(180deg, transparent 52%, rgba(2,2,2,0.5) 100%)" }}
+                />
+              </div>
 
               {/* Glass border */}
               <div

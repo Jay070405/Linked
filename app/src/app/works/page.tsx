@@ -6,7 +6,7 @@ import Image from "next/image"
 import gsap from "gsap"
 import { cn } from "@/lib/utils"
 import { ALL_WORKS } from "@/data/portfolio"
-import BorderGlow from "@/components/BorderGlow"
+import { useCardGlow } from "@/hooks/useCardGlow"
 
 const categories = [
   { key: "all", label: "ALL" },
@@ -27,6 +27,7 @@ export default function WorksPage() {
   const [activeFilter, setActiveFilter] = useState("all")
   const gridRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
+  const { setRef: setGlowRef, handlePointerMove: onGlowMove, handlePointerLeave: onGlowLeave } = useCardGlow()
 
   const filtered =
     activeFilter === "all"
@@ -142,50 +143,45 @@ export default function WorksPage() {
                 href={`/works/${work.slug}`}
                 className="work-item group cursor-pointer block"
               >
-                <BorderGlow
-                  glowColor="0 0 80"
-                  backgroundColor="transparent"
-                  borderRadius={6}
-                  glowIntensity={0.5}
-                  colors={["#ffffff", "#c0c0c0", "#808080"]}
-                  fillOpacity={0.03}
-                  className="mb-4"
+                <div
+                  className="relative overflow-hidden rounded-sm aspect-[16/10] mb-4 card-glow"
+                  ref={(el) => setGlowRef(el, i)}
+                  onPointerMove={(e) => onGlowMove(e, i)}
+                  onPointerLeave={(e) => onGlowLeave(e, i)}
                 >
-                  <div className="relative overflow-hidden rounded-sm aspect-[16/10]">
-                    <Image
-                      src={work.src}
-                      alt={work.title}
-                      fill
-                      sizes="(min-width: 1024px) 40vw, (min-width: 768px) 48vw, 92vw"
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                    <div className="absolute inset-0 border border-white/0 rounded-sm transition-all duration-500 group-hover:border-white/[0.08]" />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-sm">
-                      {(work.role || work.tools?.length || work.mood?.length) ? (
-                        <>
-                          {work.role && (
-                            <p className="text-[10px] tracking-[0.15em] text-white/70 mb-1.5">{work.role}</p>
-                          )}
-                          <div className="flex flex-wrap gap-1">
-                            {work.tools?.map((tool) => (
-                              <span key={tool} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 border border-white/10 rounded-sm text-white/50 font-mono">{tool}</span>
-                            ))}
-                            {work.mood?.map((m) => (
-                              <span key={m} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 bg-white/[0.06] rounded-sm text-white/40 font-mono">{m}</span>
-                            ))}
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <p className="text-sm tracking-[0.02em] text-white/90 font-heading">{work.title}</p>
-                          <p className="text-[10px] tracking-[0.15em] text-white/50 mt-1">{work.category}</p>
-                        </>
-                      )}
-                    </div>
+                  <Image
+                    src={work.src}
+                    alt={work.title}
+                    fill
+                    sizes="(min-width: 1024px) 40vw, (min-width: 768px) 48vw, 92vw"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  <div className="absolute inset-0 border border-white/0 rounded-sm transition-all duration-500 group-hover:border-white/[0.08]" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-sm">
+                    {(work.role || work.tools?.length || work.mood?.length) ? (
+                      <>
+                        {work.role && (
+                          <p className="text-[10px] tracking-[0.15em] text-white/70 mb-1.5">{work.role}</p>
+                        )}
+                        <div className="flex flex-wrap gap-1">
+                          {work.tools?.map((tool) => (
+                            <span key={tool} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 border border-white/10 rounded-sm text-white/50 font-mono">{tool}</span>
+                          ))}
+                          {work.mood?.map((m) => (
+                            <span key={m} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 bg-white/[0.06] rounded-sm text-white/40 font-mono">{m}</span>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm tracking-[0.02em] text-white/90 font-heading">{work.title}</p>
+                        <p className="text-[10px] tracking-[0.15em] text-white/50 mt-1">{work.category}</p>
+                      </>
+                    )}
                   </div>
-                </BorderGlow>
+                </div>
 
                 <div className="flex items-center gap-4 mb-2">
                   {work.date && (
