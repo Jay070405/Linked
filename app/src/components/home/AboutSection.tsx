@@ -98,16 +98,29 @@ export function AboutSection() {
         </ScrollReveal>
 
         {/* Body text — editorial, generous whitespace */}
-        <div className="ab-reveal space-y-6 mb-14">
-          <p className="text-[0.95rem] md:text-base leading-[1.85] text-fg-muted max-w-[640px]">
-            Specializing in fantasy worldbuilding, environment design, and cinematic illustration.
-            My work spans concept art, visual development, and narrative-driven imagery — each piece
-            a fragment of a larger story.
-          </p>
-          <p className="text-[0.95rem] md:text-base leading-[1.85] text-fg-muted max-w-[640px]">
-            I draw from Eastern and Western mythology, architectural history, and the natural world.
-            The best concept art makes you feel like you&apos;ve been to a place you can&apos;t quite remember.
-          </p>
+        <div className="space-y-6 mb-14">
+          <ScrollReveal
+            scrollContainerRef={null}
+            baseOpacity={0.15}
+            baseRotation={1}
+            blurStrength={2}
+            enableBlur={true}
+            containerClassName="ab-reveal-skip"
+            textClassName="text-[0.95rem] md:text-base leading-[1.85] text-fg-muted max-w-[640px]"
+          >
+            Specializing in fantasy worldbuilding, environment design, and cinematic illustration. My work spans concept art, visual development, and narrative-driven imagery — each piece a fragment of a larger story.
+          </ScrollReveal>
+          <ScrollReveal
+            scrollContainerRef={null}
+            baseOpacity={0.15}
+            baseRotation={1}
+            blurStrength={2}
+            enableBlur={true}
+            containerClassName="ab-reveal-skip"
+            textClassName="text-[0.95rem] md:text-base leading-[1.85] text-fg-muted max-w-[640px]"
+          >
+            I draw from Eastern and Western mythology, architectural history, and the natural world. The best concept art makes you feel like you've been to a place you can't quite remember.
+          </ScrollReveal>
         </div>
 
         {/* Approach — quiet cards */}
