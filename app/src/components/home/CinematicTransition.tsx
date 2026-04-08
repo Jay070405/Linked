@@ -15,7 +15,7 @@ export function CinematicTransition() {
   const lineCnRef = useRef<HTMLParagraphElement>(null)
   const topLineRef = useRef<HTMLDivElement>(null)
   const dustRef = useRef<HTMLDivElement>(null)
-  const contentWrapRef = useRef<HTMLDivElement>(null)
+  const glassRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
@@ -28,26 +28,13 @@ export function CinematicTransition() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=2000",
+          end: "+=1400",
           pin: true,
           pinSpacing: true,
-          scrub: 1.2,
+          scrub: 1.0,
           anticipatePin: 1,
         },
       })
-
-      // Subtle entrance — continuity from aperture reveal
-      timeline.to(
-        contentWrapRef.current,
-        {
-          opacity: 1,
-          scale: 1,
-          filter: "blur(0px)",
-          duration: 0.04,
-          ease: "power2.out",
-        },
-        0
-      )
 
       // Thin vertical accent line
       timeline.fromTo(
@@ -63,6 +50,14 @@ export function CinematicTransition() {
         { opacity: 0, scale: 0.9 },
         { opacity: 0.6, scale: 1, duration: 0.2, ease: "power2.out" },
         0.02
+      )
+
+      // Glass panel fades in
+      timeline.fromTo(
+        glassRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.12, ease: "power2.out" },
+        0.04
       )
 
       // Line 1 reveals
@@ -100,7 +95,7 @@ export function CinematicTransition() {
         0.44
       )
 
-      // Dissolve out
+      // Dissolve out — pushed late so text fills more of the scroll
       timeline.to(
         [lineOneRef.current, lineTwoRef.current],
         {
@@ -108,10 +103,17 @@ export function CinematicTransition() {
           y: -44,
           filter: "blur(22px)",
           letterSpacing: "0.2em",
-          duration: 0.2,
+          duration: 0.18,
           ease: "power2.in",
         },
-        0.7
+        0.78
+      )
+
+      // Glass panel fades out with text
+      timeline.to(
+        glassRef.current,
+        { opacity: 0, duration: 0.14, ease: "power2.in" },
+        0.78
       )
 
       timeline.to(
@@ -120,10 +122,10 @@ export function CinematicTransition() {
           opacity: 0,
           y: -20,
           filter: "blur(12px)",
-          duration: 0.14,
+          duration: 0.12,
           ease: "power2.in",
         },
-        0.74
+        0.80
       )
 
       timeline.to(
@@ -131,10 +133,10 @@ export function CinematicTransition() {
         {
           opacity: 0,
           scale: 1.1,
-          duration: 0.16,
+          duration: 0.10,
           ease: "power2.out",
         },
-        0.76
+        0.86
       )
 
       timeline.to(
@@ -142,10 +144,10 @@ export function CinematicTransition() {
         {
           opacity: 0,
           scaleY: 0,
-          duration: 0.1,
+          duration: 0.08,
           ease: "power2.in",
         },
-        0.82
+        0.90
       )
     }, sectionRef)
 
@@ -156,7 +158,7 @@ export function CinematicTransition() {
     <section
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden bg-black"
-      style={{ zIndex: 36 }}
+      style={{ zIndex: 60 }}
     >
       {/* Pure black + subtle center glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_0%,transparent_30%),linear-gradient(180deg,#010101_0%,#030303_48%,#010101_100%)]" />
@@ -180,22 +182,15 @@ export function CinematicTransition() {
         />
       </div>
 
-      {/* Glass refraction layer behind typography */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div
-          className="w-[80vw] max-w-[900px] h-[30vh] rounded-full opacity-[0.03]"
-          style={{
-            background: "radial-gradient(ellipse at center, rgba(255,255,255,0.12) 0%, transparent 70%)",
-            filter: "blur(40px)",
-          }}
-        />
+      {/* Frosted glass panel */}
+      <div ref={glassRef} className="glass-panel opacity-0">
+        <div className="glass-panel-inner" />
       </div>
 
       {/* Typography */}
       <div
-        ref={contentWrapRef}
         className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
-        style={{ opacity: 0, transform: "scale(0.96)", filter: "blur(4px)", backdropFilter: "blur(1px) brightness(1.02)" }}
+        style={{ backdropFilter: "blur(1px) brightness(1.02)" }}
       >
         <p
           ref={lineOneRef}
