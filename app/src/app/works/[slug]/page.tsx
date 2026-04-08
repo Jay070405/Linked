@@ -6,14 +6,12 @@ import Link from "next/link"
 import Image from "next/image"
 import gsap from "gsap"
 import { ALL_WORKS } from "@/data/portfolio"
-import { useCardGlow } from "@/hooks/useCardGlow"
 
 export default function WorkDetailPage() {
   const params = useParams()
   const slug = params.slug as string
   const heroRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const { setRef: setGlowRef, handlePointerMove: onGlowMove, handlePointerLeave: onGlowLeave } = useCardGlow()
 
   const workIndex = ALL_WORKS.findIndex((w) => w.slug === slug)
   const work = ALL_WORKS[workIndex]
@@ -85,11 +83,8 @@ export default function WorkDetailPage() {
         {/* Hero image */}
         <div ref={heroRef} className="mx-auto max-w-[1400px] px-6 lg:px-10 mb-12 md:mb-16">
           <div
-            className="relative w-full overflow-hidden rounded-sm card-glow"
+            className="relative w-full overflow-hidden rounded-sm"
             style={{ aspectRatio: "16 / 9" }}
-            ref={(el) => setGlowRef(el, 0)}
-            onPointerMove={(e) => onGlowMove(e, 0)}
-            onPointerLeave={(e) => onGlowLeave(e, 0)}
           >
             <Image
               src={work.src}

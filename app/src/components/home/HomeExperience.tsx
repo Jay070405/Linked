@@ -6,7 +6,6 @@ import { HeroScene } from "@/components/home/HeroScene"
 import { WorksShowcase } from "@/components/home/WorksShowcase"
 import { LogoSkillsTransition } from "@/components/home/LogoSkillsTransition"
 import { CinematicTransition } from "@/components/home/CinematicTransition"
-import { ParticleDissolve } from "@/components/home/ParticleDissolve"
 import { AboutSection } from "@/components/home/AboutSection"
 import { ResumeSection } from "@/components/home/ResumeSection"
 import { ContactSection } from "@/components/home/ContactSection"
@@ -39,7 +38,6 @@ export function HomeExperience() {
         <WorksShowcase bridgeBurstSignal={bridgeBurstSignal} heroBridgeProgress={heroBridgeProgress} />
         <LogoSkillsTransition />
         <CinematicTransition />
-        <ParticleDissolve />
         <AboutSection />
         <ResumeSection />
         <ContactSection />

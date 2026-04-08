@@ -6,7 +6,6 @@ import Image from "next/image"
 import gsap from "gsap"
 import { cn } from "@/lib/utils"
 import { ALL_WORKS } from "@/data/portfolio"
-import { useCardGlow } from "@/hooks/useCardGlow"
 
 const categories = [
   { key: "all", label: "ALL" },
@@ -27,7 +26,6 @@ export default function WorksPage() {
   const [activeFilter, setActiveFilter] = useState("all")
   const gridRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
-  const { setRef: setGlowRef, handlePointerMove: onGlowMove, handlePointerLeave: onGlowLeave } = useCardGlow()
 
   const filtered =
     activeFilter === "all"
@@ -144,10 +142,7 @@ export default function WorksPage() {
                 className="work-item group cursor-pointer block"
               >
                 <div
-                  className="relative overflow-hidden rounded-sm aspect-[16/10] mb-4 card-glow"
-                  ref={(el) => setGlowRef(el, i)}
-                  onPointerMove={(e) => onGlowMove(e, i)}
-                  onPointerLeave={(e) => onGlowLeave(e, i)}
+                  className="relative overflow-hidden rounded-sm aspect-[16/10] mb-4"
                 >
                   <Image
                     src={work.src}
