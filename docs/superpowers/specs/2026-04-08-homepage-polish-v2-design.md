@@ -138,6 +138,38 @@ Use the React Bits `ScrollReveal` component (already installed at `components/Sc
 
 ---
 
+## 8. LogoSkillsTransition Pacing Rework
+
+The current particle explosion in LogoSkillsTransition is too fast — one scroll tick and the entire sequence is over. The user can't see the particles gather, hold, explode, scatter, and dissolve. The pinned scroll needs to be longer and each phase needs to breathe.
+
+### Problem
+- Current pin: `+=3400` with scrub `2.0`
+- The explosion phase (scrollProgress ~0.58–0.86) passes too quickly — a single mousewheel flick skips through it
+- The hold phase (0.42–0.52) is only 10% of 3400 = 340px of scroll — not enough to appreciate the logo
+- Users should feel like they're watching a cinematic moment, not skipping through a flipbook
+
+### Fix
+- Increase pin distance to `+=5000` — this is a centerpiece section, it deserves scroll real estate
+- Scrub: `1.5` (slightly more responsive than 2.0 but still smooth)
+- Rework timeline phases with more generous spacing:
+  - **0.00–0.12**: Logo fades in, scales from 0.6 to 1.0
+  - **0.12–0.28**: "SKILLS" typewriter text reveals letter by letter
+  - **0.28–0.45**: **Hold** — logo + text visible, particles gently breathing/floating. This is 17% = 850px of scroll where the user just absorbs the logo
+  - **0.45–0.55**: Text fades out, preparing for explosion
+  - **0.55–0.82**: **Particle explosion** — this is the hero moment. 27% = 1350px of scroll. Particles should visibly accelerate outward from the logo shape. The user scrolls and watches particles fly. Should feel like slow-motion detonation, not an instant pop
+  - **0.82–0.94**: Particles scatter to edges and fade out, screen goes dark
+  - **0.94–1.00**: Dark overlay completes fade to black
+- The p5 sketch's `scrollProgress` mapping also needs adjustment to match these new phase boundaries — the explosion trigger point and ramp curve should align with 0.55–0.82
+
+### Key feel
+- The hold phase should feel like a pause, a breath — "look at this logo"
+- The explosion should feel like slow-motion — each scroll tick moves particles visibly but not all at once
+- The fade-out should be graceful, not abrupt
+
+**Files**: `LogoSkillsTransition.tsx` (edit timeline), `P5LogoSkills.tsx` or related p5 sketch (adjust scrollProgress mapping)
+
+---
+
 ## 7. Overall Polish & Consistency
 
 ### Section transitions
@@ -178,4 +210,6 @@ Use the React Bits `ScrollReveal` component (already installed at `components/Sc
 | `AboutSection.tsx` | CurvedLoop bg + ScrollReveal on body text |
 | `ResumeSection.tsx` | ScrollReveal on heading |
 | `ContactSection.tsx` | ScrollReveal on heading + description |
+| `LogoSkillsTransition.tsx` | Rework timeline pacing — longer hold, slower explosion |
+| `P5LogoSkills.tsx` / p5 sketch | Adjust scrollProgress phase mapping for explosion |
 | `BorderGlow.jsx/css` | **Delete** — unused |
