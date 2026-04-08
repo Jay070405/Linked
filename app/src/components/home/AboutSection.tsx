@@ -5,6 +5,7 @@ import Link from "next/link"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger"
 import ScrollReveal from "@/components/ScrollReveal"
+import CurvedLoop from "@/components/CurvedLoop"
 
 export function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -47,46 +48,34 @@ export function AboutSection() {
       id="practice"
       ref={sectionRef}
       className="relative py-32 md:py-44 overflow-hidden"
-      style={{ zIndex: 30, position: "relative" }}
+      style={{ zIndex: 65, position: "relative" }}
     >
       {/* Quiet section background */}
       <div className="absolute inset-0 section-bg" />
       <div className="section-edge-top" />
 
-      {/* Atmospheric curved loop — background layer */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.08]">
-        <svg
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%]"
-          viewBox="0 0 1000 600"
-          fill="none"
-        >
-          <path
-            d="M-50,300 Q250,100 500,300 T1050,300"
-            stroke="rgba(255,255,255,0.3)"
-            strokeWidth="0.5"
-            fill="none"
-          >
-            <animate
-              attributeName="d"
-              values="M-50,300 Q250,100 500,300 T1050,300;M-50,300 Q250,500 500,300 T1050,300;M-50,300 Q250,100 500,300 T1050,300"
-              dur="20s"
-              repeatCount="indefinite"
-            />
-          </path>
-          <path
-            d="M-50,320 Q300,150 550,320 T1050,320"
-            stroke="rgba(255,255,255,0.2)"
-            strokeWidth="0.5"
-            fill="none"
-          >
-            <animate
-              attributeName="d"
-              values="M-50,320 Q300,150 550,320 T1050,320;M-50,320 Q300,480 550,320 T1050,320;M-50,320 Q300,150 550,320 T1050,320"
-              dur="25s"
-              repeatCount="indefinite"
-            />
-          </path>
-        </svg>
+      {/* CurvedLoop marquee background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.12]">
+        <div className="absolute top-[30%] left-0 right-0">
+          <CurvedLoop
+            marqueeText="WORLDBUILDING · ENVIRONMENT DESIGN · VISUAL DEVELOPMENT · NARRATIVE · ATMOSPHERE · "
+            speed={1.5}
+            direction="left"
+            interactive={false}
+            curveAmount={200}
+            className=""
+          />
+        </div>
+        <div className="absolute top-[60%] left-0 right-0">
+          <CurvedLoop
+            marqueeText="WORLDBUILDING · ENVIRONMENT DESIGN · VISUAL DEVELOPMENT · NARRATIVE · ATMOSPHERE · "
+            speed={1}
+            direction="right"
+            interactive={false}
+            curveAmount={150}
+            className=""
+          />
+        </div>
       </div>
 
       <div className="relative z-10 mx-auto max-w-[860px] px-6 lg:px-10">
