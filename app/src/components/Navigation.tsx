@@ -85,7 +85,7 @@ export function Navigation({ brandMorphProgress = 0 }: NavigationProps) {
         className={cn(
           "fixed inset-x-0 top-0 z-[90] transition-all duration-500",
           scrolled
-            ? "border-b border-white/10 bg-[rgba(3,3,3,0.72)] shadow-[0_24px_70px_rgba(0,0,0,0.48)] backdrop-blur-2xl"
+            ? "border-b border-white/[0.06] bg-[rgba(6,6,6,0.6)] shadow-[0_24px_70px_rgba(0,0,0,0.48)] backdrop-blur-3xl backdrop-saturate-150"
             : "bg-transparent"
         )}
       >
@@ -118,8 +118,10 @@ export function Navigation({ brandMorphProgress = 0 }: NavigationProps) {
                             desktopLinkClass
                           )}
                         >
-                          <span className="relative z-10">{label}</span>
-                          <span className="absolute inset-0 rounded-md bg-white/[0.04] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300" />
+                          <span className="relative">
+                            {label}
+                            <span className="absolute left-0 right-0 -bottom-1 h-px bg-white/50 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+                          </span>
                         </Link>
                       ) : (
                         <a
@@ -129,8 +131,10 @@ export function Navigation({ brandMorphProgress = 0 }: NavigationProps) {
                             desktopLinkClass
                           )}
                         >
-                          <span className="relative z-10">{label}</span>
-                          <span className="absolute inset-0 rounded-md bg-white/[0.04] opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300" />
+                          <span className="relative">
+                            {label}
+                            <span className="absolute left-0 right-0 -bottom-1 h-px bg-white/50 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]" />
+                          </span>
                         </a>
                       )}
                     </li>
