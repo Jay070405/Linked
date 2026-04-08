@@ -1,7 +1,5 @@
 import type p5 from "p5"
 
-// ─── Types ───────────────────────────────────────────────────────────
-
 export interface LogoSkillsSketchConfig {
   logoPoints: Array<{ x: number; y: number }>
   width: number
@@ -21,8 +19,6 @@ export interface LogoSkillsSketchBundle {
   api: LogoSkillsSketchAPI
 }
 
-// ─── Physics Constants ───────────────────────────────────────────────
-
 const SPRING_STIFFNESS = 0.025
 const DAMPING = 0.88
 
@@ -31,8 +27,6 @@ const REPEL_STRENGTH = 0.6
 
 const IDLE_AMPLITUDE = 1.0
 const PARALLAX_STRENGTH = 10
-
-// ─── Particle ────────────────────────────────────────────────────────
 
 interface Particle {
   logoX: number
@@ -48,11 +42,7 @@ interface Particle {
   stagger: number
 }
 
-// ─── Sketch Factory ──────────────────────────────────────────────────
-
-export function createLogoSkillsSketch(
-  config: LogoSkillsSketchConfig
-): LogoSkillsSketchBundle {
+export function createLogoSkillsSketch(config: LogoSkillsSketchConfig): LogoSkillsSketchBundle {
   let scrollProgress = 0
   let mouseX = config.width / 2
   let mouseY = config.height / 2
@@ -69,10 +59,12 @@ export function createLogoSkillsSketch(
     },
     applyClickImpulse(clickX: number, clickY: number) {
       const impactRadius = Math.min(config.width, config.height) * 0.4
+
       for (const particle of particles) {
         const dx = particle.x - clickX
         const dy = particle.y - clickY
         const dist = Math.sqrt(dx * dx + dy * dy)
+
         if (dist < impactRadius && dist > 0.1) {
           const strength = ((impactRadius - dist) / impactRadius) * 2.5
           particle.vx += (dx / dist) * strength
@@ -81,7 +73,9 @@ export function createLogoSkillsSketch(
       }
     },
     dispose() {
-      if (p5Instance) p5Instance.remove()
+      if (p5Instance) {
+        p5Instance.remove()
+      }
     },
   }
 
@@ -90,21 +84,19 @@ export function createLogoSkillsSketch(
 
     const centerX = config.width / 2
     const centerY = config.height / 2
-
     const logoPoints = resizePoints(config.logoPoints, config.particleCount)
 
-    // Initialize particles at logo positions
     for (let i = 0; i < config.particleCount; i++) {
-      const lp = logoPoints[i]
-      const dx = lp.x - centerX
-      const dy = lp.y - centerY
+      const point = logoPoints[i]
+      const dx = point.x - centerX
+      const dy = point.y - centerY
       const dist = Math.sqrt(dx * dx + dy * dy) || 1
 
       particles.push({
-        logoX: lp.x,
-        logoY: lp.y,
-        x: lp.x,
-        y: lp.y,
+        logoX: point.x,
+        logoY: point.y,
+        x: point.x,
+        y: point.y,
         vx: 0,
         vy: 0,
         size: 0.5 + (i % 5) * 0.25,
@@ -115,19 +107,18 @@ export function createLogoSkillsSketch(
       })
     }
 
-    // Normalize stagger 0–1 based on distance from center
-    const maxDist = Math.max(...particles.map((pt) => pt.distFromCenter), 1)
+    const maxDist = Math.max(...particles.map((particle) => particle.distFromCenter), 1)
     for (const particle of particles) {
       particle.stagger = particle.distFromCenter / maxDist
     }
 
-    // ─── p5 lifecycle ────────────────────────────────────────────
-
     p.setup = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
       const canvas = p.createCanvas(config.width * dpr, config.height * dpr)
+
       canvas.style("width", `${config.width}px`)
       canvas.style("height", `${config.height}px`)
+
       p.pixelDensity(1)
       p.noStroke()
     }
@@ -136,30 +127,37 @@ export function createLogoSkillsSketch(
       if (document.hidden) return
 
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      const w = config.width
-      const h = config.height
-      const t = p.millis() * 0.001
+      const width = config.width
+      const height = config.height
+      const time = p.millis() * 0.001
 
       p.clear()
 
-      // Parallax offset from mouse
-      const parallaxX = ((mouseX - w / 2) / w) * PARALLAX_STRENGTH
-      const parallaxY = ((mouseY - h / 2) / h) * PARALLAX_STRENGTH
+      const parallaxX = ((mouseX - width / 2) / width) * PARALLAX_STRENGTH
+      const parallaxY = ((mouseY - height / 2) / height) * PARALLAX_STRENGTH
 
-      // Named explosion phase
       const EXPLODE_START = 0.55
-      const EXPLODE_END = 0.90
-      const rawExplosionT =
+      const DISPERSION_END = 0.82
+      const FADE_END = 0.94
+
+      const rawTravelT =
         scrollProgress <= EXPLODE_START
           ? 0
-          : scrollProgress >= EXPLODE_END
+          : scrollProgress >= DISPERSION_END
             ? 1
-            : (scrollProgress - EXPLODE_START) / (EXPLODE_END - EXPLODE_START)
-      const explosionT = Math.max(0, Math.min(1, rawExplosionT))
-      const isExploding = explosionT > 0
+            : (scrollProgress - EXPLODE_START) / (DISPERSION_END - EXPLODE_START)
+      const rawFadeT =
+        scrollProgress <= DISPERSION_END
+          ? 0
+          : scrollProgress >= FADE_END
+            ? 1
+            : (scrollProgress - DISPERSION_END) / (FADE_END - DISPERSION_END)
+
+      const travelT = Math.max(0, Math.min(1, rawTravelT))
+      const fadeT = Math.max(0, Math.min(1, rawFadeT))
+      const isExploding = travelT > 0 || fadeT > 0
 
       for (const particle of particles) {
-        // ─── Hover repulsion ───────────────────────────────────
         let repelForceX = 0
         let repelForceY = 0
 
@@ -167,24 +165,20 @@ export function createLogoSkillsSketch(
           const dmx = particle.x - mouseX
           const dmy = particle.y - mouseY
           const mouseDist = Math.sqrt(dmx * dmx + dmy * dmy)
+
           if (mouseDist < REPEL_RADIUS && mouseDist > 0.1) {
-            const force =
-              ((REPEL_RADIUS - mouseDist) / REPEL_RADIUS) * REPEL_STRENGTH
+            const force = ((REPEL_RADIUS - mouseDist) / REPEL_RADIUS) * REPEL_STRENGTH
             repelForceX = (dmx / mouseDist) * force
             repelForceY = (dmy / mouseDist) * force
           }
         }
 
-        // ─── Spring to logo position (when not exploding) ──────
         if (!isExploding) {
-          const noiseX =
-            (p.noise(particle.phase + t * 0.3, 0) - 0.5) * 2 * IDLE_AMPLITUDE
-          const noiseY =
-            (p.noise(0, particle.phase + t * 0.3) - 0.5) * 2 * IDLE_AMPLITUDE
+          const noiseX = (p.noise(particle.phase + time * 0.3, 0) - 0.5) * 2 * IDLE_AMPLITUDE
+          const noiseY = (p.noise(0, particle.phase + time * 0.3) - 0.5) * 2 * IDLE_AMPLITUDE
 
           const goalX = particle.logoX + noiseX + parallaxX
           const goalY = particle.logoY + noiseY + parallaxY
-
           const forceX = (goalX - particle.x) * SPRING_STIFFNESS
           const forceY = (goalY - particle.y) * SPRING_STIFFNESS
 
@@ -196,41 +190,34 @@ export function createLogoSkillsSketch(
           particle.y += particle.vy
         }
 
-        // ─── Draw ──────────────────────────────────────────────
         let drawX = particle.x * dpr
         let drawY = particle.y * dpr
         let drawAlpha = particle.baseAlpha
 
-        // ─── Scroll explosion (0.64 → 0.92) ───────────────────
         if (isExploding) {
           const dx = particle.x - centerX
           const dy = particle.y - centerY
           const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy))
-
-          // Cubic easing for slow ramp-up — tunable starting point
-          const easedT = explosionT * explosionT * explosionT
-          const burstDist = easedT * 280
-
+          const easedTravelT = Math.pow(travelT, 1.35)
+          const burstDist = easedTravelT * (240 + particle.stagger * 180)
           const offsetX = (dx / dist) * burstDist
           const offsetY = (dy / dist) * burstDist
+          const driftY = easedTravelT * (72 + particle.stagger * 150)
+          const fadeScatter = fadeT * (70 + particle.stagger * 130)
 
-          // Extended downward drift
-          const driftY = explosionT * 100 * particle.stagger
+          drawX = (particle.x + offsetX + (dx / dist) * fadeScatter) * dpr
+          drawY = (particle.y + offsetY + driftY + (dy / dist) * fadeScatter * 0.35) * dpr
 
-          drawX = (particle.x + offsetX) * dpr
-          drawY = (particle.y + offsetY + driftY) * dpr
-
-          // Alpha fade: fast at edges, slow at center — stretched over wider range
-          const fadeBias = 0.25 + particle.stagger * 0.75
-          drawAlpha *= Math.max(0, 1 - explosionT * fadeBias)
+          const dispersionFade = 1 - travelT * (0.18 + particle.stagger * 0.12)
+          const fadeBias = 0.72 + particle.stagger * 0.4
+          drawAlpha *= Math.max(0, dispersionFade)
+          drawAlpha *= Math.max(0, 1 - fadeT * fadeBias)
         }
 
-        // ─── Entrance fade (0 → 0.15) ─────────────────────────
-        if (scrollProgress < 0.15) {
-          drawAlpha *= scrollProgress / 0.15
+        if (scrollProgress < 0.12) {
+          drawAlpha *= scrollProgress / 0.12
         }
 
-        // Render particle
         if (drawAlpha > 0.01) {
           const drawSize = particle.size * dpr
           p.fill(240, 240, 240, drawAlpha * 255)
@@ -243,21 +230,21 @@ export function createLogoSkillsSketch(
   return { sketch, api }
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────
-
-function resizePoints(
-  points: Array<{ x: number; y: number }>,
-  count: number
-): Array<{ x: number; y: number }> {
+function resizePoints(points: Array<{ x: number; y: number }>, count: number): Array<{ x: number; y: number }> {
   if (points.length === 0) {
     return Array.from({ length: count }, () => ({ x: 0, y: 0 }))
   }
-  if (points.length === count) return points
+
+  if (points.length === count) {
+    return points
+  }
 
   const result: Array<{ x: number; y: number }> = []
+
   for (let i = 0; i < count; i++) {
     const index = Math.floor((i / count) * points.length) % points.length
     result.push(points[index])
   }
+
   return result
 }

@@ -38,9 +38,23 @@ export function HomeExperience() {
         <WorksShowcase bridgeBurstSignal={bridgeBurstSignal} heroBridgeProgress={heroBridgeProgress} />
         <LogoSkillsTransition />
         <CinematicTransition />
-        <AboutSection />
-        <ResumeSection />
-        <ContactSection />
+        <div className="post-work-atmosphere relative overflow-hidden" style={{ zIndex: 60 }}>
+          <div className="pointer-events-none absolute inset-0 hero-3d-grid opacity-[0.06]" />
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `
+                radial-gradient(circle at 15% 18%, rgba(255,255,255,0.08), transparent 22%),
+                radial-gradient(circle at 82% 12%, rgba(255,255,255,0.05), transparent 18%),
+                radial-gradient(circle at 50% 46%, rgba(255,255,255,0.04), transparent 28%),
+                linear-gradient(180deg, rgba(2,2,2,0.96) 0%, rgba(4,4,4,0.98) 42%, rgba(2,2,2,1) 100%)
+              `,
+            }}
+          />
+          <AboutSection />
+          <ResumeSection />
+          <ContactSection />
+        </div>
       </main>
       <Footer />
     </>
