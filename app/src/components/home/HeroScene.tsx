@@ -1,23 +1,35 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import dynamic from "next/dynamic"
+import { useEffect, useMemo, useRef, useState } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger"
+import { P5ParticleHero } from "@/components/home/P5ParticleHero"
+import { clamp } from "@/components/home/particleShapeUtils"
+import type { ParticleState } from "@/components/home/p5HeroSketch"
 
-const GlassJLLogo3D = dynamic(
-  () => import("./GlassJLLogo3D").then((m) => ({ default: m.GlassJLLogo3D })),
-  { ssr: false }
-)
+interface HeroSceneProps {
+  onBrandMorphProgressChange?: (progress: number) => void
+  onBridgeProgressChange?: (progress: number) => void
+  onBridgeBurst?: () => void
+  particleState: ParticleState
+  onParticleToggle: () => void
+}
 
-export function HeroScene() {
+export function HeroScene({
+  onBrandMorphProgressChange,
+  onBridgeProgressChange,
+  onBridgeBurst,
+  particleState,
+  onParticleToggle,
+}: HeroSceneProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const logoWrapRef = useRef<HTMLDivElement>(null)
-  const parallaxRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
-  const rafRef = useRef(0)
+  const burstTriggeredRef = useRef(false)
+  const [bridgeProgress, setBridgeProgress] = useState(0)
+  const particleOpacity = useMemo(() => {
+    if (bridgeProgress <= 0.68) return 1
+    return 1 - clamp((bridgeProgress - 0.68) / 0.3)
+  }, [bridgeProgress])
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
@@ -25,211 +37,176 @@ export function HeroScene() {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     const ctx = gsap.context(() => {
-      if (prefersReduced) {
-        gsap.set(contentRef.current, { opacity: 1 })
-        gsap.set(logoWrapRef.current, { opacity: 1 })
-        return
+      const reveals = sectionRef.current?.querySelectorAll("[data-hero-reveal]") ?? []
+      const ambient = sectionRef.current?.querySelectorAll("[data-hero-ambient]") ?? []
+
+      if (!prefersReduced) {
+        const intro = gsap.timeline({ defaults: { ease: "power3.out" } })
+
+        intro.fromTo(
+          reveals,
+          { opacity: 0, y: 28, filter: "blur(6px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 1.4,
+            stagger: 0.15,
+            ease: "power3.out",
+          },
+          0.5
+        )
       }
 
-      gsap.set(contentRef.current, { opacity: 0, y: 50 })
-      gsap.set(logoWrapRef.current, { opacity: 0, scale: 0.85, y: 40 })
+      gsap.to(contentRef.current, {
+        y: -80,
+        opacity: 0.04,
+        filter: "blur(8px)",
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+          onUpdate: (self) => {
+            const brand = clamp(self.progress / 0.32)
+            const bridge = clamp((self.progress - 0.52) / 0.3)
 
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
-      tl.to(contentRef.current, { opacity: 1, y: 0, duration: 1.3, delay: 0.2 })
-        .to(logoWrapRef.current, { opacity: 1, scale: 1, y: 0, duration: 1.1 }, "-=0.7")
+            onBrandMorphProgressChange?.(brand)
+            onBridgeProgressChange?.(bridge)
+            setBridgeProgress((current) => (Math.abs(current - bridge) > 0.012 ? bridge : current))
 
-      gsap.fromTo(
-        contentRef.current,
-        { opacity: 1, y: 0, scale: 1 },
-        {
+            if (!burstTriggeredRef.current && bridge > 0.03) {
+              burstTriggeredRef.current = true
+              onBridgeBurst?.()
+            }
+
+            if (self.progress < 0.02) {
+              burstTriggeredRef.current = false
+            }
+          },
+        },
+      })
+
+      ambient.forEach((layer, index) => {
+        gsap.to(layer, {
           opacity: 0,
-          y: -100,
-          scale: 0.92,
+          scale: 0.85,
+          y: index % 2 === 0 ? -36 : 36,
+          ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top top",
-            end: "55% top",
-            scrub: 1.5,
+            end: "80% top",
+            scrub: 1.1,
           },
-        }
-      )
-
-      gsap.fromTo(
-        logoWrapRef.current,
-        { opacity: 1, y: 0, scale: 1 },
-        {
-          opacity: 0,
-          y: -60,
-          scale: 0.88,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "8% top",
-            end: "65% top",
-            scrub: 1.5,
-          },
-        }
-      )
+        })
+      })
     }, sectionRef)
 
-    const onMove = (e: MouseEvent) => {
-      mouseRef.current.targetX = (e.clientX / window.innerWidth) * 2 - 1
-      mouseRef.current.targetY = (e.clientY / window.innerHeight) * 2 - 1
-    }
-
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
-
-    const tick = () => {
-      const m = mouseRef.current
-      m.x = lerp(m.x, m.targetX, 0.06)
-      m.y = lerp(m.y, m.targetY, 0.06)
-
-      if (parallaxRef.current) {
-        parallaxRef.current.style.transform = `translate(${m.x * -15}px, ${m.y * -10}px)`
-      }
-
-      if (titleRef.current) {
-        titleRef.current.style.transform = `translate(${m.x * -8}px, ${m.y * -5}px)`
-        titleRef.current.style.textShadow = `
-          ${m.x * 3}px ${m.y * 3}px 0px hsl(38 50% 61% / 0.08),
-          ${m.x * 6}px ${m.y * 6}px 0px hsl(38 50% 61% / 0.04),
-          ${m.x * 10}px ${m.y * 10}px 20px hsl(38 50% 61% / 0.03)
-        `
-      }
-
-      rafRef.current = requestAnimationFrame(tick)
-    }
-
-    if (!prefersReduced) {
-      window.addEventListener("mousemove", onMove, { passive: true })
-      rafRef.current = requestAnimationFrame(tick)
-    }
-
     return () => {
+      onBrandMorphProgressChange?.(0)
+      onBridgeProgressChange?.(0)
+      setBridgeProgress(0)
       ctx.revert()
-      window.removeEventListener("mousemove", onMove)
-      cancelAnimationFrame(rafRef.current)
     }
-  }, [])
+  }, [onBrandMorphProgressChange, onBridgeBurst, onBridgeProgressChange])
 
   return (
     <section
       id="hero"
       ref={sectionRef}
-      className="relative w-full overflow-hidden"
-      style={{ height: "115vh", zIndex: 5, position: "relative" }}
+      className="relative isolate overflow-visible bg-black text-white z-[60]"
+      style={{ minHeight: "100vh" }}
     >
-      <div className="absolute inset-0 section-bg" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_40%,rgba(255,255,255,0.035),transparent_52%),linear-gradient(180deg,#000000_0%,#030303_100%)]" />
+      <div className="absolute inset-0 hero-3d-grid opacity-[0.12]" />
+      <div className="hero-grain absolute inset-0 opacity-[0.2]" aria-hidden="true" />
 
-      {/* Parallax ambient elements */}
-      <div ref={parallaxRef} className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute left-[15%] top-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full animate-blob-1"
-          style={{
-            background: "radial-gradient(circle, hsl(38 50% 61% / 0.05), transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute right-[10%] top-[40%] w-[35vw] h-[35vw] max-w-[450px] max-h-[450px] rounded-full animate-blob-2"
-          style={{
-            background: "radial-gradient(circle, hsl(220 50% 50% / 0.035), transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute left-[40%] bottom-[15%] w-[30vw] h-[30vw] max-w-[400px] max-h-[400px] rounded-full animate-blob-3"
-          style={{
-            background: "radial-gradient(circle, hsl(280 30% 50% / 0.025), transparent 70%)",
-          }}
-        />
-
-        <div
-          className="absolute left-[8%] top-[30%] w-32 h-32 border border-white/[0.02]"
-          style={{ transform: "rotate(45deg) perspective(400px) rotateY(15deg)" }}
-        />
-        <div
-          className="absolute right-[12%] bottom-[25%] w-24 h-24 border border-accent/[0.03]"
-          style={{ transform: "rotate(12deg) perspective(400px) rotateX(20deg)" }}
-        />
-        <div
-          className="absolute left-[60%] top-[15%] w-16 h-16 border border-white/[0.015]"
-          style={{ transform: "rotate(-30deg) perspective(400px) rotateY(-25deg) rotateX(15deg)" }}
+      <div
+        className="fixed inset-0 z-[65] transition-opacity duration-300"
+        style={{
+          opacity: particleOpacity,
+          pointerEvents: bridgeProgress < 0.72 ? "auto" : "none",
+        }}
+      >
+        <P5ParticleHero
+          className="h-full w-full"
+          bridgeProgress={bridgeProgress}
+          targetState={particleState}
+          onClickToggle={onParticleToggle}
         />
       </div>
 
-      {/* Ambient glow */}
       <div
-        className="absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[50vh] rounded-full animate-glow-pulse pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse, hsl(var(--accent) / 0.04) 0%, transparent 70%)",
-        }}
+        data-hero-ambient
+        className="pointer-events-none absolute left-[-12%] top-[14%] h-[22rem] w-[22rem] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.08)_0%,transparent_68%)] blur-3xl"
+      />
+      <div
+        data-hero-ambient
+        className="pointer-events-none absolute bottom-[-6%] right-[-4%] h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.06)_0%,transparent_68%)] blur-3xl"
       />
 
-      {/* Sparkle particles */}
-      {[
-        { l: 15, t: 22, s: 2.0, d: 0.0, dur: 3.5 },
-        { l: 72, t: 14, s: 1.2, d: 0.8, dur: 4.2 },
-        { l: 38, t: 65, s: 2.5, d: 1.5, dur: 3.0 },
-        { l: 85, t: 42, s: 1.5, d: 2.2, dur: 4.8 },
-        { l: 52, t: 78, s: 1.8, d: 3.0, dur: 3.3 },
-        { l: 24, t: 48, s: 2.2, d: 0.5, dur: 4.0 },
-        { l: 63, t: 30, s: 1.3, d: 1.8, dur: 3.8 },
-        { l: 44, t: 88, s: 2.8, d: 2.5, dur: 4.5 },
-        { l: 78, t: 58, s: 1.0, d: 3.5, dur: 3.2 },
-        { l: 30, t: 35, s: 1.6, d: 1.2, dur: 4.1 },
-      ].map((p, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full bg-white/30 animate-sparkle pointer-events-none"
-          style={{
-            left: `${p.l}%`,
-            top: `${p.t}%`,
-            width: `${p.s}px`,
-            height: `${p.s}px`,
-            animationDelay: `${p.d}s`,
-            animationDuration: `${p.dur}s`,
-          }}
-        />
-      ))}
+      <div className="pointer-events-none relative z-10 mx-auto grid min-h-[100vh] max-w-[1640px] grid-cols-1 gap-8 px-5 pb-16 pt-28 md:grid-cols-12 md:px-10 md:pt-36 xl:px-14">
+        <div className="flex flex-col justify-between md:col-span-7">
+          <div ref={contentRef} className="max-w-[44rem] pt-6 md:pt-10">
+            <p
+              data-hero-reveal
+              className="text-[0.68rem] font-sans font-medium uppercase tracking-[0.32em] text-white/40"
+            >
+              Visual Development &mdash; Concept Art
+            </p>
 
-      {/* Sticky content */}
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center">
-        {/* Title */}
-        <div ref={contentRef} className="text-center z-10 px-4">
-          <h1
-            ref={titleRef}
-            className="font-heading font-semibold tracking-[0.12em] text-fg text-[clamp(3rem,13vw,12rem)] leading-[0.88]"
-            style={{
-              willChange: "transform",
-              transition: "text-shadow 0.1s ease-out",
-            }}
+            <h1
+              data-hero-reveal
+              className="mt-10 font-heading text-[clamp(3.8rem,10vw,7.5rem)] leading-[0.92] tracking-[-0.02em] text-white"
+              style={{ fontWeight: 600 }}
+            >
+              <span className="block">Jay</span>
+              <span className="block mt-2 text-white/85">Lin</span>
+            </h1>
+
+            <p
+              data-hero-reveal
+              className="mt-8 max-w-[28rem] font-sans text-[clamp(1rem,1.6vw,1.28rem)] leading-[1.6] tracking-[-0.01em] text-white/50"
+              style={{ fontWeight: 400 }}
+            >
+              Worlds built with atmosphere, restraint,
+              <br className="hidden md:block" />
+              and cinematic gravity.
+            </p>
+
+            <p
+              data-hero-reveal
+              className="mt-6 max-w-[28rem] text-[0.88rem] leading-[1.8] text-white/36"
+            >
+              Fantasy-driven concept art and visual development shaped through
+              environment storytelling, image-making, and authored mood.
+            </p>
+
+            <div data-hero-reveal className="mt-11 flex flex-wrap items-center gap-5 pointer-events-auto">
+              <a href="#works" className="hero-primary-cta">
+                View Works
+              </a>
+              <a href="#contact" className="hero-secondary-cta">
+                Contact
+              </a>
+            </div>
+          </div>
+
+          <div
+            data-hero-reveal
+            className="mt-14 flex items-center gap-3 pb-1 text-[0.6rem] uppercase tracking-[0.4em] text-white/26 md:mt-0"
           >
-            SHIJIE LIN
-          </h1>
-          <p className="mt-5 text-[clamp(0.55rem,1.1vw,0.78rem)] font-light tracking-[0.35em] text-fg-muted/70 drop-shadow-[0_2px_20px_rgba(0,0,0,0.8)]">
-            CONCEPT ART &nbsp;&middot;&nbsp; VISUAL DEVELOPMENT
-            &nbsp;&middot;&nbsp; FANTASY WORLDBUILDING
-          </p>
+            <span>Scroll to explore</span>
+            <span aria-hidden="true" className="editorial-scroll-line" />
+          </div>
         </div>
 
-        {/* 3D Glass JL Logo */}
-        <div ref={logoWrapRef} className="mt-4 z-10">
-          <GlassJLLogo3D
-            className="w-[clamp(360px,70vw,1000px)] aspect-[16/9]"
-            autoRotate={true}
-            scaleMultiplier={1}
-          />
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 animate-float">
-          <span className="text-[9px] font-medium tracking-[0.3em] text-fg-subtle/50 uppercase">
-            scroll to explore
-          </span>
-          <span className="text-fg-muted/40">&rarr;</span>
-        </div>
+        <div className="hidden md:col-span-5 md:block" />
       </div>
 
-      {/* Vignette */}
-      <div className="absolute inset-0 vignette pointer-events-none" />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-52 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.96)_100%)]" />
     </section>
   )
 }

@@ -2,220 +2,10 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import gsap from "gsap"
 import { cn } from "@/lib/utils"
-
-interface WorkItem {
-  src: string
-  title: string
-  category: string
-  tags: string[]
-  date?: string
-  type: "personal" | "school"
-}
-
-const allWorks: WorkItem[] = [
-  {
-    src: "/image/personal/world tree.png",
-    title: "World Tree",
-    category: "Environment Design",
-    tags: ["concept art", "environment", "fantasy"],
-    date: "2025",
-    type: "personal",
-  },
-  {
-    src: "/image/personal/sakura-villege.png",
-    title: "Sakura Village",
-    category: "Environment Design",
-    tags: ["concept art", "japanese"],
-    date: "2025",
-    type: "personal",
-  },
-  {
-    src: "/image/personal/%E6%A3%AE%E6%9E%97.png",
-    title: "Enchanted Forest",
-    category: "Environment Design",
-    tags: ["concept art", "forest"],
-    date: "2024",
-    type: "personal",
-  },
-  {
-    src: "/image/personal/%E5%89%91%E4%BB%99.png",
-    title: "Sword Immortal",
-    category: "Character Design",
-    tags: ["character", "fantasy"],
-    date: "2024",
-    type: "personal",
-  },
-  {
-    src: "/image/personal/personal project.jpg",
-    title: "Personal Project",
-    category: "Visual Development",
-    tags: ["vis dev", "narrative"],
-    date: "2024",
-    type: "personal",
-  },
-  {
-    src: "/image/personal/%E5%AF%BA%E5%BA%99%E8%8D%89%E7%A8%BF.jpg",
-    title: "Temple Sketch",
-    category: "Visual Development",
-    tags: ["architecture", "sketch"],
-    date: "2024",
-    type: "personal",
-  },
-  {
-    src: "/image/personal/artist (1).png",
-    title: "Artist Portrait",
-    category: "Character Design",
-    tags: ["character", "portrait"],
-    date: "2025",
-    type: "personal",
-  },
-  {
-    src: "/image/school/enviroment 1.png",
-    title: "Environment Study I",
-    category: "Environment Design",
-    tags: ["environment", "study"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/enviroment 2.png",
-    title: "Environment Study II",
-    category: "Environment Design",
-    tags: ["environment", "study"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/enviroment 3.png",
-    title: "Environment Study III",
-    category: "Environment Design",
-    tags: ["environment", "study"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/enviroment 4.png",
-    title: "Environment Study IV",
-    category: "Environment Design",
-    tags: ["environment", "study"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/vis_dev_character.png",
-    title: "Character Vis Dev",
-    category: "Character Design",
-    tags: ["vis dev", "character"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/vis_dev_prop.png",
-    title: "Prop Design",
-    category: "Visual Development",
-    tags: ["vis dev", "prop"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/vis_dev_vehicle.png",
-    title: "Vehicle Design",
-    category: "Visual Development",
-    tags: ["vis dev", "vehicle"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/vis dev.jpg",
-    title: "Visual Development I",
-    category: "Visual Development",
-    tags: ["vis dev", "narrative"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/vis dev (2).jpg",
-    title: "Visual Development II",
-    category: "Visual Development",
-    tags: ["vis dev", "narrative"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/vis dev 3.jpg",
-    title: "Visual Development III",
-    category: "Visual Development",
-    tags: ["vis dev", "narrative"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/creative prespetive.jpg",
-    title: "Creative Perspective",
-    category: "Fundamentals",
-    tags: ["perspective", "study"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/creative prespetive (2).png",
-    title: "Creative Perspective II",
-    category: "Fundamentals",
-    tags: ["perspective", "study"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/24FA_MonBGptg_Wk12_v02_Jay.png",
-    title: "Background Painting",
-    category: "Environment Design",
-    tags: ["painting", "background"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/mars monster.png",
-    title: "Mars Monster",
-    category: "Character Design",
-    tags: ["creature", "character"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/maya.png",
-    title: "3D Modeling — Maya",
-    category: "3D",
-    tags: ["maya", "3d"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/maya (2).png",
-    title: "3D Modeling — Maya II",
-    category: "3D",
-    tags: ["maya", "3d"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/cat diary (1).png",
-    title: "Cat Diary",
-    category: "Illustration",
-    tags: ["illustration", "narrative"],
-    date: "2024",
-    type: "school",
-  },
-  {
-    src: "/image/school/sketching for entd.png",
-    title: "Sketching for ENTD",
-    category: "Fundamentals",
-    tags: ["sketch", "study"],
-    date: "2024",
-    type: "school",
-  },
-]
+import { ALL_WORKS } from "@/data/portfolio"
 
 const categories = [
   { key: "all", label: "ALL" },
@@ -228,8 +18,8 @@ const categories = [
 ]
 
 function getCategoryCount(key: string): number {
-  if (key === "all") return allWorks.length
-  return allWorks.filter((w) => w.category === key).length
+  if (key === "all") return ALL_WORKS.length
+  return ALL_WORKS.filter((w) => w.category === key).length
 }
 
 export default function WorksPage() {
@@ -239,8 +29,8 @@ export default function WorksPage() {
 
   const filtered =
     activeFilter === "all"
-      ? allWorks
-      : allWorks.filter((w) => w.category === activeFilter)
+      ? ALL_WORKS
+      : ALL_WORKS.filter((w) => w.category === activeFilter)
 
   useEffect(() => {
     const cards = gridRef.current?.querySelectorAll(".work-item")
@@ -270,10 +60,8 @@ export default function WorksPage() {
 
   return (
     <div className="min-h-screen bg-bg text-fg relative z-[2]">
-      {/* Grid bg */}
       <div className="fixed inset-0 hero-3d-grid pointer-events-none" />
 
-      {/* Nav bar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-bg/80 backdrop-blur-2xl border-b border-white/[0.04]">
         <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-6 lg:px-10">
           <Link
@@ -290,7 +78,7 @@ export default function WorksPage() {
               Works
             </Link>
             <Link
-              href="/#about"
+              href="/about"
               className="text-[11px] font-medium tracking-[0.2em] text-fg-muted transition-colors duration-300 hover:text-fg"
             >
               About
@@ -306,7 +94,6 @@ export default function WorksPage() {
       </header>
 
       <main className="relative z-10 pt-28 pb-20 px-6 lg:px-10 max-w-[1600px] mx-auto">
-        {/* Header */}
         <div ref={headerRef} className="mb-16">
           <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl tracking-[0.06em] text-fg leading-none">
             Works
@@ -314,25 +101,28 @@ export default function WorksPage() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
-          {/* Left sidebar — Categories */}
           <aside className="lg:w-52 shrink-0 lg:sticky lg:top-28 lg:self-start">
             <nav className="flex flex-wrap lg:flex-col gap-1">
-              {categories.map(({ key, label }) => {
-                const count = getCategoryCount(key)
-                if (count === 0 && key !== "all") return null
+              {categories.map((cat) => {
+                const count = getCategoryCount(cat.key)
+                if (count === 0 && cat.key !== "all") return null
+                const isActive = activeFilter === cat.key
                 return (
                   <button
-                    key={key}
-                    onClick={() => setActiveFilter(key)}
+                    key={cat.key}
+                    onClick={() => setActiveFilter(cat.key)}
                     className={cn(
-                      "text-left text-sm tracking-[0.04em] px-2 py-1.5 rounded-sm transition-all duration-300",
-                      activeFilter === key
-                        ? "text-fg font-medium"
-                        : "text-fg-muted hover:text-fg/80"
+                      "relative px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] font-mono transition-all duration-300",
+                      isActive
+                        ? "text-fg bg-white/[0.06] rounded-sm"
+                        : "text-fg-muted/50 hover:text-fg-muted"
                     )}
                   >
-                    {label}{" "}
-                    <span className="text-[10px] text-fg-subtle ml-1">
+                    {cat.label}
+                    <span className={cn(
+                      "ml-1.5 text-[9px] transition-opacity duration-300",
+                      isActive ? "text-fg-muted" : "text-fg-subtle/30"
+                    )}>
                       [{count}]
                     </span>
                   </button>
@@ -341,26 +131,53 @@ export default function WorksPage() {
             </nav>
           </aside>
 
-          {/* Right — Works grid */}
-          <div ref={gridRef} className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div
+            ref={gridRef}
+            className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
+          >
             {filtered.map((work, i) => (
-              <div
-                key={`${work.title}-${i}`}
-                className="work-item group cursor-pointer"
+              <Link
+                key={`${work.slug}-${i}`}
+                href={`/works/${work.slug}`}
+                className="work-item group cursor-pointer block"
               >
-                {/* Image */}
-                <div className="relative overflow-hidden rounded-sm aspect-[16/10] mb-4">
-                  <img
+                <div
+                  className="relative overflow-hidden rounded-sm aspect-[16/10] mb-4"
+                >
+                  <Image
                     src={work.src}
                     alt={work.title}
+                    fill
+                    sizes="(min-width: 1024px) 40vw, (min-width: 768px) 48vw, 92vw"
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   <div className="absolute inset-0 border border-white/0 rounded-sm transition-all duration-500 group-hover:border-white/[0.08]" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-sm">
+                    {(work.role || work.tools?.length || work.mood?.length) ? (
+                      <>
+                        {work.role && (
+                          <p className="text-[10px] tracking-[0.15em] text-white/70 mb-1.5">{work.role}</p>
+                        )}
+                        <div className="flex flex-wrap gap-1">
+                          {work.tools?.map((tool) => (
+                            <span key={tool} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 border border-white/10 rounded-sm text-white/50 font-mono">{tool}</span>
+                          ))}
+                          {work.mood?.map((m) => (
+                            <span key={m} className="text-[8px] tracking-[0.1em] uppercase px-1.5 py-0.5 bg-white/[0.06] rounded-sm text-white/40 font-mono">{m}</span>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm tracking-[0.02em] text-white/90 font-heading">{work.title}</p>
+                        <p className="text-[10px] tracking-[0.15em] text-white/50 mt-1">{work.category}</p>
+                      </>
+                    )}
+                  </div>
                 </div>
 
-                {/* Meta */}
                 <div className="flex items-center gap-4 mb-2">
                   {work.date && (
                     <span className="text-[10px] tracking-[0.15em] text-fg-subtle font-mono">
@@ -379,27 +196,25 @@ export default function WorksPage() {
                   </div>
                 </div>
 
-                {/* Title */}
                 <h3 className="font-heading text-lg md:text-xl tracking-[0.04em] text-fg/90 transition-colors duration-300 group-hover:text-fg">
                   {work.title}
                 </h3>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-white/[0.04] py-12 relative z-10">
         <div className="mx-auto max-w-[1600px] px-6 lg:px-10 flex items-center justify-between">
           <Link
             href="/"
             className="font-heading text-xs tracking-[0.35em] text-fg-muted hover:text-fg transition-colors duration-300"
           >
-            ← Back to Home
+            &larr; Back to Home
           </Link>
           <p className="text-[10px] tracking-[0.2em] text-fg-subtle">
-            &copy; {new Date().getFullYear()} Shijie Lin
+            &copy; {new Date().getFullYear()} Jay Lin
           </p>
         </div>
       </footer>
