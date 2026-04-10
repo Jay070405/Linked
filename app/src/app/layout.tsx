@@ -1,26 +1,24 @@
 import type { Metadata } from "next"
-import { Cinzel, Outfit } from "next/font/google"
-import "./globals.css"
-import { FluidCanvas } from "@/components/FluidCanvas"
+import { GeistSans } from "geist/font/sans"
+import { Noto_Sans_SC, Geist } from "next/font/google"
 import { CustomCursor } from "@/components/CustomCursor"
+import { LanguageProvider } from "@/components/LanguageProvider"
+import "./globals.css"
+import { cn } from "@/lib/utils"
 
-const cinzel = Cinzel({
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
+
+const notoSansSc = Noto_Sans_SC({
   subsets: ["latin"],
-  variable: "--font-heading",
+  variable: "--font-display-cn",
   display: "swap",
   weight: ["400", "500", "600", "700"],
 })
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-})
-
 export const metadata: Metadata = {
-  title: "Shijie Lin — Concept Art & Visual Development",
+  title: "Jay Lin - Concept Art & Visual Development",
   description:
-    "Fantasy worldbuilding, concept art, and visual development portfolio by Shijie Lin.",
+    "Fantasy worldbuilding, concept art, and visual development portfolio by Jay Lin.",
 }
 
 export default function RootLayout({
@@ -29,11 +27,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${outfit.variable}`}>
+    <html
+      lang="en"
+      className={cn(GeistSans.variable, notoSansSc.variable, "font-sans", geist.variable)}
+    >
       <body className="font-sans">
-        <FluidCanvas />
-        <CustomCursor />
-        {children}
+        <LanguageProvider>
+          <CustomCursor />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   )
