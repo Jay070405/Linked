@@ -1,0 +1,26 @@
+# Root-level ignores.
+# The Next.js app has its own app/.gitignore — this file must not duplicate it.
+# Every rule here is anchored with a leading slash so it applies to the repository
+# root only and cannot accidentally match a path inside app/.
+
+# Local archives of previous states. Currently ~380 MB.
+/backups/
+
+# Empty stub lockfile left by an accidental `npm install` at the repository root.
+# It has no packages and is the reason Next.js warns about an inferred workspace
+# root. Must NOT match app/package-lock.json, which is the real lockfile.
+/package-lock.json
+
+# Dev server error log.
+# app/.gitignore already covers *.log, but not *.err.
+/app/dev-3000.err
+
+# Local agent tooling state, not project source.
+/.claude-local-marketplace/
+/.superpowers/
+
+# Contains a live registered git worktree at .claude/worktrees/.
+# Ignoring it prevents `git add` from pulling a worktree directory into the repo.
+# This does not unregister or damage the worktree — remove it with
+# `git worktree remove` if it is ever no longer needed.
+/.claude/
