@@ -1,117 +1,74 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import gsap from "gsap"
+
+const INTERACTIVE_SELECTOR = "a, button, [data-cursor-hover]"
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
-  const glowRef = useRef<HTMLDivElement>(null)
-  const pos = useRef({ x: -100, y: -100 })
-  const isHovering = useRef(false)
+  const posRef = useRef({ x: -100, y: -100, lx: -100, ly: -100 })
+  const rafRef = useRef(0)
 
   useEffect(() => {
-    if (typeof window === "undefined") return
-    if (window.matchMedia("(pointer: coarse)").matches) return
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (isCoarse || prefersReduced) return
 
     const cursor = cursorRef.current
-    const glow = glowRef.current
-    if (!cursor || !glow) return
+    if (!cursor) return
 
-    const onMove = (e: MouseEvent) => {
-      pos.current.x = e.clientX
-      pos.current.y = e.clientY
+    const setHoverState = (target: EventTarget | null) => {
+      const element = target as Element | null
+      const interactive = !!element?.closest?.(INTERACTIVE_SELECTOR)
+      cursor.style.width = interactive ? "16px" : "8px"
+      cursor.style.height = interactive ? "16px" : "8px"
+      cursor.style.opacity = interactive ? "0.72" : "0.94"
     }
 
-    const onEnterInteractive = () => {
-      if (isHovering.current) return
-      isHovering.current = true
-      gsap.to(cursor, { scale: 2.5, opacity: 0.6, duration: 0.3, ease: "power2.out" })
-      gsap.to(glow, { scale: 1.8, opacity: 0.3, duration: 0.3, ease: "power2.out" })
+    const onMove = (event: MouseEvent) => {
+      posRef.current.x = event.clientX
+      posRef.current.y = event.clientY
+      setHoverState(event.target)
     }
 
-    const onLeaveInteractive = () => {
-      isHovering.current = false
-      gsap.to(cursor, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" })
-      gsap.to(glow, { scale: 1, opacity: 0.15, duration: 0.3, ease: "power2.out" })
-    }
-
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
     const tick = () => {
-      gsap.set(cursor, { x: pos.current.x, y: pos.current.y })
-      gsap.to(glow, {
-        x: pos.current.x,
-        y: pos.current.y,
-        duration: 0.6,
-        ease: "power3.out",
-      })
-      requestAnimationFrame(tick)
+      const position = posRef.current
+      position.lx = lerp(position.lx, position.x, 0.22)
+      position.ly = lerp(position.ly, position.y, 0.22)
+      cursor.style.transform = `translate3d(${position.lx}px, ${position.ly}px, 0) translate(-50%, -50%)`
+      rafRef.current = requestAnimationFrame(tick)
     }
 
     window.addEventListener("mousemove", onMove, { passive: true })
-
-    const interactives = document.querySelectorAll("a, button, [data-cursor-hover]")
-    interactives.forEach((el) => {
-      el.addEventListener("mouseenter", onEnterInteractive)
-      el.addEventListener("mouseleave", onLeaveInteractive)
-    })
-
-    const observer = new MutationObserver(() => {
-      const newInteractives = document.querySelectorAll("a, button, [data-cursor-hover]")
-      newInteractives.forEach((el) => {
-        el.addEventListener("mouseenter", onEnterInteractive)
-        el.addEventListener("mouseleave", onLeaveInteractive)
-      })
-    })
-    observer.observe(document.body, { childList: true, subtree: true })
-
-    const raf = requestAnimationFrame(tick)
+    rafRef.current = requestAnimationFrame(tick)
 
     return () => {
       window.removeEventListener("mousemove", onMove)
-      cancelAnimationFrame(raf)
-      observer.disconnect()
-      interactives.forEach((el) => {
-        el.removeEventListener("mouseenter", onEnterInteractive)
-        el.removeEventListener("mouseleave", onLeaveInteractive)
-      })
+      cancelAnimationFrame(rafRef.current)
     }
   }, [])
 
   return (
-    <>
-      <div
-        ref={cursorRef}
-        className="custom-cursor"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          background: "hsl(38 50% 61%)",
-          pointerEvents: "none",
-          zIndex: 99999,
-          transform: "translate(-50%, -50%)",
-          mixBlendMode: "difference",
-        }}
-      />
-      <div
-        ref={glowRef}
-        className="custom-cursor-glow"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: 40,
-          height: 40,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, hsl(38 50% 61% / 0.15), transparent 70%)",
-          pointerEvents: "none",
-          zIndex: 99998,
-          transform: "translate(-50%, -50%)",
-          opacity: 0.15,
-        }}
-      />
-    </>
+    <div
+      ref={cursorRef}
+      className="custom-cursor"
+      aria-hidden="true"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: 8,
+        height: 8,
+        borderRadius: "9999px",
+        background: "rgba(255,255,255,0.92)",
+        boxShadow: "0 0 18px rgba(255,255,255,0.2)",
+        pointerEvents: "none",
+        zIndex: 99999,
+        transform: "translate(-50%, -50%)",
+        opacity: 0.95,
+        transition: "width 120ms ease, height 120ms ease, opacity 120ms ease",
+      }}
+    />
   )
 }

@@ -1,17 +1,25 @@
+"use client"
+
+import { useLanguage } from "@/components/LanguageProvider"
+
 export function Footer() {
+  const { language } = useLanguage()
+
   return (
-    <footer className="border-t border-white/[0.04] py-16" style={{ background: "hsl(240 8% 2.5%)" }}>
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="flex flex-col items-center gap-5 text-center">
-          <p className="font-heading text-xs tracking-[0.35em] text-fg-muted">
-            SHIJIE LIN
-          </p>
-          <div className="h-px w-10 bg-accent/20" />
-          <p className="text-[10px] tracking-[0.2em] text-fg-subtle">
-            &copy; {new Date().getFullYear()} &mdash; Fantasy Worldbuilding &
-            Concept Art
-          </p>
-        </div>
+    <footer className="border-t border-white/[0.06] bg-[#030303] py-14">
+      <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-4 px-5 text-center md:px-10 xl:px-14">
+        <p className="font-heading text-lg tracking-[-0.02em] text-white">Jay Lin</p>
+        <div className="h-px w-12 bg-white/26" />
+        <p className="text-[0.72rem] uppercase tracking-[0.24em] text-white/46">
+          {language === "en"
+            ? "Visual Development Artist / Concept Artist"
+            : "\u89c6\u89c9\u5f00\u53d1\u827a\u672f\u5bb6 / \u6982\u5ff5\u8bbe\u8ba1\u5e08"}
+        </p>
+        <p className="text-[0.72rem] tracking-[0.18em] text-white/34">
+          {language === "en"
+            ? `\u00A9 ${new Date().getFullYear()} Selected worlds, sketches, and stories.`
+            : `\u00A9 ${new Date().getFullYear()} \u7cbe\u9009\u4e16\u754c\u3001\u8349\u56fe\u4e0e\u89c6\u89c9\u53d9\u4e8b\u3002`}
+        </p>
       </div>
     </footer>
   )

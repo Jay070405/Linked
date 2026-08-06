@@ -2,90 +2,35 @@
 
 import { useEffect, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger"
 import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import { ArrowLeft, Download, Mail } from "lucide-react"
+import {
+  ABOUT_HERO_IMAGE,
+  ABOUT_BIO_SECTIONS,
+  ABOUT_APPROACH,
+  ABOUT_DISCIPLINES,
+  ABOUT_TOOLS,
+  ABOUT_EDUCATION,
+  ABOUT_GALLERY_IMAGES,
+} from "@/data/portfolio"
 
 /* ── Data ───────────────────────────────────── */
 
-const heroImage = "/image/personal/world tree.png"
+const heroImage = ABOUT_HERO_IMAGE
 
 const artistStatement =
   "I craft worlds that exist in the space between imagination and reality — designing the environments, characters, and atmospheres that bring fantasy narratives to life."
 
-const bioSections = [
-  {
-    title: "Background",
-    text: "I'm Shijie Lin, a concept artist and visual development artist specializing in fantasy worldbuilding. My journey began with a deep fascination for the surreal and the mythological — stories that transport you to places that feel both impossible and inevitable.",
-  },
-  {
-    title: "Practice",
-    text: "My work spans environment design, character design, and cinematic illustration. I approach each piece as a fragment of a larger narrative — every rock formation, every shaft of light, every silhouette tells a story. I draw heavily from Eastern and Western mythology, architectural history, and the natural world.",
-  },
-  {
-    title: "Vision",
-    text: "Currently focused on building immersive visual worlds through digital painting, 3D exploration, and cross-media visual development. I believe the best concept art doesn't just show you a place — it makes you feel like you've been there before, in a dream you can't quite remember.",
-  },
-]
-
-const approach = [
-  {
-    label: "Narrative First",
-    description: "Every environment tells a story. I start with the emotion and narrative purpose before touching a single brush stroke.",
-  },
-  {
-    label: "World Logic",
-    description: "Believable worlds need internal consistency — from geological formations to architectural traditions to how light interacts with atmosphere.",
-  },
-  {
-    label: "Mood & Atmosphere",
-    description: "Color, light, and composition are my primary tools for establishing the emotional tone that draws viewers into the world.",
-  },
-  {
-    label: "Cross-Media Thinking",
-    description: "I work across 2D painting, 3D blockout, and photo-bashing to find the approach that best serves each piece's intent.",
-  },
-]
-
-const disciplines = [
-  "Concept Art",
-  "Visual Development",
-  "Environment Design",
-  "Character Design",
-  "Worldbuilding",
-  "Digital Illustration",
-  "Matte Painting",
-  "Storyboarding",
-]
-
-const tools = [
-  { name: "Photoshop", level: 95 },
-  { name: "Procreate", level: 90 },
-  { name: "Maya", level: 75 },
-  { name: "Blender", level: 70 },
-  { name: "After Effects", level: 65 },
-  { name: "ZBrush", level: 55 },
-]
-
-const education = [
-  {
-    period: "2023 — Present",
-    title: "Visual Development & Concept Art",
-    org: "University Program",
-    description: "Focused study in environment design, character design, visual storytelling, and production pipeline for animation and games.",
-  },
-]
-
-const galleryImages = [
-  { src: "/image/personal/sakura-villege.png", title: "Sakura Village", category: "Environment" },
-  { src: "/image/personal/%E6%A3%AE%E6%9E%97.png", title: "Enchanted Forest", category: "Environment" },
-  { src: "/image/personal/%E5%89%91%E4%BB%99.png", title: "Sword Immortal", category: "Character" },
-  { src: "/image/school/enviroment 1.png", title: "Environment Study I", category: "School" },
-  { src: "/image/school/vis_dev_character.png", title: "Vis Dev Character", category: "School" },
-  { src: "/image/school/24FA_MonBGptg_Wk12_v02_Jay.png", title: "Background Painting", category: "School" },
-]
+const bioSections = ABOUT_BIO_SECTIONS
+const approach = ABOUT_APPROACH
+const disciplines = ABOUT_DISCIPLINES
+const tools = ABOUT_TOOLS
+const education = ABOUT_EDUCATION
+const galleryImages = ABOUT_GALLERY_IMAGES
 
 /* ── Page ────────────────────────────────────── */
 
@@ -97,6 +42,7 @@ export default function AboutPage() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches
     if (prefersReduced) return
 
     const ctx = gsap.context(() => {
@@ -168,8 +114,10 @@ export default function AboutPage() {
 
       rafRef.current = requestAnimationFrame(tick)
     }
-    window.addEventListener("mousemove", onMove, { passive: true })
-    rafRef.current = requestAnimationFrame(tick)
+    if (!isCoarse) {
+      window.addEventListener("mousemove", onMove, { passive: true })
+      rafRef.current = requestAnimationFrame(tick)
+    }
 
     return () => {
       ctx.revert()
@@ -190,12 +138,15 @@ export default function AboutPage() {
           {/* Background image with parallax */}
           <div className="absolute inset-0">
             <div className="hero-parallax hero-mouse-parallax absolute inset-[-40px]">
-              <img
+              <Image
                 src={heroImage}
                 alt="Featured artwork"
+                fill
+                sizes="100vw"
                 className="w-full h-full object-cover"
                 style={{ filter: "brightness(0.4) saturate(0.8)" }}
                 draggable={false}
+                priority
               />
             </div>
             <div className="absolute inset-0" style={{ background: "linear-gradient(to top, hsl(240 10% 2%) 0%, hsl(240 10% 2% / 0.4) 40%, transparent 70%)" }} />
@@ -428,12 +379,14 @@ export default function AboutPage() {
               {galleryImages.map((img) => (
                 <div
                   key={img.title}
-                  className="gal-card group relative overflow-hidden rounded-sm border border-white/[0.06] transition-all duration-500 hover:border-white/[0.12] hover:shadow-[0_12px_50px_-10px_rgba(0,0,0,0.6)]"
+                  className="gal-card group relative h-[240px] md:h-[280px] overflow-hidden rounded-sm border border-white/[0.06] transition-all duration-500 hover:border-white/[0.12] hover:shadow-[0_12px_50px_-10px_rgba(0,0,0,0.6)]"
                   style={{ transformStyle: "preserve-3d" }}
                 >
-                  <img
+                  <Image
                     src={img.src}
                     alt={img.title}
+                    fill
+                    sizes="(min-width: 1024px) 30vw, (min-width: 768px) 46vw, 92vw"
                     className="w-full h-[240px] md:h-[280px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                     loading="lazy"
                     draggable={false}
