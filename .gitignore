@@ -18,6 +18,12 @@
 # Local agent tooling state, not project source.
 /.claude-local-marketplace/
 /.superpowers/
+/.cursor/
+/skills-lock.json
+
+# Standalone HTML sketches kept for local reference. They are not imported by
+# the Next.js app and are not part of the deployed site.
+/code for prototype/
 
 # Contains a live registered git worktree at .claude/worktrees/.
 # Ignoring it prevents `git add` from pulling a worktree directory into the repo.
