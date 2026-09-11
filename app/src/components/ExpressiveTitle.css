@@ -1,0 +1,13 @@
+.expressive-title{display:inline;font:inherit;line-height:inherit;color:inherit;letter-spacing:inherit;pointer-events:auto}
+.expressive-word{display:inline-block;position:relative;white-space:pre;font:inherit;line-height:inherit;letter-spacing:inherit;vertical-align:baseline;transition:translate .28s cubic-bezier(.2,.75,.25,1)}
+.expressive-native{font:inherit;line-height:inherit;letter-spacing:inherit}
+.expressive-word.is-painting>.expressive-native,.expressive-word.is-pending>.expressive-native{opacity:0}
+.expressive-baseline{display:inline-block;vertical-align:baseline;width:0;height:0;padding:0;margin:0;pointer-events:none}
+.expressive-paint{position:absolute;inset:0;display:block;font:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;pointer-events:none}
+.expressive-paint .stroke-text__svg{overflow:visible}
+.expressive-paint .text-type,.expressive-paint .text-type__content{font:inherit;line-height:inherit;letter-spacing:inherit;white-space:pre}
+.expressive-paint .text-type__cursor{position:absolute;margin-left:.07em;font-weight:300}
+.expressive-title[data-expressive=split] .expressive-paint{overflow:clip;overflow-clip-margin:.12em}
+@media(hover:hover) and (pointer:fine){.expressive-title[data-expressive-settled=true][data-expressive-hover=true]:hover .expressive-word{translate:0 -.025em}}
+.expressive-title[data-expressive-settled=true][data-expressive-hover=true]:focus-within .expressive-word{translate:0 -.025em}
+@media(prefers-reduced-motion:reduce){.expressive-word.is-painting>.expressive-native,.expressive-word.is-pending>.expressive-native{opacity:1}.expressive-paint{display:none}.expressive-word{transition:none;translate:none!important}}

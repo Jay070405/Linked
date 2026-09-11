@@ -1,0 +1,5 @@
+.rb-splittext,.rb-splittext-content{display:inline;font:inherit;color:inherit;line-height:inherit;letter-spacing:inherit;white-space:pre}
+.rb-splittext{perspective:900px}
+.rb-splittext .rb-split-char{display:inline-block;position:relative;font:inherit;line-height:inherit;letter-spacing:inherit;backface-visibility:hidden;transform-origin:50% 90%}
+.rb-splittext .rb-split-word,.rb-splittext .rb-split-line{font:inherit;line-height:inherit;letter-spacing:inherit}
+@media(prefers-reduced-motion:reduce){.rb-splittext-content{visibility:visible!important}.rb-splittext .rb-split-char{transform:none!important;opacity:1!important}}

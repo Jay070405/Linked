@@ -1,0 +1,185 @@
+{
+  "count": 25,
+  "featuredSlugs": [
+    "world-tree",
+    "background-painting",
+    "sakura-village",
+    "character-vis-dev"
+  ],
+  "manifest": [
+    {
+      "source": "world tree.png",
+      "asset": "/assets/art/world-tree.png",
+      "bytes": 1635473,
+      "sha256": "61545c6cdbf3f8ebcf72321420e97bef8f641634fb2b97451e60b4a233148a97"
+    },
+    {
+      "source": "sakura-villege.png",
+      "asset": "/assets/art/sakura-village.png",
+      "bytes": 1867024,
+      "sha256": "f698ecaf2e43d933e72c0f2dbc5cd6f3d5cdbe2fa642f2fb9249de18a7590983"
+    },
+    {
+      "source": "森林.png",
+      "asset": "/assets/art/enchanted-forest.png",
+      "bytes": 1842926,
+      "sha256": "0898022e10353fbb1c9f2df540d9f206dfd2c41676a0c95d2574024f415d9e9a"
+    },
+    {
+      "source": "剑仙.png",
+      "asset": "/assets/art/sword-immortal.png",
+      "bytes": 733883,
+      "sha256": "78f4dab98825063c391b200a02106c9782531c35e906f9b1a20caa22158701c8"
+    },
+    {
+      "source": "personal project.jpg",
+      "asset": "/assets/art/personal-project.jpg",
+      "bytes": 97213,
+      "sha256": "761f4edf327875ba246f413f63095dc8c929abcf89508259177b2d54508075a2"
+    },
+    {
+      "source": "寺庙草稿.jpg",
+      "asset": "/assets/art/temple-sketch.jpg",
+      "bytes": 212956,
+      "sha256": "c5236f88b801e3738ddff6f08ac926f7bae363714ad790b5f45200d81192496c"
+    },
+    {
+      "source": "artist (1).png",
+      "asset": "/assets/art/artist-portrait.png",
+      "bytes": 1872391,
+      "sha256": "8982e517e3673df08243364a583d58ae80ca49da20009e2d179b48fa69c11ab8"
+    },
+    {
+      "source": "enviroment 1.png",
+      "asset": "/assets/art/environment-study-i.png",
+      "bytes": 1976043,
+      "sha256": "e6bf6a78322f17374bc2b82a8c4232d2f26b40b6872553992db97b6a797a96f6"
+    },
+    {
+      "source": "enviroment 2.png",
+      "asset": "/assets/art/environment-study-ii.png",
+      "bytes": 2235028,
+      "sha256": "c359e5acbe05786b881f3f15a70186abd1474be6aa1e2aef4e45e3e16295fe8c"
+    },
+    {
+      "source": "enviroment 3.png",
+      "asset": "/assets/art/environment-study-iii.png",
+      "bytes": 1863086,
+      "sha256": "b7c9f35a378aefb81407b11fa2b195c986fec346fe4517d96cf3fdd63f538365"
+    },
+    {
+      "source": "enviroment 4.png",
+      "asset": "/assets/art/environment-study-iv.png",
+      "bytes": 2069600,
+      "sha256": "3f3283f68ca9ab363c9076dd7d5745318290e267e725189dc6765921680a6d95"
+    },
+    {
+      "source": "vis_dev_character.png",
+      "asset": "/assets/art/character-vis-dev.png",
+      "bytes": 16254763,
+      "sha256": "c46b84061a8f78d4fd30a2e1ec3cb7c334ab0f8cc9e8a430c07f35e6961aed8a"
+    },
+    {
+      "source": "vis_dev_prop.png",
+      "asset": "/assets/art/prop-design.png",
+      "bytes": 16493672,
+      "sha256": "24e2702a1fe966b21312f6418a40a10642af188477e17959c375a43483fed107"
+    },
+    {
+      "source": "vis_dev_vehicle.png",
+      "asset": "/assets/art/vehicle-design.png",
+      "bytes": 16444255,
+      "sha256": "f3d5f2d71c48bb5e9ad2916f6a3535b20ccc3923583e4726d3b7ad2b970ba8c7"
+    },
+    {
+      "source": "vis dev.jpg",
+      "asset": "/assets/art/visual-development-i.jpg",
+      "bytes": 193575,
+      "sha256": "c2a8759f47df752308fa135c2ecc7b2b90c79ad34a71c1b94840dabc3c9e25ef"
+    },
+    {
+      "source": "vis dev (2).jpg",
+      "asset": "/assets/art/visual-development-ii.jpg",
+      "bytes": 191951,
+      "sha256": "35c0a34c22e3be5aa1adbf027dae1d52926193c9c797e9ef6f446a9369079df1"
+    },
+    {
+      "source": "vis dev 3.jpg",
+      "asset": "/assets/art/visual-development-iii.jpg",
+      "bytes": 182996,
+      "sha256": "324fa839f1cf91bd5deb9a000c786206e451b1d66052e881c11db24f9fed4321"
+    },
+    {
+      "source": "creative prespetive.jpg",
+      "asset": "/assets/art/creative-perspective.jpg",
+      "bytes": 123144,
+      "sha256": "b265f6f50b8a6ebe4c76669034b6accbbeef8a8672c455908cc0edcb033e519a"
+    },
+    {
+      "source": "creative prespetive (2).png",
+      "asset": "/assets/art/creative-perspective-ii.png",
+      "bytes": 576158,
+      "sha256": "693e03b8f98d14201f43bad2ff8ef26e03402f29728a1fdd74cc5294f93b8fb0"
+    },
+    {
+      "source": "24FA_MonBGptg_Wk12_v02_Jay.png",
+      "asset": "/assets/art/background-painting.png",
+      "bytes": 6881616,
+      "sha256": "88dd9485b6aeaed27a66abcc8fcb2e966f2a6fc10e6118768dba8dd8cff2c606"
+    },
+    {
+      "source": "mars monster.png",
+      "asset": "/assets/art/mars-monster.png",
+      "bytes": 1454086,
+      "sha256": "7694683161dbe7696629f44bbea69afc6a0c1c292da024e67a2de3696f20bfa0"
+    },
+    {
+      "source": "maya.png",
+      "asset": "/assets/art/3d-modeling-maya.png",
+      "bytes": 81697,
+      "sha256": "e0d7a29e8d29acd50cb05d1549184d87b9f18ab25255f0b3d32b09547be20044"
+    },
+    {
+      "source": "maya (2).png",
+      "asset": "/assets/art/3d-modeling-maya-ii.png",
+      "bytes": 710407,
+      "sha256": "ed9517d13a0dd7b1e727834ba4bed594f94ea47491994535606195ddc8ba3e9e"
+    },
+    {
+      "source": "cat diary (1).png",
+      "asset": "/assets/art/cat-diary.png",
+      "bytes": 1117064,
+      "sha256": "f2df5b69ee82785d460ef33662afd7cffb55c59187cef71c3c99381bbfd344ba"
+    },
+    {
+      "source": "sketching for entd.png",
+      "asset": "/assets/art/sketching-for-entd.png",
+      "bytes": 5493296,
+      "sha256": "9f5d5c3c9af878c08d081a323bfdb070733507a9abab6407e735d979a99c33b6"
+    },
+    {
+      "source": "s5-user-repaint.png",
+      "asset": "/assets/projects/roco-cover.png",
+      "bytes": 3851756,
+      "sha256": "5beff2d02f6894a86101afd3311f109077c7bbad07abb587ccd8b442eeaaf15d"
+    },
+    {
+      "source": "洛克王国世界-异色奇遇作品集-评审正文-v1.3.pdf",
+      "asset": "/assets/docs/roco-review.pdf",
+      "bytes": 2729381,
+      "sha256": "0862922c892e1b5d5ed8d6e738fe201b7c9ec5eb209c0098ede693e82024de25"
+    },
+    {
+      "source": "洛克王国世界-异色奇遇作品集-详细附录-v1.3.pdf",
+      "asset": "/assets/docs/roco-appendix.pdf",
+      "bytes": 10129388,
+      "sha256": "f38226f5645644057f4956ddfc5c0a58c524536ed585ec90ac6ee38937d7ad98"
+    },
+    {
+      "source": "中文策划简历.pdf",
+      "asset": "/assets/docs/jay-lin-systems-resume-zh.pdf",
+      "bytes": 2629568,
+      "sha256": "700c98c3af952ca1e0b76aea105716611399ce16cd0ac9e396a3506b5b6d3852"
+    }
+  ]
+}

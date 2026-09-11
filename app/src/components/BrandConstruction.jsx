@@ -1,0 +1,54 @@
+import {useLayoutEffect,useRef} from 'react';
+import gsap from 'gsap';
+import OriginalLogo from './OriginalLogo';
+import BrandWordmark,{geometry} from './BrandWordmark';
+import './brand-motion.css';
+
+/** Draw the actual logo and font contours before their matching solid shapes. */
+export default function BrandConstruction({children,reduced=false,play=true,replayKey=0,onComplete,className=''}) {
+ const host=useRef(null),complete=useRef(onComplete);complete.current=onComplete;
+ useLayoutEffect(()=>{
+  const el=host.current;if(!el)return;
+  const q=s=>el.querySelector(s),qa=s=>[...el.querySelectorAll(s)];
+  let timeline,finished=false,visible=true;
+  const finish=()=>{if(!finished){finished=true;el.dataset.constructed='true';complete.current?.();}};
+  const context=gsap.context(()=>{
+   el.dataset.constructed='false';
+   if(reduced){gsap.set([q('.brand-symbol'),q('.brand-word-drawing')],{autoAlpha:0});gsap.set(q('.brand-name'),{autoAlpha:1});finish();return;}
+   gsap.set(q('.brand-symbol'),{autoAlpha:1,x:0,y:0,scale:1});
+   gsap.set(q('.brand-symbol-solid'),{opacity:0});
+   gsap.set(q('.brand-name'),{autoAlpha:0});
+   gsap.set(q('.brand-word-drawing'),{autoAlpha:1});
+   gsap.set(qa('.brand-symbol-guide,.brand-symbol-stroke,.brand-glyph-guide,.brand-glyph-stroke'),{strokeDasharray:1,strokeDashoffset:1});
+   gsap.set(qa('.brand-word-drawing .brand-glyph-fill'),{opacity:0});
+   timeline=gsap.timeline({paused:!play,onComplete:finish,defaults:{ease:'power2.inOut',autoRound:false}})
+    .to(qa('.brand-symbol-guide'),{strokeDashoffset:0,duration:.55,stagger:.045},0)
+    .to(qa('.brand-symbol-stroke'),{strokeDashoffset:0,duration:1.15,stagger:.10,ease:'power1.inOut'},.22)
+    .to(q('.brand-symbol-solid'),{opacity:1,duration:.5},1.32)
+    .to(q('.brand-symbol'),{x:()=>-el.clientWidth*.42,y:()=>-el.clientHeight*.28,scale:.19,duration:.8},1.85)
+    .to(qa('.brand-glyph-guide'),{strokeDashoffset:0,duration:.6,stagger:.06},1.95)
+    .to(qa('.brand-glyph-stroke'),{strokeDashoffset:0,duration:1.12,stagger:.09,ease:'power1.inOut'},2.15)
+    .to(qa('.brand-word-drawing .brand-glyph-fill'),{opacity:1,duration:.5,stagger:.09},3.24)
+    .to(q('.brand-symbol'),{autoAlpha:0,duration:.4},2.62)
+    .to(qa('.brand-glyph-guide'),{opacity:0,duration:.5},3.75)
+    .set(q('.brand-name'),{autoAlpha:1},4.22)
+    .set(q('.brand-word-drawing'),{autoAlpha:0},4.22);
+  },host);
+  const sync=()=>{if(!timeline||finished)return;const covered=el.closest('.home-journey')&&(document.body.classList.contains('portfolio-route-open')||document.body.classList.contains('brand-loading'));if(document.hidden||!play||!visible||covered)timeline.pause();else timeline.resume();};
+  const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();});observer.observe(el);
+  const pageObserver=new MutationObserver(sync);pageObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
+  document.addEventListener('visibilitychange',sync);sync();
+  return()=>{observer.disconnect();pageObserver.disconnect();document.removeEventListener('visibilitychange',sync);context.revert();};
+ },[reduced,play,replayKey]);
+ return <div ref={host} className={`brand-construction ${className}`}>
+  <div className="brand-symbol" aria-hidden="true">
+   <svg className="brand-symbol-trace" viewBox={geometry.logo.viewBox} fill="none" stroke="currentColor">
+    <g opacity=".35" strokeWidth=".6">{[198,245,283,331].map(x=><path key={x} className="brand-symbol-guide" pathLength="1" vectorEffect="non-scaling-stroke" d={`M${x} 68V125M${x} 317V420`}/>)}{[102,338,388,493].map(y=><path key={y} className="brand-symbol-guide" pathLength="1" vectorEffect="non-scaling-stroke" d={`M70 ${y}H140M380 ${y}H460`}/>)}</g>
+    {geometry.logo.paths.map((d,i)=><path key={i} d={d} pathLength="1" className="brand-symbol-stroke" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>)}
+   </svg>
+   <div className="brand-symbol-solid"><OriginalLogo className="brand-logo"/></div>
+  </div>
+  <div className="brand-word-drawing" aria-hidden="true"><BrandWordmark guides/><BrandWordmark outline/><BrandWordmark/></div>
+  <div className="brand-name">{children||<><span className="loading-accessible">JAY LIN</span><BrandWordmark/></>}</div>
+ </div>;
+}

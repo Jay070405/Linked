@@ -1,0 +1,45 @@
+.brand-construction{position:relative;width:100%;aspect-ratio:3/1;isolation:isolate;color:inherit}
+.brand-symbol{position:absolute;width:18%;aspect-ratio:355/410;left:41%;top:16%;z-index:4;pointer-events:none}
+.brand-symbol-trace,.brand-symbol-solid{position:absolute;inset:0;width:100%;height:100%}
+.brand-symbol-trace{overflow:visible}.brand-logo{width:100%;height:100%;display:block}
+.brand-name,.brand-word-drawing{position:absolute;inset:0}
+.brand-word-drawing{pointer-events:none}
+.brand-word-vector{position:absolute;inset:10% .75%;width:98.5%;height:80%;overflow:visible;pointer-events:none}
+.brand-finale .liquid-signature.has-vector .liquid-signature__native{position:absolute!important;width:1px!important;height:1px!important;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+.liquid-signature.is-canvas-ready>.brand-word-vector{opacity:0}
+.studio-loading{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#08090b;color:#fafbfc;overflow:hidden;z-index:99999;font-family:'TikTok Sans','Microsoft YaHei',sans-serif}
+.studio-loading::backdrop{background:transparent}
+.studio-loading:focus{outline:none}
+.studio-loading.is-reduced *{animation:none!important;transition:none!important}
+.studio-loading.is-leaving{animation:studio-loading-exit .65s cubic-bezier(.65,0,.15,1) both;pointer-events:none}
+.studio-loading.is-reduced.is-leaving{animation:none;opacity:0}
+.loading-top,.loading-bottom{position:absolute;left:4.5%;right:4.5%;display:flex;align-items:center;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.07em;z-index:5}
+.loading-top{top:32px;color:#bfc0c4}
+.loading-top>span:first-child{display:flex;align-items:center;gap:13px;color:#fff;font-family:'TikTok Sans',sans-serif;font-size:12px;letter-spacing:.15em}
+.loading-corner-logo{width:25px;height:29px}
+.loading-accessible{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden;white-space:nowrap}
+.loading-center{position:absolute;width:91%;max-width:1400px;left:50%;top:49%;transform:translate(-50%,-50%)}
+.loading-center:before{content:'';position:absolute;inset:-40% 5%;background:radial-gradient(ellipse at center,#292b3126,transparent 65%);pointer-events:none}
+.loading-caption{position:relative;text-align:center;font-size:12px;color:#c1c2c7;margin:29px 0 0;letter-spacing:.17em;animation:loading-caption-in .8s .35s both}
+.loading-bottom{bottom:32px;color:#91939b;gap:24px}
+.loading-bottom>div{width:245px;max-width:50%}
+.loading-resource-line{height:1px;background:#ffffff24;margin-top:15px;overflow:hidden}
+.loading-resource-line i{display:block;background:#eee;height:100%;width:100%;transform:scaleX(.07);transform-origin:left;transition:transform 1.4s cubic-bezier(.2,.8,.2,1)}
+.loading-resource-line i.is-ready{transform:scaleX(1)}
+.loading-bottom button{background:transparent;color:#fff;border:1px solid #ffffff30;border-radius:2px;font-family:inherit;font-size:11px;padding:14px 19px;display:flex;align-items:center;gap:35px;min-height:44px;cursor:pointer;transition:background .25s,border-color .25s}
+.loading-bottom button:hover{background:#ffffff0e;border-color:#ffffff70}
+.loading-bottom button:focus-visible{outline:2px solid #fff;outline-offset:5px}
+.loading-bottom button span{display:inline-block;transition:transform .3s}
+.loading-bottom button:hover span{transform:translate(2px,-2px)}
+.brand-finale{position:relative;z-index:1;margin-top:21px}
+.brand-finale .brand-construction{aspect-ratio:3.55/1}
+.brand-finale .liquid-signature{width:100%;height:100%;min-height:0;margin:0;background:#fafbfc}
+.brand-finale .brand-guides{color:#111114}
+.brand-finale-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:'Geist Mono',monospace;color:#62646b;font-size:9px;letter-spacing:.06em;padding-top:20px}
+.contact-finale .brand-finale-bottom button{font-family:inherit;font-size:10px;color:#62646b;min-height:44px;display:flex;align-items:center;gap:22px}
+.brand-finale-bottom button span{font-size:18px;display:inline-block;transition:transform .45s}
+.brand-finale-bottom button:hover span{transform:rotate(-70deg)}
+@keyframes studio-loading-exit{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+@keyframes loading-caption-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media(max-width:650px){.loading-top{top:24px;font-size:8px}.loading-top>span:first-child{font-size:10px;gap:10px}.loading-corner-logo{width:22px;height:26px}.loading-center{width:92%;top:47%}.loading-center .brand-construction{aspect-ratio:2/1}.brand-typeset{font-size:24vw}.loading-center .brand-symbol{width:26%;left:37%;top:20%}.loading-caption{font-size:10px;letter-spacing:.09em;margin-top:28px}.loading-bottom{bottom:24px;font-size:8px}.loading-bottom button{font-size:10px;padding:12px;gap:19px}.loading-bottom>div{max-width:46%}.brand-finale .brand-construction{aspect-ratio:2.7/1}.brand-finale .brand-symbol{width:22%;left:39%;top:16%}.brand-finale-bottom{font-size:7px;padding-top:6px}.contact-finale .brand-finale-bottom button{font-size:9px}.brand-finale .liquid-signature__native{font-size:26vw}}
+@media(prefers-reduced-motion:reduce){.studio-loading *{animation:none!important;transition:none!important}.brand-finale-bottom button span{transition:none}}

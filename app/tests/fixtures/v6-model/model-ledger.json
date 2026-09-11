@@ -1,0 +1,1474 @@
+{
+  "metadata": {
+    "model_version": "v6-20260907-1",
+    "seed": 20260907,
+    "numpy_version": "2.3.5",
+    "python_version": "3.12.14",
+    "generator": "numpy.random.Generator(numpy.random.PCG64(seed))",
+    "draw_order": "SIM-01 to SIM-10; fairy, advanced, net; skip zero-count ball types",
+    "random_call_count": 14,
+    "initial_rng_state": {
+      "bit_generator": "PCG64",
+      "state": {
+        "state": 175587427759456559827728201579777733003,
+        "inc": 104325743844774820430948754790888466891
+      },
+      "has_uint32": 0,
+      "uinteger": 0
+    },
+    "final_rng_state": {
+      "bit_generator": "PCG64",
+      "state": {
+        "state": 129592500214671347309241798481050754561,
+        "inc": 104325743844774820430948754790888466891
+      },
+      "has_uint32": 0,
+      "uinteger": 0
+    },
+    "source_workbook_sha256": {
+      "data.xlsx": "3cb7fa282e8d87a74b862fb62ca6a69c2dbb47756e68a22a8949add5eceac3fe",
+      "model.xlsx": "bbe1850a28921fce343daa735228b607872cec35e8d6c1d29d907d73c14c637c"
+    },
+    "source_workbook_directory": "C:\\Users\\shiji\\Documents\\ChatGPT\\New project\\outputs\\final-review\\after",
+    "observed_batch_count": 10,
+    "simulated_scenario_count": 10,
+    "statistical_sample_count_after_simulation": 10,
+    "combined_statistical_summary_allowed": false,
+    "material_label_zh": "四叶草铅绘（原表：草团子）",
+    "material_definition_source": "model.xlsx::参数!D7; 模拟器!D8",
+    "income_scope": "Raw account income × selected multiplier, personal ball cost ×1. ×2 is conditional, not audited receipts or two-player net profit.",
+    "price_scope": "Project prices, not claimed current prices for every season.",
+    "formula_source_cells": {
+      "expected_shiny": "model.xlsx::模拟器!E6",
+      "probability": "model.xlsx::模拟器!E7",
+      "material": "model.xlsx::模拟器!E8",
+      "raw_income": "model.xlsx::模拟器!E10",
+      "conditional_income": "model.xlsx::模拟器!E11",
+      "net": "model.xlsx::模拟器!E12"
+    },
+    "core_limit_zh": "10批非随机观察仅用于校准假设模型。模拟不新增样本，不验证官方概率，也不证明回本。",
+    "core_limit_en": "Ten nonrandom observed batches inform this hypothetical model. Simulations add no evidence and establish neither official odds nor cost recovery."
+  },
+  "calibration": {
+    "fairy": {
+      "label_zh": "童话球",
+      "source_observed_ids": [
+        "TEST-01",
+        "TEST-02",
+        "TEST-03"
+      ],
+      "batch_count": 3,
+      "balls": 1506,
+      "shiny_records": 4,
+      "material": 212,
+      "raw_income": 40638750,
+      "shiny_record_ratio": 0.0026560424966799467,
+      "material_per_ball": 0.1407702523240372,
+      "raw_income_per_ball": 26984.561752988047,
+      "unit_price": 80000,
+      "official_probability": false,
+      "simulated_records_in_calibration": 0
+    },
+    "advanced": {
+      "label_zh": "高级咕噜球",
+      "source_observed_ids": [
+        "TEST-05",
+        "TEST-06"
+      ],
+      "batch_count": 2,
+      "balls": 2036,
+      "shiny_records": 3,
+      "material": 74,
+      "raw_income": 29989450,
+      "shiny_record_ratio": 0.0014734774066797642,
+      "material_per_ball": 0.036345776031434185,
+      "raw_income_per_ball": 14729.592337917486,
+      "unit_price": 15000,
+      "official_probability": false,
+      "simulated_records_in_calibration": 0
+    },
+    "net": {
+      "label_zh": "网兜球",
+      "source_observed_ids": [
+        "TEST-04"
+      ],
+      "batch_count": 1,
+      "balls": 1099,
+      "shiny_records": 1,
+      "material": 47,
+      "raw_income": 14463000,
+      "shiny_record_ratio": 0.0009099181073703367,
+      "material_per_ball": 0.042766151046405826,
+      "raw_income_per_ball": 13160.145586897179,
+      "unit_price": 3000,
+      "official_probability": false,
+      "simulated_records_in_calibration": 0
+    }
+  },
+  "observed_summary_only": {
+    "batch_count": 10,
+    "total_balls": 6632,
+    "shiny_records": 13,
+    "material": 499,
+    "raw_income": 144462100,
+    "personal_ball_cost": 243202000
+  },
+  "records": [
+    {
+      "id": "TEST-01",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 504,
+        "advanced": 0,
+        "net": 0
+      },
+      "total_balls": 504,
+      "shiny_records_observed": 2,
+      "shiny_count_model_draw": null,
+      "material_observed": 68,
+      "raw_income_observed": 12494950,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 12494950,
+      "personal_ball_cost": 40320000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 24989900.0,
+      "conditional_net_calculated": -15330100.0,
+      "conditional_net_excluding_recorded_book_calculated": -15330100.0,
+      "expected": null,
+      "pure_ball_calibration_group": "fairy",
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": true,
+      "calibration_role": "pure_observed_source",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B2",
+          "advanced": "model.xlsx::测算!C2",
+          "net": "model.xlsx::测算!D2"
+        },
+        "shiny_records": "data.xlsx::'记录'!P2",
+        "material": "data.xlsx::'记录'!L2",
+        "raw_income": "data.xlsx::'记录'!R2",
+        "recorded_cost": "data.xlsx::'记录'!Q2",
+        "book_income": "data.xlsx::'记录'!AG2",
+        "note": "data.xlsx::'记录'!W2"
+      },
+      "source_note": "耗球204＋100＋100＋100＝504；草团子20＋15＋20＋13＝68；污染2次。球价80,000。黄色总收入12,494,950；可见白字分项合计7,094,950，差额5,400,000未标独立分项，不擅自分配。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-02",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 500,
+        "advanced": 0,
+        "net": 0
+      },
+      "total_balls": 500,
+      "shiny_records_observed": 1,
+      "shiny_count_model_draw": null,
+      "material_observed": 70,
+      "raw_income_observed": 14878800,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 14878800,
+      "personal_ball_cost": 40000000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 29757600.0,
+      "conditional_net_calculated": -10242400.0,
+      "conditional_net_excluding_recorded_book_calculated": -10242400.0,
+      "expected": null,
+      "pure_ball_calibration_group": "fairy",
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": true,
+      "calibration_role": "pure_observed_source",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B3",
+          "advanced": "model.xlsx::测算!C3",
+          "net": "model.xlsx::测算!D3"
+        },
+        "shiny_records": "data.xlsx::'记录'!P3",
+        "material": "data.xlsx::'记录'!L3",
+        "raw_income": "data.xlsx::'记录'!R3",
+        "recorded_cost": "data.xlsx::'记录'!Q3",
+        "book_income": "data.xlsx::'记录'!AG3",
+        "note": "data.xlsx::'记录'!W3"
+      },
+      "source_note": "耗球=200+100+100+100；草团子=24+15+20+11；野生污染=1。赛季球单价按用户更正 80,000 洛克贝/个；收益取黄色共赚取汇总。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-03",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 502,
+        "advanced": 0,
+        "net": 0
+      },
+      "total_balls": 502,
+      "shiny_records_observed": 1,
+      "shiny_count_model_draw": null,
+      "material_observed": 74,
+      "raw_income_observed": 13265000,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 13265000,
+      "personal_ball_cost": 40160000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 26530000.0,
+      "conditional_net_calculated": -13630000.0,
+      "conditional_net_excluding_recorded_book_calculated": -13630000.0,
+      "expected": null,
+      "pure_ball_calibration_group": "fairy",
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": true,
+      "calibration_role": "pure_observed_source",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B4",
+          "advanced": "model.xlsx::测算!C4",
+          "net": "model.xlsx::测算!D4"
+        },
+        "shiny_records": "data.xlsx::'记录'!P4",
+        "material": "data.xlsx::'记录'!L4",
+        "raw_income": "data.xlsx::'记录'!R4",
+        "recorded_cost": "data.xlsx::'记录'!Q4",
+        "book_income": "data.xlsx::'记录'!AG4",
+        "note": "data.xlsx::'记录'!W4"
+      },
+      "source_note": "耗球=314+88+100；草团子=40+18+16；可见词条数=11+5+5=21；野生污染=3。赛季球单价按用户更正 80,000 洛克贝/个。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-04",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 0,
+        "advanced": 0,
+        "net": 1099
+      },
+      "total_balls": 1099,
+      "shiny_records_observed": 1,
+      "shiny_count_model_draw": null,
+      "material_observed": 47,
+      "raw_income_observed": 14463000,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 14463000,
+      "personal_ball_cost": 3297000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 28926000.0,
+      "conditional_net_calculated": 25629000.0,
+      "conditional_net_excluding_recorded_book_calculated": 25629000.0,
+      "expected": null,
+      "pure_ball_calibration_group": "net",
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": true,
+      "calibration_role": "pure_observed_source",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B5",
+          "advanced": "model.xlsx::测算!C5",
+          "net": "model.xlsx::测算!D5"
+        },
+        "shiny_records": "data.xlsx::'记录'!P5",
+        "material": "data.xlsx::'记录'!L5",
+        "raw_income": "data.xlsx::'记录'!R5",
+        "recorded_cost": "data.xlsx::'记录'!Q5",
+        "book_income": "data.xlsx::'记录'!AG5",
+        "note": "data.xlsx::'记录'!W5"
+      },
+      "source_note": "可见分段耗球=599+500=1,099；起止库存1,590→499相差8球。用户确认小额差异不再作为待核项，本项目以分段耗球数为准，不重复补加；草团子=27+20；词条=16+9=25；网兜球固定按3,000洛克贝/个计算。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-05",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 0,
+        "advanced": 1036,
+        "net": 0
+      },
+      "total_balls": 1036,
+      "shiny_records_observed": 1,
+      "shiny_count_model_draw": null,
+      "material_observed": 41,
+      "raw_income_observed": 10629100,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 10629100,
+      "personal_ball_cost": 15540000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 21258200.0,
+      "conditional_net_calculated": 5718200.0,
+      "conditional_net_excluding_recorded_book_calculated": 5718200.0,
+      "expected": null,
+      "pure_ball_calibration_group": "advanced",
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": true,
+      "calibration_role": "pure_observed_source",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B6",
+          "advanced": "model.xlsx::测算!C6",
+          "net": "model.xlsx::测算!D6"
+        },
+        "shiny_records": "data.xlsx::'记录'!P6",
+        "material": "data.xlsx::'记录'!L6",
+        "raw_income": "data.xlsx::'记录'!R6",
+        "recorded_cost": "data.xlsx::'记录'!Q6",
+        "book_income": "data.xlsx::'记录'!AG6",
+        "note": "data.xlsx::'记录'!W6"
+      },
+      "source_note": "高级咕噜球单价 15,000 洛克贝/个，游戏内商店截图已确认；收入取黄色“共赚取”。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-06",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 0,
+        "advanced": 1000,
+        "net": 0
+      },
+      "total_balls": 1000,
+      "shiny_records_observed": 2,
+      "shiny_count_model_draw": null,
+      "material_observed": 33,
+      "raw_income_observed": 19360350,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 19360350,
+      "personal_ball_cost": 15000000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 38720700.0,
+      "conditional_net_calculated": 23720700.0,
+      "conditional_net_excluding_recorded_book_calculated": 23720700.0,
+      "expected": null,
+      "pure_ball_calibration_group": "advanced",
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": true,
+      "calibration_role": "pure_observed_source",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B7",
+          "advanced": "model.xlsx::测算!C7",
+          "net": "model.xlsx::测算!D7"
+        },
+        "shiny_records": "data.xlsx::'记录'!P7",
+        "material": "data.xlsx::'记录'!L7",
+        "raw_income": "data.xlsx::'记录'!R7",
+        "recorded_cost": "data.xlsx::'记录'!Q7",
+        "book_income": "data.xlsx::'记录'!AG7",
+        "note": "data.xlsx::'记录'!W7"
+      },
+      "source_note": "分段明确耗球1,000；起止库存1,744→767推得977，相差23球。用户确认小额差异不再作为待核项，本项目以分段耗球数为准，不重复补加；高级咕噜球15,000洛克贝/个。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-07",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 325,
+        "advanced": 620,
+        "net": 0
+      },
+      "total_balls": 945,
+      "shiny_records_observed": 2,
+      "shiny_count_model_draw": null,
+      "material_observed": 72,
+      "raw_income_observed": 11627400,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 11627400,
+      "personal_ball_cost": 35300000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 23254800.0,
+      "conditional_net_calculated": -12045200.0,
+      "conditional_net_excluding_recorded_book_calculated": -12045200.0,
+      "expected": null,
+      "pure_ball_calibration_group": null,
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": false,
+      "calibration_role": "mixed_observed_overview_only",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B8",
+          "advanced": "model.xlsx::测算!C8",
+          "net": "model.xlsx::测算!D8"
+        },
+        "shiny_records": "data.xlsx::'记录'!P8",
+        "material": "data.xlsx::'记录'!L8",
+        "raw_income": "data.xlsx::'记录'!R8",
+        "recorded_cost": "data.xlsx::'记录'!Q8",
+        "book_income": "data.xlsx::'记录'!AG8",
+        "note": "data.xlsx::'记录'!W8"
+      },
+      "source_note": "混合球：童话球325×80,000；高级咕噜球620×15,000。童话球起止库存1,025→708推得317，相差8球；用户确认按分段325记录，不重复补加。四叶草铅绘累计30个会出现提示。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-08",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 200,
+        "advanced": 101,
+        "net": 0
+      },
+      "total_balls": 301,
+      "shiny_records_observed": 1,
+      "shiny_count_model_draw": null,
+      "material_observed": 33,
+      "raw_income_observed": 9493500,
+      "picture_book_income_observed": 2700000,
+      "raw_income_excluding_recorded_book": 6793500,
+      "personal_ball_cost": 17515000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 18987000.0,
+      "conditional_net_calculated": 1472000.0,
+      "conditional_net_excluding_recorded_book_calculated": -3928000.0,
+      "expected": null,
+      "pure_ball_calibration_group": null,
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": false,
+      "calibration_role": "mixed_observed_overview_only",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B9",
+          "advanced": "model.xlsx::测算!C9",
+          "net": "model.xlsx::测算!D9"
+        },
+        "shiny_records": "data.xlsx::'记录'!P9",
+        "material": "data.xlsx::'记录'!L9",
+        "raw_income": "data.xlsx::'记录'!R9",
+        "recorded_cost": "data.xlsx::'记录'!Q9",
+        "book_income": "data.xlsx::'记录'!AG9",
+        "note": "data.xlsx::'记录'!W9"
+      },
+      "source_note": "独立测试；耗球=赛季球200+高级咕噜球101=301；期末库存794与679均吻合；成本=200×80000+101×15000；黄色共赚取9493500含童话绘本异色陶陶2700000。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-09",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 200,
+        "advanced": 320,
+        "net": 0
+      },
+      "total_balls": 520,
+      "shiny_records_observed": 1,
+      "shiny_count_model_draw": null,
+      "material_observed": 29,
+      "raw_income_observed": 9666600,
+      "picture_book_income_observed": 0,
+      "raw_income_excluding_recorded_book": 9666600,
+      "personal_ball_cost": 20800000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 19333200.0,
+      "conditional_net_calculated": -1466800.0,
+      "conditional_net_excluding_recorded_book_calculated": -1466800.0,
+      "expected": null,
+      "pure_ball_calibration_group": null,
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": false,
+      "calibration_role": "mixed_observed_overview_only",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B10",
+          "advanced": "model.xlsx::测算!C10",
+          "net": "model.xlsx::测算!D10"
+        },
+        "shiny_records": "data.xlsx::'记录'!P10",
+        "material": "data.xlsx::'记录'!L10",
+        "raw_income": "data.xlsx::'记录'!R10",
+        "recorded_cost": "data.xlsx::'记录'!Q10",
+        "book_income": "data.xlsx::'记录'!AG10",
+        "note": "data.xlsx::'记录'!W10"
+      },
+      "source_note": "独立测试；用户更正高级咕噜球消耗为320；耗球=赛季球200+高级咕噜球320=520；期末库存804与448均吻合；成本=200×80000+320×15000；收入=7206600+660000+1800000=9666600。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "TEST-10",
+      "kind": "observed",
+      "parent_batch_id": null,
+      "balls": {
+        "fairy": 183,
+        "advanced": 42,
+        "net": 0
+      },
+      "total_balls": 225,
+      "shiny_records_observed": 1,
+      "shiny_count_model_draw": null,
+      "material_observed": 32,
+      "raw_income_observed": 28583400,
+      "picture_book_income_observed": 5400000,
+      "raw_income_excluding_recorded_book": 23183400,
+      "personal_ball_cost": 15270000,
+      "income_multiplier_scenario": 2.0,
+      "conditional_income_calculated": 57166800.0,
+      "conditional_net_calculated": 41896800.0,
+      "conditional_net_excluding_recorded_book_calculated": 31096800.0,
+      "expected": null,
+      "pure_ball_calibration_group": null,
+      "eligible_for_observed_summary": true,
+      "eligible_for_calibration": false,
+      "calibration_role": "mixed_observed_overview_only",
+      "source_cells": {
+        "balls": {
+          "fairy": "model.xlsx::测算!B11",
+          "advanced": "model.xlsx::测算!C11",
+          "net": "model.xlsx::测算!D11"
+        },
+        "shiny_records": "data.xlsx::'记录'!P11",
+        "material": "data.xlsx::'记录'!L11",
+        "raw_income": "data.xlsx::'记录'!R11",
+        "recorded_cost": "data.xlsx::'记录'!Q11",
+        "book_income": "data.xlsx::'记录'!AG11",
+        "note": "data.xlsx::'记录'!W11"
+      },
+      "source_note": "独立测试；耗球=童话球183+高级咕噜球42=225，起止库存完全吻合；成本=183×80,000+42×15,000；收入28,583,400，其中童话绘本栗鼠5,400,000；星光值按形态单独记录，不直接进入异色概率公式。",
+      "income_scope_note": "牵手口径：按作者此前指定，将黄色账面收入×2、本人球成本×1；这是折算情景。若黄色金额已含双方收入，倍率应改为1，不能重复翻倍。",
+      "measurement_date": null,
+      "measurement_date_note": "Source DATE-001 is a recording date, not established gameplay time."
+    },
+    {
+      "id": "SIM-01",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-01",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 504,
+        "advanced": 0,
+        "net": 0
+      },
+      "total_balls": 504,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 0,
+      "shiny_model_draw_by_ball": {
+        "fairy": 0,
+        "advanced": 0,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 40320000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 504,
+        "personal_ball_cost": 40320000,
+        "expected_shiny_records": 1.3386454183266931,
+        "probability_at_least_one_under_assumptions": 0.7382659382027683,
+        "expected_material": 70.94820717131475,
+        "expected_raw_income": 13600219.123505976,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 27200438.247011952,
+        "expected_conditional_net": -13119561.752988048,
+        "expected_income_cost_ratio": 0.6746140438247012,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "fairy": [
+          "TEST-01",
+          "TEST-02",
+          "TEST-03"
+        ]
+      },
+      "mixed_ball_additivity_assumption": false,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B2",
+          "advanced": "model.xlsx::测算!C2",
+          "net": "model.xlsx::测算!D2"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-02",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-02",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 500,
+        "advanced": 0,
+        "net": 0
+      },
+      "total_balls": 500,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 1,
+      "shiny_model_draw_by_ball": {
+        "fairy": 1,
+        "advanced": 0,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 40000000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 500,
+        "personal_ball_cost": 40000000,
+        "expected_shiny_records": 1.3280212483399734,
+        "probability_at_least_one_under_assumptions": 0.7354666683067291,
+        "expected_material": 70.3851261620186,
+        "expected_raw_income": 13492280.876494024,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 26984561.752988048,
+        "expected_conditional_net": -13015438.247011952,
+        "expected_income_cost_ratio": 0.6746140438247012,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "fairy": [
+          "TEST-01",
+          "TEST-02",
+          "TEST-03"
+        ]
+      },
+      "mixed_ball_additivity_assumption": false,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B3",
+          "advanced": "model.xlsx::测算!C3",
+          "net": "model.xlsx::测算!D3"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-03",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-03",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 502,
+        "advanced": 0,
+        "net": 0
+      },
+      "total_balls": 502,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 1,
+      "shiny_model_draw_by_ball": {
+        "fairy": 1,
+        "advanced": 0,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 40160000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 502,
+        "personal_ball_cost": 40160000,
+        "expected_shiny_records": 1.3333333333333333,
+        "probability_at_least_one_under_assumptions": 0.7368700256815386,
+        "expected_material": 70.66666666666667,
+        "expected_raw_income": 13546250.0,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 27092500.0,
+        "expected_conditional_net": -13067500.0,
+        "expected_income_cost_ratio": 0.6746140438247012,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "fairy": [
+          "TEST-01",
+          "TEST-02",
+          "TEST-03"
+        ]
+      },
+      "mixed_ball_additivity_assumption": false,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B4",
+          "advanced": "model.xlsx::测算!C4",
+          "net": "model.xlsx::测算!D4"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-04",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-04",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 0,
+        "advanced": 0,
+        "net": 1099
+      },
+      "total_balls": 1099,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 1,
+      "shiny_model_draw_by_ball": {
+        "fairy": 0,
+        "advanced": 0,
+        "net": 1
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 3297000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 1099,
+        "personal_ball_cost": 3297000,
+        "expected_shiny_records": 1.0,
+        "probability_at_least_one_under_assumptions": 0.6322879923953129,
+        "expected_material": 47.0,
+        "expected_raw_income": 14463000.0,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 28926000.0,
+        "expected_conditional_net": 25629000.0,
+        "expected_income_cost_ratio": 8.773430391264785,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "net": [
+          "TEST-04"
+        ]
+      },
+      "mixed_ball_additivity_assumption": false,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B5",
+          "advanced": "model.xlsx::测算!C5",
+          "net": "model.xlsx::测算!D5"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-05",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-05",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 0,
+        "advanced": 1036,
+        "net": 0
+      },
+      "total_balls": 1036,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 1,
+      "shiny_model_draw_by_ball": {
+        "fairy": 0,
+        "advanced": 1,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 15540000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 1036,
+        "personal_ball_cost": 15540000,
+        "expected_shiny_records": 1.5265225933202358,
+        "probability_at_least_one_under_assumptions": 0.782954516838296,
+        "expected_material": 37.654223968565816,
+        "expected_raw_income": 15259857.662082516,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 30519715.32416503,
+        "expected_conditional_net": 14979715.324165031,
+        "expected_income_cost_ratio": 1.9639456450556647,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "advanced": [
+          "TEST-05",
+          "TEST-06"
+        ]
+      },
+      "mixed_ball_additivity_assumption": false,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B6",
+          "advanced": "model.xlsx::测算!C6",
+          "net": "model.xlsx::测算!D6"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-06",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-06",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 0,
+        "advanced": 1000,
+        "net": 0
+      },
+      "total_balls": 1000,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 1,
+      "shiny_model_draw_by_ball": {
+        "fairy": 0,
+        "advanced": 1,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 15000000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 1000,
+        "personal_ball_cost": 15000000,
+        "expected_shiny_records": 1.4734774066797642,
+        "probability_at_least_one_under_assumptions": 0.7711215133098341,
+        "expected_material": 36.345776031434184,
+        "expected_raw_income": 14729592.337917486,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 29459184.675834972,
+        "expected_conditional_net": 14459184.675834972,
+        "expected_income_cost_ratio": 1.963945645055665,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "advanced": [
+          "TEST-05",
+          "TEST-06"
+        ]
+      },
+      "mixed_ball_additivity_assumption": false,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B7",
+          "advanced": "model.xlsx::测算!C7",
+          "net": "model.xlsx::测算!D7"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-07",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-07",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 325,
+        "advanced": 620,
+        "net": 0
+      },
+      "total_balls": 945,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 2,
+      "shiny_model_draw_by_ball": {
+        "fairy": 1,
+        "advanced": 1,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 35300000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 945,
+        "personal_ball_cost": 35300000,
+        "expected_shiny_records": 1.7767698035624364,
+        "probability_at_least_one_under_assumptions": 0.8311242290840711,
+        "expected_material": 68.28471314480129,
+        "expected_raw_income": 17902329.819229957,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 35804659.63845991,
+        "expected_conditional_net": 504659.63845991343,
+        "expected_income_cost_ratio": 1.0142963070385245,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "fairy": [
+          "TEST-01",
+          "TEST-02",
+          "TEST-03"
+        ],
+        "advanced": [
+          "TEST-05",
+          "TEST-06"
+        ]
+      },
+      "mixed_ball_additivity_assumption": true,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B8",
+          "advanced": "model.xlsx::测算!C8",
+          "net": "model.xlsx::测算!D8"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-08",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-08",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 200,
+        "advanced": 101,
+        "net": 0
+      },
+      "total_balls": 301,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 2,
+      "shiny_model_draw_by_ball": {
+        "fairy": 1,
+        "advanced": 1,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 17515000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 301,
+        "personal_ball_cost": 17515000,
+        "expected_shiny_records": 0.6800297174106456,
+        "probability_at_least_one_under_assumptions": 0.49381151314984756,
+        "expected_material": 31.824973843982292,
+        "expected_raw_income": 6884601.176727276,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 13769202.353454553,
+        "expected_conditional_net": -3745797.6465454474,
+        "expected_income_cost_ratio": 0.7861377307139339,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "fairy": [
+          "TEST-01",
+          "TEST-02",
+          "TEST-03"
+        ],
+        "advanced": [
+          "TEST-05",
+          "TEST-06"
+        ]
+      },
+      "mixed_ball_additivity_assumption": true,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B9",
+          "advanced": "model.xlsx::测算!C9",
+          "net": "model.xlsx::测算!D9"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-09",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-09",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 200,
+        "advanced": 320,
+        "net": 0
+      },
+      "total_balls": 520,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 0,
+      "shiny_model_draw_by_ball": {
+        "fairy": 0,
+        "advanced": 0,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 20800000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 520,
+        "personal_ball_cost": 20800000,
+        "expected_shiny_records": 1.002721269473514,
+        "probability_at_least_one_under_assumptions": 0.6335069425282367,
+        "expected_material": 39.78469879486638,
+        "expected_raw_income": 10110381.898731206,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 20220763.79746241,
+        "expected_conditional_net": -579236.2025375888,
+        "expected_income_cost_ratio": 0.9721521056472313,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "fairy": [
+          "TEST-01",
+          "TEST-02",
+          "TEST-03"
+        ],
+        "advanced": [
+          "TEST-05",
+          "TEST-06"
+        ]
+      },
+      "mixed_ball_additivity_assumption": true,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B10",
+          "advanced": "model.xlsx::测算!C10",
+          "net": "model.xlsx::测算!D10"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    },
+    {
+      "id": "SIM-10",
+      "kind": "simulated",
+      "parent_batch_id": "TEST-10",
+      "parent_link_meaning": "Reuses ball inputs only; not a new observation or independent validation.",
+      "balls": {
+        "fairy": 183,
+        "advanced": 42,
+        "net": 0
+      },
+      "total_balls": 225,
+      "shiny_records_observed": null,
+      "shiny_count_model_draw": 0,
+      "shiny_model_draw_by_ball": {
+        "fairy": 0,
+        "advanced": 0,
+        "net": 0
+      },
+      "material_observed": null,
+      "raw_income_observed": null,
+      "picture_book_income_observed": null,
+      "personal_ball_cost": 15270000,
+      "income_multiplier_scenario": 2.0,
+      "expected": {
+        "total_balls": 225,
+        "personal_ball_cost": 15270000,
+        "expected_shiny_records": 0.5479418279729803,
+        "probability_at_least_one_under_assumptions": 0.42226159791615453,
+        "expected_material": 27.287478768619046,
+        "expected_raw_income": 5556817.678989347,
+        "income_multiplier_scenario": 2.0,
+        "expected_conditional_income": 11113635.357978694,
+        "expected_conditional_net": -4156364.642021306,
+        "expected_income_cost_ratio": 0.7278084713803991,
+        "expected_material_at_least_30": false,
+        "picture_book_income_model": null
+      },
+      "eligible_for_observed_summary": false,
+      "eligible_for_calibration": false,
+      "calibration_role": "never_calibrate_or_increase_observed_sample_count",
+      "calibration_source_ids": {
+        "fairy": [
+          "TEST-01",
+          "TEST-02",
+          "TEST-03"
+        ],
+        "advanced": [
+          "TEST-05",
+          "TEST-06"
+        ]
+      },
+      "mixed_ball_additivity_assumption": true,
+      "source_cells": {
+        "inherited_input_cells": {
+          "fairy": "model.xlsx::测算!B11",
+          "advanced": "model.xlsx::测算!C11",
+          "net": "model.xlsx::测算!D11"
+        }
+      },
+      "seed": 20260907,
+      "rng": "NumPy Generator(PCG64), sequential stream",
+      "measurement_date": null,
+      "evidence_image": null,
+      "simulated_fields": [
+        "shiny_count_model_draw"
+      ],
+      "expected_only_fields": [
+        "material",
+        "raw_income",
+        "conditional_income",
+        "conditional_net"
+      ],
+      "unmodeled": [
+        "encounter_source",
+        "unique_encounters",
+        "chain_progress",
+        "capture_difficulty",
+        "picture_book_events",
+        "time",
+        "species",
+        "joint_income_outcome"
+      ]
+    }
+  ],
+  "random_draw_trace": [
+    {
+      "call_index": 1,
+      "id": "SIM-01",
+      "ball": "fairy",
+      "n": 504,
+      "p": 0.0026560424966799467,
+      "result": 0
+    },
+    {
+      "call_index": 2,
+      "id": "SIM-02",
+      "ball": "fairy",
+      "n": 500,
+      "p": 0.0026560424966799467,
+      "result": 1
+    },
+    {
+      "call_index": 3,
+      "id": "SIM-03",
+      "ball": "fairy",
+      "n": 502,
+      "p": 0.0026560424966799467,
+      "result": 1
+    },
+    {
+      "call_index": 4,
+      "id": "SIM-04",
+      "ball": "net",
+      "n": 1099,
+      "p": 0.0009099181073703367,
+      "result": 1
+    },
+    {
+      "call_index": 5,
+      "id": "SIM-05",
+      "ball": "advanced",
+      "n": 1036,
+      "p": 0.0014734774066797642,
+      "result": 1
+    },
+    {
+      "call_index": 6,
+      "id": "SIM-06",
+      "ball": "advanced",
+      "n": 1000,
+      "p": 0.0014734774066797642,
+      "result": 1
+    },
+    {
+      "call_index": 7,
+      "id": "SIM-07",
+      "ball": "fairy",
+      "n": 325,
+      "p": 0.0026560424966799467,
+      "result": 1
+    },
+    {
+      "call_index": 8,
+      "id": "SIM-07",
+      "ball": "advanced",
+      "n": 620,
+      "p": 0.0014734774066797642,
+      "result": 1
+    },
+    {
+      "call_index": 9,
+      "id": "SIM-08",
+      "ball": "fairy",
+      "n": 200,
+      "p": 0.0026560424966799467,
+      "result": 1
+    },
+    {
+      "call_index": 10,
+      "id": "SIM-08",
+      "ball": "advanced",
+      "n": 101,
+      "p": 0.0014734774066797642,
+      "result": 1
+    },
+    {
+      "call_index": 11,
+      "id": "SIM-09",
+      "ball": "fairy",
+      "n": 200,
+      "p": 0.0026560424966799467,
+      "result": 0
+    },
+    {
+      "call_index": 12,
+      "id": "SIM-09",
+      "ball": "advanced",
+      "n": 320,
+      "p": 0.0014734774066797642,
+      "result": 0
+    },
+    {
+      "call_index": 13,
+      "id": "SIM-10",
+      "ball": "fairy",
+      "n": 183,
+      "p": 0.0026560424966799467,
+      "result": 0
+    },
+    {
+      "call_index": 14,
+      "id": "SIM-10",
+      "ball": "advanced",
+      "n": 42,
+      "p": 0.0014734774066797642,
+      "result": 0
+    }
+  ]
+}

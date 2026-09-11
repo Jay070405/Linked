@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "model_version": "v6-20260907-1",
+    "seed": 20260907,
+    "numpy_version": "2.3.5",
+    "python_version": "3.12.14",
+    "generator": "numpy.random.Generator(numpy.random.PCG64(seed))",
+    "draw_order": "SIM-01 to SIM-10; fairy, advanced, net; skip zero-count ball types",
+    "random_call_count": 14,
+    "initial_rng_state": {
+      "bit_generator": "PCG64",
+      "state": {
+        "state": 175587427759456559827728201579777733003,
+        "inc": 104325743844774820430948754790888466891
+      },
+      "has_uint32": 0,
+      "uinteger": 0
+    },
+    "final_rng_state": {
+      "bit_generator": "PCG64",
+      "state": {
+        "state": 129592500214671347309241798481050754561,
+        "inc": 104325743844774820430948754790888466891
+      },
+      "has_uint32": 0,
+      "uinteger": 0
+    },
+    "source_workbook_sha256": {
+      "data.xlsx": "3cb7fa282e8d87a74b862fb62ca6a69c2dbb47756e68a22a8949add5eceac3fe",
+      "model.xlsx": "bbe1850a28921fce343daa735228b607872cec35e8d6c1d29d907d73c14c637c"
+    },
+    "source_workbook_directory": "C:\\Users\\shiji\\Documents\\ChatGPT\\New project\\outputs\\final-review\\after",
+    "observed_batch_count": 10,
+    "simulated_scenario_count": 10,
+    "statistical_sample_count_after_simulation": 10,
+    "combined_statistical_summary_allowed": false,
+    "material_label_zh": "四叶草铅绘（原表：草团子）",
+    "material_definition_source": "model.xlsx::参数!D7; 模拟器!D8",
+    "income_scope": "Raw account income × selected multiplier, personal ball cost ×1. ×2 is conditional, not audited receipts or two-player net profit.",
+    "price_scope": "Project prices, not claimed current prices for every season.",
+    "formula_source_cells": {
+      "expected_shiny": "model.xlsx::模拟器!E6",
+      "probability": "model.xlsx::模拟器!E7",
+      "material": "model.xlsx::模拟器!E8",
+      "raw_income": "model.xlsx::模拟器!E10",
+      "conditional_income": "model.xlsx::模拟器!E11",
+      "net": "model.xlsx::模拟器!E12"
+    },
+    "core_limit_zh": "10批非随机观察仅用于校准假设模型。模拟不新增样本，不验证官方概率，也不证明回本。",
+    "core_limit_en": "Ten nonrandom observed batches inform this hypothetical model. Simulations add no evidence and establish neither official odds nor cost recovery."
+  },
+  "presets": [
+    {
+      "id": "500-500-0-x2",
+      "kind": "deterministic_model_preset",
+      "balls": {
+        "fairy": 500,
+        "advanced": 500,
+        "net": 0
+      },
+      "income_multiplier_scenario": 2,
+      "status": "ready",
+      "outputs": {
+        "total_balls": 1000,
+        "personal_ball_cost": 47500000,
+        "expected_shiny_records": 2.0647599516798554,
+        "probability_at_least_one_under_assumptions": 0.8734439567036589,
+        "expected_material": 88.55801417773569,
+        "expected_raw_income": 20857077.045452766,
+        "income_multiplier_scenario": 2,
+        "expected_conditional_income": 41714154.09090553,
+        "expected_conditional_net": -5785845.909094468,
+        "expected_income_cost_ratio": 0.8781927177032743,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "display_note": null
+    },
+    {
+      "id": "300-300-0-x2",
+      "kind": "deterministic_model_preset",
+      "balls": {
+        "fairy": 300,
+        "advanced": 300,
+        "net": 0
+      },
+      "income_multiplier_scenario": 2,
+      "status": "ready",
+      "outputs": {
+        "total_balls": 600,
+        "personal_ball_cost": 28500000,
+        "expected_shiny_records": 1.2388559710079132,
+        "probability_at_least_one_under_assumptions": 0.7106858113234373,
+        "expected_material": 53.13480850664142,
+        "expected_raw_income": 12514246.227271661,
+        "income_multiplier_scenario": 2,
+        "expected_conditional_income": 25028492.454543322,
+        "expected_conditional_net": -3471507.5454566777,
+        "expected_income_cost_ratio": 0.8781927177032745,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "display_note": null
+    },
+    {
+      "id": "500-500-0-x1",
+      "kind": "deterministic_model_preset",
+      "balls": {
+        "fairy": 500,
+        "advanced": 500,
+        "net": 0
+      },
+      "income_multiplier_scenario": 1,
+      "status": "ready",
+      "outputs": {
+        "total_balls": 1000,
+        "personal_ball_cost": 47500000,
+        "expected_shiny_records": 2.0647599516798554,
+        "probability_at_least_one_under_assumptions": 0.8734439567036589,
+        "expected_material": 88.55801417773569,
+        "expected_raw_income": 20857077.045452766,
+        "income_multiplier_scenario": 1,
+        "expected_conditional_income": 20857077.045452766,
+        "expected_conditional_net": -26642922.954547234,
+        "expected_income_cost_ratio": 0.43909635885163717,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "display_note": null
+    },
+    {
+      "id": "0-1000-0-x2",
+      "kind": "deterministic_model_preset",
+      "balls": {
+        "fairy": 0,
+        "advanced": 1000,
+        "net": 0
+      },
+      "income_multiplier_scenario": 2,
+      "status": "ready",
+      "outputs": {
+        "total_balls": 1000,
+        "personal_ball_cost": 15000000,
+        "expected_shiny_records": 1.4734774066797642,
+        "probability_at_least_one_under_assumptions": 0.7711215133098341,
+        "expected_material": 36.345776031434184,
+        "expected_raw_income": 14729592.337917486,
+        "income_multiplier_scenario": 2,
+        "expected_conditional_income": 29459184.675834972,
+        "expected_conditional_net": 14459184.675834972,
+        "expected_income_cost_ratio": 1.963945645055665,
+        "expected_material_at_least_30": true,
+        "picture_book_income_model": null
+      },
+      "display_note": null
+    }
+  ],
+  "zero_input_semantics": {
+    "status": "empty",
+    "outputs": {
+      "total_balls": 0,
+      "personal_ball_cost": 0,
+      "expected_shiny_records": 0.0,
+      "probability_at_least_one_under_assumptions": 0.0,
+      "expected_material": 0.0,
+      "expected_raw_income": 0.0,
+      "income_multiplier_scenario": 2,
+      "expected_conditional_income": 0.0,
+      "expected_conditional_net": 0.0,
+      "expected_income_cost_ratio": null,
+      "expected_material_at_least_30": false,
+      "picture_book_income_model": null
+    },
+    "display_note": "球数和成本显示0；概率、期望产出、收入、净额及比例显示—。尚未配置投入。"
+  }
+}

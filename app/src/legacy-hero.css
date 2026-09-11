@@ -1,0 +1,137 @@
+@font-face{font-family:LegacyGelasio;src:url('/assets/fonts/gelasio-latin.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:LegacyEditorial;src:url('/assets/fonts/cormorant-italic-latin.woff2') format('woff2');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:LegacyMono;src:url('/assets/fonts/GeistMono-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+.legacy-hero{--legacy-pad:clamp(24px,4.2vw,84px);--legacy-white:#fffdf4;--legacy-paper:#FAFBFC;height:1060vh;position:relative;background:var(--legacy-paper);color:var(--legacy-white)}
+.legacy-hero *{box-sizing:border-box}
+.legacy-hero .editorial-motion,.legacy-hero .editorial-focus-line{pointer-events:auto}
+.legacy-hero .legacy-skill-lines>.editorial-focus-line{border-bottom-color:#ffffff35}
+.legacy-hero .legacy-path-line.editorial-focus-line:after{bottom:auto;top:0}
+.legacy-hero .intro-stage{position:sticky;top:0;height:100svh;width:100%;overflow:hidden;isolation:isolate;color:var(--legacy-white)}
+.legacy-hero .legacy-office-wrap{position:absolute;inset:0;width:100%;height:100%;z-index:3;overflow:hidden;transform:scale(1.013);transform-origin:center;will-change:transform,opacity}
+.legacy-hero .office-camera{position:absolute;left:50%;top:50%;width:max(100vw,160.14svh);height:max(62.44vw,100svh);margin-left:min(-50vw,-80.07svh);margin-top:min(-31.22vw,-50svh);transform-origin:54.2% 46.8%;will-change:transform}
+.legacy-hero .office-camera>.liquid-office{position:absolute!important;inset:0;width:100%;height:100%}
+.legacy-hero .legacy-screen-glint{position:absolute;left:39.7%;top:33.3%;width:28.7%;height:26.7%;border-radius:3%;background:#050905;opacity:0;pointer-events:none}
+.legacy-hero .legacy-blackout{position:absolute;inset:0;z-index:4;background:#050805;opacity:0;pointer-events:none}
+.legacy-hero .film-window{position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);overflow:hidden;z-index:1;border-radius:0;will-change:width,height,transform}
+.legacy-hero .film-window video{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 50%;background:#09100a}
+.legacy-hero .legacy-video-refraction{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.legacy-hero .legacy-film-shade{position:absolute;inset:0;z-index:2;opacity:.55;background:linear-gradient(180deg,#0613093b 0%,transparent 34%,#06130905 58%,#061309a3 100%);pointer-events:none}
+.legacy-hero .legacy-scene-copy{position:absolute;z-index:7;opacity:0;pointer-events:none;color:var(--legacy-white);margin:0}
+.legacy-hero .legacy-scene-copy p,.legacy-hero .legacy-scene-copy h1,.legacy-hero .legacy-scene-copy h2{margin:0}
+.legacy-hero .legacy-scene-copy a,.legacy-hero .legacy-reactive{pointer-events:auto}
+.legacy-hero .office-copy{display:block;opacity:1;left:var(--legacy-pad);right:auto;top:auto;bottom:15%;width:auto;text-align:left}
+.legacy-hero .legacy-signature{font-family:'TikTok Sans',sans-serif;font-style:normal;font-weight:400;font-size:clamp(40px,4.5vw,84px);line-height:1.15;letter-spacing:-.045em}
+.legacy-hero .office-copy p{font-size:14px;line-height:1.8;letter-spacing:.1em;margin:14px 0}
+.legacy-hero .legacy-text-link{display:inline-flex;min-height:44px;align-items:center;padding:12px 0;border-bottom:1px solid #fff8;font-size:14px;line-height:1.4;margin-top:0;color:inherit;text-decoration:none;transition:letter-spacing .3s}
+.legacy-hero .legacy-text-link:hover{letter-spacing:.06em}
+.legacy-hero .legacy-eyebrow{font:400 12px/1.6 LegacyMono,monospace;letter-spacing:.13em}
+.legacy-hero .film-copy{font-family:'Helvetica Neue','Microsoft YaHei',sans-serif}
+.legacy-hero .film-creative{left:0;right:0;top:24%;text-align:center;width:auto}
+.legacy-hero .film-creative>.legacy-eyebrow{margin-top:1em;margin-bottom:28px}
+.legacy-hero .film-creative h1{display:block;font-family:LegacyGelasio,Georgia,serif;font-weight:500;font-style:normal;font-size:11.5vw;line-height:.88;letter-spacing:-.055em;margin:30px 0}
+/* V13's span rule also scaled its generated letters. Preserve that actual
+   cascade, including the second .6 factor inside the italic line. */
+.legacy-hero .film-creative h1 span{display:block;font-size:.6em;margin-top:.08em}
+.legacy-hero .film-creative h1 .legacy-letter{display:inline-block}
+.legacy-hero .legacy-italic{font-family:LegacyEditorial,'Times New Roman',serif;font-style:italic;font-weight:400;letter-spacing:-.045em}
+.legacy-hero .legacy-reactive{display:inline-block;user-select:none;-webkit-user-select:none}
+.legacy-hero .legacy-letter{display:inline-block;will-change:transform;white-space:pre;transition:color .3s}
+.legacy-hero .film-believe{left:var(--legacy-pad);top:29%;max-width:48%}
+.legacy-hero .film-believe h2{font-family:'Songti SC','SimSun',serif;font-size:clamp(36px,4.7vw,92px);font-weight:400;line-height:1.35;letter-spacing:.02em;margin:25px 0}
+.legacy-hero .film-believe>p:last-child{font-size:16px;line-height:1.85}
+.legacy-hero .film-intro{left:auto;right:var(--legacy-pad);top:29%;width:32%}
+.legacy-hero .film-intro h2,.legacy-hero .film-timeline h2{font-family:'Songti SC','SimSun',serif;font-size:clamp(32px,3.5vw,64px);font-weight:400;line-height:1.35;margin:24px 0}
+.legacy-hero .film-intro>p:last-child{font-size:16px;line-height:1.9}
+.legacy-hero .film-intro:before,.legacy-hero .film-timeline:before{content:'';position:absolute;inset:-30px -35px;z-index:-1;border-radius:5px;background:linear-gradient(125deg,#0b271a3d,#0b271a08);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 90%,transparent)}
+.legacy-hero .film-skills{left:auto;right:var(--legacy-pad);top:22%;display:block;font-family:inherit;font-style:normal}
+.legacy-hero .film-skills h2{font-size:5vw;font-weight:400;line-height:1.03;letter-spacing:-.05em;margin:24px 0}
+.legacy-hero .legacy-skill-lines{display:flex;flex-direction:column;align-items:flex-start;gap:15px;margin-top:30px}
+.legacy-hero .legacy-skill-lines span{padding-bottom:7px;border-bottom:1px solid #fff6;font-size:14px;letter-spacing:.01em;line-height:1.5;min-width:230px}
+.legacy-hero .film-timeline{left:var(--legacy-pad);right:auto;top:20%;width:37%}
+.legacy-hero .legacy-path-line{display:flex;gap:23px;align-items:flex-start;border-top:1px solid #fff5;padding:16px 0}
+.legacy-hero .legacy-path-line>span{font:11px LegacyMono,monospace;white-space:nowrap;padding-top:6px}
+.legacy-hero .legacy-path-line p{font-size:21px;line-height:1.5}
+.legacy-hero .legacy-path-line p span{font-size:13px;display:block;margin-top:4px}
+.legacy-hero .film-final{left:var(--legacy-pad);top:auto;bottom:13%;max-width:75%}
+.legacy-hero .film-final h2{font-size:clamp(45px,6.8vw,130px);font-weight:500;line-height:.95;letter-spacing:-.04em;margin:24px 0 0}
+.legacy-hero .film-final h2 .legacy-italic{font-size:1.25em}
+.legacy-hero .legacy-film-foot{position:absolute;bottom:34px;left:var(--legacy-pad);right:var(--legacy-pad);display:flex;align-items:center;justify-content:space-between;gap:20px;z-index:15;font:12px LegacyMono,monospace;letter-spacing:.07em}
+.legacy-hero .legacy-film-foot button{display:flex;align-items:center;justify-content:center;gap:10px;min-width:44px;min-height:44px;padding:8px;background:none;border:0;font:inherit;color:inherit;cursor:pointer}
+.legacy-hero .legacy-film-foot button>span{font-size:19px;line-height:1}
+.legacy-hero .legacy-scroll-cue{display:flex;gap:12px;align-items:center}
+.legacy-hero .legacy-scroll-cue i{display:block;height:29px;width:1px;background:#ffffff40;position:relative;overflow:hidden}
+.legacy-hero .legacy-scroll-cue i:after{content:'';position:absolute;width:100%;height:60%;background:currentColor;animation:legacy-scroll-cue 1.8s ease-in-out infinite}
+.legacy-hero .legacy-film-progress{position:absolute;bottom:0;height:2px;left:0;right:0;background:#ffffff18;z-index:18}
+.legacy-hero .legacy-film-progress i{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:left;background:#a7aaa1}
+.legacy-hero[data-nav-tone=light] .legacy-film-progress i{background:#a7a7a7}
+.legacy-hero .legacy-pointer{position:absolute;left:0;top:0;width:36px;height:36px;margin:-18px 0 0 -18px;border:1px solid #fff8;border-radius:50%;z-index:25;pointer-events:none;mix-blend-mode:difference;display:grid;place-items:center;opacity:0;transition:width .3s,height .3s,margin .3s,border-color .3s}
+.legacy-hero .legacy-pointer i{height:3px;width:3px;background:#fff;border-radius:50%}
+.legacy-hero .legacy-pointer[data-over=true]{width:60px;height:60px;margin:-30px 0 0 -30px;border-color:#fff}
+.legacy-hero .after-video{position:absolute;inset:0;z-index:0;opacity:0;background:var(--legacy-paper);color:#151515;overflow:hidden;pointer-events:none}
+.legacy-hero .legacy-center-label{position:absolute;top:13%;left:0;right:0;text-align:center;font:10px LegacyMono,monospace;letter-spacing:.14em}
+.legacy-hero .legacy-marquee{position:absolute;left:0;right:0;top:28%;overflow:visible;white-space:nowrap;font-family:LegacyEditorial,serif;font-style:italic;font-weight:400;font-size:12.2vw;line-height:1.05;letter-spacing:-.055em;color:#222}
+.legacy-hero .legacy-marquee-reverse{top:49%;font-family:'TikTok Sans',sans-serif;font-style:normal;font-weight:500;color:#969696}
+.legacy-hero .legacy-marquee-track{display:flex;width:max-content;animation:legacy-marquee var(--legacy-marquee-duration,1s) linear infinite;will-change:transform}
+.legacy-hero .legacy-marquee-track>span{flex:none}
+.legacy-hero .legacy-marquee-reverse .legacy-marquee-track{animation-direction:reverse}
+.legacy-hero .after-video[data-running=false] .legacy-marquee-track{animation-play-state:paused}
+.legacy-hero .legacy-center-caption{position:absolute;bottom:11%;left:0;right:0;text-align:center;opacity:0}
+.legacy-hero .legacy-center-caption i{font:italic 26px LegacyEditorial,serif;color:#181818}
+.legacy-hero .legacy-center-caption p{font-size:12px;line-height:1.7;margin:8px 0 0;color:#555}
+.legacy-hero .intro-follow,.legacy-hero .legacy-static-caption{display:none}
+.legacy-hero a:focus-visible,.legacy-hero button:focus-visible{outline:2px solid currentColor;outline-offset:5px}
+@keyframes legacy-scroll-cue{from{transform:translateY(-140%)}to{transform:translateY(240%)}}
+@keyframes legacy-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+@media(max-width:700px){
+ .legacy-hero{--legacy-pad:22px;height:870svh}
+ .legacy-hero .office-copy{bottom:21%;left:22px;width:calc(100% - 44px)}
+ .legacy-hero .legacy-signature{font-size:48px}
+ .legacy-hero .office-copy p{font-size:12px}
+ .legacy-hero .film-creative{top:27%}
+ .legacy-hero .film-creative h1{font-size:16.5vw;line-height:1}
+ .legacy-hero .film-creative h1 span{font-size:.78em}
+ .legacy-hero .film-creative>.legacy-eyebrow{font-size:9px;letter-spacing:.07em}
+ .legacy-hero .legacy-eyebrow{font-size:10px}
+ .legacy-hero .film-believe{max-width:calc(100% - 44px);top:22%}
+ .legacy-hero .film-believe h2{font-size:37px;line-height:1.5}
+ .legacy-hero .film-believe>p:last-child{font-size:14px}
+ .legacy-hero .film-intro{right:22px;top:20%;width:78%}
+ .legacy-hero .film-intro h2,.legacy-hero .film-timeline h2{font-size:34px}
+ .legacy-hero .film-intro>p:last-child{font-size:14px}
+ .legacy-hero .film-skills{left:22px;right:22px;top:18%}
+ .legacy-hero .film-skills h2{font-size:42px}
+ .legacy-hero .legacy-skill-lines{margin-top:25px}
+ .legacy-hero .legacy-skill-lines span{font-size:12px;min-width:230px}
+ .legacy-hero .film-timeline{left:22px;top:18%;width:85%}
+ .legacy-hero .legacy-path-line{gap:16px;padding:12px 0}
+ .legacy-hero .legacy-path-line p{font-size:19px}
+ .legacy-hero .legacy-path-line p span{font-size:12px}
+ .legacy-hero .legacy-path-line>span{font-size:10px}
+ .legacy-hero .film-final{left:22px;bottom:16%;max-width:calc(100% - 44px)}
+ .legacy-hero .film-final h2{font-size:10.4vw;line-height:1}
+ .legacy-hero .film-final>.legacy-eyebrow{font-size:9px}
+ .legacy-hero .legacy-film-foot{bottom:18px;font-size:9px;gap:8px;letter-spacing:0}
+ .legacy-hero .legacy-film-foot button{font-size:10px;padding:8px 0;gap:6px}
+ .legacy-hero .legacy-scroll-cue{gap:6px}
+ .legacy-hero .legacy-scroll-cue i{height:22px}
+ .legacy-hero .legacy-pointer{display:none}
+ .legacy-hero .legacy-marquee{top:31%;font-size:22vw}
+ .legacy-hero .legacy-marquee-reverse{top:54%}
+ .legacy-hero .legacy-center-label{top:23%;font-size:8px}
+ .legacy-hero .legacy-center-caption{bottom:20%}
+ .legacy-hero .legacy-center-caption i{font-size:23px}
+ .legacy-hero .legacy-center-caption p{font-size:10px}
+}
+@media(pointer:coarse){.legacy-hero .legacy-pointer{display:none}}
+.legacy-hero.legacy-static{height:auto}
+.legacy-hero.legacy-static .intro-stage{height:auto;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.legacy-hero.legacy-static .legacy-office-wrap{position:relative;inset:auto;order:0;width:100%;height:100svh;opacity:1!important;visibility:visible!important;transform:none!important}
+.legacy-hero.legacy-static .office-camera{left:0;top:0;width:100%!important;height:100%!important;margin:0!important;transform:none!important}
+.legacy-hero.legacy-static .office-copy{display:block!important;left:var(--legacy-pad);top:calc(100svh - 270px);bottom:auto;opacity:1!important;visibility:visible!important;transform:none!important}
+.legacy-hero.legacy-static .film-window{position:relative;order:1;left:0;top:0;width:100%!important;height:65svh!important;opacity:1!important;visibility:visible!important;transform:none!important}
+.legacy-hero.legacy-static .film-copy,.legacy-hero.legacy-static .after-video,.legacy-hero.legacy-static .legacy-blackout,.legacy-hero.legacy-static .legacy-screen-glint,.legacy-hero.legacy-static .legacy-film-foot,.legacy-hero.legacy-static .legacy-film-progress,.legacy-hero.legacy-static .legacy-pointer,.legacy-hero.legacy-static .legacy-film-shade{display:none!important}
+.legacy-hero.legacy-static .legacy-static-caption{display:block;position:relative;background:var(--legacy-paper);color:#202020;padding:38px var(--legacy-pad) 55px}
+.legacy-hero.legacy-static .legacy-static-caption p{font-size:16px;line-height:1.8;max-width:520px;margin:0 0 20px}
+.legacy-hero.legacy-static .legacy-static-caption a{display:inline-flex;align-items:center;min-height:44px;border-bottom:1px solid currentColor;font-size:14px;color:inherit;text-decoration:none}
+.legacy-hero.legacy-static *{animation:none!important;transition:none!important}

@@ -1,0 +1,33 @@
+{
+  "source": "Existing workspace s5-prototype",
+  "adaptations": [
+    "Mount original client component without server routing",
+    "Rebase six creature image URLs",
+    "Add parent-ready/error handshake and standalone fallback",
+    "Reuse original compiled CSS"
+  ],
+  "gameRules": "No changes",
+  "storageRules": "No changes; local same-origin browser save is separate from original hosted origin",
+  "files": [
+    {
+      "source": "app/simple-prototype.tsx",
+      "sha256": "bdf648c6c526469244587f6c4a0b3300135993da12e218a1569bcef705696773"
+    },
+    {
+      "source": "app/motion-feedback.tsx",
+      "sha256": "ab13cd2d2db4e1d206c7aa7cc3d7fe50fbd4164b85805cb1e3e9484974fb557a"
+    },
+    {
+      "source": "lib/game.ts",
+      "sha256": "db19bc372331a25bfa159468df26e3b699c6c7567c4c3ade60b7f6bf922d5edd"
+    },
+    {
+      "source": "lib/storage.ts",
+      "sha256": "7b29fba071414ce27b7a468c7e47c64cdec8050338c84ccd25086aab5ba6bb17"
+    },
+    {
+      "source": "README-PROTOTYPE.md",
+      "sha256": "ddafbce5294869db8961748f7bc030495b49a512e4faf5cfc63e1330d78b4c96"
+    }
+  ]
+}
