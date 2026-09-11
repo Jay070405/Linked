@@ -15,7 +15,7 @@ function useNavigationTone(tone) {
       frame = 0;
       const declared = document.body.dataset.navTone;
       if (declared === 'light' || declared === 'dark') { setDetected(declared); return; }
-      const scene = document.elementsFromPoint(innerWidth * .5, Math.min(96, innerHeight * .15)).find(el => !el.closest('.v16-navigation'));
+      const scene = document.elementsFromPoint(innerWidth * .5, Math.min(96, innerHeight * .15)).find(el => !el.closest('.v16-navigation,.studio-loading'));
       const tagged = scene?.closest('[data-nav-tone]')?.dataset.navTone;
       if (tagged === 'light' || tagged === 'dark') { setDetected(tagged); return; }
       let node = scene;

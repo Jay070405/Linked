@@ -5,8 +5,8 @@ import BrandWordmark,{geometry} from './BrandWordmark';
 import './brand-motion.css';
 
 /** Draw the actual logo and font contours before their matching solid shapes. */
-export default function BrandConstruction({children,reduced=false,play=true,replayKey=0,onComplete,className=''}) {
- const host=useRef(null),complete=useRef(onComplete);complete.current=onComplete;
+export default function BrandConstruction({children,reduced=false,play=true,replayKey=0,onComplete,onTimeline,handoff=false,className=''}) {
+ const host=useRef(null),complete=useRef(onComplete),timelineReady=useRef(onTimeline);complete.current=onComplete;timelineReady.current=onTimeline;
  useLayoutEffect(()=>{
   const el=host.current;if(!el)return;
   const q=s=>el.querySelector(s),qa=s=>[...el.querySelectorAll(s)];
@@ -25,21 +25,22 @@ export default function BrandConstruction({children,reduced=false,play=true,repl
     .to(qa('.brand-symbol-guide'),{strokeDashoffset:0,duration:.55,stagger:.045},0)
     .to(qa('.brand-symbol-stroke'),{strokeDashoffset:0,duration:1.15,stagger:.10,ease:'power1.inOut'},.22)
     .to(q('.brand-symbol-solid'),{opacity:1,duration:.5},1.32)
-    .to(q('.brand-symbol'),{x:()=>-el.clientWidth*.42,y:()=>-el.clientHeight*.28,scale:.19,duration:.8},1.85)
+    .to(q('.brand-symbol'),{x:()=>handoff?0:-el.clientWidth*.42,y:()=>-el.clientHeight*(handoff?.6:.28),scale:handoff?.42:.19,duration:.8},1.85)
     .to(qa('.brand-glyph-guide'),{strokeDashoffset:0,duration:.6,stagger:.06},1.95)
     .to(qa('.brand-glyph-stroke'),{strokeDashoffset:0,duration:1.12,stagger:.09,ease:'power1.inOut'},2.15)
     .to(qa('.brand-word-drawing .brand-glyph-fill'),{opacity:1,duration:.5,stagger:.09},3.24)
-    .to(q('.brand-symbol'),{autoAlpha:0,duration:.4},2.62)
+    .to(q(handoff?'.brand-symbol-trace':'.brand-symbol'),{autoAlpha:0,duration:.4},2.62)
     .to(qa('.brand-glyph-guide'),{opacity:0,duration:.5},3.75)
     .set(q('.brand-name'),{autoAlpha:1},4.22)
     .set(q('.brand-word-drawing'),{autoAlpha:0},4.22);
+   timelineReady.current?.(timeline);
   },host);
-  const sync=()=>{if(!timeline||finished)return;const covered=el.closest('.home-journey')&&(document.body.classList.contains('portfolio-route-open')||document.body.classList.contains('brand-loading'));if(document.hidden||!play||!visible||covered)timeline.pause();else timeline.resume();};
+  const sync=()=>{if(!timeline||finished||el.closest('.studio-loading.is-leaving'))return;const covered=el.closest('.home-journey')&&(document.body.classList.contains('portfolio-route-open')||document.body.classList.contains('brand-loading'));if(document.hidden||!play||!visible||covered)timeline.pause();else timeline.resume();};
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();});observer.observe(el);
   const pageObserver=new MutationObserver(sync);pageObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
   document.addEventListener('visibilitychange',sync);sync();
   return()=>{observer.disconnect();pageObserver.disconnect();document.removeEventListener('visibilitychange',sync);context.revert();};
- },[reduced,play,replayKey]);
+ },[reduced,play,replayKey,handoff]);
  return <div ref={host} className={`brand-construction ${className}`}>
   <div className="brand-symbol" aria-hidden="true">
    <svg className="brand-symbol-trace" viewBox={geometry.logo.viewBox} fill="none" stroke="currentColor">

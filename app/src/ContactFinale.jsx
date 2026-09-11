@@ -8,16 +8,62 @@ const modalHasPriority = () => [...document.querySelectorAll('dialog[open], [rol
   .some(dialog => dialog.getClientRects().length && !dialog.hidden);
 
 function Letter({ open }) {
-  return <svg className={`cfx-object cfx-letter${open ? ' is-open' : ''}`} viewBox="0 0 64 52" aria-hidden="true">
-    <path className="cfx-letter-paper" d="M16 28V9h32v19M23 16h18M23 22h13" />
-    <path d="M7 20h50v27H7zM7 20l25 17 25-17M7 47l18-16M57 47L39 31" />
+  return <svg className={`cfx-object cfx-letter${open ? ' is-open' : ''}`} viewBox="0 0 64 64" aria-hidden="true">
+    <path className="cfx-letter-back" d="M7 29l25-18 25 18v26H7z" />
+    <g className="cfx-letter-paper">
+      <path className="cfx-paper-sheet" d="M16 22h32v29H16z" />
+      <path d="M23 29h18M23 35h18M23 41h11" />
+    </g>
+    <path className="cfx-letter-front" d="M7 29l25 16 25-16v26H7z" />
+    <path d="M7 55l18-15M57 55L39 40" />
   </svg>;
 }
 function Telephone({ open }) {
-  return <svg className={`cfx-object cfx-phone${open ? ' is-open' : ''}`} viewBox="0 0 64 52" aria-hidden="true">
-    <path className="cfx-phone-cord" d={open ? 'M17 30c-11 7-3 17 5 13s13-5 17-1 12 5 16-1' : 'M17 31c-6 3-5 11 1 11s4-7 10-6 2 10 9 8 7-7 13-4'} />
-    <path className="cfx-phone-receiver" d="M8 18C12 5 52 5 56 18l-5 12-11-3v-8c-5-3-11-3-16 0v8l-11 3z" />
+  return <svg className={`cfx-object cfx-phone${open ? ' is-open' : ''}`} viewBox="0 0 64 64" aria-hidden="true">
+    <path className="cfx-phone-cord cfx-phone-cord-rest" d="M17 36c-6 3-5 11 1 11s4-7 10-6 2 10 9 8 7-7 13-4" />
+    <path className="cfx-phone-cord cfx-phone-cord-lifted" d="M14 29c-11 7-1 22 7 18s14-7 18-3 12 6 17 0" />
+    <path className="cfx-phone-receiver" d="M8 25C12 12 52 12 56 25l-5 12-11-3v-8c-5-3-11-3-16 0v8l-11 3z" />
   </svg>;
+}
+
+// The surface moves its light, not its hit target. Touch keeps the same clear
+// disclosure states; reduced motion ignores pointer-driven light updates.
+function useContactLight(reduced) {
+  const surfaces = useRef(new Set());
+  const motionAllowed = useRef(false);
+  useEffect(() => {
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    const reset = () => {
+      motionAllowed.current = !reduced && !preference.matches && !document.hidden;
+      surfaces.current.forEach(surface => {
+        delete surface.dataset.pointer;
+        surface.style.removeProperty('--cfx-light-x');
+        surface.style.removeProperty('--cfx-light-y');
+        if (!surface.isConnected) surfaces.current.delete(surface);
+      });
+    };
+    preference.addEventListener('change', reset);
+    document.addEventListener('visibilitychange', reset);
+    reset();
+    return () => {
+      reset(); surfaces.current.clear();
+      preference.removeEventListener('change', reset);
+      document.removeEventListener('visibilitychange', reset);
+    };
+  }, [reduced]);
+  const move = useCallback(event => {
+    if (!motionAllowed.current || event.pointerType === 'touch') return;
+    const surface = event.currentTarget;
+    const bounds = surface.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+    surfaces.current.forEach(previous => { if (!previous.isConnected) surfaces.current.delete(previous); });
+    surfaces.current.add(surface);
+    surface.style.setProperty('--cfx-light-x', `${Math.max(0, Math.min(100, (event.clientX - bounds.left) / bounds.width * 100))}%`);
+    surface.style.setProperty('--cfx-light-y', `${Math.max(0, Math.min(100, (event.clientY - bounds.top) / bounds.height * 100))}%`);
+    surface.dataset.pointer = 'true';
+  }, []);
+  const leave = useCallback(event => { delete event.currentTarget.dataset.pointer; }, []);
+  return { onPointerMove: move, onPointerLeave: leave, onPointerCancel: leave };
 }
 
 function QuietAtmosphere() {
@@ -46,7 +92,9 @@ export default function ContactFinale({ lang = 'zh', reduced = false, onNavigate
   const [active, setActive] = useState(null);
   const [copyState, setCopyState] = useState('');
   const sectionRef = useRef(null);
-  const triggerRef = useRef(null), panelRef = useRef(null), copyRequest = useRef(0), activeRef = useRef(null);
+  const triggerRef = useRef(null), panelRef = useRef(null), copyRequest = useRef(0), activeRef = useRef(null), restoreFrame = useRef(0);
+  const light = useContactLight(reduced);
+  useEffect(() => () => { copyRequest.current += 1; cancelAnimationFrame(restoreFrame.current); }, []);
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return undefined;
@@ -68,9 +116,10 @@ export default function ContactFinale({ lang = 'zh', reduced = false, onNavigate
     };
   }, [reduced]);
   const close = useCallback((restore = true) => {
+    cancelAnimationFrame(restoreFrame.current);
     activeRef.current = null;
     copyRequest.current += 1; setActive(null); setCopyState('');
-    if (restore) requestAnimationFrame(() => {
+    if (restore) restoreFrame.current = requestAnimationFrame(() => {
       if (!activeRef.current && !modalHasPriority()) {
         const trigger = triggerRef.current;
         trigger?.focus({ preventScroll: true });
@@ -100,6 +149,7 @@ export default function ContactFinale({ lang = 'zh', reduced = false, onNavigate
     return () => { cancelAnimationFrame(frame); document.removeEventListener('keydown', escape); };
   }, [active, close, reduced]);
   const toggle = (kind, event) => {
+    cancelAnimationFrame(restoreFrame.current);
     triggerRef.current = event.currentTarget;
     copyRequest.current += 1; setCopyState('');
     if (active === kind) close(); else { activeRef.current = kind; setActive(kind); }
@@ -113,6 +163,7 @@ export default function ContactFinale({ lang = 'zh', reduced = false, onNavigate
   const value = active === 'phone' ? author.phone : author.email;
   const copy = async () => {
     const request = ++copyRequest.current;
+    setCopyState('pending');
     try {
       await navigator.clipboard.writeText(value);
       if (copyRequest.current === request) setCopyState('done');
@@ -121,27 +172,27 @@ export default function ContactFinale({ lang = 'zh', reduced = false, onNavigate
 
   return <section ref={sectionRef} id="contact" data-nav-tone="light" className={`contact-finale${reduced ? ' is-reduced' : ''}`} aria-labelledby="cfx-title">
     <QuietAtmosphere />
-    <div className="cfx-topline"><span>THE NEXT CHAPTER</span><span className="cfx-availability"><i />{en ? 'A conversation starts here' : '从一次交谈开始'}</span></div>
+    <div className="cfx-topline"><span>LET’S WORK TOGETHER</span><span className="cfx-availability"><i />{en ? 'A conversation starts here' : '从一次交谈开始'}</span></div>
     <div className="cfx-introduction">
-      <h2 id="cfx-title" aria-label={en ? 'What’s next, let’s make it.' : '下一幕，一起做。'} className={`cfx-title${en ? ' cfx-title-en' : ''}`}>
-        <span><ExpressiveTitle reduced={reduced}>{en ? 'WHAT’S NEXT,' : '下一幕，'}</ExpressiveTitle></span>
-        <span><ExpressiveTitle reduced={reduced}>{en ? 'LET’S MAKE IT.' : '一起做。'}</ExpressiveTitle><i aria-hidden="true">✳</i></span>
+      <h2 id="cfx-title" aria-label={en ? 'Good ideas. Real experiences.' : '把想法，做成体验。'} className={`cfx-title${en ? ' cfx-title-en' : ''}`}>
+        <span><ExpressiveTitle reduced={reduced}>{en ? 'GOOD IDEAS.' : '把想法，'}</ExpressiveTitle></span>
+        <span><ExpressiveTitle reduced={reduced}>{en ? 'REAL EXPERIENCES.' : '做成体验。'}</ExpressiveTitle><i aria-hidden="true">✳</i></span>
       </h2>
-      <div className="cfx-note"><p><ExpressiveTitle reduced={reduced} variant="type" typingSpeed={44}>Let’s make what comes next.</ExpressiveTitle></p><span>{en ? 'An idea, a question, a world to build.' : '一个想法，一次合作，或一个想实现的世界。'}</span></div>
+      <div className="cfx-note"><p><ExpressiveTitle reduced={reduced} variant="type" typingSpeed={44}>{en ? 'From the first thought to the final detail.' : '从最初的念头，到体验的每一处。'}</ExpressiveTitle></p><span>{en ? 'Systems, visual worlds, and the work that connects them. Let’s talk.' : '关于系统策划、视觉创作，或两者之间的新可能，欢迎聊聊。'}</span></div>
     </div>
 
     <div className="cfx-grid">
-      <div className="cfx-cell cfx-email">
+      <div className={`cfx-cell cfx-contact-cell cfx-email${active === 'email' ? ' is-open' : ''}`} {...light}>
         <span className="cfx-label">01 / {en ? 'WRITE' : '留一封信'}</span>
         <button className="cfx-contact-trigger" type="button" aria-expanded={active === 'email'} aria-controls="cfx-action-panel" onClick={event => toggle('email', event)}>
-          <span>{author.email}</span><Letter open={active === 'email'} />
+          <span className="cfx-trigger-content"><span className="cfx-contact-value">{author.email}</span><span className="cfx-trigger-invite">{active === 'email' ? (en ? 'Close details' : '收起联系选项') : (en ? 'Open a note' : '展开纸笺')}<i aria-hidden="true">{active === 'email' ? '−' : '↗'}</i></span></span><span className="cfx-object-well"><Letter open={active === 'email'} /></span>
         </button>
-        <span className="cfx-cell-note">{en ? 'A note for what comes next.' : '把下一幕，写进第一句话。'}</span>
+        <span className="cfx-cell-note">{en ? 'An idea, a brief, or a simple hello.' : '一个想法，一份需求，或一句你好。'}</span>
       </div>
-      <div className="cfx-cell cfx-phone-cell">
+      <div className={`cfx-cell cfx-contact-cell cfx-phone-cell${active === 'phone' ? ' is-open' : ''}`} {...light}>
         <span className="cfx-label">02 / {en ? 'SAY HELLO' : '打个招呼'}</span>
         <button className="cfx-contact-trigger" type="button" aria-expanded={active === 'phone'} aria-controls="cfx-action-panel" onClick={event => toggle('phone', event)}>
-          <span>{author.phone}</span><Telephone open={active === 'phone'} />
+          <span className="cfx-trigger-content"><span className="cfx-contact-value">{author.phone}</span><span className="cfx-trigger-invite">{active === 'phone' ? (en ? 'Close details' : '收起联系选项') : (en ? 'Pick up the receiver' : '拿起听筒')}<i aria-hidden="true">{active === 'phone' ? '−' : '↗'}</i></span></span><span className="cfx-object-well"><Telephone open={active === 'phone'} /></span>
         </button>
         <span className="cfx-cell-note">{en ? 'Good things start with hello.' : '从一句你好开始。'}</span>
       </div>
@@ -158,11 +209,11 @@ export default function ContactFinale({ lang = 'zh', reduced = false, onNavigate
     </div>
 
     <div id="cfx-action-panel" className={`cfx-panel-wrap${active ? ' is-open' : ''}`}>
-      {active && <div ref={panelRef} className="cfx-panel" role="region" aria-labelledby="cfx-panel-title">
-        <div className="cfx-panel-heading"><span className="cfx-label" id="cfx-panel-title">{active === 'email' ? (en ? 'A NOTE TO JAY' : '写给下一幕') : (en ? 'IT STARTS WITH HELLO' : '从一句你好开始')}</span><p>{value}</p></div>
+      {active && <div key={active} ref={panelRef} className="cfx-panel" data-kind={active} role="region" aria-labelledby="cfx-panel-title" {...light}>
+        <div className="cfx-panel-heading"><span className="cfx-label" id="cfx-panel-title">{active === 'email' ? (en ? 'A NOTE TO JAY' : '写给林世杰') : (en ? 'IT STARTS WITH HELLO' : '从一句你好开始')}</span><p>{value}</p></div>
         <div className="cfx-panel-actions">
           <a data-primary-action href={active === 'email' ? `mailto:${author.email}` : author.phoneHref}>{active === 'email' ? (en ? 'Write an email' : '写邮件') : (en ? 'Make a call' : '拨打电话')} <span>↗</span></a>
-          <button type="button" onClick={copy}>{copyState === 'done' ? (en ? 'Copied' : '已复制') : (en ? 'Copy' : '复制')} <span>{copyState === 'done' ? '✓' : '⧉'}</span></button>
+          <button type="button" onClick={copy} disabled={copyState === 'pending'}>{copyState === 'done' ? (en ? 'Copied' : '已复制') : copyState === 'pending' ? (en ? 'Copying' : '复制中') : (en ? 'Copy' : '复制')} <span>{copyState === 'done' ? '✓' : '⧉'}</span></button>
         </div>
         <button className="cfx-close" type="button" aria-label={en ? 'Close contact details' : '关闭联系方式'} onClick={() => close()}>×</button>
         <span className={`cfx-copy-status${copyState === 'done' ? ' is-stamped' : ''}`} role="status" aria-live="polite">{copyState === 'done' ? (en ? 'COPIED ✓' : '已复制 ✓') : copyState === 'failed' ? (en ? 'Please select and copy the address above.' : '请选中上方联系方式复制。') : ''}</span>

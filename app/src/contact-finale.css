@@ -27,3 +27,77 @@
 @keyframes cfx-canopy-sway{from{transform:translate3d(0,0,0) rotate(-.65deg)}to{transform:translate3d(-6px,4px,0) rotate(.7deg)}}
 @keyframes cfx-daylight-pass{from{transform:translate3d(-15%,1%,0) rotate(-1.5deg)}to{transform:translate3d(15%,-2%,0) rotate(1deg)}}
 @media(max-width:650px){.cfx-atmosphere{height:81%}.cfx-branch-shadow{width:110%;right:-47%;top:0;opacity:.036;animation-duration:23s}.cfx-passing-light{opacity:.52;animation-duration:29s}.cfx-panel{padding:24px 45px 32px 18px}.contact-finale .cfx-close{right:1px;top:11px}.cfx-panel-actions{gap:26px}}
+
+/* Contact objects offer a small, deliberate invitation before disclosure. */
+.contact-finale .cfx-title-en{font-size:clamp(48px,7.15vw,127px)}
+.cfx-title-en>span:nth-child(2){margin-left:11%}
+.cfx-contact-cell{position:relative;isolation:isolate;--cfx-light-x:50%;--cfx-light-y:50%}
+.cfx-contact-cell::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;background:radial-gradient(ellipse 220px 145px at var(--cfx-light-x) var(--cfx-light-y),rgba(255,255,255,.98),rgba(234,237,240,.24) 48%,rgba(181,188,196,.12));box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.75);transition:opacity .38s ease}
+.cfx-contact-cell::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:var(--cfx-black);transform:scaleX(0);transform-origin:left center;transition:transform .5s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.cfx-contact-cell[data-pointer=true]::before,.cfx-contact-cell:focus-within::before,.cfx-contact-cell.is-open::before{opacity:1}
+.cfx-contact-cell[data-pointer=true]::after,.cfx-contact-cell:focus-within::after,.cfx-contact-cell.is-open::after{transform:scaleX(1)}
+.cfx-contact-trigger{min-height:89px!important;margin-top:8px;gap:14px}
+.cfx-trigger-content{display:flex;flex-direction:column;align-items:flex-start;gap:13px;min-width:0}
+.cfx-contact-value{display:block;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.cfx-trigger-invite{display:flex;align-items:center;gap:14px;font-size:9px;line-height:1.5;letter-spacing:.035em;color:var(--cfx-gray);transition:color .25s}
+.cfx-trigger-invite i{font-style:normal;font-size:15px;line-height:1;display:block;transition:transform .38s cubic-bezier(.2,.8,.2,1)}
+.cfx-object-well{display:grid;place-items:center;flex-shrink:0;width:65px;height:65px;position:relative;border:1px solid transparent;border-radius:50%;transition:transform .5s cubic-bezier(.2,.8,.2,1),border-color .3s,background .3s,box-shadow .3s}
+.cfx-object{width:52px;height:52px;overflow:visible;stroke-width:1.2;transform:translateZ(0)}
+.cfx-paper-sheet,.cfx-letter-front{fill:#FAFBFC}
+.cfx-letter-back{fill:rgba(204,210,217,.16);stroke:rgba(17,17,20,.48)}
+.cfx-contact-cell .cfx-letter-paper{transform:translateY(0);transform-origin:32px 40px;transition:transform .62s cubic-bezier(.22,1,.36,1)}
+.cfx-contact-cell .cfx-phone-receiver{fill:#FAFBFC;transform-origin:32px 27px;transition:transform .62s cubic-bezier(.22,1.25,.36,1)}
+.cfx-phone-cord-rest{opacity:.5}.cfx-phone-cord-lifted{opacity:0!important}
+.cfx-contact-cell .cfx-phone-cord{transition:opacity .4s,transform .55s cubic-bezier(.2,.8,.2,1)}
+.cfx-contact-cell:focus-within .cfx-letter-paper{transform:translateY(-9px) rotate(-4deg)}
+.cfx-contact-cell:focus-within .cfx-phone-receiver{transform:translate(1px,-6px) rotate(-11deg)}
+.cfx-contact-cell:focus-within .cfx-object-well,.cfx-contact-cell.is-open .cfx-object-well{border-color:rgba(17,17,20,.12);background:rgba(255,255,255,.56);box-shadow:inset 0 1px 0 #fff,0 4px 14px rgba(17,17,20,.035)}
+.cfx-contact-cell:focus-within .cfx-trigger-invite,.cfx-contact-cell.is-open .cfx-trigger-invite{color:var(--cfx-black)}
+.cfx-contact-cell.is-open .cfx-contact-trigger .cfx-letter-paper{transform:translateY(-14px) rotate(-5deg)}
+.cfx-contact-cell.is-open .cfx-phone-receiver{animation:none;transform:translate(2px,-9px) rotate(-16deg)}
+.cfx-contact-cell.is-open .cfx-phone-cord-rest{opacity:0}
+.cfx-contact-cell.is-open .cfx-phone-cord-lifted{opacity:.85!important}
+.cfx-contact-trigger:active .cfx-contact-value{transform:translateY(2px)}
+.cfx-contact-trigger:active .cfx-object-well{transform:scale(.95)}
+.cfx-cell-note{display:block;margin-top:9px}
+.cfx-panel{--cfx-light-x:50%;--cfx-light-y:50%;animation:cfx-contact-reveal .52s cubic-bezier(.22,1,.36,1);transform-origin:12% 0}
+.cfx-panel[data-kind=phone]{transform-origin:53% 0}
+.cfx-panel:before{background:radial-gradient(ellipse 360px 190px at var(--cfx-light-x) var(--cfx-light-y),rgba(255,255,255,.95),rgba(255,255,255,.12) 62%,transparent);opacity:.48;transition:opacity .3s}
+.cfx-panel[data-pointer=true]:before,.cfx-panel:focus-within:before{opacity:1}
+.cfx-panel-actions a,.cfx-panel-actions button{position:relative;isolation:isolate;transition:color .25s,background .25s;padding:10px 8px;border-bottom-color:rgba(17,17,20,.45)}
+.cfx-panel-actions a::before,.cfx-panel-actions button::before{content:'';position:absolute;inset:auto 0 -1px;height:1px;background:var(--cfx-black);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.cfx-panel-actions a:hover,.cfx-panel-actions button:hover,.cfx-panel-actions a:focus-visible,.cfx-panel-actions button:focus-visible{background:rgba(17,17,20,.045)}
+.cfx-panel-actions a:hover::before,.cfx-panel-actions button:hover::before,.cfx-panel-actions a:focus-visible::before,.cfx-panel-actions button:focus-visible::before{transform:scaleX(1)}
+.cfx-panel-actions span{transition:transform .3s}
+.cfx-panel-actions a:hover span,.cfx-panel-actions a:focus-visible span{transform:translate(3px,-3px)}
+.cfx-panel-actions button:hover span,.cfx-panel-actions button:focus-visible span{transform:translateY(-2px)}
+.cfx-panel-actions button:disabled{opacity:.6;cursor:wait}
+.contact-finale .cfx-close{border-radius:50%;transition:background .25s,transform .3s}
+.contact-finale .cfx-close:hover,.contact-finale .cfx-close:focus-visible{background:rgba(17,17,20,.055);transform:rotate(90deg)}
+@keyframes cfx-contact-reveal{from{opacity:0;transform:translateY(-14px) scaleY(.96)}to{opacity:1;transform:none}}
+@keyframes cfx-receiver-lift{0%{transform:translate(0,0) rotate(0)}45%{transform:translate(1px,-8px) rotate(-16deg)}70%{transform:translate(1px,-5px) rotate(-8deg)}100%{transform:translate(1px,-6px) rotate(-11deg)}}
+@media(hover:hover) and (pointer:fine){
+  .cfx-contact-cell:hover .cfx-letter-paper{transform:translateY(-9px) rotate(-4deg)}
+  .cfx-contact-cell:hover .cfx-phone-receiver{animation:cfx-receiver-lift .68s cubic-bezier(.2,.8,.2,1) both}
+  .cfx-contact-cell.is-open:hover .cfx-phone-receiver{animation:none;transform:translate(2px,-9px) rotate(-16deg)}
+  .cfx-contact-cell:hover .cfx-object-well{border-color:rgba(17,17,20,.12);background:rgba(255,255,255,.56);box-shadow:inset 0 1px 0 #fff,0 4px 14px rgba(17,17,20,.035);transform:translateY(-2px)}
+  .cfx-contact-cell:hover .cfx-trigger-invite{color:var(--cfx-black)}
+  .cfx-contact-cell:hover .cfx-trigger-invite i{transform:translate(2px,-2px)}
+}
+@media(max-width:1250px) and (min-width:1001px){.cfx-object-well{width:49px;height:60px}.cfx-object{width:46px;height:46px}.cfx-contact-trigger{gap:8px}.cfx-trigger-invite{font-size:8px;gap:8px}}
+@media(max-width:650px){
+  .contact-finale .cfx-title{font-size:14.6vw;line-height:1.23}
+  .contact-finale .cfx-title-en{font-size:9.5vw;letter-spacing:-.07em;line-height:1.14}
+  .cfx-title-en>span:nth-child(2){margin-left:5%}
+  .cfx-title-en>span>i{left:calc(100% + 7px)}
+  .cfx-note{margin-top:31px;max-width:270px}
+  .cfx-note p{font-size:15px;line-height:1.65}
+  .cfx-contact-trigger{min-height:79px!important;gap:17px}
+  .cfx-trigger-content{gap:12px}.cfx-trigger-invite{font-size:9px}
+  .cfx-object-well{width:62px;height:62px}.cfx-object{width:51px;height:51px}
+  .cfx-contact-cell::before{inset:0 -10px}
+  .cfx-cell-note{margin-top:7px}
+  .cfx-panel-actions{gap:17px}.cfx-panel-actions a,.cfx-panel-actions button{gap:15px;padding:10px 5px}
+}
+.contact-finale.is-reduced .cfx-contact-value,.contact-finale.is-reduced .cfx-object-well,.contact-finale.is-reduced .cfx-trigger-invite i,.contact-finale.is-reduced .cfx-close,.quiet .contact-finale .cfx-contact-value,.quiet .contact-finale .cfx-object-well{transform:none!important}
+@media(prefers-reduced-motion:reduce){.contact-finale .cfx-contact-value,.contact-finale .cfx-object-well,.contact-finale .cfx-trigger-invite i,.contact-finale .cfx-close{transform:none!important}}

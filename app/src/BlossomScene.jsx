@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { createPaintedBlossomMaterial } from './blossom-painted-material';
 
 const BLACK = '#09090b';
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -11,11 +12,12 @@ const PETAL_CENTER = new THREE.Vector3(0, 0.58, petalCurve(0, 0.58) + 0.075);
 // geometry; the five petals are not image planes or transparent sprites.
 function createPetalGeometry() {
   const rings = 28, segments = 100;
-  const positions = [], indices = [];
+  const positions = [], indices = [], paintRadii = [];
   const faceCount = 1 + rings * segments;
   for (let face = 0; face < 2; face++) {
     const top = face === 0;
     positions.push(0, 0.58, petalCurve(0, 0.58) + (top ? 0.075 : -0.046));
+    paintRadii.push(0);
     for (let ring = 1; ring <= rings; ring++) {
       const rho = ring / rings;
       for (let j = 0; j < segments; j++) {
@@ -30,6 +32,7 @@ function createPetalGeometry() {
         const thickness = (top ? 0.069 : -0.040) * (1 - rho * rho) + (top ? 0.006 : -0.006);
         const softEdge = 0.012 * Math.sin(theta * 3 + 0.4) * rho ** 4;
         positions.push(x, y, petalCurve(x, y) + thickness + softEdge);
+        paintRadii.push(rho);
       }
     }
     const offset = face * faceCount;
@@ -53,38 +56,11 @@ function createPetalGeometry() {
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('aPaintRadius', new THREE.Float32BufferAttribute(paintRadii, 1));
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
   geometry.computeBoundingSphere();
   return geometry;
-}
-
-function finishMaterial(material, darkUniform, petal = false) {
-  material.onBeforeCompile = shader => {
-    shader.uniforms.uStoryDark = darkUniform;
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nvarying vec3 vBlossomPoint;')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvBlossomPoint = position;');
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', '#include <common>\nuniform float uStoryDark;\nvarying vec3 vBlossomPoint;');
-    if (petal) {
-      shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `
-        #include <color_fragment>
-        float fan = atan(vBlossomPoint.x, max(0.06, vBlossomPoint.y + 0.04));
-        float vein = 1.0 - smoothstep(0.055, 0.19, abs(sin(fan * 24.0 + vBlossomPoint.y * 0.28)));
-        float veinFade = smoothstep(0.08, 0.35, vBlossomPoint.y) * (1.0 - smoothstep(0.95, 1.30, vBlossomPoint.y));
-        diffuseColor.rgb *= 1.0 + vein * veinFade * 0.055;
-      `);
-    }
-    // This final operation is after output color conversion. All surfaces
-    // converge to the exact CSS black, including highlights and stamens.
-    shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>', `
-      #include <dithering_fragment>
-      gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(9.0/255.0, 9.0/255.0, 11.0/255.0), uStoryDark);
-    `);
-  };
-  material.customProgramCacheKey = () => petal ? 'sakura-petal-v1' : 'sakura-solid-v1';
-  return material;
 }
 
 /**
@@ -122,28 +98,28 @@ export default function BlossomScene({ progress = 0, reducedMotion = false, getP
     const flower = new THREE.Group();
     scene.add(flower);
     const petalGeometry = createPetalGeometry();
-    const petalMaterial = finishMaterial(new THREE.MeshPhysicalMaterial({
-      color: '#dc8da8', roughness: 0.31, metalness: 0.025,
-      clearcoat: 0.44, clearcoatRoughness: 0.32,
-      side: THREE.DoubleSide,
-    }), darkUniform, true);
-    const roseMaterial = finishMaterial(new THREE.MeshPhysicalMaterial({
-      color: '#a84267', roughness: 0.46, metalness: 0.04,
-      clearcoat: 0.25, clearcoatRoughness: 0.40,
-    }), darkUniform);
-    const goldMaterial = finishMaterial(new THREE.MeshPhysicalMaterial({
-      color: '#d4a45c', roughness: 0.30, metalness: 0.34,
-    }), darkUniform);
-    const jadeMaterial = finishMaterial(new THREE.MeshPhysicalMaterial({
-      color: '#727d73', roughness: 0.37, metalness: 0.04,
-      clearcoat: 0.45, clearcoatRoughness: 0.25,
-    }), darkUniform);
+    const roseMaterial = createPaintedBlossomMaterial({
+      base: '#ab7487', light: '#d3a0aa', shade: '#805969', ink: '#785664', darkUniform,
+    });
+    const filamentMaterial = createPaintedBlossomMaterial({
+      base: '#c29aab', light: '#e4c0cb', shade: '#986f84', ink: '#805c70', darkUniform, seed: 2,
+    });
+    const pollenMaterial = createPaintedBlossomMaterial({
+      base: '#e7c7ce', light: '#f4dcdf', shade: '#bd929f', ink: '#a4798a', darkUniform, seed: 3,
+    });
+    const jadeMaterial = createPaintedBlossomMaterial({
+      base: '#77867e', light: '#a0aea0', shade: '#52695e', ink: '#43594d', darkUniform, seed: 4,
+    });
 
     const petals = [];
     for (let i = 0; i < 5; i++) {
       const hinge = new THREE.Group();
       hinge.rotation.z = i * Math.PI * 2 / 5;
       flower.add(hinge);
+      const petalMaterial = createPaintedBlossomMaterial({
+        base: '#ecc0ca', light: '#f6dce0', shade: '#b77994', ink: '#a26482',
+        darkUniform, petal: true, seed: i * 1.31,
+      });
       const mesh = new THREE.Mesh(petalGeometry, petalMaterial);
       mesh.scale.set(1 + Math.sin(i * 2.3) * 0.018, 1 + Math.cos(i * 1.7) * 0.020, 1);
       hinge.add(mesh);
@@ -155,7 +131,7 @@ export default function BlossomScene({ progress = 0, reducedMotion = false, getP
     center.scale.z = 0.46;
     flower.add(center);
     const pollenGeometry = new THREE.SphereGeometry(0.025, 12, 8);
-    const stamens = new THREE.InstancedMesh(pollenGeometry, goldMaterial, 23);
+    const stamens = new THREE.InstancedMesh(pollenGeometry, pollenMaterial, 23);
     const temporary = new THREE.Object3D();
     for (let i = 0; i < 23; i++) {
       const angle = i * 2.399963;
@@ -167,7 +143,7 @@ export default function BlossomScene({ progress = 0, reducedMotion = false, getP
         new THREE.Vector3(x * 0.70, y * 0.70, z * 0.95),
         new THREE.Vector3(x, y, z),
       );
-      flower.add(new THREE.Mesh(new THREE.TubeGeometry(filamentCurve, 8, 0.0065, 5, false), goldMaterial));
+      flower.add(new THREE.Mesh(new THREE.TubeGeometry(filamentCurve, 8, 0.0065, 5, false), filamentMaterial));
       temporary.position.set(x, y, z);
       temporary.scale.setScalar(0.82 + (i % 4) * 0.12);
       temporary.updateMatrix();
@@ -179,14 +155,6 @@ export default function BlossomScene({ progress = 0, reducedMotion = false, getP
       new THREE.Vector3(-0.16, -1.24, -0.62), new THREE.Vector3(0.12, -1.68, -0.87),
     );
     flower.add(new THREE.Mesh(new THREE.TubeGeometry(stemCurve, 40, 0.025, 10, false), jadeMaterial));
-
-    scene.add(new THREE.HemisphereLight('#ecdee5', '#474951', 1.7));
-    const key = new THREE.DirectionalLight('#fff6fa', 3.4);
-    key.position.set(-3, 4, 5); scene.add(key);
-    const edgeLight = new THREE.DirectionalLight('#e9ebf3', 2.0);
-    edgeLight.position.set(3, -1, 2); scene.add(edgeLight);
-    const backLight = new THREE.DirectionalLight('#c57a96', 1.5);
-    backLight.position.set(-1, -3, -2); scene.add(backLight);
 
     let frame = 0, disposed = false, visible = true;
     let lastTime = performance.now(), idleTime = 0;
