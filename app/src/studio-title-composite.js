@@ -88,9 +88,8 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
   ink.fillText('PORTFOLIO', leftBearing, ascent);
   ink.restore();
 
-  // Paint only the letter pixels. Modulate the pigment with the source wall's
-  // own illumination so its existing side light and texture remain continuous.
-  // There is no rectangular patch, new background, bevel, or synthetic noise.
+  // Paint only the letter pixels. The title remains pure white, independent of
+  // the wall color beneath it; all other office pixels remain unchanged.
   const bounds = {
     x: Math.max(0, Math.floor(x - 2)), y: Math.max(0, Math.floor(y - 2)),
     width: Math.ceil(glyphWidth * fit + 4), height: Math.ceil(inkHeight + 4),
@@ -103,10 +102,9 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
     const alpha = mask[i + 3] / 255;
     if (!alpha) continue;
     const r = pixels.data[i], g = pixels.data[i + 1], b = pixels.data[i + 2];
-    const light = .82 + (.2126 * r + .7152 * g + .0722 * b) / 255 * .60;
-    pixels.data[i] = r + (208 * light - r) * alpha;
-    pixels.data[i + 1] = g + (214 * light - g) * alpha;
-    pixels.data[i + 2] = b + (211 * light - b) * alpha;
+    pixels.data[i] = r + (255 - r) * alpha;
+    pixels.data[i + 1] = g + (255 - g) * alpha;
+    pixels.data[i + 2] = b + (255 - b) * alpha;
   }
   context.putImageData(pixels, bounds.x, bounds.y);
   restoreMonitor(context, image);
