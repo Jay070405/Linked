@@ -5,6 +5,19 @@
  */
 export const STUDIO_TITLE_FONT = '700 200px "TikTok Sans", Arial, sans-serif';
 
+function neutralizeCanvas(context, width, height) {
+  const pixels = context.getImageData(0, 0, width, height);
+  for (let i = 0; i < pixels.data.length; i += 4) {
+    const luminance = Math.round(
+      pixels.data[i] * .2126 + pixels.data[i + 1] * .7152 + pixels.data[i + 2] * .0722,
+    );
+    pixels.data[i] = luminance;
+    pixels.data[i + 1] = luminance;
+    pixels.data[i + 2] = luminance;
+  }
+  context.putImageData(pixels, 0, 0);
+}
+
 export function studioTitleLayout(imageWidth, imageHeight, viewportWidth, viewportHeight) {
   const scale = Math.max(viewportWidth / imageWidth, viewportHeight / imageHeight);
   const visibleWidth = viewportWidth / scale;
@@ -59,6 +72,10 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
   const context = canvas.getContext('2d', { willReadFrequently: true });
   if (!context) throw new Error('Office title canvas is unavailable.');
   context.drawImage(image, 0, 0);
+  // The office is deliberately neutral: every original warm or green hue is
+  // converted to the same luminance value. The separate fantasy texture stays
+  // untouched, so the cursor reveal still opens onto its original color world.
+  neutralizeCanvas(context, canvas.width, canvas.height);
 
   const letters = document.createElement('canvas');
   letters.width = canvas.width; letters.height = canvas.height;
@@ -104,12 +121,16 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
     if (!alpha) continue;
     const r = pixels.data[i], g = pixels.data[i + 1], b = pixels.data[i + 2];
     const light = .82 + (.2126 * r + .7152 * g + .0722 * b) / 255 * .60;
-    pixels.data[i] = r + (208 * light - r) * alpha;
-    pixels.data[i + 1] = g + (214 * light - g) * alpha;
-    pixels.data[i + 2] = b + (211 * light - b) * alpha;
+    const neutralInk = 218 * light;
+    pixels.data[i] = r + (neutralInk - r) * alpha;
+    pixels.data[i + 1] = g + (neutralInk - g) * alpha;
+    pixels.data[i + 2] = b + (neutralInk - b) * alpha;
   }
   context.putImageData(pixels, bounds.x, bounds.y);
   restoreMonitor(context, image);
+  // restoreMonitor copies the original pixels under the lower letter tips;
+  // normalize that exact bezel layer as well to keep the whole office neutral.
+  neutralizeCanvas(context, canvas.width, canvas.height);
   // Only the lower tips of the central letters pass behind the monitor. The
   // title stays well above the lamp and desk and remains part of the liquid UV.
   canvas.dataset.titleBounds = JSON.stringify({ x, y, width: glyphWidth * fit, height: inkHeight });
