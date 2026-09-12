@@ -11,4 +11,3 @@ The user requested default quiet playback. The controller requests a 0.14 output
 Where HTML media volume is writable it controls the level directly. A GainNode is used only when a browser refuses media-volume changes. Safari `interrupted` and `suspended` contexts both use `resume()`. The gain fallback has controller tests; physical iOS hardware was not available for this pass.
 
 Technical references: [MDN autoplay guide](https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay), [play() Promise](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play), [Page Visibility](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API), [interrupted audio contexts in Safari](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/state#resuming_interrupted_play_states_in_ios_safari).
-
