@@ -67,7 +67,7 @@ export default function AboutPanel({ lang = 'zh', onClose, reducedMotion = false
         <figcaption><span>{captionText}</span><small>{noteText}</small></figcaption>
       </figure>
       {reduced ? staticBadge : <BadgeBoundary fallback={staticBadge}><Suspense fallback={staticBadge}><Lanyard position={[0, 0, 23]} fov={25} gravity={[0, -32, 0]} frontImage={badgeFront} backImage={badgeBack} lanyardImage={strap} lanyardWidth={0.8} imageFit="cover" onReveal={reveal} onRestProjection={placeEasterEgg} /></Suspense></BadgeBoundary>}
-      <p className="v15-about-drag">{reduced ? (en ? 'Lift the badge. There is more behind it.' : '翻开工牌，后面还有一点我。') : (en ? 'Move the badge. There is more behind it.' : '拨开工牌，后面还有一点我。')} <span>↗</span></p>
+      <p className="v15-about-drag">{reduced ? (en ? 'Lift the badge. There is more behind it.' : '翻开工牌，后面还有一点我。') : (en ? 'Pull the badge down. There is more behind it.' : '向下拉一拉，后面还有一点我。')} <span>{reduced ? '↗' : '↓'}</span></p>
     </div>
     <div className="v15-about-copy">
       <p className="v15-about-eyebrow">ABOUT / {en ? 'A LITTLE CONTEXT' : '世界之外的我'}</p>

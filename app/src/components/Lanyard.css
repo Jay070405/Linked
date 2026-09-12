@@ -9,3 +9,17 @@
   transform: scale(1);
   transform-origin: center;
 }
+
+/* Only the projected badge opts out of native touch scrolling. clip-path also
+   clips hit testing; the transparent area outside this polygon stays scrollable. */
+.lanyard-badge-pointer-surface {
+  position: absolute;
+  z-index: 3;
+  background: transparent;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  clip-path: polygon(0 0, 0 0, 0 0);
+}
