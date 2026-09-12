@@ -20,10 +20,10 @@ export function studioTitleLayout(imageWidth, imageHeight, viewportWidth, viewpo
   // A shallow overlap gives the room depth without hiding the word's counters
   // and crossbars. Portrait crops have less spare width, so keep more ink visible.
   const overlap = visibleWidth < imageWidth * .55 ? .12 : .18;
-  const navClearance = viewportHeight < 600 ? 74 : 98;
+  const navClearance = viewportHeight < 600 ? 74 : viewportWidth >= 1000 ? 76 : 98;
   const minimumCap = imageHeight * .035;
-  const safeTop = Math.max(imageHeight * .19, cropY + navClearance / scale);
-  const height = Math.max(minimumCap, Math.min(imageHeight * .155, (monitorTop - safeTop) / (1 - overlap)));
+  const safeTop = Math.max(imageHeight * .17, cropY + navClearance / scale);
+  const height = Math.max(minimumCap, Math.min(imageHeight * .18, (monitorTop - safeTop) / (1 - overlap)));
   return {
     left, width: Math.max(1, right - left), height, monitorTop, overlap,
     cropX, cropY, visibleWidth, visibleHeight, scale,
@@ -72,15 +72,18 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
   const descent = metrics.actualBoundingBoxDescent || 0;
   const leftBearing = metrics.actualBoundingBoxLeft || 0;
   const glyphWidth = metrics.actualBoundingBoxRight + leftBearing || metrics.width;
-  // Uniform scaling preserves the actual glyph shape, including the round Os.
-  const fit = Math.min(box.width / glyphWidth, box.height / (ascent + descent));
+  // A modest vertical stretch brings back the taller wall lettering while the
+  // horizontal fit keeps the entire word readable inside each viewport crop.
+  const elongation = 1.16;
+  const fit = Math.min(box.width / glyphWidth, box.height / ((ascent + descent) * elongation));
+  const fitY = fit * elongation;
   const x = box.left + (box.width - glyphWidth * fit) / 2;
   // Anchor by the measured ink height rather than the layout box, so narrow
   // screens keep the same intentional relationship to the real monitor edge.
-  const inkHeight = (ascent + descent) * fit;
+  const inkHeight = (ascent + descent) * fitY;
   const y = box.monitorTop - inkHeight * (1 - box.overlap);
   ink.save();
-  ink.translate(x, y); ink.scale(fit, fit);
+  ink.translate(x, y); ink.scale(fit, fitY);
   ink.fillStyle = '#fff';
   ink.fillText('PORTFOLIO', leftBearing, ascent);
   ink.restore();
@@ -90,7 +93,7 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
   // There is no rectangular patch, new background, bevel, or synthetic noise.
   const bounds = {
     x: Math.max(0, Math.floor(x - 2)), y: Math.max(0, Math.floor(y - 2)),
-    width: Math.ceil(glyphWidth * fit + 4), height: Math.ceil((ascent + descent) * fit + 4),
+    width: Math.ceil(glyphWidth * fit + 4), height: Math.ceil(inkHeight + 4),
   };
   bounds.width = Math.min(bounds.width, canvas.width - bounds.x);
   bounds.height = Math.min(bounds.height, canvas.height - bounds.y);
@@ -109,6 +112,6 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
   restoreMonitor(context, image);
   // Only the lower tips of the central letters pass behind the monitor. The
   // title stays well above the lamp and desk and remains part of the liquid UV.
-  canvas.dataset.titleBounds = JSON.stringify({ x, y, width: glyphWidth * fit, height: (ascent + descent) * fit });
+  canvas.dataset.titleBounds = JSON.stringify({ x, y, width: glyphWidth * fit, height: inkHeight });
   return canvas;
 }
