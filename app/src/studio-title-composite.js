@@ -16,15 +16,40 @@ export function studioTitleLayout(imageWidth, imageHeight, viewportWidth, viewpo
   // the cover image to remove the beginning and end of the word.
   const left = Math.max(imageWidth * .185, cropX + visibleWidth * .065);
   const right = Math.min(imageWidth * .935, cropX + visibleWidth * .935);
-  const bottom = imageHeight * .317;
+  const monitorTop = imageHeight * (318 / 992);
+  // A shallow overlap gives the room depth without hiding the word's counters
+  // and crossbars. Portrait crops have less spare width, so keep more ink visible.
+  const overlap = visibleWidth < imageWidth * .55 ? .12 : .18;
   const navClearance = viewportHeight < 600 ? 74 : 98;
   const minimumCap = imageHeight * .035;
-  const top = Math.min(bottom - minimumCap, Math.max(imageHeight * .194, cropY + navClearance / scale));
+  const safeTop = Math.max(imageHeight * .19, cropY + navClearance / scale);
+  const height = Math.max(minimumCap, Math.min(imageHeight * .155, (monitorTop - safeTop) / (1 - overlap)));
   return {
-    left, top, width: Math.max(1, right - left),
-    height: bottom - top,
+    left, width: Math.max(1, right - left), height, monitorTop, overlap,
     cropX, cropY, visibleWidth, visibleHeight, scale,
   };
+}
+
+function restoreMonitor(context, image) {
+  // Follow the actual outer bezel, including its rounded upper corners. Copying
+  // original pixels makes the monitor occlude the wall lettering, never the
+  // other way around. Coordinates are registered to the clean 1586×992 room.
+  context.save();
+  context.scale(image.naturalWidth / 1586, image.naturalHeight / 992);
+  context.beginPath();
+  context.moveTo(648, 318);
+  context.lineTo(1071, 318);
+  context.bezierCurveTo(1090, 318, 1099, 327, 1099, 346);
+  context.lineTo(1100, 613);
+  context.quadraticCurveTo(1100, 642, 1073, 642);
+  context.lineTo(646, 642);
+  context.quadraticCurveTo(619, 642, 619, 614);
+  context.lineTo(620, 344);
+  context.bezierCurveTo(620, 328, 628, 318, 648, 318);
+  context.closePath();
+  context.clip();
+  context.drawImage(image, 0, 0, 1586, 992);
+  context.restore();
 }
 
 export function composeStudioTitle(image, viewportWidth, viewportHeight) {
@@ -50,7 +75,10 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
   // Uniform scaling preserves the actual glyph shape, including the round Os.
   const fit = Math.min(box.width / glyphWidth, box.height / (ascent + descent));
   const x = box.left + (box.width - glyphWidth * fit) / 2;
-  const y = box.top + (box.height - (ascent + descent) * fit) / 2;
+  // Anchor by the measured ink height rather than the layout box, so narrow
+  // screens keep the same intentional relationship to the real monitor edge.
+  const inkHeight = (ascent + descent) * fit;
+  const y = box.monitorTop - inkHeight * (1 - box.overlap);
   ink.save();
   ink.translate(x, y); ink.scale(fit, fit);
   ink.fillStyle = '#fff';
@@ -78,8 +106,9 @@ export function composeStudioTitle(image, viewportWidth, viewportHeight) {
     pixels.data[i + 2] = b + (211 * light - b) * alpha;
   }
   context.putImageData(pixels, bounds.x, bounds.y);
-  // The heading ends above the original monitor (its top is at ~32% height).
-  // Nothing is drawn over the monitor, lamp, desk, or window foreground.
+  restoreMonitor(context, image);
+  // Only the lower tips of the central letters pass behind the monitor. The
+  // title stays well above the lamp and desk and remains part of the liquid UV.
   canvas.dataset.titleBounds = JSON.stringify({ x, y, width: glyphWidth * fit, height: (ascent + descent) * fit });
   return canvas;
 }
