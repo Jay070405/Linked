@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { composeStudioTitle, STUDIO_TITLE_FONT } from './studio-title-composite';
 
 const CLEAN = '/assets/studio-clean.png';
-const FANTASY = '/assets/studio-fantasy.png';
-const PORTFOLIO = '/assets/studio-portfolio-screen-off.png';
+const FANTASY = '/assets/studio-fantasy-anime.png';
 const TRAIL_COUNT = 24;
 const TRAIL_LIFE = 2.15;
 
@@ -25,7 +25,6 @@ precision mediump float;
 varying vec2 vUv;
 uniform sampler2D uClean;
 uniform sampler2D uFantasy;
-uniform sampler2D uPortfolio;
 uniform float uAspect;
 uniform float uImageAspect;
 uniform float uTime;
@@ -88,10 +87,6 @@ void main() {
                     min(1., uImageAspect / uAspect));
   vec2 uv = clamp((vUv + offset - .5) * cover + .5, .001, .999);
   vec3 clean = texture2D(uClean, uv).rgb;
-  // The approved room's lettering includes its actual lighting and foreground
-  // occlusion. Composite that exact V13 patch BEFORE revealing the other room.
-  float wallPatch = step(.19, uv.x) * step(uv.x, .91) * step(.28, uv.y) * step(uv.y, .92);
-  clean = mix(clean, texture2D(uPortfolio, uv).rgb, wallPatch);
   vec3 fantasy = texture2D(uFantasy, uv).rgb;
   gl_FragColor = vec4(mix(clean, fantasy, reveal), 1.);
 }`;
@@ -133,11 +128,44 @@ export default function LiquidOffice({ className = '', reducedMotion = false, pr
   const [fallback, setFallback] = useState(false);
   const [alternate, setAlternate] = useState(false);
   const [restore, setRestore] = useState(0);
+  const [composition, setComposition] = useState(null);
+
+  useEffect(() => {
+    let disposed = false, image, resizeTimer = 0, fontTimer = 0;
+    let lastWidth = 0, lastHeight = 0;
+    function compose(force = false) {
+      if (disposed || !image) return;
+      const width = window.innerWidth, height = window.innerHeight;
+      if (!force && width === lastWidth && height === lastHeight) return;
+      lastWidth = width; lastHeight = height;
+      try {
+        const canvas = composeStudioTitle(image, width, height);
+        setComposition({ canvas, src: canvas.toDataURL('image/png') });
+      } catch {
+        // A failed 2D canvas still leaves the untouched source room visible.
+        setComposition(null);
+      }
+    }
+    const font = document.fonts?.load(STUDIO_TITLE_FONT).catch(() => []);
+    const fontWait = new Promise(resolve => { fontTimer = window.setTimeout(resolve, 700); });
+    Promise.all([loadImage(CLEAN), Promise.race([font || Promise.resolve(), fontWait])])
+      .then(([source]) => { image = source; compose(true); }).catch(() => {});
+    // A slow or failed font never holds the room hostage. If it arrives later,
+    // measure again so fallback text never overflows the painted wall bounds.
+    font?.then(() => compose(true));
+    const resize = () => { clearTimeout(resizeTimer); resizeTimer = window.setTimeout(() => compose(), 120); };
+    window.addEventListener('resize', resize, { passive: true });
+    return () => {
+      disposed = true;
+      clearTimeout(resizeTimer); clearTimeout(fontTimer);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
 
   useEffect(() => {
     setReady(false);
     setFallback(false);
-    if (reducedMotion) return undefined;
+    if (reducedMotion || !composition) return undefined;
 
     const host = hostRef.current;
     const canvas = canvasRef.current;
@@ -282,9 +310,9 @@ export default function LiquidOffice({ className = '', reducedMotion = false, pr
       locations.uTrail = gl.getUniformLocation(program, 'uTrail[0]');
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
-      Promise.all([loadImage(CLEAN), loadImage(FANTASY), loadImage(PORTFOLIO)]).then(images => {
+      Promise.all([Promise.resolve(composition.canvas), loadImage(FANTASY)]).then(images => {
         if (disposed || lost) return;
-        imageAspect = images[0].naturalWidth / images[0].naturalHeight;
+        imageAspect = images[0].width / images[0].height;
         images.forEach((image, index) => {
           const texture = gl.createTexture(); textures.push(texture);
           gl.activeTexture(gl.TEXTURE0 + index);
@@ -294,7 +322,7 @@ export default function LiquidOffice({ className = '', reducedMotion = false, pr
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-          gl.uniform1i(gl.getUniformLocation(program, ['uClean', 'uFantasy', 'uPortfolio'][index]), index);
+          gl.uniform1i(gl.getUniformLocation(program, ['uClean', 'uFantasy'][index]), index);
         });
         loaded = true;
         resize();
@@ -340,18 +368,17 @@ export default function LiquidOffice({ className = '', reducedMotion = false, pr
         if (program) gl.deleteProgram(program);
       }
     };
-  }, [reducedMotion, restore]);
+  }, [reducedMotion, restore, composition]);
 
   const staticControl = reducedMotion || fallback;
   return (
     <div ref={hostRef} className={`liquid-office ${className}`} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#171d14' }}>
-      <img src={CLEAN} alt="工作室的书桌、电脑与窗外景色" draggable="false" style={imageStyle} />
-      <img src={PORTFOLIO} alt="" aria-hidden="true" draggable="false" style={{ ...imageStyle, clipPath: 'inset(8% 9% 28% 19%)' }} />
+      <img src={composition?.src || CLEAN} alt="PORTFOLIO — 工作室的书桌、电脑与窗外景色" draggable="false" style={imageStyle} />
       {staticControl && <img src={FANTASY} alt="" aria-hidden="true" draggable="false" style={{ ...imageStyle, opacity: alternate ? 1 : 0 }} />}
       <canvas ref={canvasRef} aria-hidden="true" style={{ ...layer, display: 'block', opacity: ready && !staticControl ? 1 : 0, pointerEvents: 'auto', touchAction: 'pan-y' }} />
       {staticControl && (
         <button type="button" aria-pressed={alternate} onClick={() => setAlternate(value => !value)}
-          style={{ position: 'absolute', zIndex: 2, left: 24, bottom: 24, minHeight: 44, padding: '10px 18px', border: '1px solid rgba(255,255,255,.65)', borderRadius: 999, background: 'rgba(12,25,17,.82)', color: '#fff', font: 'inherit', cursor: 'pointer' }}>
+          style={{ position: 'absolute', zIndex: 2, right: 24, bottom: 24, minHeight: 44, padding: '10px 18px', border: '1px solid rgba(255,255,255,.65)', borderRadius: 999, background: 'rgba(12,25,17,.82)', color: '#fff', font: 'inherit', cursor: 'pointer' }}>
           {alternate ? '回到工作室' : '另一种可能'}
         </button>
       )}

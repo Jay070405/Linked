@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import StaggeredMenu from './StaggeredMenu';
 import OriginalLogo from './OriginalLogo';
+import MusicToggle from './MusicToggle';
 import { author } from '../portfolioData';
 import './SiteNavigation.css';
 
@@ -64,15 +65,24 @@ export default function SiteNavigation({ lang = 'zh', onLanguage, onNavigate, on
   const primary = useMemo(() => ['systems', 'art', 'about', 'contact'].map(id => ({ id, label: labels[id], href: hrefFor(id) })), [labels]);
   const fullMenu = useMemo(() => ['home', 'systems', 'art', 'archive', 'about', 'contact'].map(id => ({ id, label: labels[id], link: hrefFor(id), ariaLabel: labels[id] })), [labels]);
   const navigate = id => id === 'about' ? onAbout?.() : onNavigate?.(id);
-  return <div className={`v16-navigation${menuOpen ? ' is-menu-open' : ''}`} data-tone={surfaceTone}>
+  const containMenuFocus = event => {
+    if (!menuOpen || event.key !== 'Tab') return;
+    const controls = [...event.currentTarget.querySelectorAll('.v16-language button,.music-toggle,.sm-toggle,.staggered-menu-panel a[href]')]
+      .filter(element => !element.disabled && element.getClientRects().length);
+    const first = controls[0], last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+  };
+  return <div className={`v16-navigation${menuOpen ? ' is-menu-open' : ''}`} data-tone={surfaceTone} onKeyDown={containMenuFocus}>
     <a className="v16-wordmark" href="/#home" onClick={event => { event.preventDefault(); navigate('home'); }} aria-label={en ? 'Jay Lin — Home' : '林世杰 · 首页'}>
       <OriginalLogo/><span>JAY LIN</span>
     </a>
-    <nav className="v16-primary-nav" aria-label={en ? 'Primary navigation' : '主导航'}>{primary.map(item => <a key={item.id} href={item.href} onClick={event => { event.preventDefault(); navigate(item.id); }}><span>{item.label}</span></a>)}</nav>
+    <nav className="v16-primary-nav" inert={menuOpen ? true : undefined} aria-hidden={menuOpen || undefined} aria-label={en ? 'Primary navigation' : '主导航'}>{primary.map(item => <a key={item.id} href={item.href} onClick={event => { event.preventDefault(); navigate(item.id); }}><span>{item.label}</span></a>)}</nav>
     <div className="v16-language" role="group" aria-label={en ? 'Language' : '语言'} data-language={lang}>
       <span className="v16-language-thumb" aria-hidden="true"/>
       {[['en','EN'],['zh','中文']].map(([value,label])=><button type="button" key={value} lang={value==='zh'?'zh-CN':'en'} aria-label={value==='en'?'Switch to English':'切换到中文'} aria-pressed={lang===value} onClick={()=>{if(lang===value)return;setMenuOpen(false);setMenuReset(current=>current+1);onLanguage?.(value);}}>{label}</button>)}
     </div>
+    <MusicToggle lang={lang} reduced={reducedMotion || prefersReduced} />
     <StaggeredMenu key={`${lang}-${menuReset}`} className="v16-staggered" isFixed logoUrl={logo} items={fullMenu} reducedMotion={reducedMotion || prefersReduced}
       colors={['#d9d9d9', '#737373']} menuButtonColor={surfaceTone === 'light' ? '#111111' : '#ffffff'} openMenuButtonColor="#ffffff" accentColor="#b6b6b6"
       openLabel={en ? 'Menu' : '目录'} closeLabel={en ? 'Close' : '关闭'} socialLabel={en ? 'A conversation starts here' : '下一幕，从一次交谈开始'}
