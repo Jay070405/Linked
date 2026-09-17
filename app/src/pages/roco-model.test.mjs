@@ -41,6 +41,12 @@ for(const key of ['expected_shiny_records','probability_at_least_one_under_assum
 equal(two.expected_conditional_income,one.expected_conditional_income*2,'income multiplier only');
 check(JSON.stringify(core.simulations.map(row=>row.shiny_count_model_draw))==='[0,1,1,1,1,1,2,2,0,0]','canonical saved draw sequence unchanged');
 const pages=[['RocoCase.jsx','case'],['RocoModel.jsx','model']];
+const spec=JSON.parse(fs.readFileSync(path.join(directory,'roco-spec-data.json'),'utf8'));
+equal(spec.s3Tables.length,11,'complete S3 configuration');
+equal(spec.s5Tables.length,11,'complete S5 configuration');
+for(const table of [...spec.s3Tables,...spec.s5Tables])check(table.rows.length>=4&&table.rows.every(row=>row.length===table.rows[0].length),table.title+' preserves three headers and aligned data');
+for(const [scheme,count]of [['A',5],['B',9]])equal(spec.s5Tables.filter((table,i)=>i<3||table.title.startsWith(scheme)).length,count,scheme+' includes shared and scheme-specific tables');
+for(const image of [...spec.functions.flatMap(step=>step.images),...spec.wireframes])check(fs.existsSync(path.join(root,'public',image.src)),'source screenshot exists '+image.src);
+for(const name of ['s3-flow','s5-a-flow','s5-b-flow'])for(const extension of ['jpg','svg'])check(fs.existsSync(path.join(root,'public/assets/roco/current',name+'.'+extension)),'flow asset exists '+name+'.'+extension);
 for(const [file,name]of pages){const {default:Component}=await load(file);for(const lang of ['zh','en']){const html=renderToStaticMarkup(React.createElement(Component,{lang,reduced:true,onNavigate:()=>{}}));check(html.includes('rco-page'),'renders '+name+' '+lang);check(!/>NaN</.test(html)&&!/>undefined</.test(html),'no unresolved values '+name+' '+lang);for(const asset of [...new Set([...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)/g)].map(match=>match[1]))])check(fs.existsSync(path.join(root,'public',asset)),'local resource exists '+asset);}}
 console.log(`PASS: ${assertions} assertions; four canonical presets, ten canonical simulation expectations, calibration lineage, observed totals, invalid/empty inputs, multiplier invariants, and four bilingual server renders.`);
-

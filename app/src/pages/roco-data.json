@@ -1474,46 +1474,46 @@
           "en": "My work"
         },
         "title": {
-          "zh": "把现有玩法转成可检查的系统。",
-          "en": "Turn observed play into an inspectable system."
+          "zh": "延长收集目标，让玩家有更多追求。",
+          "en": "Give players more to collect and pursue."
         },
         "judgment": {
           "zh": "同一条玩家操作链，需要同时说清动作、状态、结果和证据。",
           "en": "One player journey needs a clear account of actions, state, outcomes and evidence."
         },
         "body": {
-          "zh": "项目串联三项工作：还原 S3 现状、整理实测与模型、提出 S5 机制及原型。官方规则、作者观察、建模推断与原创设计分别标注。",
-          "en": "The project connects three pieces of work: an S3 breakdown, gameplay records and models, and S5 mechanics with a prototype. Official rules, observations, assumptions and original design are labeled separately."
+          "zh": "延长收集目标，给玩家更多追求，增加在线活跃时长。",
+          "en": "Extend collection goals, give players more to pursue, and encourage longer active play."
         },
         "contributions": [
           {
             "title": {
-              "zh": "还原系统",
-              "en": "Map the system"
+              "zh": "S3 现有系统",
+              "en": "S3 system breakdown"
             },
             "body": {
-              "zh": "整理操作截图与箭头流程，拆解输入、事件分支、状态与结算。",
-              "en": "Organize gameplay screenshots and flows into inputs, event branches, states and settlement."
+              "zh": "用实机截图、主流程与配置表说明怎么玩、如何处理。",
+              "en": "Explain play and system responses through gameplay screenshots, a main flow and configuration tables."
             }
           },
           {
             "title": {
-              "zh": "审视数据",
-              "en": "Examine the data"
+              "zh": "资源循环",
+              "en": "Resource loop"
             },
             "body": {
-              "zh": "统一批次、球种和成本口径，把样本记录与概率假设分开。",
-              "en": "Align batch, ball-type and cost definitions; separate recorded outcomes from probability assumptions."
+              "zh": "记录投球消耗、回顾收益与牵手情景，检查下一轮资源从哪里来。",
+              "en": "Track ball costs, review income and co-op scenarios to examine how the next run is funded."
             }
           },
           {
             "title": {
-              "zh": "提出并演示规则",
-              "en": "Propose and demonstrate rules"
+              "zh": "S5 原创提案",
+              "en": "Original S5 proposals"
             },
             "body": {
-              "zh": "比较两套 S5 循环，把目标、保障、结果锁定与异常边界做成可操作原型。",
-              "en": "Compare two S5 loops and demonstrate targets, guarantees, locked outcomes and recovery states in a prototype."
+              "zh": "A优化连续捕捉，B增加生态调查，分别写清规则、流程和配置。",
+              "en": "A refines continuous capture; B adds ecological investigation, each with rules, flows and configuration."
             }
           }
         ],
@@ -1535,16 +1535,16 @@
           "en": "S3 loop"
         },
         "title": {
-          "zh": "一次奇遇，不等于一次入库。",
-          "en": "An encounter is not a completed capture."
+          "zh": "先出现书，再进入对应奇遇。",
+          "en": "A book appears before its encounter begins."
         },
         "judgment": {
-          "zh": "先分清连锁推进、事件分支、结果生成与实际捕获，才能解释一次刷取发生了什么。",
-          "en": "Separate chain progress, event branches, generated outcomes and successful captures to explain a farming run."
+          "zh": "成功捕捉触发童话书或绘本，完成战斗或故事后揭晓精灵，捕捉成功才入库。",
+          "en": "Successful captures trigger a Storybook or Picture Book; combat or story reveals candidates, and only successful captures add them to storage."
         },
         "body": {
-          "zh": "成功捕捉与捕捉难度影响赛季连锁。四叶草铅绘通向童话书或童话绘本；野生污染是并行路线。每种结果都要与最终捕获分开记录。",
-          "en": "Successful captures and capture difficulty contribute to seasonal chain progress. Clover encounters lead to a Storybook or Picture Book; wild corruption is a parallel route. Generated outcomes and final captures are recorded separately."
+          "zh": "成功捕捉触发童话书或绘本，完成战斗或故事后揭晓精灵，捕捉成功才入库。",
+          "en": "Successful captures trigger a Storybook or Picture Book; combat or story reveals candidates, and only successful captures add them to storage."
         },
         "steps": [
           {
@@ -1576,8 +1576,8 @@
               "en": "03 Event branches"
             },
             "body": {
-              "zh": "草团子交互进入童话书或低概率绘本。累计 30 个时出现书本风险提示，不代表必出异色。",
-              "en": "Interact with a clover encounter to enter a Storybook or the rarer Picture Book branch. The warning at 30 clovers is not a shiny guarantee."
+              "zh": "奇遇触发时先决定童话书或绘本；触碰童话书后才出现四叶草铅绘。",
+              "en": "The trigger selects a Storybook or Picture Book; clover art appears only after touching a Storybook."
             }
           },
           {
@@ -1610,8 +1610,8 @@
               "en": "Storybook"
             },
             "body": {
-              "zh": "战斗 → 破盾 → 铅绘着色 → 捕捉。童话书异色带有特长。",
-              "en": "Combat → shield break → coloring → capture. A Storybook shiny includes a specialty."
+              "zh": "出现童话书 → 触碰出铅绘 → 战斗破盾着色 → 揭晓精灵 → 捕捉入库；童话书异色必带特长。",
+              "en": "Storybook appears → touch to create clover art → battle, break shield and color → reveal → capture to collect; Storybook shinies always have a specialty."
             }
           },
           "picturebook": {
@@ -1620,8 +1620,8 @@
               "en": "Picture Book"
             },
             "body": {
-              "zh": "五幕故事后出现 10 个自由捕捉候选，至少 1 个异色，不占童话书保障。未主动关闭且未满 4 小时可重入。",
-              "en": "Five story acts lead to 10 free-capture candidates, including at least one shiny, independent of Storybook guarantees. Re-entry remains available until closure or the four-hour limit."
+              "zh": "绘本入口 → 五幕故事 → 10个候选且至少1个异色 → 自由捕捉；未关闭且未到期可重入，最长保留4小时。",
+              "en": "Picture Book entrance → five acts → ten candidates with at least one shiny → free capture; re-enter before closure or expiry, up to four hours."
             }
           },
           "corruption": {
@@ -1636,8 +1636,8 @@
           }
         },
         "visible_limit": {
-          "zh": "S3 固定异色率、事件权重与连锁换算公式未公开。下文 S5 数值属于原创提案，不能反推为 S3 规则。",
-          "en": "S3 shiny rates, event weights and chain conversion formulas are not public. The S5 parameters below are original design values, not inferred S3 rules."
+          "zh": "30个未处理书本／铅绘只触发数量提示，不是硬容量或异色保障；表内未公开参数为复现示例，S5数值是原创设计。",
+          "en": "Thirty pending books or clover objects trigger a warning, not a hard cap or shiny guarantee. Unpublished S3 parameters are reconstruction examples; S5 values are original design choices."
         },
         "image_caption": {
           "zh": "作者实机截图与箭头流程；可放大核对对应操作。",
@@ -1657,16 +1657,16 @@
           "en": "Evidence"
         },
         "title": {
-          "zh": "省球、回本与异色率，是三个问题。",
-          "en": "Efficiency, cost recovery and shiny odds are different questions."
+          "zh": "资源能继续循环，惊喜也要保留。",
+          "en": "Keep the resource loop going—and the surprise."
         },
         "judgment": {
-          "zh": "这组记录里，童话球更省球地推进奇遇，但每个草团子的购球支出更高。",
-          "en": "In these records, the seasonal ball produced encounters with fewer balls, but at a higher ball-purchase cost per clover."
+          "zh": "10批实测账面收入／球成本约59.4%，牵手折算情景约118.8%；后者不是单人对照，也不是固定双倍奖励。",
+          "en": "Across ten batches, recorded income covers about 59.4% of ball cost; the co-op multiplier scenario reaches 118.8%, not a solo control or a fixed double-reward rule."
         },
         "body": {
-          "zh": "我按纯球种批次比较连锁推进，再结合球价与收入考察投入。混合批次单列，绘本收益另看，避免把不同来源合成一个“掉率”。",
-          "en": "I compare chain progress within single-ball-type batches, then examine prices and income. Mixed batches and Picture Book income remain separate instead of being compressed into one “drop rate.”"
+          "zh": "日常资源和回顾收益用于补球；实测关注下一轮能否继续，不把每轮回本设为设计目的。",
+          "en": "Daily resources and exploration income fund more balls; the records examine repeat play, not guaranteed cost recovery on every run."
         },
         "metrics": [
           {
@@ -1705,32 +1705,32 @@
         "expanded": [
           {
             "title": {
-              "zh": "球种比较能说明什么",
-              "en": "What the ball comparison supports"
+              "zh": "投入从哪里来",
+              "en": "Where resources come from"
             },
             "body": {
-              "zh": "只比较整批使用同一种球的记录。目标、形态、路线与停手规则不同，差异只能作为本组样本观察，不能解释成固定后台倍率或固定耗时倍率。",
-              "en": "Only batches using a single ball type are compared. Targets, forms, routes and stopping rules differ, so the gap is a sample observation—not a fixed hidden multiplier or time advantage."
+              "zh": "日常资源与探索回顾补充洛克贝，再购买下一轮需要的球。",
+              "en": "Daily play and exploration reviews provide currency for the next set of balls."
             }
           },
           {
             "title": {
-              "zh": "经济模型的条件",
-              "en": "Conditions in the economy model"
+              "zh": "玩家追求什么",
+              "en": "What players pursue"
             },
             "body": {
-              "zh": "收入 ×2、本人球成本 ×1 是指定牵手情景；若黄色收入已含双方，倍率应为 1。折算净值不冒充已审计实收，绘本收入另行拆分。",
-              "en": "Income ×2 and personal ball cost ×1 is an explicit co-op scenario. If the displayed income already includes both players, the multiplier must be 1. Modeled net value is not audited cash received, and Picture Book income is separated."
+              "zh": "心仪异色比不喜欢的异色更有价值，消耗可接受与否取决于收集目标。",
+              "en": "A desired shiny can be worth more to the player than an unwanted one; acceptable cost depends on their collection goal."
             }
           },
           {
             "title": {
-              "zh": "原始记录的校正",
-              "en": "Reconciling the records"
+              "zh": "牵手的作用",
+              "en": "Why co-op matters"
             },
             "body": {
-              "zh": "TEST-04、06、07 的分段耗球与库存差不一致，最终采用截图分段耗球，差异保留备注，不二次补加。",
-              "en": "In TEST-04, 06 and 07, segment totals differ from inventory deltas. The final table uses screenshot segment totals and notes the differences without adding them again."
+              "zh": "增加玩家联系与共同回收机会；每人的投球、候选与收益分开记录。",
+              "en": "Create social ties and shared opportunities while tracking each player’s throws, candidates and income separately."
             }
           }
         ],
@@ -1752,12 +1752,12 @@
           "en": "Refine the familiar loop, or add more agency?"
         },
         "judgment": {
-          "zh": "B 迁徙调查为主案；制作周期不足时采用 A 森林音乐会。",
-          "en": "Lead with B: Migration Investigation. Use A: Forest Concert when the production schedule is tighter."
+          "zh": "推荐B增加调查玩法；制作周期不足时采用A，保留熟悉的捕捉循环。",
+          "en": "Recommend B for investigation play; choose A when the schedule calls for the familiar capture loop."
         },
         "body": {
-          "zh": "B 让玩家收集线索、选择路线并完成调查，代价是更高的内容、配置与 QA 成本。A 复用连续捕捉结构，重点改善目标、进度和保障的可读性。",
-          "en": "B introduces clue gathering, route choices and investigations, with higher content, configuration and QA costs. A reuses continuous capture and focuses on readable goals, progress and guarantees."
+          "zh": "两案都围绕固定收集目标，清楚展示进度、结果与保障。",
+          "en": "Both proposals use fixed collection goals with visible progress, outcomes and guarantees."
         },
         "design_badge": {
           "zh": "以下均为 S5 原创设计初稿，非官方概率与规则",
@@ -1766,20 +1766,20 @@
         "options": {
           "A": {
             "short_name": {
-              "zh": "森林音乐会",
-              "en": "Forest Concert"
+              "zh": "林间回响",
+              "en": "Woodland Echoes"
             },
             "full_name": {
-              "zh": "方案 A｜林间回响——失声森林音乐会",
-              "en": "Option A | Woodland Echoes — The Silent Forest Concert"
+              "zh": "方案A｜林间回响",
+              "en": "Option A | Woodland Echoes"
             },
             "role": {
               "zh": "制作周期受限时的备选",
               "en": "Fallback for a shorter production schedule"
             },
             "concept": {
-              "zh": "捕捉留下回响音符，补全乐章，让失声的森林重新响起。",
-              "en": "Captures leave echo notes that complete movements and restore the forest’s lost sound."
+              "zh": "捕捉攒音符，完成演奏后揭晓精灵。",
+              "en": "Build notes through capture, then perform to reveal a creature."
             },
             "loop": {
               "zh": "选目标 → 有效捕捉 → 28 音符成章 → 演奏与破罩 → 揭晓 → 捕捉",
@@ -1787,20 +1787,28 @@
             },
             "rules": [
               {
-                "zh": "奖励目标固定到单只精灵与形态；有效来源名单单独显示。",
-                "en": "The reward target is one creature and form; eligible capture sources are listed separately."
+                "zh": "匹配目标来源的捕捉才给1／2／4音符，赛季球及必中球给4。",
+                "en": "Eligible captures give 1/2/4 notes; seasonal and guaranteed balls give 4."
               },
               {
-                "zh": "来源匹配后才按难度给 1／2／4 音符；赛季球在有效来源内给 4。",
-                "en": "Eligible captures award 1/2/4 notes by difficulty; the seasonal ball awards 4 only for eligible sources."
+                "zh": "每满28音符生成乐章并保留余数；30条未开奖时暂停积累。",
+                "en": "Every 28 notes creates a movement, keeping the remainder; 30 pending movements pause accumulation."
               },
               {
-                "zh": "普通池：目标 70%、关联 20%、特邀 10%；基础任意异色率 5%，目标异色率 3.5%。",
-                "en": "Regular pool: target 70%, related 20%, guest 10%. Base shiny rate is 5%; target-shiny rate is 3.5%."
+                "zh": "主目标／关联／特邀按70／20／10选取，基础任意异色率5%。",
+                "en": "Select target / related / guest at 70/20/10; the base any-shiny rate is 5%."
               },
               {
-                "zh": "第 61 次起软保障，第 80 次直接生成指定目标异色；成功捕捉才入库。",
-                "en": "Soft protection starts at event 61; event 80 generates the target shiny. Collection still requires a successful capture."
+                "zh": "第61次起每次增加0.5个百分点，第80次直接生成目标异色。",
+                "en": "From attempt 61, add 0.5 percentage points per attempt; attempt 80 generates the target shiny."
+              },
+              {
+                "zh": "普通乐章生成目标异色才重置保障，换目标不转移进度。",
+                "en": "Only a regular target-shiny generation resets its guarantee; target progress never transfers."
+              },
+              {
+                "zh": "另有1%额外协奏：8候选至少1异色，不替换普通结果或改变普通保障。",
+                "en": "A separate 1% bonus concert has eight candidates and at least one shiny, without replacing the regular result or changing its guarantee."
               }
             ],
             "strength": {
@@ -1814,8 +1822,8 @@
           },
           "B": {
             "short_name": {
-              "zh": "迁徙调查",
-              "en": "Migration Investigation"
+              "zh": "生态迁徙",
+              "en": "Ecological Migration"
             },
             "full_name": {
               "zh": "方案 B｜生态迁徙",
@@ -1826,8 +1834,8 @@
               "en": "Recommended lead concept"
             },
             "concept": {
-              "zh": "从研究营地追踪足迹、叫声与环境记录，定位迁徙区，再决定本轮研究方向。",
-              "en": "Track footprints, calls and habitat records from a research camp, locate a migration zone, then choose the investigation’s reward focus."
+              "zh": "收集线索，完成调查后选择奖励方向。",
+              "en": "Gather clues, finish an investigation, then choose the reward focus."
             },
             "loop": {
               "zh": "选目标 → 收集两类线索 → 组合定位 → 三项调查 → 选奖励路线 → 揭晓与捕捉",
@@ -1835,20 +1843,28 @@
             },
             "rules": [
               {
-                "zh": "四类线索、六种组合；两类各 120 点定位一轮，每类非捕捉贡献最多 60 点。",
-                "en": "Four clue types create six combinations. Two types at 120 points locate a run; non-capture actions contribute at most 60 per type."
+                "zh": "足迹、叫声、残留、环境共四类，两类各120点定位一轮。",
+                "en": "Four clue types—tracks, calls, traces and habitat—form six pairs; spend 120 of each selected type."
               },
               {
-                "zh": "首次进入迁徙区开始 12 分钟任务窗口；三张任务卡分别完成，不能重复一张凑分。",
-                "en": "The 12-minute task window starts on first entry. All three task cards must be completed; repeating one cannot replace another."
+                "zh": "捕捉给1／2／4点，拍照或观察给10点，每类非捕捉最多60点。",
+                "en": "Captures give 1/2/4 points; photos or observations give 10, capped at 60 non-capture points per type."
               },
               {
-                "zh": "外观、血脉、资源三条终局路线，每次只生成所选目标与形态的一只候选。",
-                "en": "Appearance, lineage and resource routes each generate one candidate of the selected creature and form."
+                "zh": "首次入区起12分钟，完成三项任务共100分后停表，离线不暂停。",
+                "en": "The 12-minute clock starts on first entry and stops after all three tasks total 100; going offline does not pause it."
               },
               {
-                "zh": "外观路线前三轮基础异色率 5%；连续三轮未出后，第 4 轮保障。其他路线不动外观印记。",
-                "en": "Appearance runs have a 5% base shiny rate for the first three attempts; after three misses, the fourth is guaranteed. Other routes leave appearance marks unchanged."
+                "zh": "外观：异色5%，连续3轮未出后第4轮保障；提前出异色清零。",
+                "en": "Appearance: 5% shiny chance; after three misses the fourth is guaranteed, with an early shiny resetting the counter."
+              },
+              {
+                "zh": "血脉：异色5%、合法奇异血脉20%；资源：异色5%、90,000洛克贝＋6高级球，均不动外观印记。",
+                "en": "Lineage: 5% shiny and 20% legal rare lineage. Resources: 5% shiny, 90,000 currency and six advanced balls. Neither changes appearance marks."
+              },
+              {
+                "zh": "确认后锁定一只目标候选；30分钟后转存手册，重入不重抽，捕捉成功才入库。",
+                "en": "Confirmation locks one target candidate; after 30 minutes it moves to the handbook without rerolling, and only capture adds it to storage."
               }
             ],
             "strength": {
@@ -2044,16 +2060,16 @@
         },
         "completed": [
           {
-            "zh": "S3 流程、状态、字段与原图证据整理。",
-            "en": "S3 flows, states, fields and original screenshot evidence."
+            "zh": "S3实机流程、11张配置表、特殊情况与位置线框。",
+            "en": "S3 gameplay flow, 11 configuration tables, special cases and screen wireframes."
           },
           {
             "zh": "10 批实测录入、成本复算与模型假设标注。",
             "en": "Ten recorded batches, cost calculations and labeled model assumptions."
           },
           {
-            "zh": "S5 两案、配置边界、交互原型与受检分支记录。",
-            "en": "Two S5 proposals, configuration boundaries, an interactive prototype and checked-branch records."
+            "zh": "S5双方案、两张主流程图与11张配置表，另保留既有演示原型。",
+            "en": "Two S5 proposals, two main flows and 11 configuration tables, alongside the existing demo prototype."
           }
         ],
         "validation_note": {
@@ -2093,8 +2109,8 @@
           }
         ],
         "closing": {
-          "zh": "完整规则留在母版，关键判断留在页面。每条入口对应一种深入方式。",
-          "en": "The full specification stays in the master documents; the key reasoning stays on this page. Each link supports a different kind of review."
+          "zh": "查看最新版系统案、完整配置表与可编辑主流程。",
+          "en": "Read the current specification, complete configuration tables and editable flows."
         },
         "sources": [
           "proposal §7, §9",
@@ -2104,69 +2120,56 @@
     ],
     "resources": [
       {
-        "id": "core-pdf",
-        "title": {
-          "zh": "评审正文 PDF",
-          "en": "Review PDF"
-        },
-        "detail": {
-          "zh": "19 页 · 中文 · 离线快速阅读",
-          "en": "19 pages · Chinese · Concise offline review"
-        },
-        "kind": "local-pdf",
-        "url": "/assets/docs/roco-review.pdf"
-      },
-      {
-        "id": "appendix-pdf",
-        "title": {
-          "zh": "详细附录 PDF",
-          "en": "Detailed appendix"
-        },
-        "detail": {
-          "zh": "117 页 · 中文 · 规则与证据深读",
-          "en": "117 pages · Chinese · Rules and evidence"
-        },
-        "kind": "local-pdf",
-        "url": "/assets/docs/roco-appendix.pdf"
-      },
-      {
-        "id": "lark",
-        "title": {
-          "zh": "完整 Lark 母版",
-          "en": "Complete Lark library"
-        },
-        "detail": {
-          "zh": "中文 · 规则、图册、模型与提案",
-          "en": "Chinese · Rules, diagrams, models and proposals"
-        },
-        "kind": "external",
-        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/wiki/NA23wIAemiDPVwk3fVSuKQxmt4g"
-      },
-      {
-        "id": "prototype",
-        "title": {
-          "zh": "S5 双方案原型",
-          "en": "S5 interactive prototype"
-        },
-        "detail": {
-          "zh": "中文 · 免登录 · 操作与规则体验",
-          "en": "Chinese · No login · Explore actions and rules"
-        },
-        "kind": "external",
-        "url": "https://s5-encounter-lab.linke0704.chatgpt.site"
-      },
-      {
         "id": "s3-rules",
         "title": {
-          "zh": "S3 系统说明",
+          "zh": "S3 系统策划案",
           "en": "S3 system specification"
         },
         "detail": {
-          "zh": "中文 · 当前系统规则与状态",
-          "en": "Chinese · Existing rules and states"
+          "zh": "设计目的、规则、截图与表结构",
+          "en": "Purpose, rules, screenshots and configuration"
         },
         "kind": "external",
-        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/wiki/Hxqqw1ys6i9vrukrzEBuPQGptyf"
+        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/docx/H6IPdIfEboApSOxeakeuQdKOtKg"
+      },
+      {
+        "id": "config",
+        "title": {
+          "zh": "S3 流程与配置表",
+          "en": "S3 configuration tables"
+        },
+        "detail": {
+          "zh": "完整11张表，与主文档一致",
+          "en": "Current source document · Chinese"
+        },
+        "kind": "external",
+        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/docx/BD1Pdtpd7o5qDsx8v2kuKFVDtC9"
+      },
+      {
+        "id": "flow",
+        "title": {
+          "zh": "S3 可编辑主流程",
+          "en": "Editable S3 main flow"
+        },
+        "detail": {
+          "zh": "玩家操作、系统处理与事件分支",
+          "en": "Current source document · Chinese"
+        },
+        "kind": "external",
+        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/docx/KX2WdEO98oI7rpxH0dquSwZstpZ"
+      },
+      {
+        "id": "proposal",
+        "title": {
+          "zh": "S5 完整双方案",
+          "en": "Complete S5 proposals"
+        },
+        "detail": {
+          "zh": "中文 · 配置、状态、异常与验收",
+          "en": "Chinese · Configuration, states and review criteria"
+        },
+        "kind": "external",
+        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/docx/Pg7ddGzZLoihiaxgHaouBo87txh"
       },
       {
         "id": "screenshots",
@@ -2179,7 +2182,7 @@
           "en": "Chinese · Author’s gameplay and annotations"
         },
         "kind": "external",
-        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/wiki/SUJAwmbbJi2c3bkSI7eudICLtdc"
+        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/docx/U9B6dqPi2oeHkKxFCGPuQOpAtXe"
       },
       {
         "id": "data",
@@ -2208,17 +2211,56 @@
         "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/sheets/WOwMsTmhnhjyLot5tfxuhWdntrh"
       },
       {
-        "id": "proposal",
+        "id": "prototype",
         "title": {
-          "zh": "S5 完整双方案",
-          "en": "Complete S5 proposals"
+          "zh": "S5 双方案原型",
+          "en": "S5 interactive prototype"
         },
         "detail": {
-          "zh": "中文 · 配置、状态、异常与验收",
-          "en": "Chinese · Configuration, states and review criteria"
+          "zh": "中文 · 免登录 · 操作与规则体验",
+          "en": "Chinese · No login · Explore actions and rules"
         },
         "kind": "external",
-        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/wiki/YzggwSneyin4j4k4QDguLYzhtjf"
+        "url": "https://s5-encounter-lab.linke0704.chatgpt.site"
+      },
+      {
+        "id": "lark",
+        "title": {
+          "zh": "完整 Lark 母版",
+          "en": "Complete Lark library"
+        },
+        "detail": {
+          "zh": "中文 · 规则、图册、模型与提案",
+          "en": "Chinese · Rules, diagrams, models and proposals"
+        },
+        "kind": "external",
+        "url": "https://dlarkus6pgedgdu9.usttp.larksuite.com/wiki/NA23wIAemiDPVwk3fVSuKQxmt4g"
+      },
+      {
+        "id": "core-pdf",
+        "title": {
+          "zh": "历史评审 PDF",
+          "en": "Archived review PDF"
+        },
+        "detail": {
+          "zh": "旧版存档，最新规则以飞书文档为准",
+          "en": "Earlier snapshot; refer to Lark for current rules"
+        },
+        "kind": "local-pdf",
+        "url": "/assets/docs/roco-review.pdf"
+      },
+      {
+        "id": "appendix-pdf",
+        "title": {
+          "zh": "历史详细附录 PDF",
+          "en": "Archived appendix PDF"
+        },
+        "detail": {
+          "zh": "旧版存档，最新规则以飞书文档为准",
+          "en": "Earlier snapshot; refer to Lark for current rules"
+        },
+        "kind": "local-pdf",
+        "url": "/assets/docs/roco-appendix.pdf"
       }
     ]
   }
