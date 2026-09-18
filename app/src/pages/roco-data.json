@@ -2120,6 +2120,19 @@
     ],
     "resources": [
       {
+        "id": "portfolio-pdf",
+        "title": {
+          "zh": "完整系统策划作品集 PDF",
+          "en": "Complete systems design portfolio PDF"
+        },
+        "detail": {
+          "zh": "中文 · 免登录 · 可下载 · 含可点击目录",
+          "en": "Chinese · No login · Downloadable · Linked contents"
+        },
+        "kind": "local-pdf",
+        "url": "/assets/docs/roco-system-design-portfolio-zh.pdf"
+      },
+      {
         "id": "s3-rules",
         "title": {
           "zh": "S3 系统策划案",
