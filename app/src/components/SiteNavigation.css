@@ -27,6 +27,9 @@
 .v16-staggered .sm-toggle { min-height:44px; padding:0; gap:13px; border:0; border-radius:0; background:transparent; font-size:11px; letter-spacing:.05em; }
 .v16-staggered .staggered-menu-panel { width:min(620px,100vw); background:linear-gradient(135deg,#171717f2,#080808f5); backdrop-filter:blur(35px) saturate(0); -webkit-backdrop-filter:blur(35px) saturate(0); padding:132px 54px 45px; border-left:1px solid #ffffff1a; box-shadow:-30px 0 100px #0004; }
 .v16-staggered .sm-prelayers { width:min(620px,100vw); }
+/* The base menu's tablet rule sets left:0; keep a right-side panel anchored right
+   when our 620px width overrides its full-width layout. */
+.v16-staggered[data-position=right] .staggered-menu-panel { left:auto; right:0; }
 .v16-staggered .sm-panel-list { gap:17px; }
 .v16-staggered .sm-panel-item { color:#fff; font-size:clamp(30px,3.1vw,51px); font-weight:450; letter-spacing:-.04em; padding:0 70px 8px 0; line-height:1.25; }
 .v16-staggered .sm-panel-list[data-numbering] .sm-panel-item::after { right:20px; top:7px; font-size:11px; color:#999; }

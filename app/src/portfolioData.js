@@ -583,7 +583,7 @@ const verifiedProjects = [
 export const otherProjects = verifiedProjects.filter(project => project.id !== 'roco');
 export const systems = [
   { ...verifiedProjects[0], status: 'available' },
-  { id: 'league-of-legends', slug: 'league-of-legends', title: '英雄联盟', titleEn: 'League of Legends', subtitle: '活动系统策划', subtitleEn: 'Event systems design', status: 'coming-soon', detailAvailable: false, image: null, description: 'Coming Soon', descriptionEn: 'Coming Soon', classification: '筹备中', classificationEn: 'Coming Soon' },
+  { id: 'league-of-legends', slug: 'league-of-legends', title: '英雄联盟', titleEn: 'League of Legends', subtitle: '长线运营 · 三个系统改进', subtitleEn: 'Live operations · Three system proposals', status: 'available', detailAvailable: true, image: '/assets/lol/pass-clean.webp', description: '通行证目标、加载页解释与两天制无畏杯。', descriptionEn: 'Reward goals, matchmaking context and a two-day Fearless Cup.', classification: '个人研究与提案', classificationEn: 'Personal research & proposal' },
   { id: 'genshin-impact', slug: 'genshin-impact', title: '原神', titleEn: 'Genshin Impact', subtitle: '抽卡系统策划', subtitleEn: 'Wish systems design', status: 'coming-soon', detailAvailable: false, image: null, description: 'Coming Soon', descriptionEn: 'Coming Soon', classification: '筹备中', classificationEn: 'Coming Soon' },
 ];
 
@@ -618,8 +618,8 @@ export const stats = {
   "archiveWorks": 25,
   "observedBatches": 10,
   "systemProjects": 3,
-  "availableSystemProjects": 1,
-  "comingSoonProjects": 2,
+  "availableSystemProjects": 2,
+  "comingSoonProjects": 1,
   "otherProjects": 3
 };
 

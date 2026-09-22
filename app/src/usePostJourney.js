@@ -22,7 +22,7 @@ export function usePostJourney({reduced,blossomProgress,lang}) {
   const opacity=(el,a)=>{if(!el)return;el.style.opacity=a;el.style.visibility=a>.002?'visible':'hidden';};
   const show=(el,a,y=0)=>{opacity(el,a);el.style.transform=`translate3d(0,${y}px,0)`;};
   function resize(){wi=innerWidth;he=innerHeight;m={intro:intro.offsetTop,introH:intro.offsetHeight-he,art:art.offsetTop,artH:art.offsetHeight-he,finale:finale.offsetTop,finaleH:finale.offsetHeight-he,bridge:bridge.offsetTop,travel:Math.max(0,track.scrollWidth-wi)};}
-  resize();const ro=new ResizeObserver(resize);[intro,track,art,bridge,finale].forEach(el=>ro.observe(el));window.addEventListener('resize',resize);
+  resize();const ro=new ResizeObserver(resize);[intro,q('.systems-section'),track,art,bridge,finale].forEach(el=>ro.observe(el));window.addEventListener('resize',resize);
   const reveals=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('has-entered');reveals.unobserve(entry.target);}}),{threshold:.16});cards.forEach(el=>reveals.observe(el));
   function draw(now){
    if(!alive)return;

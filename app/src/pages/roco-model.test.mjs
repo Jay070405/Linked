@@ -15,7 +15,8 @@ const source=path.resolve(root,'tests/fixtures/v6-model');
 const require=createRequire(import.meta.url);
 async function load(file){
  const {outputFiles}=await build({entryPoints:[path.join(directory,file)],bundle:true,platform:'node',format:'cjs',jsx:'automatic',write:false,external:['react','react-dom'],loader:{'.css':'empty'}});
- const module={exports:{}};vm.runInNewContext(outputFiles[0].text,{module,exports:module.exports,require,console,Intl,Math,Number,JSON},{filename:file});return module.exports;
+ // Motion's SSR bundle schedules microtasks through the standard host API.
+ const module={exports:{}};vm.runInNewContext(outputFiles[0].text,{module,exports:module.exports,require,console,Intl,Math,Number,JSON,queueMicrotask,setTimeout,clearTimeout,performance,process},{filename:file});return module.exports;
 }
 const core=await load('roco-model-core.js');
 const fixturePresets=JSON.parse(fs.readFileSync(path.join(source,'model-presets.json'),'utf8'));

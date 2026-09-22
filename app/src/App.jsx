@@ -25,6 +25,7 @@ function Branch({className=''}) {
 function Petal({className='',style}) {return <span className={'petal '+className} style={style} aria-hidden="true"><i/></span>;}
 function PetalField(){return <div className="petal-field" aria-hidden="true">{Array.from({length:10},(_,i)=><Petal key={i} style={{left:`${7+i*9}%`,top:`${13+(i*19)%77}%`,'--r':`${i*31}deg`,'--d':`${9+i*1.2}s`,'--delay':`${-i*2}s`}}/>)}</div>;}
 
+
 function Systems({lang,onOpen,reduced=false}) {
  const [hover,setHover]=useState(null);
  const layoutRef=useRef(null),previewRef=useRef(null),follow=useRef({frame:0,x:0,y:0,tx:0,ty:0,ready:false});
@@ -92,10 +93,9 @@ export default function App(){
  // Direct About links open after the loading dialog releases its focus and scroll lock.
  useEffect(()=>{if(!loading&&location.hash==='#about')setAbout(true);},[loading]);
  useEffect(()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>setReduced(preference.matches);preference.addEventListener('change',sync);return()=>preference.removeEventListener('change',sync);},[]);
- useEffect(()=>{const h=e=>{if(e.key==='Escape'&&about)setAbout(false);};window.addEventListener('keydown',h);return()=>window.removeEventListener('keydown',h);},[about]);
  return <>
  <a className="skip-link" href={modal?'#portfolio-page':'#systems'}>{lang==='en'?'Skip to content':'跳到正文'}</a>
- <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(modal.type==='desk'?'dark':'light'):'auto'} onLanguage={setLang} onNavigate={nav} onAbout={()=>setAbout(true)}/>
+ <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive'].includes(modal.type)?'dark':'light'):'auto'} onLanguage={setLang} onNavigate={nav} onAbout={()=>setAbout(true)}/>
  <div className="shared-petal"><Petal/></div>
  <main className="home-journey" inert={modal?true:undefined} aria-hidden={!!modal}>
   <LegacyHero lang={lang} reduced={quiet} onMediaError={()=>setMediaFailed(true)}/>
@@ -107,7 +107,7 @@ export default function App(){
  <div className="journey-indicator"><i/><span>SCROLL TO EXPLORE</span></div>
  <button className="motion-toggle" aria-pressed={quiet} disabled={mediaFailed} aria-label={mediaFailed?(lang==='en'?'Static browsing: film unavailable':'静态浏览：影片未能加载'):quiet?(lang==='en'?'Enable motion':'恢复动态'):(lang==='en'?'Reduce motion':'减少动态')} onClick={toggleMotion} title={mediaFailed?(lang==='en'?'The film is unavailable; all work remains available in static browsing.':'影片未能加载，所有作品仍可通过静态浏览访问。'):(lang==='en'?'Toggle reduced motion':'切换减少动态')}>{mediaFailed?'STATIC':quiet?'MOTION −':'MOTION +'}</button>
  {modal&&<PortfolioPages page={modal} lang={lang} reduced={quiet} onNavigate={open} onBack={back} pageScroll={pageScroll} archiveState={archiveState}/>}
- {about&&<div className="about-shell" role="dialog" aria-modal="true" aria-label="About Jay"><AboutPanel lang={lang} reducedMotion={quiet} onClose={()=>setAbout(false)}/></div>}
+ {about&&<div className="about-shell"><AboutPanel lang={lang} onLanguage={setLang} reducedMotion={quiet} onClose={()=>setAbout(false)}/></div>}
  {loading&&<LoadingScreen lang={lang} reduced={reduced} onDone={()=>setLoading(false)}/>}
  </>;
 }
