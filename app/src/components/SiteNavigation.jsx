@@ -59,11 +59,11 @@ export default function SiteNavigation({ lang = 'zh', onLanguage, onNavigate, on
   const en = lang === 'en';
   const surfaceTone = useNavigationTone(tone);
   const labels = useMemo(() => en ? {
-    home: 'Home', systems: 'Systems', art: 'Art', about: 'About', archive: 'Archive', contact: 'Contact',
-  } : { home: '首页', systems: '系统策划', art: '美术作品', about: '关于我', archive: '作品档案', contact: '联系' }, [en]);
-  const hrefFor = id => id === 'art' ? '/works' : id === 'archive' ? '/works/archive' : '/#' + id;
+    home: 'Home', systems: 'Systems', art: 'Art', about: 'About', vibecoding: 'Vibe coding', contact: 'Contact',
+  } : { home: '首页', systems: '系统策划', art: '美术作品', about: '关于我', vibecoding: 'Vibe coding', contact: '联系' }, [en]);
+  const hrefFor = id => id === 'art' ? '/works' : id === 'vibecoding' ? '/vibecoding' : '/#' + id;
   const primary = useMemo(() => ['systems', 'art', 'about', 'contact'].map(id => ({ id, label: labels[id], href: hrefFor(id) })), [labels]);
-  const fullMenu = useMemo(() => ['home', 'systems', 'art', 'archive', 'about', 'contact'].map(id => ({ id, label: labels[id], link: hrefFor(id), ariaLabel: labels[id] })), [labels]);
+  const fullMenu = useMemo(() => ['home', 'systems', 'art', 'vibecoding', 'about', 'contact'].map(id => ({ id, label: labels[id], link: hrefFor(id), ariaLabel: labels[id] })), [labels]);
   const navigate = id => id === 'about' ? onAbout?.() : onNavigate?.(id);
   const containMenuFocus = event => {
     if (!menuOpen || event.key !== 'Tab') return;

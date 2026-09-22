@@ -81,6 +81,7 @@ export default function App(){
  const nav=id=>{
   if(id==='art'){open('/works');return;}
   if(id==='archive'){open('/works/archive');return;}
+  if(id==='vibecoding'){open('/vibecoding');return;}
   if(id==='about'){setAbout(true);return;}
   if(modal){close(id);return;}
   document.getElementById(id)?.scrollIntoView({behavior:'instant'});

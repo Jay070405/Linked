@@ -1,0 +1,10 @@
+.shapegrid-canvas{width:100%;height:100%;border:none;display:block}
+
+:root{background:#f1f1f1;color:#242424}
+.experience{background:radial-gradient(ellipse at 60% 45%,#fafafa 0%,#f1f1f1 56%,#e8e8e8 100%);filter:none}
+.page-grid{display:none!important}
+.portfolio-shape-grid{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;transform:scale(1.04)}
+.portfolio-shape-grid canvas{width:100%;height:100%;display:block;pointer-events:none}
+.experience .dynamic-island{background:linear-gradient(145deg,#353535ed,#151515ed)}
+.experience .glass{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+@media(prefers-reduced-motion:reduce){.portfolio-shape-grid{transform:none}}

@@ -5,9 +5,13 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "redirects": [
+    { "source": "/field01", "destination": "/field01/", "permanent": true },
     { "source": "/about", "destination": "/#about", "permanent": true }
   ],
   "rewrites": [
+    { "source": "/field01/", "destination": "/field01/index.html" },
+    { "source": "/vibecoding", "destination": "/index.html" },
+    { "source": "/vibecoding/:path*", "destination": "/index.html" },
     { "source": "/works", "destination": "/index.html" },
     { "source": "/works/:path*", "destination": "/index.html" },
     { "source": "/systems/:path*", "destination": "/index.html" }

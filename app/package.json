@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 4316",
-    "build": "vite build",
+    "build": "node scripts/build-field01-theme.mjs && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4316"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.0",
+    "esbuild": "^0.28.2",
     "vite": "^7.1.0"
   },
   "engines": {

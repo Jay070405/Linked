@@ -1,0 +1,46 @@
+{
+  "sdk": {
+    "package": "@mediapipe/tasks-vision",
+    "version": "1.0.1",
+    "license_as_declared_in_package_json": "Apache-2.0"
+  },
+  "model_source": "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+  "files": {
+    "gesture_recognizer.task": {
+      "bytes": 8373440,
+      "sha256": "97952348cf6a6a4915c2ea1496b4b37ebabc50cbbf80571435643c455f2b0482"
+    },
+    "vision_bundle.js": {
+      "bytes": 155465,
+      "sha256": "98db72469ffb176f5e9f2687be0f70783893aca681f7789c34b872b0a764371a"
+    },
+    "worker.js": {
+      "bytes": 1155,
+      "sha256": "0a0c835188237c44a00597ff72f3299afb81ac72b4ef47679e146c07b62dbdf0"
+    },
+    "wasm/vision_wasm_internal.js": {
+      "bytes": 323377,
+      "sha256": "e170ee67dd4e16c1a6fcd8840a206687e5a59b22c20e4a902bc445b095454d73"
+    },
+    "wasm/vision_wasm_internal.wasm": {
+      "bytes": 11756954,
+      "sha256": "8da277a733926eacd0474b8704b36742d6ec3231c57a860c5b889dff8f1df886"
+    },
+    "wasm/vision_wasm_module_internal.js": {
+      "bytes": 323415,
+      "sha256": "da8934057f147b622e82cfb4c0dbd85461c598e268588b5a8ba9ca963a8ff82d"
+    },
+    "wasm/vision_wasm_module_internal.wasm": {
+      "bytes": 11756972,
+      "sha256": "2dabd8e23c60984628beb7bb338764c81a08e6837145273f59578684b5d53c1b"
+    },
+    "wasm/vision_wasm_nosimd_internal.js": {
+      "bytes": 323180,
+      "sha256": "e81d715a3d42cc3373602eb2f7aff795d164934db680e32496b65dab537f9658"
+    },
+    "wasm/vision_wasm_nosimd_internal.wasm": {
+      "bytes": 10960242,
+      "sha256": "a28483cd42e74e855bf5ebdb6b40d9b66a5b49e35e95020bc97669e6822a3192"
+    }
+  }
+}

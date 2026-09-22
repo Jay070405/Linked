@@ -1,0 +1,12 @@
+import {build} from 'esbuild';
+import {readFile,writeFile} from 'node:fs/promises';
+await build({entryPoints:['src/field01-theme.jsx'],bundle:true,minify:true,format:'iife',jsx:'automatic',define:{'process.env.NODE_ENV':'"production"'},outfile:'public/field01/portfolio-theme.js'});
+const base=await readFile('public/field01/portfolio-theme.css','utf8');
+const overrides=await readFile('src/field01-theme.css','utf8');
+await writeFile('public/field01/portfolio-theme.css',base+'\n'+overrides);
+const path='public/field01/index.html';
+let html=await readFile(path,'utf8');
+if(!html.includes('portfolio-theme.css'))html=html.replace('</head>','<link rel="stylesheet" href="./portfolio-theme.css"/>\n</head>');
+if(!html.includes('portfolio-theme.js'))html=html.replace('</body>','<script defer src="./portfolio-theme.js"></script></body>');
+await writeFile(path,html);
+console.log('FIELD / 01: neutral background and React Bits ShapeGrid built; original material colors preserved.');

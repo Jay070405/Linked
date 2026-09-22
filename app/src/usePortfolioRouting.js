@@ -7,6 +7,8 @@ export function resolvePath(pathname) {
   const path = pathname.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
   if (path === '/works') return { type: 'desk' };
   if (path === '/works/archive') return { type: 'archive' };
+  if (path === '/vibecoding') return { type: 'vibecoding' };
+  if (path === '/vibecoding/field01') return { type: 'field01' };
   if (path === '/systems/roco/model') return { type: 'model' };
   const work = allWorks.find(item => item.href === path);
   if (work) return { type: 'art', item: work };
@@ -17,6 +19,8 @@ export function routeFor(page) {
   if (typeof page === 'string') return page.startsWith('/') && !page.startsWith('//') && resolvePath(page) ? page : null;
   if (page?.type === 'desk') return '/works';
   if (page?.type === 'archive') return '/works/archive';
+  if (page?.type === 'vibecoding') return '/vibecoding';
+  if (page?.type === 'field01') return '/vibecoding/field01';
   if (page?.type === 'model') return '/systems/roco/model';
   if (page?.type === 'art') return allWorks.find(w => w.id === page.item?.id || w.slug === page.item?.slug)?.href || null;
   if (page?.type === 'system') {
@@ -35,6 +39,7 @@ function historyState(meta) {
   return next;
 }
 function parentPath(page) {
+  if (page?.type === 'field01') return '/vibecoding';
   if (page?.type === 'art') return '/works/archive';
   if (page?.type === 'archive') return '/works';
   if (page?.type === 'model') return '/systems/roco';
@@ -127,4 +132,3 @@ export function usePortfolioRouting() {
   }, [captureScroll,open,close]);
   return { modal, open, close, back, pageScroll, archiveState };
 }
-

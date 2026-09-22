@@ -5,6 +5,12 @@ const result = await build({entryPoints:['src/usePortfolioRouting.js'],bundle:tr
 const routing = await import('data:text/javascript;base64,' + Buffer.from(result.outputFiles[0].text).toString('base64'));
 assert.equal(routing.resolvePath('/works').type,'desk');
 assert.equal(routing.resolvePath('/works/archive').type,'archive');
+assert.equal(routing.resolvePath('/vibecoding').type,'vibecoding');
+assert.equal(routing.resolvePath('/vibecoding/field01/').type,'field01');
+assert.equal(routing.routeFor({type:'vibecoding'}),'/vibecoding');
+assert.equal(routing.routeFor({type:'field01'}),'/vibecoding/field01');
+assert.equal(routing.routeFor('/vibecoding/experiment-02'),null);
+assert.equal(routing.resolvePath('/field01/assets/missing.glb'),null);
 assert.equal(routing.resolvePath('/systems/roco').type,'system');
 assert.equal(routing.resolvePath('/systems/roco/model').type,'model');
 assert.equal(new Set(allWorks.map(w=>w.href)).size,25);
@@ -18,4 +24,4 @@ for (const system of systems.filter(s=>s.status==='coming-soon')) {
 }
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; separate desk/archive/case/model routes; no invented Coming Soon routes.');
+console.log('PASS: 25 original artwork routes; desk/archive/case/model plus Vibe coding/FIELD01 routes; no invented Coming Soon routes.');
