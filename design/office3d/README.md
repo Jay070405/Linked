@@ -50,6 +50,16 @@ node src/components/MusicToggle.test.mjs
 npm run build
 ```
 
+## Fourth revision — transparent controls and pickup fixes — 2026-09-22
+
+- Volume dialog and backdrop now have fully transparent backgrounds, no panel border or blur. Text/drop shadows retain legibility. Removed the persistent lamp/speaker buttons; physical model clicks remain, with L/S keyboard actions when the office canvas is focused. Escape returns focus to that canvas.
+- Fixed tablet/sketchbook pickup being blocked by the pen resting above. Supported objects are carried together during pickup and released as independent dynamic bodies. Side collisions now slide along the obstacle rather than cancelling upward motion; this also lets closely spaced reference books lift with a slightly diagonal pointer path.
+- Increased damped mouse parallax to a maximum 0.20 m horizontal / 0.105 m vertical camera offset, with a small matching target offset. Parallax freezes during pickup and fades to zero before the existing black-screen handoff; touch input does not add camera sway.
+- 23 camera/drag/physics tests and production build pass. Tests use the actual GLB prop metadata, including all four upright books, tablet and sketchbook, and retain solid-desktop, monitor, off-edge restore and fast-drag collision checks.
+- Real Edge pointer checks: tablet lifted y=1.431 → 2.774 at unchanged z=0.550; sketchbook y=1.458 → 2.699 at unchanged z=0.830. Both and their pens settled back on the table. No restore button appeared. Transparent dialog/backdrop computed to rgba(0,0,0,0); no persistent tool buttons remained. Dial keyboard 7% → 8% → 7%, then Escape restored canvas focus. Rightward mouse movement changed camera from [0,4.100,8.600] to [0.146,4.170,8.600].
+- Local preview only; no GitHub push or deployment.
+- Final sliding-collision browser check: upright reference book lifted y=1.839 → 3.193 while z stayed -0.760.
+
 ## Third-revision validation — 2026-09-22
 
 - Blender source and compressed model rebuilt. Production Vite build passed.

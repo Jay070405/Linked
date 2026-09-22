@@ -26,7 +26,9 @@ export function cameraPose(progress, aspect, start, look, screen, pointer = { x:
   const position = origin.lerp(finish, travel);
   const target = initialLook.lerp(screen, easeRange(0, .095, progress));
   const sway = 1 - easeRange(.025, .11, progress);
-  position.x += pointer.x * .095 * sway;
-  position.y += pointer.y * .048 * sway;
+  position.x += pointer.x * .20 * sway;
+  position.y += pointer.y * .105 * sway;
+  target.x += pointer.x * .055 * sway;
+  target.y += pointer.y * .025 * sway;
   return { position, target, travel };
 }

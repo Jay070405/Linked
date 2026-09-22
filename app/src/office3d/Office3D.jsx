@@ -36,10 +36,10 @@ function wallTitle() {
 
 export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'zh' }) {
   const hostRef = useRef(null), canvasRef = useRef(null), modeRef = useRef(onMode), apiRef = useRef({});
-  const hoverRef = useRef(null), speakerButton = useRef(null), langRef = useRef(lang);
+  const hoverRef = useRef(null), langRef = useRef(lang);
   langRef.current = lang;
   modeRef.current = onMode;
-  const [mode, setMode] = useState('loading'), [lostCount, setLostCount] = useState(0), [lampOn, setLampOn] = useState(true);
+  const [mode, setMode] = useState('loading'), [lostCount, setLostCount] = useState(0);
   const [speakerPosition, setSpeakerPosition] = useState(null);
   const english = lang === 'en';
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     function toggleLamp() {
       lightOn=!lightOn;lamp.intensity=lightOn?26:0;lampBounce.intensity=lightOn?.35:0;
       lampMaterials.forEach((original,material)=>{material.emissiveIntensity=lightOn?original:0;});
-      setLampOn(lightOn);host.dataset.lamp=lightOn?'on':'off';wake();
+      host.dataset.lamp=lightOn?'on':'off';wake();
     }
     function openSpeaker() {
       release();clearHover();
@@ -111,6 +111,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       const p=progressRef.current;
       if(p>.015){if(drag)release();clearHover();if(lastP<=.015)setSpeakerPosition(null);}
       host.dataset.interactive=p<.015?'true':'false';
+      canvas.tabIndex=p<.015?0:-1;
       const controls=host.querySelector('.office-tools');if(controls)controls.inert=p>=.015;
       if(!drag)sway.lerp(cursor,1-Math.exp(-dt*5));
       const pose=cameraPose(p,camera.aspect,start,look,screen,sway);
@@ -171,7 +172,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     function pointerMove(event) {
       if(!allowed()||progressRef.current>.015)return;
       const xy=point(event);
-      cursor.set(Math.max(-1,Math.min(1,xy.x))*.45,Math.max(-1,Math.min(1,xy.y))*.45);
+      if(event.pointerType!=='touch')cursor.set(Math.max(-1,Math.min(1,xy.x)),Math.max(-1,Math.min(1,xy.y)));
       if(drag){
         const intersection=pickupPosition(drag,raycaster.ray);
         if(intersection)physics.move(intersection);
@@ -217,7 +218,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
         if(hdr){hdr.mapping=THREE.EquirectangularReflectionMapping;environment=hdr;scene.environment=hdr;scene.environmentRotation.y=.8;}
         const gltf=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(buffer,'/assets/office3d/');
         if(disposed){disposeObject(gltf.scene);return;}
-        setLostCount(0);setLampOn(true);
+        setLostCount(0);
         model=gltf.scene;scene.add(model);model.updateMatrixWorld(true);
         if(!model.getObjectByName('ScreenTarget'))throw new Error('Missing office anchors');
         start=model.getObjectByName('CameraStart').getWorldPosition(new THREE.Vector3());
@@ -272,18 +273,22 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
   },[reducedMotion,progressRef]);
   return <div ref={hostRef} className="office-3d" data-mode={mode}>
     {mode!=='3d'&&<LiquidOffice reducedMotion allowAlternate={false} progressRef={progressRef}/>}
-    <canvas ref={canvasRef} className={mode==='3d'?'is-ready':''} aria-hidden="true"/>
+    <canvas ref={canvasRef} className={mode==='3d'?'is-ready':''} tabIndex={mode==='3d'?0:-1}
+      aria-label={english?'Interactive office. Drag objects to lift. Click the lamp or speaker. Keyboard: L switches the lamp, S opens volume.':'互动办公室。拖动物件拎起，点击台灯或音响。键盘 L 开关灯，S 调节音量。'}
+      aria-keyshortcuts="L S" onKeyDown={event=>{
+        if(progressRef.current>=.015||event.altKey||event.ctrlKey||event.metaKey)return;
+        if(event.key.toLowerCase()==='l'){event.preventDefault();apiRef.current.toggleLamp?.();}
+        if(event.key.toLowerCase()==='s'){event.preventDefault();apiRef.current.openSpeaker?.();}
+      }}/>
     <span ref={hoverRef} className="office-hover-label" hidden aria-hidden="true"/>
     {mode==='3d'&&<div className="office-tools" inert={progressRef.current>=.015}>
       <span className="office-drag-hint"><ExpressiveTitle reduced={reducedMotion} variant="type" hover={false} typingSpeed={25}>{english?'Pick up an object. Make yourself at home.':'拎起桌上的物件，随手摆一摆。'}</ExpressiveTitle></span>
       <div className="office-tool-buttons">
-        <button type="button" onClick={()=>apiRef.current.toggleLamp?.()} aria-pressed={lampOn}>{lampOn?'☼':'☾'} <ExpressiveTitle reduced={reducedMotion} variant="type" typingSpeed={30} hover={false}>{english?(lampOn?'Lamp on':'Lamp off'):(lampOn?'台灯已开':'台灯已关')}</ExpressiveTitle></button>
-        <button ref={speakerButton} type="button" onClick={()=>apiRef.current.openSpeaker?.()} aria-haspopup="dialog">♫ <ExpressiveTitle reduced={reducedMotion} variant="type" typingSpeed={30} hover={false}>{english?'Speaker':'音响音量'}</ExpressiveTitle></button>
         {lostCount>0&&<button type="button" className="office-restore" onClick={()=>apiRef.current.restore?.()}>↺ <ExpressiveTitle reduced={reducedMotion} variant="type" typingSpeed={30} hover={false}>{english?'Bring back fallen objects':'找回掉落的物件'}</ExpressiveTitle> <small>{lostCount}</small></button>}
       </div>
       <span className="office-3d-description" role="status">{lostCount>0?(english?`${lostCount} objects fell off the desk.`:`${lostCount} 件物品掉出了桌子。`):''}</span>
     </div>}
-    {speakerPosition&&<SpeakerVolume lang={lang} position={speakerPosition} returnRef={speakerButton} onClose={()=>setSpeakerPosition(null)} reduced={reducedMotion}/>}
+    {speakerPosition&&<SpeakerVolume lang={lang} position={speakerPosition} returnRef={canvasRef} onClose={()=>setSpeakerPosition(null)} reduced={reducedMotion}/>}
   </div>;
 }
 function disposeObject(root){

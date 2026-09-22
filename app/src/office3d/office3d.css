@@ -5,9 +5,11 @@
 .office-hover-label{position:absolute;z-index:3;pointer-events:none;padding:8px 12px;border:1px solid #ffffff30;background:#141610d9;backdrop-filter:blur(12px);color:#f7f1e7;font-size:10px;letter-spacing:.07em;border-radius:3px;box-shadow:0 3px 16px #0002}
 .office-hover-label:not([hidden]){animation:office-label-in .16s ease-out both}
 @keyframes office-label-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.office-speaker-panel{position:fixed;left:clamp(16px,var(--speaker-x),calc(100vw - 296px));top:clamp(16px,var(--speaker-y),calc(100dvh - 430px));margin:0;border:1px solid #fff3;border-radius:8px;width:280px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);padding:0;background:#171916ec;color:#f7f2e9;box-shadow:0 22px 100px #0006;backdrop-filter:blur(24px);overflow-y:auto}
-.office-speaker-panel::backdrop{background:#05060533}
-.speaker-panel-content{padding:20px}
+.office-speaker-panel{position:fixed;left:clamp(16px,var(--speaker-x),calc(100vw - 296px));top:clamp(16px,var(--speaker-y),calc(100dvh - 430px));margin:0;border:0;border-radius:0;width:280px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);padding:0;background:transparent;color:#f7f2e9;box-shadow:none;overflow-y:auto}
+.office-speaker-panel::backdrop{background:transparent}
+.speaker-panel-content{padding:20px;text-shadow:0 1px 5px #000,0 2px 16px #0009}
+.speaker-panel-content .comet-dial{filter:drop-shadow(0 2px 5px #0008)}
+.office-3d>canvas:focus-visible{outline:1px solid #fff8;outline-offset:-6px}
 .speaker-panel-content header{display:flex;align-items:center;justify-content:space-between;font:9px LegacyMono,monospace;letter-spacing:.12em;color:#c4b9a5}
 .speaker-panel-content button{border:0;background:transparent;color:inherit;cursor:pointer;font:inherit;min-height:36px}
 .speaker-panel-content header button{font-size:22px;padding:0 6px}

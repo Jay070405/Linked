@@ -7,6 +7,26 @@ const asset=readFileSync(new URL('../../public/assets/office3d/studio.glb',impor
 const gltf=JSON.parse(asset.subarray(20,20+asset.readUInt32LE(12)).toString());
 const step=(scene,n=360)=>{for(let i=0;i<n;i++)scene.step(1/60);};
 
+for (const id of ['Prop_Tablet','Prop_Sketchbook','Prop_Book_0','Prop_Book_1','Prop_Book_2','Prop_Book_3']) test(`${id} lifts in the fully furnished scene despite a small sideways pointer component`,()=>{
+  const scene=new DeskPhysics();
+  try {
+    for(const node of gltf.nodes.filter(n=>n.extras?.draggable)) {
+      const {home,halfExtents:h,mass}=node.extras;
+      scene.add(node.name,{x:home[0],y:home[2],z:-home[1]},[h[0],h[2],h[1]],mass);
+    }
+    step(scene,240);
+    const body=scene.items.get(id).body, from={...body.translation()};
+    scene.grab(id);
+    for(let i=1;i<=60;i++){scene.move({...from,x:from.x-.05*i/60,y:from.y+i/60});step(scene,1);}
+    assert.ok(body.translation().y>from.y+.9,`${id}: ${from.y} → ${body.translation().y}`);
+    assert.ok(Math.abs(body.translation().z-from.z)<.001);
+    // Return above its original slot before dropping a narrow upright book.
+    scene.move({...from,y:from.y+1});step(scene,30);
+    scene.release();step(scene,300);
+    assert.equal(scene.lost.size,0);
+  } finally {scene.dispose();}
+});
+
 test('all authored loose objects remain on the table after first load',()=>{
   const scene=new DeskPhysics();
   try {
