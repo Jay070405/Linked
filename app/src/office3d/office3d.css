@@ -5,3 +5,11 @@
 .legacy-hero[data-office-renderer="3d"] .office-camera{inset:0!important;width:100%!important;height:100%!important;margin:0!important;transform:none!important}
 .legacy-hero[data-office-renderer="3d"] .legacy-office-wrap{transform:none!important}
 .legacy-hero[data-office-renderer="3d"] .legacy-screen-glint{display:none}
+.office-tools{position:absolute;z-index:4;right:3.3vw;bottom:92px;display:flex;flex-direction:column;align-items:flex-end;gap:12px;color:#eee9df;transition:opacity .25s}
+.office-drag-hint{font-size:11px;letter-spacing:.06em;text-shadow:0 1px 5px #000b}
+.office-tool-buttons{display:flex;gap:8px}
+.office-tools button{color:inherit;background:#191a17a8;border:1px solid #ffffff38;border-radius:2px;padding:10px 14px;font:inherit;font-size:11px;cursor:pointer;backdrop-filter:blur(10px);transition:background .2s,border-color .2s}
+.office-tools button:hover,.office-tools button:focus-visible{background:#302c23df;border-color:#ffffffa6}
+.office-tools button small{margin-left:8px;border-left:1px solid #fff4;padding-left:8px}
+.office-3d:not([data-interactive="true"]) .office-tools{opacity:0;pointer-events:none}
+@media(max-width:699px){.office-tools{right:20px;bottom:112px}.office-drag-hint{max-width:180px;text-align:right;font-size:10px}.office-tool-buttons{flex-direction:column}.office-tools button{padding:9px 11px}}

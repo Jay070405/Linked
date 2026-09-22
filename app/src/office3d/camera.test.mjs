@@ -9,9 +9,10 @@ const asset = readFileSync(new URL('../../public/assets/office3d/studio.glb', im
 const gltf = JSON.parse(asset.subarray(20,20+asset.readUInt32LE(12)).toString());
 const anchor = name => new Vector3(...gltf.nodes.find(node => node.name === name).translation);
 const start = anchor('CameraStart'), look = anchor('CameraLook'), screen = anchor('ScreenTarget');
-test('web model retains independently selectable environments and screen',()=>{
-  for (const name of ['StudioInterior','FantasyGarden','SharedDesk','ScreenSurface']) assert.ok(gltf.nodes.some(node=>node.name===name));
-  assert.ok(asset.length<3_000_000,'Keep first-load office under 3 MB');
+test('web model retains screen and independent draggable props, with no alternate art world',()=>{
+  for (const name of ['StudioInterior','SharedDesk','ScreenSurface','Prop_Cup','Prop_Keyboard','Prop_Tablet']) assert.ok(gltf.nodes.some(node=>node.name===name));
+  assert.ok(!gltf.nodes.some(node=>node.name==='FantasyGarden'));
+  assert.ok(asset.length<5_000_000,'Keep the detailed first-load office under 5 MB');
 });
 for (const aspect of [16/9, 16/10, 21/9, 390/844]) {
   test(`black monitor covers viewport before handoff, aspect ${aspect}`, () => {

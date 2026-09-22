@@ -51,7 +51,7 @@ export default function LegacyHero({ lang = 'zh', reduced = false, onMediaError 
         <VideoRefraction videoRef={videoRef} progressRef={progressRef} reduced={quiet} />
         <div className="legacy-film-shade" />
       </div>
-      <div className="legacy-office-wrap"><div className="office-camera"><Office3D reducedMotion={quiet} progressRef={progressRef} onMode={officeMode} /><div className="legacy-screen-glint" /></div></div>
+      <div className="legacy-office-wrap"><div className="office-camera"><Office3D lang={lang} reducedMotion={quiet} progressRef={progressRef} onMode={officeMode} /><div className="legacy-screen-glint" /></div></div>
       <div className="legacy-blackout" />
       <div className="office-copy legacy-scene-copy"><div className="legacy-signature"><EditorialMotion reduced={quiet} enter={false}>Jay Lin</EditorialMotion></div><p>{english ? 'SYSTEMS DESIGN / VISUAL ART' : '系统策划 / 视觉创作'}</p><a className="legacy-text-link" href="#systems" onClick={goToWork}>{english ? 'Explore the work ↗' : '直接看作品 ↗'}</a></div>
       <div className="film-copy film-creative legacy-scene-copy"><p className="legacy-eyebrow">AN INVITATION INTO MY WORLD</p><LegacyCreativeTitle /></div>

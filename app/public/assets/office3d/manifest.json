@@ -4,8 +4,7 @@
   "units": "metres",
   "groups": [
     "SharedDesk",
-    "StudioInterior",
-    "FantasyGarden"
+    "StudioInterior"
   ],
   "screenSize": [
     3.11,
@@ -16,6 +15,20 @@
     "CameraLook",
     "ScreenTarget"
   ],
-  "sourceArtwork": "Existing original portfolio artwork: world-tree.png",
-  "meshCount": 33
+  "textures": "Poly Haven CC0: wood_table_large, potted_plant_01, studio_small_09, sunset_jhbcentral",
+  "props": [
+    "Prop_Keyboard",
+    "Prop_Mouse",
+    "Prop_Tablet",
+    "Prop_Stylus",
+    "Prop_Cup",
+    "Prop_Sketchbook",
+    "Prop_Pencil",
+    "Prop_Plant",
+    "Prop_Book_0",
+    "Prop_Book_1",
+    "Prop_Book_2",
+    "Prop_Book_3"
+  ],
+  "meshCount": 50
 }

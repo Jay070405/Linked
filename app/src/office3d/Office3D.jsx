@@ -2,254 +2,246 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import LiquidOffice from '../LiquidOffice';
 import { STUDIO_TITLE_FONT } from '../studio-title-composite';
 import { preloadOffice } from './model';
-import { cameraPose, CAMERA_FOV, easeRange } from './camera';
-import { liquidVertex, liquidFragment } from './liquidShader';
+import { cameraPose, CAMERA_FOV } from './camera';
+
 import './office3d.css';
 
-const clamp = THREE.MathUtils.clamp;
 const filmBlocked = () => document.hidden || document.body.classList.contains('portfolio-route-open');
-
 function wallTitle() {
   const canvas = document.createElement('canvas'); canvas.width = 2048; canvas.height = 384;
   const ctx = canvas.getContext('2d');
-  ctx.font = STUDIO_TITLE_FONT; ctx.fillStyle = '#f5f5f3'; ctx.textBaseline = 'alphabetic';
-  const metrics = ctx.measureText('PORTFOLIO');
-  const ascent = metrics.actualBoundingBoxAscent || 146;
-  ctx.scale(1990 / metrics.width, 330 / ascent);
-  ctx.fillText('PORTFOLIO', 16, ascent + 3);
-  const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 4;
+  ctx.font = STUDIO_TITLE_FONT; ctx.fillStyle = '#ffffff'; ctx.textBaseline = 'alphabetic';
+  const metrics = ctx.measureText('PORTFOLIO'), ascent = metrics.actualBoundingBoxAscent || 146;
+  ctx.scale(1990 / metrics.width, 330 / ascent); ctx.fillText('PORTFOLIO', 16, ascent + 3);
+  const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
   const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, toneMapped: false });
+  material.color.setRGB(3,3,3);
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
   mesh.name = 'WallPortfolio'; mesh.position.set(.6, 4.09, -1.79); mesh.scale.set(7.65, 1.29, 1);
   return mesh;
 }
 
-/** Real geometry, one shared camera, two render targets, existing liquid field. */
-export default function Office3D({ progressRef, reducedMotion, onMode }) {
-  const hostRef = useRef(null), canvasRef = useRef(null), modeRef = useRef(onMode);
+export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'zh' }) {
+  const hostRef = useRef(null), canvasRef = useRef(null), modeRef = useRef(onMode), apiRef = useRef({});
   modeRef.current = onMode;
-  const [mode, setMode] = useState('loading');
-
+  const [mode, setMode] = useState('loading'), [lostCount, setLostCount] = useState(0), [lampOn, setLampOn] = useState(true);
+  const english = lang === 'en';
   useEffect(() => {
     if (reducedMotion) { setMode('image'); modeRef.current?.('image'); return undefined; }
     const host = hostRef.current, canvas = canvasRef.current, root = host.closest('.legacy-hero');
-    let disposed = false, ready = false, visible = true, lost = false, frame = 0, previous = 0;
-    let width = 1, height = 1, lastInput = 0, lastDrop = 0, active = false, strength = 0;
-    let touchEnd = 0, vx = 0, vy = 0, renderer, model, title, cleanTarget, gardenTarget, composite, post;
-    const cursor = new THREE.Vector2(.5, .5), head = cursor.clone(), sway = new THREE.Vector2();
-    const trail = [], packed = Array.from({ length: 24 }, () => new THREE.Vector4());
-    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, .015, 90);
-    scene.background = new THREE.Color('#111a16');
-    const postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const hemi = new THREE.HemisphereLight('#c7daef', '#b2a99e', 2.5); scene.add(hemi);
-    const key = new THREE.DirectionalLight('#f5f1df', 2.3); key.position.set(-3, 6, 5); scene.add(key);
-    key.shadow.intensity = .48;
-    key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -.0003; key.shadow.normalBias = .018;
-    Object.assign(key.shadow.camera, { left: -6, right: 6, top: 6, bottom: -3, near: .1, far: 18 });
-    key.target.position.set(.4, 1.3, 0); scene.add(key.target);
-    const lamp = new THREE.PointLight('#ffbb68', 4, 4, 2); lamp.position.set(2.35, 2.77, -.25); scene.add(lamp);
-    let indoor, garden, start, look, screen, lastP = -1, samples = 0, sampleTotal = 0;
-    const stop = () => { cancelAnimationFrame(frame); frame = 0; previous = 0; };
-    const allowed = () => !disposed && !lost && ready && visible && !filmBlocked() && progressRef.current < .18;
-    const wake = () => { if (!frame && allowed()) frame = requestAnimationFrame(draw); };
-    const report = value => {
-      if (disposed) return;
-      setMode(value); modeRef.current?.(value);
-      host.dataset.mode = value;
-    };
-    const fail = error => {
-      if (disposed) return;
-      stop(); ready = false; report('image');
-      console.warn('3D office unavailable; keeping the original opening.', error);
-    };
-
+    let disposed = false, ready = false, visible = true, contextFailed = false, frame = 0, previous = 0;
+    let width = 1, height = 1, renderer, model, title, composer, ao, environment, exterior, physics;
+    let start, look, screen, lastP = -1, samples = 0, drag, lightOn = true;
+    const items = new Map(), pickMeshes = [], lampMeshes = [], lampMaterials = new Map();
+    const cursor = new THREE.Vector2(), sway = new THREE.Vector2(), raycaster = new THREE.Raycaster();
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, .025, 60);
+    scene.background = new THREE.Color('#0b100c');
+    // Large cool window, very low bounce fill, and a local warm desk lamp.
+    // Metallic surfaces use the photographed HDR reflection environment.
+    scene.environmentIntensity = .24;
+    const hemi = new THREE.HemisphereLight('#c4cfdb', '#603615', .22); scene.add(hemi);
+    const windowLight = new THREE.DirectionalLight('#d0daf0', .65);
+    windowLight.position.set(-4.4, 4.9, 1.2); windowLight.target.position.set(1,1.4,0);
+    windowLight.castShadow = false; windowLight.shadow.mapSize.set(2048,2048);
+    Object.assign(windowLight.shadow.camera, { left:-6, right:6, top:5, bottom:-4, near:.1, far:18 });
+    windowLight.shadow.bias = -.0001; windowLight.shadow.normalBias = .015; windowLight.shadow.radius = 3;
+    scene.add(windowLight, windowLight.target);
+    RectAreaLightUniformsLib.init();
+    const bounce = new THREE.RectAreaLight('#e4caa8', .7, 7, 4);
+    bounce.position.set(-.3, 4.3, 5); bounce.lookAt(.55,2,0); scene.add(bounce);
+    const windowArea=new THREE.RectAreaLight('#b7c9ed',3.2,2.8,4.4);windowArea.position.set(-4.1,3.3,.1);windowArea.lookAt(1,2,-1);scene.add(windowArea);
+    const lamp = new THREE.SpotLight('#ffbb70', 26, 7, 1.1, .85, 2);
+    lamp.position.set(2.26,2.60,-.10); lamp.target.position.set(2.85,1.38,.28);
+    lamp.castShadow = true; lamp.shadow.mapSize.set(1024,1024); lamp.shadow.bias=-.0001; lamp.shadow.normalBias=.012;
+    lamp.shadow.focus=.85; lamp.shadow.radius=3; scene.add(lamp,lamp.target);
+    const lampBounce = new THREE.PointLight('#ffba72', .35, 4, 2); lampBounce.position.set(2.25,1.7,.1); scene.add(lampBounce);
+    const stop = () => { cancelAnimationFrame(frame); frame=0; previous=0; };
+    const allowed = () => !disposed && !contextFailed && ready && visible && !filmBlocked() && progressRef.current < .18;
+    const wake = () => { if (!frame && allowed()) frame=requestAnimationFrame(draw); };
+    const report = value => { if (!disposed) { setMode(value); modeRef.current?.(value); host.dataset.mode=value; } };
+    const fail = error => { if (!disposed) { stop();ready=false;report('image');console.warn('3D office unavailable; retaining the original opening.',error); } };
     function resize() {
-      width = Math.max(1, host.clientWidth); height = Math.max(1, host.clientHeight);
+      width=Math.max(1,host.clientWidth);height=Math.max(1,host.clientHeight);
       if (!renderer) return;
-      const mobile = width < 700;
-      const ratio = Math.min(devicePixelRatio || 1, mobile ? 1.15 : 1.4, 2100 / Math.max(width, height));
-      renderer.setPixelRatio(ratio); renderer.setSize(width, height, false);
-      cleanTarget?.setSize(Math.round(width * ratio), Math.round(height * ratio));
-      gardenTarget?.setSize(Math.round(width * ratio), Math.round(height * ratio));
-      camera.aspect = width / height; camera.updateProjectionMatrix();
-      if (title) {
-        title.scale.x = camera.aspect < .9 ? 3.65 : 7.65;
-        title.scale.y = camera.aspect < .9 ? 1.04 : 1.29;
-        title.position.x = camera.aspect < .9 ? .55 : .6;
-      }
+      const ratio=Math.min(devicePixelRatio||1,width<700?1.2:1.5,2200/Math.max(width,height));
+      renderer.setPixelRatio(ratio);renderer.setSize(width,height,false);
+      composer?.setPixelRatio(ratio);composer?.setSize(width,height);
+      camera.aspect=width/height;camera.updateProjectionMatrix();
+      if(title){title.scale.set(camera.aspect<.9?3.65:7.65,camera.aspect<.9?1.04:1.29,1);title.position.x=camera.aspect<.9?.55:.6;}
       wake();
     }
-
+    function release() {
+      if (!drag) return;
+      physics?.release();
+      if(canvas.hasPointerCapture(drag.pointerId))canvas.releasePointerCapture(drag.pointerId);
+      drag=null;canvas.style.cursor='grab';host.dataset.held='';wake();
+    }
+    function toggleLamp() {
+      lightOn=!lightOn;lamp.intensity=lightOn?26:0;lampBounce.intensity=lightOn?.35:0;
+      lampMaterials.forEach((original,material)=>{material.emissiveIntensity=lightOn?original:0;});
+      setLampOn(lightOn);host.dataset.lamp=lightOn?'on':'off';wake();
+    }
+    apiRef.current={ toggleLamp, restore:()=>{physics?.restoreLost();wake();} };
     function draw(now) {
-      frame = 0;
-      if (!allowed()) { previous = 0; return; }
-      const dt = previous ? Math.min(.05, (now - previous) / 1000) : 1 / 60; previous = now;
-      const p = progressRef.current;
-      if (touchEnd && now > touchEnd) { active = false; touchEnd = 0; }
-      const permitReveal = 1 - easeRange(.075, .125, p);
-      const follow = 1 - Math.exp(-dt * 9);
-      head.lerp(cursor, follow);
-      strength += ((active ? 1 : 0) * permitReveal - strength) * (1 - Math.exp(-dt * 6));
-      vx *= Math.exp(-dt * 3); vy *= Math.exp(-dt * 3);
-      const sx = active ? (cursor.x - .5) * 2 : 0, sy = active ? (cursor.y - .5) * 2 : 0;
-      sway.lerp(new THREE.Vector2(sx, sy), follow);
-      const pose = cameraPose(p, camera.aspect, start, look, screen, sway);
-      camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld();
-      packed.forEach(v => v.set(0, 0, .001, 0));
-      for (let i = trail.length - 1; i >= 0; i--) if (now - trail[i].born > 2150) trail.splice(i, 1);
-      trail.forEach((drop, i) => {
-        const age = (now - drop.born) / 1000, life = 1 - age / 2.15;
-        const glide = (1 - Math.exp(-age * 2.7)) / 2.7;
-        packed[i].set(drop.x + drop.vx * glide, drop.y + drop.vy * glide,
-          drop.radius * (1 + age * .19), .58 * life * life * permitReveal);
+      frame=0;if(!allowed()){previous=0;return;}
+      const dt=previous?Math.min(.08,(now-previous)/1000):1/60;previous=now;
+      const p=progressRef.current;
+      if(p>.015 && drag)release();
+      host.dataset.interactive=p<.015?'true':'false';
+      const controls=host.querySelector('.office-tools');if(controls)controls.inert=p>=.015;
+      sway.lerp(drag?new THREE.Vector2():cursor,1-Math.exp(-dt*5));
+      const pose=cameraPose(p,camera.aspect,start,look,screen,sway);
+      camera.position.copy(pose.position);camera.lookAt(pose.target);camera.updateMatrixWorld();
+      physics.step(dt);
+      const positions={};
+      items.forEach((object,id)=>{
+        const body=physics.items.get(id).body;object.visible=!physics.lost.has(id);
+        object.position.copy(body.translation());object.quaternion.copy(body.rotation());
+        // DOM diagnostics are also useful when checking real pointer interactions.
+        const projected=object.position.clone().project(camera);
+        positions[id]={x:+((projected.x*.5+.5)*width).toFixed(0),y:+((-projected.y*.5+.5)*height).toFixed(0),position:object.position.toArray().map(v=>+v.toFixed(3)),lost:!object.visible};
       });
-      const u = composite.uniforms;
-      u.uAspect.value = camera.aspect; u.uImageAspect.value = camera.aspect;
-      u.uTime.value = now / 1000; u.uHead.value.set(head.x, head.y, strength);
-      u.uVelocity.value.set(vx, vy);
-      const renderStart = performance.now();
-      renderer.info.reset();
-      indoor.visible = true; garden.visible = false; title.visible = true;
-      scene.background.set('#111a16');
-      renderer.setRenderTarget(cleanTarget); renderer.render(scene, camera);
-      if (strength > .001 || trail.length) {
-        indoor.visible = false; garden.visible = true; title.visible = false;
-        scene.background.set('#686d85');
-        renderer.setRenderTarget(gardenTarget); renderer.render(scene, camera);
-      }
-      renderer.setRenderTarget(null); renderer.render(post, postCamera);
-      sampleTotal += performance.now() - renderStart; samples++;
-      if (samples % 10 === 0) {
-        host.dataset.renderMs = (sampleTotal / samples).toFixed(2);
-        host.dataset.drawCalls = String(renderer.info.render.calls);
-      }
-      host.dataset.frames = String(samples);
-      host.dataset.progress = p.toFixed(4);
-      host.dataset.camera = camera.position.toArray().map(v => v.toFixed(3)).join(',');
-      host.dataset.reveal = strength.toFixed(3);
-      if (mode !== '3d' && host.dataset.mode !== '3d') report('3d');
-      const settling = active || strength > .001 || trail.length || sway.lengthSq() > .00001 || Math.abs(lastP - p) > .00001;
-      lastP = p;
-      if (settling) wake();
+      const renderStart=performance.now();
+      renderer.info.reset();composer.render();samples++;
+      host.dataset.frames=String(samples);host.dataset.renderMs=(performance.now()-renderStart).toFixed(2);
+      host.dataset.progress=p.toFixed(4);host.dataset.camera=camera.position.toArray().map(v=>v.toFixed(3)).join(',');
+      host.dataset.items=JSON.stringify(positions);host.dataset.lost=String(physics.lost.size);
+      if(host.dataset.mode!=='3d')report('3d');
+      if(physics.moving||drag||sway.distanceToSquared(cursor)>.000001||Math.abs(lastP-p)>.00001)wake();
+      lastP=p;
     }
-
-    function pointer(event) {
-      if (!allowed() || progressRef.current > .125) return;
-      if (event.target instanceof Element && event.target.closest('a,button,nav,dialog')) { leave(); return; }
-      const rect = host.getBoundingClientRect();
-      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) { leave(); return; }
-      const now = performance.now();
-      const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-      const y = 1 - clamp((event.clientY - rect.top) / rect.height, 0, 1);
-      const dt = Math.max(.016, Math.min(.15, (now - lastInput) / 1000 || .016));
-      const dx = x - cursor.x, dy = y - cursor.y;
-      if (!active || now - lastInput > 250) head.set(x,y);
-      vx = active ? clamp(dx / dt, -1.4, 1.4) : 0; vy = active ? clamp(dy / dt, -1.4, 1.4) : 0;
-      cursor.set(x,y); lastInput = now; active = true;
-      if (event.pointerType === 'touch') touchEnd = now + 650;
-      if (now - lastDrop > 35 && Math.hypot(dx,dy) > .002) {
-        trail.push({x,y,vx:vx*.065,vy:vy*.065,radius:.14+Math.min(Math.hypot(vx,vy),1)*.037,born:now});
-        if (trail.length > 24) trail.shift(); lastDrop = now;
-      }
+    function point(event) {
+      const rect=host.getBoundingClientRect();
+      const x=(event.clientX-rect.left)/rect.width*2-1,y=1-(event.clientY-rect.top)/rect.height*2;
+      raycaster.setFromCamera(new THREE.Vector2(x,y),camera);
+      return {x,y};
+    }
+    function hit() {
+      return raycaster.intersectObjects([...pickMeshes,...lampMeshes],false).find(h=>{
+        const id=h.object.userData.propId;return !id||!physics.lost.has(id);
+      });
+    }
+    function pointerMove(event) {
+      if(!allowed()||progressRef.current>.015)return;
+      const xy=point(event);
+      cursor.set(Math.max(-1,Math.min(1,xy.x))*.45,Math.max(-1,Math.min(1,xy.y))*.45);
+      if(drag){
+        const intersection=raycaster.ray.intersectPlane(drag.plane,new THREE.Vector3());
+        if(intersection){
+          intersection.add(drag.offset);intersection.x=THREE.MathUtils.clamp(intersection.x,-8,8);intersection.z=THREE.MathUtils.clamp(intersection.z,-6,6);
+          physics.move(intersection);
+        }
+      }else{const hovered=hit();canvas.style.cursor=hovered?(hovered.object.userData.propId?'grab':'pointer'):'';}
       wake();
     }
-    function leave() { active = false; wake(); }
-    function visibility() {
-      if (filmBlocked()) { active = false; strength = 0; trail.length = 0; stop(); }
-      else wake();
+    function pointerDown(event) {
+      if(!allowed()||progressRef.current>.015||event.button!==0)return;
+      point(event);const selected=hit();if(!selected)return;
+      if(!selected.object.userData.propId){toggleLamp();return;}
+      event.preventDefault();const id=selected.object.userData.propId;
+      const body=physics.items.get(id).body;
+      const lifted=new THREE.Vector3().copy(body.translation());lifted.y+=.38;
+      const plane=new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(0,1,0),lifted);
+      const initial=raycaster.ray.intersectPlane(plane,new THREE.Vector3());if(!initial)return;
+      const offset=lifted.clone().sub(initial);
+      drag={id,plane,offset,pointerId:event.pointerId};physics.grab(id);
+      canvas.setPointerCapture(event.pointerId);canvas.style.cursor='grabbing';host.dataset.held=id;
+      pointerMove(event);wake();
     }
-    function contextLost(event) { event.preventDefault(); lost = true; fail('WebGL context lost'); }
-    const observer = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; if (visible) wake(); else stop(); });
-    const sizeObserver = new ResizeObserver(resize);
-    const routeObserver = new MutationObserver(visibility);
-    observer.observe(host); sizeObserver.observe(host); routeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    root.addEventListener('office:progress', wake);
-    document.addEventListener('visibilitychange', visibility);
-    window.addEventListener('pointermove', pointer, { passive: true });
-    window.addEventListener('pointerdown', pointer, { passive: true });
-    window.addEventListener('pointercancel', leave);
-    window.addEventListener('blur', leave);
-    document.documentElement.addEventListener('pointerleave', leave);
-    canvas.addEventListener('webglcontextlost', contextLost);
-
+    function leave(){if(!drag){cursor.set(0,0);wake();}}
+    function visibility(){if(filmBlocked()){release();stop();}else wake();}
+    function contextLost(event){event.preventDefault();contextFailed=true;release();fail('WebGL context lost');}
+    const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{release();stop();}});
+    const sizeObserver=new ResizeObserver(resize),routeObserver=new MutationObserver(visibility);
+    observer.observe(host);sizeObserver.observe(host);routeObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
+    root.addEventListener('office:progress',wake);document.addEventListener('visibilitychange',visibility);
+    canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerdown',pointerDown);
+    canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
+    canvas.addEventListener('pointerleave',leave);window.addEventListener('blur',release);canvas.addEventListener('webglcontextlost',contextLost);
     try {
-      renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: false, powerPreference: 'high-performance' });
-      renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.AgXToneMapping; renderer.toneMappingExposure = 1.3;
-      renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      renderer.shadowMap.autoUpdate = false; renderer.shadowMap.needsUpdate = true;
-      renderer.info.autoReset = false;
-      cleanTarget = new THREE.WebGLRenderTarget(1,1,{ type: THREE.HalfFloatType, samples: 2 });
-      gardenTarget = new THREE.WebGLRenderTarget(1,1,{ type: THREE.HalfFloatType, samples: 2 });
-      composite = new THREE.ShaderMaterial({
-        vertexShader: liquidVertex, fragmentShader: liquidFragment, depthTest: false, depthWrite: false,
-        uniforms: { uClean: {value: cleanTarget.texture}, uFantasy:{value:gardenTarget.texture}, uAspect:{value:1},
-          uImageAspect:{value:1},uTime:{value:0},uHead:{value:new THREE.Vector3(.5,.5,0)},uVelocity:{value:new THREE.Vector2()},uTrail:{value:packed} }
-      });
-      post = new THREE.Scene(); post.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),composite));
-      resize();
-      Promise.all([preloadOffice(), document.fonts.load(STUDIO_TITLE_FONT).catch(() => [])]).then(async ([buffer]) => {
-        if (disposed) return;
-        const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(buffer, '/assets/office3d/');
-        if (disposed) { disposeObject(gltf.scene); return; }
-        model = gltf.scene; scene.add(model);
-        indoor = model.getObjectByName('StudioInterior'); garden = model.getObjectByName('FantasyGarden');
-        if (!indoor || !garden || !model.getObjectByName('ScreenTarget')) throw new Error('Missing office anchors');
-        model.updateMatrixWorld(true);
-        start = model.getObjectByName('CameraStart').getWorldPosition(new THREE.Vector3());
-        look = model.getObjectByName('CameraLook').getWorldPosition(new THREE.Vector3());
-        screen = model.getObjectByName('ScreenTarget').getWorldPosition(new THREE.Vector3());
-        model.traverse(object => {
-          if (!object.isMesh) return;
-          object.castShadow = object.parent !== garden && !/painting|landscape|ScreenSurface/i.test(object.name);
-          object.receiveShadow = true;
-          const material = object.material;
-          if (material.name.startsWith('Leaf') || material.name === 'Petal') material.side = THREE.DoubleSide;
-          if (material.name === 'Screen_off') {
-            object.material = new THREE.MeshBasicMaterial({ color: '#020303', toneMapped: false });
-            object.receiveShadow = false;
-          }
+      renderer=new THREE.WebGLRenderer({canvas,alpha:false,antialias:true,powerPreference:'high-performance'});
+      renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1.15;
+      renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.info.autoReset=false;
+      composer=new EffectComposer(renderer,new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType,samples:2}));
+      composer.addPass(new RenderPass(scene,camera));
+      ao=new GTAOPass(scene,camera,1,1);ao.blendIntensity=.9;
+      ao.updateGtaoMaterial({radius:.23,distanceExponent:1,thickness:1,distanceFallOff:1,scale:1,samples:12});
+      composer.addPass(ao);composer.addPass(new OutputPass());resize();
+      Promise.all([preloadOffice(),import('./physics').then(async module=>{await module.initPhysics();return module;}),document.fonts.load(STUDIO_TITLE_FONT).catch(()=>[]),new HDRLoader().loadAsync('/assets/office3d/studio-light.hdr').catch(()=>null),new HDRLoader().loadAsync('/assets/office3d/city-dusk.hdr').catch(()=>null)]).then(async([buffer,physicsModule,,hdr,city])=>{
+        if(disposed){hdr?.dispose();city?.dispose();return;}
+        if(city){city.mapping=THREE.EquirectangularReflectionMapping;exterior=city;scene.background=city;scene.backgroundBlurriness=.02;scene.backgroundIntensity=.065;scene.backgroundRotation.set(-.12,1.2,0);}
+        if(hdr){hdr.mapping=THREE.EquirectangularReflectionMapping;environment=hdr;scene.environment=hdr;scene.environmentRotation.y=.8;}
+        const gltf=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(buffer,'/assets/office3d/');
+        if(disposed){disposeObject(gltf.scene);return;}
+        setLostCount(0);setLampOn(true);
+        model=gltf.scene;scene.add(model);model.updateMatrixWorld(true);
+        if(!model.getObjectByName('ScreenTarget'))throw new Error('Missing office anchors');
+        start=model.getObjectByName('CameraStart').getWorldPosition(new THREE.Vector3());
+        look=model.getObjectByName('CameraLook').getWorldPosition(new THREE.Vector3());
+        screen=model.getObjectByName('ScreenTarget').getWorldPosition(new THREE.Vector3());
+        physics=new physicsModule.DeskPhysics(count=>{if(!disposed)setLostCount(count);});
+        // Reparent props to the scene without changing their world transform.
+        const propRoots=[];model.traverse(o=>{if(o.userData.draggable)propRoots.push(o);});
+        propRoots.forEach(object=>{
+          scene.attach(object);items.set(object.name,object);
+          const half=object.userData.halfExtents;
+          physics.add(object.name,object.position,[half[0],half[2],half[1]],object.userData.mass,object.quaternion);
+          object.traverse(mesh=>{if(mesh.isMesh){mesh.userData.propId=object.name;pickMeshes.push(mesh);}});
         });
-        title = wallTitle(); scene.add(title);
-        ready = true; resize();
-        // If restored below the office, establish mode without rendering it.
-        if (progressRef.current >= .18) report('3d');
-        wake();
+        scene.traverse(object=>{
+          if(!object.isMesh)return;
+          object.castShadow=!/Window_sky|City_light|ScreenSurface|Lamp_bulb/.test(object.name);object.receiveShadow=true;
+          const materials=Array.isArray(object.material)?object.material:[object.material];
+          materials.forEach(material=>{
+            material.envMapIntensity=.75;
+            if(/Honey_oak|Floor_walnut/.test(material.name)){material.roughness=.78;material.envMapIntensity=.22;}
+            if(material.name==='Floor_walnut')material.color.setRGB(.40,.32,.23);
+            if(material.name==='Lamp_lining')material.side=THREE.DoubleSide;
+            Object.values(material).forEach(v=>{if(v?.isTexture)v.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());});
+            if(material.name.startsWith('Leaf')||material.name.includes('leaves'))material.side=THREE.DoubleSide;
+            if(material.name==='Lamp_inner')lampMaterials.set(material,material.emissiveIntensity);
+            if(material.name==='Screen_off'){object.material=new THREE.MeshBasicMaterial({color:'#020303',toneMapped:false});object.receiveShadow=false;}
+          });
+          if(object.name.startsWith('Lamp_'))lampMeshes.push(object);
+        });
+        title=wallTitle();scene.add(title);ready=true;host.dataset.lamp='on';resize();
+        if(progressRef.current>=.18)report('3d');wake();
       }).catch(fail);
-    } catch (error) { fail(error); }
-
-    return () => {
-      disposed = true; stop(); observer.disconnect(); sizeObserver.disconnect(); routeObserver.disconnect();
-      root.removeEventListener('office:progress', wake);
-      document.removeEventListener('visibilitychange', visibility);
-      window.removeEventListener('pointermove', pointer); window.removeEventListener('pointerdown', pointer);
-      window.removeEventListener('pointercancel', leave); window.removeEventListener('blur', leave);
-      document.documentElement.removeEventListener('pointerleave', leave);
-      canvas.removeEventListener('webglcontextlost', contextLost);
-      disposeObject(scene); if (post) disposeObject(post);
-      cleanTarget?.dispose(); gardenTarget?.dispose(); key.shadow.map?.dispose(); renderer?.dispose();
+    }catch(error){fail(error);}
+    return()=>{
+      release();disposed=true;stop();observer.disconnect();sizeObserver.disconnect();routeObserver.disconnect();apiRef.current={};
+      root.removeEventListener('office:progress',wake);document.removeEventListener('visibilitychange',visibility);
+      canvas.removeEventListener('pointermove',pointerMove);canvas.removeEventListener('pointerdown',pointerDown);
+      canvas.removeEventListener('pointerup',release);canvas.removeEventListener('pointercancel',release);canvas.removeEventListener('lostpointercapture',release);
+      canvas.removeEventListener('pointerleave',leave);window.removeEventListener('blur',release);canvas.removeEventListener('webglcontextlost',contextLost);
+      physics?.dispose();disposeObject(scene);environment?.dispose();exterior?.dispose();composer?.passes.forEach(pass=>pass.dispose?.());composer?.dispose();renderer?.dispose();
     };
-  }, [reducedMotion, progressRef]);
-
+  },[reducedMotion,progressRef]);
   return <div ref={hostRef} className="office-3d" data-mode={mode}>
-    {mode !== '3d' && <LiquidOffice reducedMotion={reducedMotion} progressRef={progressRef} />}
-    <canvas ref={canvasRef} className={mode === '3d' ? 'is-ready' : ''} aria-hidden="true" />
-    <span className="office-3d-description">工作室：书桌、电脑、台灯和窗外的手绘风景。滚动进入作品。</span>
+    {mode!=='3d'&&<LiquidOffice reducedMotion allowAlternate={false} progressRef={progressRef}/>}
+    <canvas ref={canvasRef} className={mode==='3d'?'is-ready':''} aria-hidden="true"/>
+    {mode==='3d'&&<div className="office-tools" inert={progressRef.current>=.015}>
+      <span className="office-drag-hint">{english?'Pick up an object. Make yourself at home.':'拎起桌上的物件，随手摆一摆。'}</span>
+      <div className="office-tool-buttons">
+        <button type="button" onClick={()=>apiRef.current.toggleLamp?.()} aria-pressed={lampOn}>{lampOn?'☼':'☾'} {english?(lampOn?'Lamp on':'Lamp off'):(lampOn?'台灯已开':'台灯已关')}</button>
+        {lostCount>0&&<button type="button" className="office-restore" onClick={()=>apiRef.current.restore?.()}>↺ {english?'Bring back fallen objects':'找回掉落的物件'} <small>{lostCount}</small></button>}
+      </div>
+      <span className="office-3d-description" role="status">{lostCount>0?(english?`${lostCount} objects fell off the desk.`:`${lostCount} 件物品掉出了桌子。`):''}</span>
+    </div>}
   </div>;
 }
-
-function disposeObject(root) {
-  const materials = new Set(), geometries = new Set(), textures = new Set();
-  root.traverse(object => {
-    if (object.geometry) geometries.add(object.geometry);
-    if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach(m => materials.add(m));
-  });
-  materials.forEach(m => { Object.values(m).forEach(v => { if (v?.isTexture) textures.add(v); }); m.dispose(); });
-  const images = new Set();
-  textures.forEach(t => { if (t.source?.data) images.add(t.source.data); t.dispose(); });
-  images.forEach(value => value.close?.());
-  geometries.forEach(g => g.dispose());
+function disposeObject(root){
+  const materials=new Set(),geometries=new Set(),textures=new Set();
+  root.traverse(object=>{if(object.geometry)geometries.add(object.geometry);if(object.material)(Array.isArray(object.material)?object.material:[object.material]).forEach(m=>materials.add(m));});
+  materials.forEach(m=>{Object.values(m).forEach(v=>{if(v?.isTexture)textures.add(v);});m.dispose();});
+  const images=new Set();textures.forEach(t=>{if(t.source?.data)images.add(t.source.data);t.dispose();});images.forEach(v=>v.close?.());geometries.forEach(g=>g.dispose());
 }

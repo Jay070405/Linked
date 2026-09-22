@@ -24,7 +24,7 @@ export default function LoadingScreen({lang='zh',reduced=false,onDone}) {
    disposers.push(()=>{img.onload=img.onerror=null;});
   });
   // The film still owns its original independent readiness and seek timeline.
-  const sources=location.pathname.startsWith('/works')?['/assets/logo.png']:['/assets/logo.png','/assets/studio-clean.png','/assets/studio-fantasy-anime.png'];
+  const sources=location.pathname.startsWith('/works')?['/assets/logo.png']:['/assets/logo.png','/assets/studio-clean.png'];
   const ready=()=>{if(alive)setResources(true);};
   const timeout=setTimeout(ready,5500);
   Promise.allSettled([document.fonts.ready,...sources.map(picture),...(!reduced&&!location.pathname.startsWith('/works')?[preloadOffice()]:[])]).then(ready);

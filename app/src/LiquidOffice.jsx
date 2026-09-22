@@ -121,7 +121,7 @@ function shader(gl, type, source) {
  * Pointer events are observed on window so text above the canvas stays live.
  * Reduced motion / missing WebGL exposes an instantaneous, keyboard-safe toggle.
  */
-export default function LiquidOffice({ className = '', reducedMotion = false, progressRef }) {
+export default function LiquidOffice({ className = '', reducedMotion = false, progressRef, allowAlternate = true }) {
   const hostRef = useRef(null);
   const canvasRef = useRef(null);
   const [ready, setReady] = useState(false);
@@ -165,7 +165,7 @@ export default function LiquidOffice({ className = '', reducedMotion = false, pr
   useEffect(() => {
     setReady(false);
     setFallback(false);
-    if (reducedMotion || !composition) return undefined;
+    if (reducedMotion || !allowAlternate || !composition) return undefined;
 
     const host = hostRef.current;
     const canvas = canvasRef.current;
@@ -368,14 +368,14 @@ export default function LiquidOffice({ className = '', reducedMotion = false, pr
         if (program) gl.deleteProgram(program);
       }
     };
-  }, [reducedMotion, restore, composition]);
+  }, [reducedMotion, allowAlternate, restore, composition]);
 
-  const staticControl = reducedMotion || fallback;
+  const staticControl = allowAlternate && (reducedMotion || fallback);
   return (
     <div ref={hostRef} className={`liquid-office ${className}`} style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#171d14' }}>
       <img src={composition?.src || CLEAN} alt="PORTFOLIO — 工作室的书桌、电脑与窗外景色" draggable="false" style={imageStyle} />
       {staticControl && <img src={FANTASY} alt="" aria-hidden="true" draggable="false" style={{ ...imageStyle, opacity: alternate ? 1 : 0 }} />}
-      <canvas ref={canvasRef} aria-hidden="true" style={{ ...layer, display: 'block', opacity: ready && !staticControl ? 1 : 0, pointerEvents: 'auto', touchAction: 'pan-y' }} />
+      <canvas ref={canvasRef} aria-hidden="true" style={{ ...layer, display: 'block', opacity: allowAlternate && ready && !staticControl ? 1 : 0, pointerEvents: 'auto', touchAction: 'pan-y' }} />
       {staticControl && (
         <button type="button" aria-pressed={alternate} onClick={() => setAlternate(value => !value)}
           style={{ position: 'absolute', zIndex: 2, right: 24, bottom: 24, minHeight: 44, padding: '10px 18px', border: '1px solid rgba(255,255,255,.65)', borderRadius: 999, background: 'rgba(12,25,17,.82)', color: '#fff', font: 'inherit', cursor: 'pointer' }}>
