@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import LiquidOffice from './LiquidOffice';
+import { useCallback, useRef, useState } from 'react';
+import Office3D from './office3d/Office3D';
 import VideoRefraction from './VideoRefraction';
 import useLegacyIntro from './useLegacyIntro';
 import EditorialMotion,{FocusLine} from './components/EditorialMotion';
@@ -23,6 +23,11 @@ function Marquee({ text, reverse = false }) {
 
 export default function LegacyHero({ lang = 'zh', reduced = false, onMediaError }) {
   const rootRef = useRef(null), videoRef = useRef(null), progressRef = useRef(0);
+  const officeMode = useCallback(mode => {
+    if (!rootRef.current) return;
+    rootRef.current.dataset.officeRenderer = mode;
+    rootRef.current.dispatchEvent(new Event('office:mode'));
+  }, []);
   const [mediaFailed, setMediaFailed] = useState(false);
   const [videoSource] = useState(() => matchMedia('(max-width: 699px)').matches ? '/assets/courtyard-scrub-mobile.mp4' : '/assets/courtyard-scrub.mp4');
   const quiet = reduced || mediaFailed, english = lang === 'en';
@@ -46,7 +51,7 @@ export default function LegacyHero({ lang = 'zh', reduced = false, onMediaError 
         <VideoRefraction videoRef={videoRef} progressRef={progressRef} reduced={quiet} />
         <div className="legacy-film-shade" />
       </div>
-      <div className="legacy-office-wrap"><div className="office-camera"><LiquidOffice reducedMotion={quiet} progressRef={progressRef} /><div className="legacy-screen-glint" /></div></div>
+      <div className="legacy-office-wrap"><div className="office-camera"><Office3D reducedMotion={quiet} progressRef={progressRef} onMode={officeMode} /><div className="legacy-screen-glint" /></div></div>
       <div className="legacy-blackout" />
       <div className="office-copy legacy-scene-copy"><div className="legacy-signature"><EditorialMotion reduced={quiet} enter={false}>Jay Lin</EditorialMotion></div><p>{english ? 'SYSTEMS DESIGN / VISUAL ART' : '系统策划 / 视觉创作'}</p><a className="legacy-text-link" href="#systems" onClick={goToWork}>{english ? 'Explore the work ↗' : '直接看作品 ↗'}</a></div>
       <div className="film-copy film-creative legacy-scene-copy"><p className="legacy-eyebrow">AN INVITATION INTO MY WORLD</p><LegacyCreativeTitle /></div>

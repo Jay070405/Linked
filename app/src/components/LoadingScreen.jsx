@@ -1,6 +1,7 @@
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import gsap from 'gsap';
 import BrandConstruction from './BrandConstruction';
+import {preloadOffice} from '../office3d/model';
 
 export default function LoadingScreen({lang='zh',reduced=false,onDone}) {
  const dialog=useRef(null),done=useRef(onDone),construction=useRef(null);
@@ -26,7 +27,7 @@ export default function LoadingScreen({lang='zh',reduced=false,onDone}) {
   const sources=location.pathname.startsWith('/works')?['/assets/logo.png']:['/assets/logo.png','/assets/studio-clean.png','/assets/studio-fantasy-anime.png'];
   const ready=()=>{if(alive)setResources(true);};
   const timeout=setTimeout(ready,5500);
-  Promise.allSettled([document.fonts.ready,...sources.map(picture)]).then(ready);
+  Promise.allSettled([document.fonts.ready,...sources.map(picture),...(!reduced&&!location.pathname.startsWith('/works')?[preloadOffice()]:[])]).then(ready);
   return()=>{alive=false;clearTimeout(timeout);disposers.forEach(dispose=>dispose());};
  },[]);
  useEffect(()=>{if(resources&&constructed)leave();},[resources,constructed,leave]);

@@ -88,7 +88,9 @@ export default function useLegacyIntro({ rootRef, videoRef, progressRef, reduced
       if (stage.dataset.navTone !== tone) stage.dataset.navTone = tone;
       document.body.classList.toggle('past-office', p > .178);
       const zoom = smooth(0, .141, p);
-      room.style.transform = `translate(${-roomWidth * .042 * zoom}px,${roomHeight * .032 * zoom}px) scale(${Math.pow(6.5, zoom)})`;
+      const realOffice = root.dataset.officeRenderer === '3d';
+      room.style.transform = realOffice ? 'none' : `translate(${-roomWidth * .042 * zoom}px,${roomHeight * .032 * zoom}px) scale(${Math.pow(6.5, zoom)})`;
+      root.dispatchEvent(new Event('office:progress'));
       alpha(roomWrap, 1 - smooth(.133, .158, p));
       glint.style.opacity = String(smooth(.065, .14, p) * .7);
       blackout.style.opacity = String((smooth(.116, .14, p) - smooth(.147, .178, p)) * .97);
@@ -162,7 +164,7 @@ export default function useLegacyIntro({ rootRef, videoRef, progressRef, reduced
       const bounds = stage.getBoundingClientRect();
       if (bounds.bottom <= 0 || bounds.top >= innerHeight) return;
       const x = event.clientX / width, y = event.clientY / height;
-      if (clock.p < .165) gsap.to(roomWrap, { x: (x - .5) * 8, y: (y - .5) * 5, scale: 1.013, duration: .2, overwrite: true });
+      if (clock.p < .165 && root.dataset.officeRenderer !== '3d') gsap.to(roomWrap, { x: (x - .5) * 8, y: (y - .5) * 5, scale: 1.013, duration: .2, overwrite: true });
       pointer.style.opacity = clock.p < .84 ? '1' : '0';
       pointer.style.transform = `translate(${event.clientX - bounds.left}px,${event.clientY - bounds.top}px)`;
       pointer.dataset.over = event.target instanceof Element && event.target.closest('a,button') ? 'true' : 'false';
@@ -197,6 +199,7 @@ export default function useLegacyIntro({ rootRef, videoRef, progressRef, reduced
       tourTween = gsap.to(tourClock, { y: end, duration: Math.max(4, (end - scrollY) / (root.offsetHeight - height) * 36), ease: 'none', onUpdate: () => window.scrollTo(0, tourClock.y), onComplete: stopTour });
     } };
     window.addEventListener('resize', resize);
+    root.addEventListener('office:mode', measure);
     window.addEventListener('pointermove', move, { passive: true });
     window.addEventListener('wheel', stopTour, { passive: true });
     window.addEventListener('touchstart', stopTour, { passive: true });
@@ -218,6 +221,7 @@ export default function useLegacyIntro({ rootRef, videoRef, progressRef, reduced
       marqueeObserver.disconnect(); repeatObserver.disconnect();
       document.fonts?.removeEventListener('loadingdone', resize);
       window.removeEventListener('resize', resize);
+      root.removeEventListener('office:mode', measure);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('wheel', stopTour);
       window.removeEventListener('touchstart', stopTour);

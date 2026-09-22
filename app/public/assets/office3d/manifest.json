@@ -1,0 +1,21 @@
+{
+  "generator": "tools/build_office.py",
+  "blender": "5.2.2 LTS",
+  "units": "metres",
+  "groups": [
+    "SharedDesk",
+    "StudioInterior",
+    "FantasyGarden"
+  ],
+  "screenSize": [
+    3.11,
+    1.73
+  ],
+  "anchors": [
+    "CameraStart",
+    "CameraLook",
+    "ScreenTarget"
+  ],
+  "sourceArtwork": "Existing original portfolio artwork: world-tree.png",
+  "meshCount": 33
+}
