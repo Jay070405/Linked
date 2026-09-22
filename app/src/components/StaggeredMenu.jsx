@@ -1,5 +1,6 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import ExpressiveTitle from './ExpressiveTitle';
 import './StaggeredMenu.css';
 
 export const StaggeredMenu = ({
@@ -431,7 +432,7 @@ export const StaggeredMenu = ({
             <span ref={textInnerRef} className="sm-toggle-textInner">
               {textLines.map((l, i) => (
                 <span className="sm-toggle-line" key={i}>
-                  {l}
+                    <ExpressiveTitle variant="type" typingSpeed={40} reduced={reducedMotion} hover={false}>{l}</ExpressiveTitle>
                 </span>
               ))}
             </span>

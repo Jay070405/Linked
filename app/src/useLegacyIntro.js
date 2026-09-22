@@ -19,6 +19,7 @@ export const LEGACY_INTRO_TIMING = Object.freeze({
 export default function useLegacyIntro({ rootRef, videoRef, progressRef, reduced }) {
   const actions = useRef({});
   const [touring, setTouring] = useState(false);
+  const [chapter, setChapter] = useState('00 / OUTSIDE');
   const toggleTour = useCallback(() => actions.current.toggle?.(), []);
 
   useEffect(() => {
@@ -118,7 +119,8 @@ export default function useLegacyIntro({ rootRef, videoRef, progressRef, reduced
       after.style.transform = `translateY(${-leave * height * .7}px)`;
       updateMarqueePlayback();
       q('.legacy-film-progress i').style.transform = `scaleX(${p})`;
-      q('.legacy-chapter').textContent = p < .15 ? '00 / OUTSIDE' : p < .35 ? '01 / ENTER THE WORLD' : p < .69 ? '02 / A LITTLE MAGIC' : p < .84 ? '03 / CRAFT & VISION' : '04 / INTO THE WORK';
+      const chapterLabel = p < .15 ? '00 / OUTSIDE' : p < .35 ? '01 / ENTER THE WORLD' : p < .69 ? '02 / A LITTLE MAGIC' : p < .84 ? '03 / CRAFT & VISION' : '04 / INTO THE WORK';
+      if (root.dataset.chapter !== chapterLabel) { root.dataset.chapter=chapterLabel; setChapter(chapterLabel); }
       foot.style.color = p > .875 ? '#1a1a1a' : '#fffdf4';
       alpha(foot, 1 - smooth(.955, 1, p));
       const marqueeReady = smooth(.88, .935, p);
@@ -232,5 +234,5 @@ export default function useLegacyIntro({ rootRef, videoRef, progressRef, reduced
       video.removeEventListener('loadeddata', seek); video.removeEventListener('seeked', seek);
     };
   }, [rootRef, videoRef, progressRef, reduced]);
-  return { touring, toggleTour };
+  return { touring, toggleTour, chapter };
 }

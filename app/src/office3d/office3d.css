@@ -2,6 +2,25 @@
 .office-3d>canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;pointer-events:auto;touch-action:pan-y}
 .office-3d>canvas.is-ready{opacity:1}
 .office-3d-description{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.office-hover-label{position:absolute;z-index:3;pointer-events:none;padding:8px 12px;border:1px solid #ffffff30;background:#141610d9;backdrop-filter:blur(12px);color:#f7f1e7;font-size:10px;letter-spacing:.07em;border-radius:3px;box-shadow:0 3px 16px #0002}
+.office-hover-label:not([hidden]){animation:office-label-in .16s ease-out both}
+@keyframes office-label-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.office-speaker-panel{position:fixed;left:clamp(16px,var(--speaker-x),calc(100vw - 296px));top:clamp(16px,var(--speaker-y),calc(100dvh - 430px));margin:0;border:1px solid #fff3;border-radius:8px;width:280px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);padding:0;background:#171916ec;color:#f7f2e9;box-shadow:0 22px 100px #0006;backdrop-filter:blur(24px);overflow-y:auto}
+.office-speaker-panel::backdrop{background:#05060533}
+.speaker-panel-content{padding:20px}
+.speaker-panel-content header{display:flex;align-items:center;justify-content:space-between;font:9px LegacyMono,monospace;letter-spacing:.12em;color:#c4b9a5}
+.speaker-panel-content button{border:0;background:transparent;color:inherit;cursor:pointer;font:inherit;min-height:36px}
+.speaker-panel-content header button{font-size:22px;padding:0 6px}
+.speaker-panel-content h2{font-size:19px;font-weight:450;letter-spacing:-.035em;margin:14px 0 8px}
+.speaker-panel-content p{color:#aaa69e;font-size:11px;letter-spacing:.08em}
+.speaker-panel-content .comet-dial{margin:0 auto}
+.speaker-panel-content .comet-dial__ring:focus-visible{outline:1px dashed #eee8d877;outline-offset:2px}
+.speaker-panel-content footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #ffffff20;padding-top:10px}
+.speaker-panel-content footer button{font-size:11px}
+.speaker-panel-content footer button span{padding-left:6px}
+.speaker-panel-content footer>span{font:8px LegacyMono,monospace;color:#b5b0a7}
+.office-tools .expressive-title,.office-tools .expressive-word{line-height:inherit}
+@media(prefers-reduced-motion:reduce){.office-hover-label:not([hidden]){animation:none}}
 .legacy-hero[data-office-renderer="3d"] .office-camera{inset:0!important;width:100%!important;height:100%!important;margin:0!important;transform:none!important}
 .legacy-hero[data-office-renderer="3d"] .legacy-office-wrap{transform:none!important}
 .legacy-hero[data-office-renderer="3d"] .legacy-screen-glint{display:none}

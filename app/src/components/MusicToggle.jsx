@@ -1,5 +1,6 @@
-import { useId, useRef } from 'react';
-import useBackgroundMusic from './useBackgroundMusic';
+import { useId } from 'react';
+import { useMusic } from './BackgroundMusic';
+import ExpressiveTitle from './ExpressiveTitle';
 import './MusicToggle.css';
 
 const statusText = {
@@ -9,18 +10,16 @@ const statusText = {
 const labels = { playing: 'ON', pending: 'WAIT', loading: '···', off: 'OFF', suspended: 'PAUSE', stopping: '···', error: '—' };
 
 export default function MusicToggle({ lang = 'zh', reduced = false }) {
-  const audioRef = useRef(null);
   const tooltipId = useId();
-  const { enabled, status, toggle } = useBackgroundMusic(audioRef);
+  const { enabled, status, toggle, volume } = useMusic();
   const en = lang === 'en';
-  const description = statusText[en ? 'en' : 'zh'][status];
+  const description = status === 'playing' ? `${en ? 'Playing' : '正在播放'} · ${Math.round(volume * 100)}%` : statusText[en ? 'en' : 'zh'][status];
   const retry = ['pending', 'error', 'suspended'].includes(status);
   const action = retry ? (en ? 'Play music' : '播放背景音乐') : enabled ? (en ? 'Turn music off' : '关闭背景音乐') : (en ? 'Turn music on' : '开启背景音乐');
   return <div className={`v16-music${reduced ? ' is-reduced' : ''}`} data-status={status}>
-    <audio ref={audioRef} className="music-audio" src="/assets/audio/clear-day-melody.mp3" preload="metadata" loop aria-hidden="true" />
     <button data-music-toggle type="button" className="music-toggle" aria-pressed={status === 'playing'} aria-label={`${action} · ${description}`} aria-describedby={tooltipId} onClick={toggle}>
       <span className="music-meter" aria-hidden="true"><i /><i /><i /><i /><span className="music-slash" /></span>
-      <span className="music-state" aria-hidden="true">{labels[status]}</span>
+      <span className="music-state" aria-hidden="true"><ExpressiveTitle variant="type" typingSpeed={30} reduced={reduced} hover={false}>{labels[status]}</ExpressiveTitle></span>
     </button>
     <span className="music-tooltip" id={tooltipId} role="tooltip"><span lang="ja">晴日の調べ</span><span>{description}</span></span>
     <span className="music-sr-status" role="status" aria-live="polite">{description}</span>

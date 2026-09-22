@@ -57,7 +57,7 @@
 .legacy-hero .film-final h2 .legacy-italic{font-size:1.25em}
 .legacy-hero .legacy-film-foot{position:absolute;bottom:34px;left:var(--legacy-pad);right:var(--legacy-pad);display:flex;align-items:center;justify-content:space-between;gap:20px;z-index:15;font:12px LegacyMono,monospace;letter-spacing:.07em}
 .legacy-hero .legacy-film-foot button{display:flex;align-items:center;justify-content:center;gap:10px;min-width:44px;min-height:44px;padding:8px;background:none;border:0;font:inherit;color:inherit;cursor:pointer}
-.legacy-hero .legacy-film-foot button>span{font-size:19px;line-height:1}
+.legacy-hero .legacy-film-foot button>span:first-child{font-size:19px;line-height:1}
 .legacy-hero .legacy-scroll-cue{display:flex;gap:12px;align-items:center}
 .legacy-hero .legacy-scroll-cue i{display:block;height:29px;width:1px;background:#ffffff40;position:relative;overflow:hidden}
 .legacy-hero .legacy-scroll-cue i:after{content:'';position:absolute;width:100%;height:60%;background:currentColor;animation:legacy-scroll-cue 1.8s ease-in-out infinite}

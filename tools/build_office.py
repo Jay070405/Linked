@@ -296,6 +296,31 @@ sphere('Lamp_bulb',bottom-shade_axis*.15,(.09,.09,.10),glow)
 # Electrical cable and a small tactile switch.
 curve('Lamp_cable',[(2.73,.65,1.42),(3.0,1.1,1.408),(3.28,1.48,1.36),(3.3,1.52,.25)],.012,ink)
 box('Lamp_switch',(2.71,.36,1.50),(.10,.13,.015),brass,.015)
+# Keep the complete lamp clear of the display, including its slanted rim.
+# Translation is applied before material batching and shared by the web lights.
+for obj in list(shared.children):
+    if obj.name.startswith('Lamp_'): obj.location.x += .55
+
+# A compact walnut studio speaker behind the drawing tablet. Front faces -Y.
+speaker=group('StudioSpeaker');speaker.parent=shared;parent=speaker
+box('Speaker_cabinet',(-2.02,.67,1.96),(.66,.55,1.08),walnut,.045)
+box('Speaker_baffle',(-2.02,.38,1.96),(.59,.045,.98),graphite,.032)
+speakerRubber=material('Speaker_rubber',(.018,.018,.019),.9)
+speakerCone=material('Speaker_cone',(.065,.066,.062),.96)
+for z,r in [(1.77,.205),(2.20,.10)]:
+    driver=lathe('Speaker_driver',(0,0,0),[(r,0),(r*.95,.019),(r*.79,.019),(r*.73,-.006),(r*.32,-.056),(.005,-.045)],speakerRubber)
+    driver.location=(-2.02,.348,z);driver.rotation_euler.x=math.pi/2
+    cylinder('Speaker_dustcap',(-2.02,.335,z),(-2.02,.326,z),r*.28,speakerCone,vertices=40)
+for x in [-2.25,-1.79]:
+    for z in [1.56,2.35]: cylinder('Speaker_screw',(x,.348,z),(x,.337,z),.016,brass,vertices=16)
+cylinder('Speaker_volume',(-1.84,.344,1.58),(-1.84,.313,1.58),.043,aluminum,vertices=32)
+speakerLed=material('Speaker_indicator',(.7,.6,.4),.4)
+speakerLed.node_tree.nodes.get('Principled BSDF').inputs['Emission Color'].default_value=(.5,.39,.23,1)
+speakerLed.node_tree.nodes.get('Principled BSDF').inputs['Emission Strength'].default_value=.8
+sphere('Speaker_LED',(-2.18,.328,1.58),(.012,.005,.012),speakerLed,16)
+for x in [-2.26,-1.78]:
+    box('Speaker_foot',(x,.67,1.41),(.10,.38,.032),ink,.008)
+parent=shared
 
 # Open ceramic cup and handle.
 start_prop('Prop_Cup',(2.37,-.08,1.59),(.27,.225,.19),.4)
@@ -377,20 +402,22 @@ for i in range(4):
 
 # INDOOR ENVIRONMENT. Front-facing wall with physical window on the left.
 parent=indoor
-box('Back_wall',(1.1,1.88,4.5),(11.4,.15,9),plaster,.0)
-box('Left_wall',(-5.7,0,4.5),(.14,4.0,9),plaster,.0)
-box('Above_window',(-4.9,1.88,7.44),(2.5,.15,3.12),plaster,0)
+box('Back_wall',(4.215,1.88,4.5),(15.57,.15,9),plaster,.0)
+box('Left_wall',(-10,1.9,4.5),(.14,6.0,9),plaster,.0)
+box('Window_left_wall',(-8.27,1.88,4.5),(3.46,.15,9),plaster,0)
+box('Above_window',(-5.03,1.88,7.58),(2.92,.15,2.84),plaster,0)
+box('Below_window',(-5.03,1.88,.62),(2.92,.15,1.24),plaster,0)
 box('Floor',(0,-.2,-.08),(16,16,.16),walnut,.0)
 # Floorboard divisions come from the scanned surface map.
 box('Wall_baseboard',(.0,1.72,.16),(13,.06,.22),walnut,.01)
 # Opening occupies left gap alongside the wall, framed in oak.
 # The browser uses the photographed city dusk HDR outside the physical window.
-for x in [-6.12,-4.20]: box('Window_jamb',(x,1.63,3.05),(.17,.28,5.8),walnut,.02)
-for x in [-5.31,-4.48]: box('Window_mullion',(x,1.50,3.15),(.065,.09,5.8),ink,.005)
-for z in [1.35,4.20,5.84]: box('Window_crossbar',(-5.16,1.51,z),(2.0,.09,.07),ink,.006)
-box('Window_sill',(-5.10,1.40,1.28),(2.35,.75,.13),wood,.04)
+for x in [-6.40,-3.66]: box('Window_jamb',(x,1.63,3.72),(.18,.28,4.88),walnut,.02)
+box('Window_mullion',(-5.04,1.55,3.72),(.050,.09,4.88),ink,.005)
+for z in [1.35,4.26,6.12]: box('Window_crossbar',(-5.03,1.55,z),(2.74,.09,.06),ink,.006)
+box('Window_sill',(-5.03,1.40,1.28),(3.02,.75,.13),wood,.04)
 for i in range(4):
-    b=box('Windowsill_book',(-4.85+(i%2)*.06,1.23,1.4+i*.09),(.73,.43,.075),[paper,graphite,ceramic,paper][i],.009)
+    b=box('Windowsill_book',(-4.12+(i%2)*.06,1.23,1.4+i*.09),(.73,.43,.075),[paper,graphite,ceramic,paper][i],.009)
     b.rotation_euler.z=(i-1)*.045
 
 # Named anchors: exported with scene for reproducible runtime camera placement.
@@ -421,7 +448,7 @@ bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE/'studio.blend'))
 
 # Merge by material within each environment for a small browser draw-call count.
 # Screen and camera anchors remain independent. Native source above is untouched.
-for root in [shared,indoor,*props]:
+for root in [shared,indoor,speaker,*props]:
     buckets={}
     for obj in list(root.children):
         if obj.type=='CURVE':

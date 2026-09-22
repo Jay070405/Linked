@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const MUSIC_PREFERENCE_KEY = 'jay-background-music-v1';
 export const MUSIC_VOLUME = 0.14;
+export const MUSIC_VOLUME_KEY = 'jay-background-volume-v1';
 
 function preference(storage) {
   try { return storage?.getItem(MUSIC_PREFERENCE_KEY) !== 'off'; } catch { return true; }
@@ -20,16 +21,18 @@ export function createMusicController(audio, options = {}) {
   const now = options.now ?? (() => performance.now());
   const notify = options.onChange ?? (() => {});
   let enabled = preference(storage), status = enabled ? 'pending' : 'off';
+  let volume = MUSIC_VOLUME;
+  try { const saved = storage?.getItem(MUSIC_VOLUME_KEY); if (saved !== null && saved !== undefined && Number.isFinite(Number(saved))) volume = Math.max(0, Math.min(1, Number(saved))); } catch { /* Local preferences are optional. */ }
   let disposed = false, request = 0, frame = 0, pending = false, needsGesture = false;
   let context = null, gain = null, source = null;
   const emit = next => {
     status = next;
-    if (!disposed) notify({ enabled, status });
+    if (!disposed) notify({ enabled, status, volume });
   };
   const cancelFade = () => { caf(frame); frame = 0; };
   const level = () => gain ? gain.gain.value : audio.volume;
   const setLevel = value => {
-    const safe = Math.max(0, Math.min(MUSIC_VOLUME, value));
+    const safe = Math.max(0, Math.min(1, value));
     if (gain) gain.gain.value = safe;
     else audio.volume = safe;
   };
@@ -51,18 +54,18 @@ export function createMusicController(audio, options = {}) {
     if (!enabled || doc.hidden) { audio.pause(); setLevel(0); return; }
     if (!actualPlaying()) return;
     needsGesture = false;
-    if (status !== 'playing') { emit('playing'); fade(MUSIC_VOLUME, 1200); }
+    if (status !== 'playing') { emit('playing'); fade(volume, 1200); }
   };
   const start = () => {
     if (disposed || !enabled || doc.hidden || pending) return;
     cancelFade();
-    if (actualPlaying() && audio.readyState >= 3) { playing(); fade(MUSIC_VOLUME, 1000); return; }
+    if (actualPlaying() && audio.readyState >= 3) { playing(); fade(volume, 1000); return; }
     const token = ++request;
     pending = true;
     emit('loading');
     // A small, nonzero level keeps this an honest audible autoplay request.
     // Starting muted and silently unmuting would bypass the intended policy.
-    setLevel(0.012);
+    setLevel(Math.min(.012, volume));
     let playRequest, resumeRequest;
     try {
       // Both requests stay inside the trusted gesture stack when unlocking.
@@ -143,7 +146,7 @@ export function createMusicController(audio, options = {}) {
       context?.close().catch(() => {});
       context = null;
       emit(enabled ? 'error' : 'off');
-      return { getState: () => ({ enabled, status }), toggle() { enabled = true; emit('error'); }, dispose() { disposed = true; audio.pause(); } };
+      return { getState: () => ({ enabled, status, volume }), setVolume() {}, toggle() { enabled = true; emit('error'); }, dispose() { disposed = true; audio.pause(); } };
     }
   }
   audio.addEventListener('playing', playing);
@@ -158,7 +161,14 @@ export function createMusicController(audio, options = {}) {
   if (enabled && !doc.hidden) start();
   else { setLevel(0); emit(enabled ? 'suspended' : 'off'); }
   return {
-    getState: () => ({ enabled, status }),
+    getState: () => ({ enabled, status, volume }),
+    setVolume(value) {
+      if (!Number.isFinite(value)) return;
+      volume = Math.max(0, Math.min(1, value));
+      try { storage?.setItem(MUSIC_VOLUME_KEY, String(volume)); } catch { /* Playback works without storage. */ }
+      if (enabled && actualPlaying() && !doc.hidden && status !== 'stopping') fade(volume, 80);
+      emit(status);
+    },
     toggle() {
       // WAIT means “play” when pressed, rather than silently disabling the
       // requested music. A running/loading request remains a clear off toggle.
@@ -188,11 +198,12 @@ export function createMusicController(audio, options = {}) {
 
 export default function useBackgroundMusic(audioRef) {
   const controller = useRef(null);
-  const [state, setState] = useState({ enabled: true, status: 'pending' });
+  const [state, setState] = useState({ enabled: true, status: 'pending', volume: MUSIC_VOLUME });
   useEffect(() => {
     controller.current = createMusicController(audioRef.current, { onChange: setState });
     return () => { controller.current?.dispose(); controller.current = null; };
   }, [audioRef]);
   const toggle = useCallback(() => controller.current?.toggle(), []);
-  return { ...state, toggle };
+  const setVolume = useCallback(value => controller.current?.setVolume(value), []);
+  return { ...state, toggle, setVolume };
 }

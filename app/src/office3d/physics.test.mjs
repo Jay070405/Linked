@@ -43,3 +43,34 @@ test('off-table drop is removed; restoring only returns the lost object',()=>{
     assert.deepEqual(changes,[1,0]);
   }finally{scene.dispose();}
 });
+
+test('held object cannot be dragged down through the solid desktop',()=>{
+  const scene=new DeskPhysics();
+  try {
+    const cup=scene.add('cup',{x:-1,y:2.5,z:.4},[.2,.2,.2],.4);
+    step(scene,1);scene.grab('cup');scene.move({x:-1,y:.3,z:.4});step(scene,5);
+    assert.ok(cup.translation().y>=1.59,`held cup at ${cup.translation().y}`);
+    scene.release();step(scene);assert.equal(scene.lost.size,0);
+  } finally {scene.dispose();}
+});
+
+test('held object stops at the monitor instead of passing through its housing',()=>{
+  const scene=new DeskPhysics();
+  try {
+    const cup=scene.add('cup',{x:.55,y:2.7,z:.8},[.2,.2,.2],.4);
+    step(scene,1);scene.grab('cup');scene.move({x:.55,y:2.7,z:-.9});step(scene,5);
+    assert.ok(cup.translation().z>-.17);
+  } finally {scene.dispose();}
+});
+
+test('a fast lateral drag cannot launch another tabletop object',()=>{
+  const scene=new DeskPhysics();
+  try {
+    const mouse=scene.add('mouse',{x:-1,y:1.52,z:.8},[.15,.1,.2],.15);
+    const book=scene.add('book',{x:1,y:1.46,z:.8},[.7,.065,.4],.6);
+    step(scene,120);scene.grab('mouse');scene.move({x:5,y:1.55,z:.8});step(scene,10);scene.release();step(scene,180);
+    assert.ok(Math.abs(book.translation().x-1)<.1);
+    assert.equal(scene.lost.size,0);
+    assert.ok(mouse.translation().x<1);
+  } finally {scene.dispose();}
+});

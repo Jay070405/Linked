@@ -16,7 +16,8 @@ export class DeskPhysics {
     // The monitor remains the camera destination; the lamp has a fixed base.
     this.fixed([1.67, 1.09, .12], { x: .55, y: 2.70, z: -.48 });
     this.fixed([.52, .28, .25], { x: .55, y: 1.69, z: -.40 });
-    this.fixed([.30, .045, .30], { x: 2.71, y: 1.45, z: -.53 });
+    this.fixed([.30, .045, .30], { x: 3.26, y: 1.45, z: -.53 });
+    this.fixed([.33, .54, .29], { x: -2.02, y: 1.96, z: -.67 });
   }
   fixed(half, p) {
     const body = this.world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(p.x, p.y, p.z));
@@ -38,7 +39,17 @@ export class DeskPhysics {
     item.body.setBodyType(RAPIER.RigidBodyType.KinematicPositionBased, true);
     this.held = id;
   }
-  move(p) { if (this.held) this.items.get(this.held).body.setNextKinematicTranslation(p); }
+  move(p) {
+    if (!this.held) return;
+    const body = this.items.get(this.held).body;
+    const current = body.translation();
+    const delta = { x: p.x-current.x, y: p.y-current.y, z: p.z-current.z };
+    // Sweep the held shape against the whole desk, excluding itself. A fast
+    // pointer must not teleport through another prop and launch it like a bat.
+    const hit = this.world.castShape(current, body.rotation(), delta, body.collider(0).shape, .004, 1, false, 0, undefined, undefined, body);
+    const fraction = hit ? Math.max(0, hit.time_of_impact-.003) : 1;
+    body.setNextKinematicTranslation({ x: current.x+delta.x*fraction, y: current.y+delta.y*fraction, z: current.z+delta.z*fraction });
+  }
   release() {
     if (!this.held) return;
     const body = this.items.get(this.held).body;

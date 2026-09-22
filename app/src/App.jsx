@@ -104,8 +104,8 @@ export default function App(){
   <Finale lang={lang} reduced={quiet} blossomProgress={blossomProgress} onAbout={()=>setAbout(true)}/>
   <ContactFinale lang={lang} reduced={quiet} onNavigate={nav} onAbout={()=>setAbout(true)}/>
  </main>
- <div className="journey-indicator"><i/><span>SCROLL TO EXPLORE</span></div>
- <button className="motion-toggle" aria-pressed={quiet} disabled={mediaFailed} aria-label={mediaFailed?(lang==='en'?'Static browsing: film unavailable':'静态浏览：影片未能加载'):quiet?(lang==='en'?'Enable motion':'恢复动态'):(lang==='en'?'Reduce motion':'减少动态')} onClick={toggleMotion} title={mediaFailed?(lang==='en'?'The film is unavailable; all work remains available in static browsing.':'影片未能加载，所有作品仍可通过静态浏览访问。'):(lang==='en'?'Toggle reduced motion':'切换减少动态')}>{mediaFailed?'STATIC':quiet?'MOTION −':'MOTION +'}</button>
+ <div className="journey-indicator"><i/><span><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>SCROLL TO EXPLORE</ExpressiveTitle></span></div>
+ <button className="motion-toggle" aria-pressed={quiet} disabled={mediaFailed} aria-label={mediaFailed?(lang==='en'?'Static browsing: film unavailable':'静态浏览：影片未能加载'):quiet?(lang==='en'?'Enable motion':'恢复动态'):(lang==='en'?'Reduce motion':'减少动态')} onClick={toggleMotion} title={mediaFailed?(lang==='en'?'The film is unavailable; all work remains available in static browsing.':'影片未能加载，所有作品仍可通过静态浏览访问。'):(lang==='en'?'Toggle reduced motion':'切换减少动态')}><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>{mediaFailed?'STATIC':quiet?'MOTION −':'MOTION +'}</ExpressiveTitle></button>
  {modal&&<PortfolioPages page={modal} lang={lang} reduced={quiet} onNavigate={open} onBack={back} pageScroll={pageScroll} archiveState={archiveState}/>}
  {about&&<div className="about-shell"><AboutPanel lang={lang} onLanguage={setLang} reducedMotion={quiet} onClose={()=>setAbout(false)}/></div>}
  {loading&&<LoadingScreen lang={lang} reduced={reduced} onDone={()=>setLoading(false)}/>}

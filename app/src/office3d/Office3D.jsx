@@ -7,11 +7,15 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import LiquidOffice from '../LiquidOffice';
 import { STUDIO_TITLE_FONT } from '../studio-title-composite';
 import { preloadOffice } from './model';
 import { cameraPose, CAMERA_FOV } from './camera';
+import { pickupPlane, pickupPosition } from './drag';
+import SpeakerVolume from './SpeakerVolume';
+import ExpressiveTitle from '../components/ExpressiveTitle';
 
 import './office3d.css';
 
@@ -32,16 +36,20 @@ function wallTitle() {
 
 export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'zh' }) {
   const hostRef = useRef(null), canvasRef = useRef(null), modeRef = useRef(onMode), apiRef = useRef({});
+  const hoverRef = useRef(null), speakerButton = useRef(null), langRef = useRef(lang);
+  langRef.current = lang;
   modeRef.current = onMode;
   const [mode, setMode] = useState('loading'), [lostCount, setLostCount] = useState(0), [lampOn, setLampOn] = useState(true);
+  const [speakerPosition, setSpeakerPosition] = useState(null);
   const english = lang === 'en';
   useEffect(() => {
     if (reducedMotion) { setMode('image'); modeRef.current?.('image'); return undefined; }
     const host = hostRef.current, canvas = canvasRef.current, root = host.closest('.legacy-hero');
     let disposed = false, ready = false, visible = true, contextFailed = false, frame = 0, previous = 0;
-    let width = 1, height = 1, renderer, model, title, composer, ao, environment, exterior, physics;
+    let width = 1, height = 1, renderer, model, title, composer, ao, outline, environment, exterior, physics;
     let start, look, screen, lastP = -1, samples = 0, drag, lightOn = true;
-    const items = new Map(), pickMeshes = [], lampMeshes = [], lampMaterials = new Map();
+    const items = new Map(), sceneMeshes = [], lampMeshes = [], speakerMeshes = [], lampMaterials = new Map();
+    let hoveredId = '';
     const cursor = new THREE.Vector2(), sway = new THREE.Vector2(), raycaster = new THREE.Raycaster();
     const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, .025, 60);
     scene.background = new THREE.Color('#0b100c');
@@ -60,10 +68,10 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     bounce.position.set(-.3, 4.3, 5); bounce.lookAt(.55,2,0); scene.add(bounce);
     const windowArea=new THREE.RectAreaLight('#b7c9ed',3.2,2.8,4.4);windowArea.position.set(-4.1,3.3,.1);windowArea.lookAt(1,2,-1);scene.add(windowArea);
     const lamp = new THREE.SpotLight('#ffbb70', 26, 7, 1.1, .85, 2);
-    lamp.position.set(2.26,2.60,-.10); lamp.target.position.set(2.85,1.38,.28);
+    lamp.position.set(2.81,2.60,-.10); lamp.target.position.set(3.22,1.38,.28);
     lamp.castShadow = true; lamp.shadow.mapSize.set(1024,1024); lamp.shadow.bias=-.0001; lamp.shadow.normalBias=.012;
     lamp.shadow.focus=.85; lamp.shadow.radius=3; scene.add(lamp,lamp.target);
-    const lampBounce = new THREE.PointLight('#ffba72', .35, 4, 2); lampBounce.position.set(2.25,1.7,.1); scene.add(lampBounce);
+    const lampBounce = new THREE.PointLight('#ffba72', .35, 4, 2); lampBounce.position.set(2.80,1.7,.1); scene.add(lampBounce);
     const stop = () => { cancelAnimationFrame(frame); frame=0; previous=0; };
     const allowed = () => !disposed && !contextFailed && ready && visible && !filmBlocked() && progressRef.current < .18;
     const wake = () => { if (!frame && allowed()) frame=requestAnimationFrame(draw); };
@@ -81,6 +89,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     }
     function release() {
       if (!drag) return;
+      host.dataset.lastDrop=JSON.stringify({id:drag.id,...physics?.items.get(drag.id).body.translation()});
       physics?.release();
       if(canvas.hasPointerCapture(drag.pointerId))canvas.releasePointerCapture(drag.pointerId);
       drag=null;canvas.style.cursor='grab';host.dataset.held='';wake();
@@ -90,15 +99,20 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       lampMaterials.forEach((original,material)=>{material.emissiveIntensity=lightOn?original:0;});
       setLampOn(lightOn);host.dataset.lamp=lightOn?'on':'off';wake();
     }
-    apiRef.current={ toggleLamp, restore:()=>{physics?.restoreLost();wake();} };
+    function openSpeaker() {
+      release();clearHover();
+      const pos=new THREE.Vector3(-2.02,2,-.67).project(camera);
+      setSpeakerPosition({x:(pos.x*.5+.5)*width,y:(-.5*pos.y+.5)*height});
+    }
+    apiRef.current={ toggleLamp, openSpeaker, restore:()=>{physics?.restoreLost();wake();} };
     function draw(now) {
       frame=0;if(!allowed()){previous=0;return;}
       const dt=previous?Math.min(.08,(now-previous)/1000):1/60;previous=now;
       const p=progressRef.current;
-      if(p>.015 && drag)release();
+      if(p>.015){if(drag)release();clearHover();if(lastP<=.015)setSpeakerPosition(null);}
       host.dataset.interactive=p<.015?'true':'false';
       const controls=host.querySelector('.office-tools');if(controls)controls.inert=p>=.015;
-      sway.lerp(drag?new THREE.Vector2():cursor,1-Math.exp(-dt*5));
+      if(!drag)sway.lerp(cursor,1-Math.exp(-dt*5));
       const pose=cameraPose(p,camera.aspect,start,look,screen,sway);
       camera.position.copy(pose.position);camera.lookAt(pose.target);camera.updateMatrixWorld();
       physics.step(dt);
@@ -126,38 +140,57 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       return {x,y};
     }
     function hit() {
-      return raycaster.intersectObjects([...pickMeshes,...lampMeshes],false).find(h=>{
+      const nearest=raycaster.intersectObjects(sceneMeshes,false).find(h=>{
         const id=h.object.userData.propId;return !id||!physics.lost.has(id);
       });
+      return nearest&&(nearest.object.userData.propId||nearest.object.userData.speaker||nearest.object.userData.lamp)?nearest:null;
+    }
+    function clearHover() {
+      hoveredId='';host.dataset.hovered='';
+      if(outline){outline.selectedObjects=[];outline.enabled=false;}
+      if(hoverRef.current)hoverRef.current.hidden=true;
+    }
+    function hoverHit(hit,event) {
+      if(!hit){clearHover();canvas.style.cursor='';return;}
+      const id=hit.object.userData.propId||(hit.object.userData.speaker?'speaker':'lamp');
+      const en=langRef.current==='en';
+      const names={Prop_Keyboard:['键盘','Keyboard'],Prop_Mouse:['鼠标','Mouse'],Prop_Tablet:['数位板','Drawing tablet'],Prop_Stylus:['数位笔','Stylus'],Prop_Cup:['咖啡杯','Coffee cup'],Prop_Sketchbook:['速写本','Sketchbook'],Prop_Pencil:['铅笔','Pencil'],Prop_Plant:['盆栽','Plant'],speaker:['音响','Speaker'],lamp:['台灯','Desk lamp']};
+      const name=(names[id]||['参考书','Reference book'])[en?1:0];
+      if(id!==hoveredId){
+        hoveredId=id;outline.selectedObjects=items.has(id)?[items.get(id)]:id==='speaker'?speakerMeshes:lampMeshes;outline.enabled=true;
+      }
+      host.dataset.hovered=id;canvas.style.cursor=items.has(id)?'grab':'pointer';
+      const label=hoverRef.current;
+      if(label){
+        label.hidden=false;label.textContent=`${name} · ${items.has(id)?(en?'DRAG TO LIFT':'拖动拎起'):id==='speaker'?(en?'ADJUST VOLUME':'调节音量'):(en?'SWITCH LIGHT':'开关灯')}`;
+        const rect=host.getBoundingClientRect();
+        label.style.left=`${Math.max(12,Math.min(width-205,event.clientX-rect.left+20))}px`;
+        label.style.top=`${Math.max(12,Math.min(height-40,event.clientY-rect.top-38))}px`;
+      }
     }
     function pointerMove(event) {
       if(!allowed()||progressRef.current>.015)return;
       const xy=point(event);
       cursor.set(Math.max(-1,Math.min(1,xy.x))*.45,Math.max(-1,Math.min(1,xy.y))*.45);
       if(drag){
-        const intersection=raycaster.ray.intersectPlane(drag.plane,new THREE.Vector3());
-        if(intersection){
-          intersection.add(drag.offset);intersection.x=THREE.MathUtils.clamp(intersection.x,-8,8);intersection.z=THREE.MathUtils.clamp(intersection.z,-6,6);
-          physics.move(intersection);
-        }
-      }else{const hovered=hit();canvas.style.cursor=hovered?(hovered.object.userData.propId?'grab':'pointer'):'';}
+        const intersection=pickupPosition(drag,raycaster.ray);
+        if(intersection)physics.move(intersection);
+        host.dataset.dragTarget=intersection?.toArray().map(v=>v.toFixed(3)).join(',')||'';
+      }else hoverHit(hit(),event);
       wake();
     }
     function pointerDown(event) {
       if(!allowed()||progressRef.current>.015||event.button!==0)return;
       point(event);const selected=hit();if(!selected)return;
-      if(!selected.object.userData.propId){toggleLamp();return;}
+      if(!selected.object.userData.propId){event.preventDefault();if(selected.object.userData.speaker)openSpeaker();else toggleLamp();return;}
       event.preventDefault();const id=selected.object.userData.propId;
       const body=physics.items.get(id).body;
-      const lifted=new THREE.Vector3().copy(body.translation());lifted.y+=.38;
-      const plane=new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(0,1,0),lifted);
-      const initial=raycaster.ray.intersectPlane(plane,new THREE.Vector3());if(!initial)return;
-      const offset=lifted.clone().sub(initial);
-      drag={id,plane,offset,pointerId:event.pointerId};physics.grab(id);
+      const plane=pickupPlane(body.translation(),raycaster.ray);if(!plane)return;
+      clearHover();drag={id,...plane,pointerId:event.pointerId};physics.grab(id);
       canvas.setPointerCapture(event.pointerId);canvas.style.cursor='grabbing';host.dataset.held=id;
       pointerMove(event);wake();
     }
-    function leave(){if(!drag){cursor.set(0,0);wake();}}
+    function leave(){if(!drag){clearHover();cursor.set(0,0);wake();}}
     function visibility(){if(filmBlocked()){release();stop();}else wake();}
     function contextLost(event){event.preventDefault();contextFailed=true;release();fail('WebGL context lost');}
     const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{release();stop();}});
@@ -175,10 +208,12 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       composer.addPass(new RenderPass(scene,camera));
       ao=new GTAOPass(scene,camera,1,1);ao.blendIntensity=.9;
       ao.updateGtaoMaterial({radius:.23,distanceExponent:1,thickness:1,distanceFallOff:1,scale:1,samples:12});
-      composer.addPass(ao);composer.addPass(new OutputPass());resize();
+      composer.addPass(ao);
+      outline=new OutlinePass(new THREE.Vector2(1,1),scene,camera);outline.visibleEdgeColor.set('#eee5d5');outline.hiddenEdgeColor.set('#000000');outline.edgeStrength=2;outline.edgeThickness=1;outline.edgeGlow=0;outline.enabled=false;
+      composer.addPass(outline);composer.addPass(new OutputPass());resize();
       Promise.all([preloadOffice(),import('./physics').then(async module=>{await module.initPhysics();return module;}),document.fonts.load(STUDIO_TITLE_FONT).catch(()=>[]),new HDRLoader().loadAsync('/assets/office3d/studio-light.hdr').catch(()=>null),new HDRLoader().loadAsync('/assets/office3d/city-dusk.hdr').catch(()=>null)]).then(async([buffer,physicsModule,,hdr,city])=>{
         if(disposed){hdr?.dispose();city?.dispose();return;}
-        if(city){city.mapping=THREE.EquirectangularReflectionMapping;exterior=city;scene.background=city;scene.backgroundBlurriness=.02;scene.backgroundIntensity=.065;scene.backgroundRotation.set(-.12,1.2,0);}
+        if(city){city.mapping=THREE.EquirectangularReflectionMapping;exterior=city;scene.background=city;scene.backgroundBlurriness=.02;scene.backgroundIntensity=.32;scene.backgroundRotation.set(.08,1.2,0);}
         if(hdr){hdr.mapping=THREE.EquirectangularReflectionMapping;environment=hdr;scene.environment=hdr;scene.environmentRotation.y=.8;}
         const gltf=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(buffer,'/assets/office3d/');
         if(disposed){disposeObject(gltf.scene);return;}
@@ -195,10 +230,11 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
           scene.attach(object);items.set(object.name,object);
           const half=object.userData.halfExtents;
           physics.add(object.name,object.position,[half[0],half[2],half[1]],object.userData.mass,object.quaternion);
-          object.traverse(mesh=>{if(mesh.isMesh){mesh.userData.propId=object.name;pickMeshes.push(mesh);}});
+          object.traverse(mesh=>{if(mesh.isMesh)mesh.userData.propId=object.name;});
         });
         scene.traverse(object=>{
           if(!object.isMesh)return;
+          sceneMeshes.push(object);
           object.castShadow=!/Window_sky|City_light|ScreenSurface|Lamp_bulb/.test(object.name);object.receiveShadow=true;
           const materials=Array.isArray(object.material)?object.material:[object.material];
           materials.forEach(material=>{
@@ -211,7 +247,15 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
             if(material.name==='Lamp_inner')lampMaterials.set(material,material.emissiveIntensity);
             if(material.name==='Screen_off'){object.material=new THREE.MeshBasicMaterial({color:'#020303',toneMapped:false});object.receiveShadow=false;}
           });
-          if(object.name.startsWith('Lamp_'))lampMeshes.push(object);
+          if(object.name.startsWith('Lamp_')){
+            object.userData.lamp=true;
+            lampMeshes.push(object);
+            if(/Lamp_shade|Lamp_lower_arm|Lamp_upper_arm/.test(object.name)){
+              const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()).multiplyScalar(.5),center=box.getCenter(new THREE.Vector3());
+              physics.fixed(size.toArray(),center);
+            }
+          }
+          if(object.parent?.name==='StudioSpeaker'){object.userData.speaker=true;speakerMeshes.push(object);}
         });
         title=wallTitle();scene.add(title);ready=true;host.dataset.lamp='on';resize();
         if(progressRef.current>=.18)report('3d');wake();
@@ -229,14 +273,17 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
   return <div ref={hostRef} className="office-3d" data-mode={mode}>
     {mode!=='3d'&&<LiquidOffice reducedMotion allowAlternate={false} progressRef={progressRef}/>}
     <canvas ref={canvasRef} className={mode==='3d'?'is-ready':''} aria-hidden="true"/>
+    <span ref={hoverRef} className="office-hover-label" hidden aria-hidden="true"/>
     {mode==='3d'&&<div className="office-tools" inert={progressRef.current>=.015}>
-      <span className="office-drag-hint">{english?'Pick up an object. Make yourself at home.':'拎起桌上的物件，随手摆一摆。'}</span>
+      <span className="office-drag-hint"><ExpressiveTitle reduced={reducedMotion} variant="type" hover={false} typingSpeed={25}>{english?'Pick up an object. Make yourself at home.':'拎起桌上的物件，随手摆一摆。'}</ExpressiveTitle></span>
       <div className="office-tool-buttons">
-        <button type="button" onClick={()=>apiRef.current.toggleLamp?.()} aria-pressed={lampOn}>{lampOn?'☼':'☾'} {english?(lampOn?'Lamp on':'Lamp off'):(lampOn?'台灯已开':'台灯已关')}</button>
-        {lostCount>0&&<button type="button" className="office-restore" onClick={()=>apiRef.current.restore?.()}>↺ {english?'Bring back fallen objects':'找回掉落的物件'} <small>{lostCount}</small></button>}
+        <button type="button" onClick={()=>apiRef.current.toggleLamp?.()} aria-pressed={lampOn}>{lampOn?'☼':'☾'} <ExpressiveTitle reduced={reducedMotion} variant="type" typingSpeed={30} hover={false}>{english?(lampOn?'Lamp on':'Lamp off'):(lampOn?'台灯已开':'台灯已关')}</ExpressiveTitle></button>
+        <button ref={speakerButton} type="button" onClick={()=>apiRef.current.openSpeaker?.()} aria-haspopup="dialog">♫ <ExpressiveTitle reduced={reducedMotion} variant="type" typingSpeed={30} hover={false}>{english?'Speaker':'音响音量'}</ExpressiveTitle></button>
+        {lostCount>0&&<button type="button" className="office-restore" onClick={()=>apiRef.current.restore?.()}>↺ <ExpressiveTitle reduced={reducedMotion} variant="type" typingSpeed={30} hover={false}>{english?'Bring back fallen objects':'找回掉落的物件'}</ExpressiveTitle> <small>{lostCount}</small></button>}
       </div>
       <span className="office-3d-description" role="status">{lostCount>0?(english?`${lostCount} objects fell off the desk.`:`${lostCount} 件物品掉出了桌子。`):''}</span>
     </div>}
+    {speakerPosition&&<SpeakerVolume lang={lang} position={speakerPosition} returnRef={speakerButton} onClose={()=>setSpeakerPosition(null)} reduced={reducedMotion}/>}
   </div>;
 }
 function disposeObject(root){

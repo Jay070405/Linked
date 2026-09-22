@@ -2,7 +2,7 @@
 // Deterministic media-policy/race tests; browser UI and physical iOS playback
 // are separate checks. No file, microphone, device, or network audio is played.
 import assert from 'node:assert/strict';
-import { createMusicController, MUSIC_PREFERENCE_KEY, MUSIC_VOLUME } from './useBackgroundMusic.js';
+import { createMusicController, MUSIC_PREFERENCE_KEY, MUSIC_VOLUME, MUSIC_VOLUME_KEY } from './useBackgroundMusic.js';
 
 class DocumentDouble {
   hidden = false;
@@ -218,4 +218,27 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
   check(h.frames.size === 0, 'Interruption fixture cleanup leaves no frames');
 }
 
+// The speaker and header operate on one controller, preserving mute and seek.
+{
+  const h = harness();
+  const controller = createMusicController(h.media, h.options); await flush(); h.advance(1300);
+  controller.setVolume(.37); h.advance(100);
+  check(h.media.volume === .37, 'Dial changes the actual media volume');
+  check(controller.getState().volume === .37, 'Header and dial share selected level');
+  check(h.data.get(MUSIC_VOLUME_KEY) === '.37' || h.data.get(MUSIC_VOLUME_KEY) === '0.37', 'Volume preference is saved');
+  controller.setVolume(0); h.advance(100);
+  check(h.media.volume === 0 && !h.media.paused, 'Zero volume is silent without losing playback position');
+  controller.toggle(); h.advance(600); controller.setVolume(.25);
+  check(h.media.paused && h.media.volume === 0, 'Turning the dial while off does not bypass mute');
+  controller.toggle(); await flush(); h.advance(1300);
+  check(h.media.volume === .25 && h.media.currentTime === 26, 'Resume keeps new volume and playback position');
+  h.document.hidden = true; h.document.emit('visibilitychange'); controller.setVolume(.19);
+  check(h.media.paused && h.media.volume === 0, 'Hidden-page dial updates cannot resume audio');
+  h.document.hidden = false; h.document.emit('visibilitychange'); await flush(); h.advance(1300);
+  check(h.media.volume === .19, 'Visibility resume uses current selected volume');
+  controller.dispose();
+  const next=createMusicController(h.media,h.options); await flush(); h.advance(1300);
+  check(next.getState().volume===.19 && h.media.volume===.19,'New controller restores saved volume');
+  next.dispose();
+}
 console.log(`${checks} background-music assertions passed.`);

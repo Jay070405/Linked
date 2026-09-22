@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import StaggeredMenu from './StaggeredMenu';
 import OriginalLogo from './OriginalLogo';
 import MusicToggle from './MusicToggle';
+import ExpressiveTitle from './ExpressiveTitle';
 import { author } from '../portfolioData';
 import './SiteNavigation.css';
 
@@ -75,12 +76,12 @@ export default function SiteNavigation({ lang = 'zh', onLanguage, onNavigate, on
   };
   return <div className={`v16-navigation${menuOpen ? ' is-menu-open' : ''}`} data-tone={surfaceTone} onKeyDown={containMenuFocus}>
     <a className="v16-wordmark" href="/#home" onClick={event => { event.preventDefault(); navigate('home'); }} aria-label={en ? 'Jay Lin — Home' : '林世杰 · 首页'}>
-      <OriginalLogo/><span>JAY LIN</span>
+      <OriginalLogo/><span><ExpressiveTitle variant="type" typingSpeed={55} reduced={reducedMotion} hover={false}>JAY LIN</ExpressiveTitle></span>
     </a>
-    <nav className="v16-primary-nav" inert={menuOpen ? true : undefined} aria-hidden={menuOpen || undefined} aria-label={en ? 'Primary navigation' : '主导航'}>{primary.map(item => <a key={item.id} href={item.href} onClick={event => { event.preventDefault(); navigate(item.id); }}><span>{item.label}</span></a>)}</nav>
+    <nav className="v16-primary-nav" inert={menuOpen ? true : undefined} aria-hidden={menuOpen || undefined} aria-label={en ? 'Primary navigation' : '主导航'}>{primary.map(item => <a key={item.id} aria-label={item.label} href={item.href} onClick={event => { event.preventDefault(); navigate(item.id); }}><span><ExpressiveTitle variant="type" typingSpeed={42} reduced={reducedMotion} hover={false}>{item.label}</ExpressiveTitle></span></a>)}</nav>
     <div className="v16-language" role="group" aria-label={en ? 'Language' : '语言'} data-language={lang}>
       <span className="v16-language-thumb" aria-hidden="true"/>
-      {[['en','EN'],['zh','中文']].map(([value,label])=><button type="button" key={value} lang={value==='zh'?'zh-CN':'en'} aria-label={value==='en'?'Switch to English':'切换到中文'} aria-pressed={lang===value} onClick={()=>{if(lang===value)return;setMenuOpen(false);setMenuReset(current=>current+1);onLanguage?.(value);}}>{label}</button>)}
+      {[['en','EN'],['zh','中文']].map(([value,label])=><button type="button" key={value} lang={value==='zh'?'zh-CN':'en'} aria-label={value==='en'?'Switch to English':'切换到中文'} aria-pressed={lang===value} onClick={()=>{if(lang===value)return;setMenuOpen(false);setMenuReset(current=>current+1);onLanguage?.(value);}}><ExpressiveTitle variant="type" typingSpeed={42} reduced={reducedMotion} hover={false}>{label}</ExpressiveTitle></button>)}
     </div>
     <MusicToggle lang={lang} reduced={reducedMotion || prefersReduced} />
     <StaggeredMenu key={`${lang}-${menuReset}`} className="v16-staggered" isFixed logoUrl={logo} items={fullMenu} reducedMotion={reducedMotion || prefersReduced}
