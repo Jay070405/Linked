@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { createPaintedBlossomMaterial } from './blossom-painted-material';
+import { CUT, channels } from './finale-cut';
 
 const BLACK = '#09090b';
-const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
-const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 const petalCurve = (x, y) => 0.04 + 0.20 * (y / 1.35) ** 2 + 0.11 * (x / 0.65) ** 2;
 const PETAL_CENTER = new THREE.Vector3(0, 0.58, petalCurve(0, 0.58) + 0.075);
 
@@ -64,14 +63,15 @@ function createPetalGeometry() {
 }
 
 /**
- * Full-finale progress: 0..1. Root owns the sticky section and its scroll clock.
- * Optional getProgress() lets the animation read a mutable scroll value without
- * forcing a React rerender on every frame. The progress prop remains supported.
+ * Renders the flower from the finale's channels (see finale-cut.js). The
+ * timeline owns the scroll clock; getChannels() hands this scene the same
+ * smoothed values the DOM uses, without a React rerender per frame.
+ * The plain progress prop remains supported.
  */
-export default function BlossomScene({ progress = 0, reducedMotion = false, getProgress }) {
+export default function BlossomScene({ progress = 0, reducedMotion = false, getChannels, getProgress }) {
   const mountRef = useRef(null);
-  const inputs = useRef({ progress, reducedMotion, getProgress });
-  inputs.current = { progress, reducedMotion, getProgress };
+  const inputs = useRef({ progress, reducedMotion, getChannels, getProgress });
+  inputs.current = { progress, reducedMotion, getChannels, getProgress };
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -187,13 +187,9 @@ export default function BlossomScene({ progress = 0, reducedMotion = false, getP
       const dt = Math.min((now - lastTime) / 1000, 0.05) || 0.016;
       lastTime = now;
       const input = inputs.current;
-      const supplied = input.getProgress ? input.getProgress() : input.progress;
-      const p = clamp(Number.isFinite(supplied) ? supplied : 0);
+      const { p, retreat, close, dark } = input.getChannels ? input.getChannels()
+        : channels(input.getProgress ? input.getProgress() : input.progress);
       const still = input.reducedMotion;
-      const approach = smooth(0.15, 0.38, p);
-      const retreat = smooth(0.72, 0.94, p);
-      const close = approach * (1 - retreat);
-      const dark = smooth(0.38, 0.50, p) * (1 - smooth(0.745, 0.90, p));
       if (!still && visible && !(document.hidden || document.body.classList.contains('portfolio-route-open'))) idleTime += dt * (1 - close);
 
       flower.rotation.set(
@@ -221,9 +217,10 @@ export default function BlossomScene({ progress = 0, reducedMotion = false, getP
       camera.position.copy(target).addScaledVector(direction, distance);
       camera.up.set(0, 1, 0);
       camera.lookAt(target);
-      darkUniform.value = dark;
+      // Keep 6% of the painted skin: the dark reads as the inside of the petal, not a void.
+      darkUniform.value = dark * 0.94;
       renderer.setClearAlpha(dark);
-      mount.dataset.phase = p < 0.15 ? 'sculpture' : p < 0.38 ? 'approach' : p < 0.50 ? 'pink-to-black' : p < 0.72 ? 'philosophy' : p < 0.94 ? 'return' : 'ending';
+      mount.dataset.phase = p < CUT.dive[0] ? 'sculpture' : p < CUT.darkIn[0] ? 'approach' : p < CUT.darkIn[1] ? 'pink-to-black' : p < CUT.darkOut[0] ? 'philosophy' : p < CUT.retreat[1] ? 'return' : 'ending';
       if (visible && !(document.hidden || document.body.classList.contains('portfolio-route-open'))) renderer.render(scene, camera);
       frame = requestAnimationFrame(render);
     }
