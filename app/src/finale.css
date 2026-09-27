@@ -8,6 +8,8 @@
 .mask-in{display:block}
 .finale-journey .blossom-small-copy .eyebrow,.finale-journey .philosophy>.eyebrow,.finale-journey .return-copy i{display:block}
 .finale-journey .reading-text span{transition:none}
+/* The CTA fades on a wrapper: .text-link keeps its own hover transition, which would otherwise smear a scrubbed opacity. */
+.finale-cta{display:inline-block;flex-shrink:0}
 
 /* The grade, bottom to top: ground · halo · lens · iris · type · grain. */
 .finale-halo,.finale-halo-glow,.blossom-lens,.finale-iris{position:absolute;inset:0;pointer-events:none}
