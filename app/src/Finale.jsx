@@ -39,9 +39,9 @@ function play(hit,state,instant){
 
 /** Builds the finale for one media condition. GSAP's matchMedia reverts every
  *  tween and trigger made here; the returned cleanup undoes the manual writes. */
-function direct(root,clock,{scrub,lens}){
+function direct(root,clock,{scrub}){
  const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];
- const ground=q('.finale-ground'),lensEl=q('.blossom-lens'),iris=q('.finale-iris'),grain=q('.finale-grain'),mount=q('.world-scene');
+ const ground=q('.finale-ground'),iris=q('.finale-iris'),grain=q('.finale-grain'),mount=q('.world-scene');
  const words=qa('.reading-text span'),lit=new Float32Array(words.length).fill(-1);
  const [lineA,lineB]=qa('.bloom-title>.mask');
  const hits=[
@@ -60,8 +60,6 @@ function direct(root,clock,{scrub,lens}){
  // Write only on change: most channels sit still across long stretches of scroll.
  const memo=new Map();
  const set=(el,prop,value)=>{let last=memo.get(el);if(!last)memo.set(el,last={});if(last[prop]===value)return;last[prop]=value;if(prop.startsWith('--'))el.style.setProperty(prop,value);else el.style[prop]=value;};
- // Create the lens's filter surface now, not when the rack focus first pulls mid-scroll.
- if(lens)set(lensEl,'willChange','filter,transform');
  const state={p:0};
  // The lens only settles in as the stage lands (last 30% of the entry) and lifts as it
  // leaves, so no grain or vignette ever meets the plain sections above and below at an edge.
@@ -76,10 +74,6 @@ function direct(root,clock,{scrub,lens}){
   // Never fully 0: the browser skips painting a transparent layer, and rasterising this
   // viewport-sized grain for the first time mid-entry cost a measured 50 ms frame.
   set(grain,'opacity',Math.max(.001,c.grain*presence).toFixed(3));
-  // Rack focus. The blur stays at or under 2px: past that the compositor switches to a
-  // downsampled blur and allocates new textures mid-scroll (a measured 32 ms hitch at 3px).
-  // The receding opacity carries the rest of the focus pull at no cost.
-  if(lens){set(lensEl,'filter',c.focus>.004?`blur(${(c.focus*2).toFixed(2)}px)`:'none');set(lensEl,'transform',`scale(${(1+c.focus*.015).toFixed(4)})`);set(lensEl,'opacity',(1-c.focus*.12).toFixed(3));}
   const head=c.read*(words.length+6);                 // a six-glyph soft leading edge
   for(let i=0;i<words.length;i++){const t=Math.round(Math.max(0,Math.min(1,(head-i)/6))*40)/40;if(t!==lit[i]){lit[i]=t;words[i].style.color=rgb(DIM,LIT,t);}}
   for(const hit of hits){const s=hitState(c.p,hit.beat);if(s!==hit.state){play(hit,s,hit.state===null);hit.state=s;}}
@@ -132,12 +126,12 @@ export default function Finale({lang,reduced,onAbout}){
   // v16.css's own breakpoint, written as a query and its negation so every width
   // (fractional ones under browser zoom included) builds exactly one timeline.
   // Touch scrolling already carries momentum; a long scrub on top reads as float.
-  media.add({mobile:'(max-width: 700px)',desktop:'not all and (max-width: 700px)'},({conditions})=>direct(node,clock,{scrub:conditions.desktop?1.2:.8,lens:conditions.desktop}));
+  media.add({mobile:'(max-width: 700px)',desktop:'not all and (max-width: 700px)'},({conditions})=>direct(node,clock,{scrub:conditions.desktop?1.2:.8}));
   return()=>media.revert();
  },[reduced,lang]);
  return <section ref={root} className="finale-journey" id="practice" data-nav-tone={reduced?'dark':'light'}><div className="finale-stage">
   <div className="finale-ground"/>
-  <div className="blossom-wrap"><div className="blossom-lens"><WorldScene getChannels={()=>clock.current} reducedMotion={reduced}/></div></div>
+  <div className="blossom-wrap"><WorldScene getChannels={()=>clock.current} reducedMotion={reduced}/></div>
   <div className="finale-iris" aria-hidden="true"/>
   <div className="blossom-small-copy"><span className="eyebrow"><Line>A SMALL IDEA. AN ENTIRE WORLD.</Line></span><p><Line>{copy.invite}</Line></p></div>
   <div className="bloom-title">{copy.title.map(line=><Letters key={line} line={line} en={en}/>)}<span className="visually-hidden">{copy.title.join(' ')}</span></div>
