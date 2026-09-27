@@ -18,16 +18,18 @@
 .finale-iris{--iris-in:38vmax;--iris-out:80vmax;--iris-a:.14;background:radial-gradient(circle at 50% 50%,rgba(9,9,11,0) var(--iris-in),rgba(9,9,11,var(--iris-a)) var(--iris-out))}
 
 /* The depth layer: out-of-focus disciplines drifting behind the reading. */
-.finale-journey .philosophy-ribbon{top:50%;bottom:auto;left:0;margin-top:-.6em;font-size:clamp(96px,15vw,260px);font-weight:300;letter-spacing:-.04em;line-height:1.2;color:#fff;filter:blur(2.5px);z-index:2;transform:none}
+/* Out of focus via a text-shadow baked into the glyph raster, not a CSS filter:
+   a filter needs its own compositor surface, and creating it mid-scroll hitched. */
+.finale-journey .philosophy-ribbon{top:50%;bottom:auto;left:0;margin-top:-.6em;font-size:clamp(96px,15vw,260px);font-weight:300;letter-spacing:-.04em;line-height:1.2;color:transparent;text-shadow:0 0 .1em #fff;z-index:2;transform:none}
 .finale-journey .philosophy-ribbon>span{animation:finale-drift 80s linear infinite;animation-play-state:paused}
 .finale-journey .philosophy{z-index:3}
 
 /* Film grain: a stepped 24fps-style jitter of a grey noise tile, over everything. */
-.finale-grain{position:absolute;inset:-60%;z-index:6;pointer-events:none;opacity:.05;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px;animation:film-grain .9s steps(8) infinite;animation-play-state:paused}
+.finale-grain{position:absolute;inset:-60%;z-index:6;pointer-events:none;opacity:.001;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px;animation:film-grain .9s steps(8) infinite;animation-play-state:paused}
 .finale-grain.is-running,.finale-journey .philosophy-ribbon.is-running>span{animation-play-state:running}
 body.portfolio-route-open .finale-grain{animation-play-state:paused}
 @keyframes film-grain{0%,100%{transform:translate3d(0,0,0)}12%{transform:translate3d(-7%,4%,0)}25%{transform:translate3d(5%,-8%,0)}37%{transform:translate3d(-10%,9%,0)}50%{transform:translate3d(8%,6%,0)}62%{transform:translate3d(-4%,-10%,0)}75%{transform:translate3d(10%,2%,0)}87%{transform:translate3d(-8%,-4%,0)}}
 @keyframes finale-drift{to{transform:translate3d(-50%,0,0)}}
 
 .quiet .finale-halo,.quiet .finale-iris,.quiet .finale-grain{display:none}
-@media(max-width:699px){.finale-journey .philosophy-ribbon{font-size:22vw}}
+@media(max-width:700px){.finale-journey .philosophy-ribbon{font-size:22vw}}

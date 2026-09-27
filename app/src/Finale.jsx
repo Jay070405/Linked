@@ -31,15 +31,26 @@ function direct(root,clock,{scrub,lens}){
  // Write only on change: most channels sit still across long stretches of scroll.
  const memo=new Map();
  const set=(el,prop,value)=>{let last=memo.get(el);if(!last)memo.set(el,last={});if(last[prop]===value)return;last[prop]=value;if(prop.startsWith('--'))el.style.setProperty(prop,value);else el.style[prop]=value;};
+ // Create the lens's filter surface now, not when the rack focus first pulls mid-scroll.
+ if(lens)set(lensEl,'willChange','filter,transform');
  const state={p:0};
+ // The lens only settles in as the stage lands (last 30% of the entry) and lifts as it
+ // leaves, so no grain or vignette ever meets the plain sections above and below at an edge.
+ let entered=0,left=0;
  const apply=()=>{
   const c=channels(state.p);clock.current=c;
   set(ground,'background',rgb(PAPER,INK,c.dark));
   set(glow,'opacity',c.halo.toFixed(3));set(glow,'transform',`scale(${c.haloScale.toFixed(3)})`);
-  set(iris,'--iris-in',`${mix(38,0,c.iris).toFixed(1)}vmax`);set(iris,'--iris-out',`${mix(80,14,c.iris).toFixed(1)}vmax`);set(iris,'--iris-a',mix(.14,1,c.iris).toFixed(3));
-  set(grain,'opacity',c.grain.toFixed(3));
-  set(ribbon,'opacity',(c.depth*.07).toFixed(4));set(ribbon,'transform',`translate3d(${(-span(c.p,CUT.depth)*35).toFixed(2)}vw,0,0)`);
-  if(lens){set(lensEl,'filter',c.focus>.004?`blur(${(c.focus*5).toFixed(2)}px)`:'none');set(lensEl,'transform',`scale(${(1+c.focus*.015).toFixed(4)})`);}
+  const presence=entered*(1-left);
+  set(iris,'--iris-in',`${mix(38,0,c.iris).toFixed(1)}vmax`);set(iris,'--iris-out',`${mix(80,14,c.iris).toFixed(1)}vmax`);set(iris,'--iris-a',mix(.14*presence,1,c.iris).toFixed(3));
+  // Never fully 0: the browser skips painting a transparent layer, and rasterising this
+  // viewport-sized grain for the first time mid-entry cost a measured 50 ms frame.
+  set(grain,'opacity',Math.max(.001,c.grain*presence).toFixed(3));
+  set(ribbon,'opacity',(c.depth*.05).toFixed(4));set(ribbon,'transform',`translate3d(${(-span(c.p,CUT.depth)*35).toFixed(2)}vw,0,0)`);
+  // Rack focus. The blur stays at or under 2px: past that the compositor switches to a
+  // downsampled blur and allocates new textures mid-scroll (a measured 32 ms hitch at 3px).
+  // The receding opacity carries the rest of the focus pull at no cost.
+  if(lens){set(lensEl,'filter',c.focus>.004?`blur(${(c.focus*2).toFixed(2)}px)`:'none');set(lensEl,'transform',`scale(${(1+c.focus*.015).toFixed(4)})`);set(lensEl,'opacity',(1-c.focus*.12).toFixed(3));}
   const head=c.read*(words.length+6);                 // a six-glyph soft leading edge
   for(let i=0;i<words.length;i++){const t=Math.round(Math.max(0,Math.min(1,(head-i)/6))*40)/40;if(t!==lit[i]){lit[i]=t;words[i].style.color=rgb(DIM,LIT,t);}}
   const tone=c.dark>.48?'dark':'light';if(root.dataset.navTone!==tone)root.dataset.navTone=tone;
@@ -49,18 +60,19 @@ function direct(root,clock,{scrub,lens}){
  tl.to(state,{p:1,duration:D,ease:'none',onUpdate:apply},0);
  gsap.set([q('.bloom-title'),q('.return-copy')],{autoAlpha:1});
  cutOut(tl,qa('.blossom-small-copy .mask-in'),CUT.inviteOut);
- cutIn(tl,qa('.bloom-title .mask-in'),CUT.titleIn,{letterSpacing:'.06em',filter:'blur(8px)'},{letterSpacing:'-.07em',filter:'blur(0px)'});
+ cutIn(tl,qa('.bloom-title .mask-in'),CUT.titleIn,{letterSpacing:'.06em'},{letterSpacing:'-.07em'});
  tl.fromTo(q('.bloom-title'),{yPercent:4},{yPercent:-4,ease:'none',duration:len([CUT.titleIn[0],CUT.titleOut[1]])},at(CUT.titleIn));
- cutOut(tl,qa('.bloom-title .mask-in'),CUT.titleOut,{filter:'blur(6px)'});
+ cutOut(tl,qa('.bloom-title .mask-in'),CUT.titleOut);
  tl.fromTo(q('.philosophy'),{autoAlpha:0},{autoAlpha:1,ease:'none',duration:len(CUT.eyebrow)*.5},at(CUT.eyebrow));
  cutIn(tl,q('.philosophy>.eyebrow .mask-in'),CUT.eyebrow);
  cutIn(tl,q('.philosophy-details .mask-in'),CUT.details);
  tl.fromTo(q('.finale-cta'),{autoAlpha:0,y:14},{autoAlpha:1,y:0,ease:EASE.cutIn,duration:len(CUT.details)*.7},at(CUT.details)+len(CUT.details)*.3);
- tl.to(q('.philosophy'),{autoAlpha:0,yPercent:-6,filter:'blur(6px)',ease:'power2.in',duration:len(CUT.philOut)},at(CUT.philOut));
+ tl.to(q('.philosophy'),{autoAlpha:0,yPercent:-6,ease:'power2.in',duration:len(CUT.philOut)},at(CUT.philOut));
  cutIn(tl,qa('.return-copy .mask-in'),CUT.ending);
 
  // Entry: the flower rises into frame with parallax as the section arrives.
- gsap.fromTo(q('.blossom-wrap'),{yPercent:14,scale:.9},{yPercent:0,scale:1,ease:EASE.settle,scrollTrigger:{trigger:root,start:'top bottom',end:'top top',scrub:true}});
+ gsap.fromTo(q('.blossom-wrap'),{yPercent:14,scale:.9},{yPercent:0,scale:1,ease:EASE.settle,scrollTrigger:{trigger:root,start:'top bottom',end:'top top',scrub:true,onUpdate:self=>{entered=span(self.progress,[.7,1]);apply();}}});
+ ScrollTrigger.create({trigger:root,start:'bottom bottom',end:'bottom top',onUpdate:self=>{left=span(self.progress,[0,.3]);apply();}});
  gsap.fromTo(q('.finale-halo'),{autoAlpha:0},{autoAlpha:1,ease:'none',scrollTrigger:{trigger:root,start:'top 60%',end:'top top',scrub:true}});
  ScrollTrigger.create({trigger:root,start:'top bottom',end:'bottom top',onToggle:self=>{grain.classList.toggle('is-running',self.isActive);ribbon.classList.toggle('is-running',self.isActive);}});
 
@@ -94,8 +106,10 @@ export default function Finale({lang,reduced,onAbout}){
   if(reduced){clock.current=channels(0);return undefined;}
   gsap.registerPlugin(ScrollTrigger);
   const media=gsap.matchMedia();
+  // v16.css's own breakpoint, written as a query and its negation so every width
+  // (fractional ones under browser zoom included) builds exactly one timeline.
   // Touch scrolling already carries momentum; a long scrub on top reads as float.
-  media.add({desktop:'(min-width: 700px)',mobile:'(max-width: 699px)'},({conditions})=>direct(node,clock,{scrub:conditions.desktop?1.2:.8,lens:conditions.desktop}));
+  media.add({mobile:'(max-width: 700px)',desktop:'not all and (max-width: 700px)'},({conditions})=>direct(node,clock,{scrub:conditions.desktop?1.2:.8,lens:conditions.desktop}));
   return()=>media.revert();
  },[reduced,lang]);
  return <section ref={root} className="finale-journey" id="practice" data-nav-tone={reduced?'dark':'light'}><div className="finale-stage">
@@ -103,7 +117,7 @@ export default function Finale({lang,reduced,onAbout}){
   <div className="finale-halo" aria-hidden="true"><div className="finale-halo-glow"/></div>
   <div className="blossom-wrap"><div className="blossom-lens"><BlossomScene getChannels={()=>clock.current} reducedMotion={reduced}/></div></div>
   <div className="finale-iris" aria-hidden="true"/>
-  <div className="philosophy-ribbon" aria-hidden="true"><span>{DISCIPLINES.repeat(4)}</span></div>
+  <div className="philosophy-ribbon" aria-hidden="true"><span>{DISCIPLINES.repeat(2)}</span></div>
   <div className="blossom-small-copy"><span className="eyebrow"><Line>A SMALL IDEA. AN ENTIRE WORLD.</Line></span><p><Line>{copy.invite}</Line></p></div>
   <div className="bloom-title">{copy.title.map(line=><Line key={line}>{line}</Line>)}</div>
   <div className="philosophy">
