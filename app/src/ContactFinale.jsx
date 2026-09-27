@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { author } from './portfolioData';
 import BrandFinale from './components/BrandFinale';
 import ExpressiveTitle from './components/ExpressiveTitle';
+import PointField from './PointField';
 import './contact-finale.css';
 
 const modalHasPriority = () => [...document.querySelectorAll('dialog[open], [role="dialog"][aria-modal="true"]')]
@@ -66,23 +67,10 @@ function useContactLight(reduced) {
   return { onPointerMove: move, onPointerLeave: leave, onPointerCancel: leave };
 }
 
-function QuietAtmosphere() {
+// The same quiet dot grid as the systems section: the page ends on the rules it began with.
+function QuietAtmosphere({ reduced }) {
   return <div className="cfx-atmosphere" aria-hidden="true">
-    <svg className="cfx-branch-shadow" viewBox="0 0 1000 760" fill="none">
-      <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M1040-70C840 108 810 266 676 347S437 426 310 627" strokeWidth="13" />
-        <path d="M849 166C749 134 611 119 515 27M739 297C701 179 726 92 685-25M610 381C531 321 462 215 380 186M464 461C346 429 236 461 137 401M348 571C367 468 331 370 274 331" strokeWidth="5" />
-        <path d="M768 146L752 55M647 102L625 5M697 207L586 170M539 307L541 230M449 264L366 298M315 438L251 376M365 477L409 375M293 362L204 325" strokeWidth="2.4" />
-      </g>
-      <g fill="currentColor">
-        <ellipse cx="755" cy="67" rx="12" ry="32" transform="rotate(-30 755 67)" />
-        <ellipse cx="584" cy="170" rx="30" ry="11" transform="rotate(18 584 170)" />
-        <ellipse cx="540" cy="232" rx="11" ry="28" transform="rotate(9 540 232)" />
-        <ellipse cx="364" cy="299" rx="29" ry="11" transform="rotate(-24 364 299)" />
-        <ellipse cx="408" cy="378" rx="11" ry="30" transform="rotate(23 408 378)" />
-        <ellipse cx="251" cy="377" rx="10" ry="26" transform="rotate(-32 251 377)" />
-      </g>
-    </svg>
+    <PointField className="contact-field" reducedMotion={reduced} />
     <div className="cfx-passing-light" />
   </div>;
 }
@@ -171,12 +159,12 @@ export default function ContactFinale({ lang = 'zh', reduced = false, onNavigate
   };
 
   return <section ref={sectionRef} id="contact" data-nav-tone="light" className={`contact-finale${reduced ? ' is-reduced' : ''}`} aria-labelledby="cfx-title">
-    <QuietAtmosphere />
+    <QuietAtmosphere reduced={reduced} />
     <div className="cfx-topline"><span>LET’S WORK TOGETHER</span><span className="cfx-availability"><i />{en ? 'A conversation starts here' : '从一次交谈开始'}</span></div>
     <div className="cfx-introduction">
       <h2 id="cfx-title" aria-label={en ? 'Good ideas. Real experiences.' : '把想法，做成体验。'} className={`cfx-title${en ? ' cfx-title-en' : ''}`}>
         <span><ExpressiveTitle reduced={reduced}>{en ? 'GOOD IDEAS.' : '把想法，'}</ExpressiveTitle></span>
-        <span><ExpressiveTitle reduced={reduced}>{en ? 'REAL EXPERIENCES.' : '做成体验。'}</ExpressiveTitle><i aria-hidden="true">✳</i></span>
+        <span><ExpressiveTitle reduced={reduced}>{en ? 'REAL EXPERIENCES.' : '做成体验。'}</ExpressiveTitle><i aria-hidden="true" className="cfx-pearl" /></span>
       </h2>
       <div className="cfx-note"><p><ExpressiveTitle reduced={reduced} variant="type" typingSpeed={44}>{en ? 'From the first thought to the final detail.' : '从最初的念头，到体验的每一处。'}</ExpressiveTitle></p><span>{en ? 'Systems, visual worlds, and the work that connects them. Let’s talk.' : '关于系统策划、视觉创作，或两者之间的新可能，欢迎聊聊。'}</span></div>
     </div>

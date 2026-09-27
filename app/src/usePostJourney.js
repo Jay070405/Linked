@@ -18,7 +18,7 @@ export function usePostJourney({reduced,lang}) {
   if(reduced)return;
   const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
   const intro=q('.intro-journey'),art=q('.art-journey'),track=q('.art-track'),bridge=q('.art-bridge');
-  const shared=q('.shared-petal'),branchOuter=q('.art-branch-scroll'),branch=q('.art-branch'),light=q('.art-light'),opening=q('.art-opening h2'),atmosphere=q('.art-atmosphere');
+  const shared=q('.shared-petal'),light=q('.art-light'),opening=q('.art-opening h2'),atmosphere=q('.art-atmosphere');
   const cards=qa('.art-work');
   let raf=0,alive=true,last=performance.now(),previousY=scrollY,energy=1,wi=innerWidth,he=innerHeight,m={};
   const opacity=(el,a)=>{if(!el)return;el.style.opacity=a;el.style.visibility=a>.002?'visible':'hidden';};
@@ -39,15 +39,11 @@ export function usePostJourney({reduced,lang}) {
    const t=ambient.current.art,amp=mobile?.5:1;
    track.style.transform=`translate3d(${-ap*m.travel}px,0,0)`;
    q('.art-progress i').style.transform=`scaleX(${ap})`;
-   branchOuter.style.transform=`translate3d(${-ap*180}px,0,0) rotate(${-ap*7}deg)`;
-   branch.style.setProperty('--branch-r',`${Math.sin(t*Math.PI*2/14)*.6*amp}deg`);
-   branch.style.setProperty('--branch-y',`${Math.sin(t*Math.PI*2/17)*3*amp}px`);
    light.style.setProperty('--light-x',`${Math.sin(t*Math.PI*2/22)*1.2*amp}%`);
    light.style.setProperty('--light-y',`${Math.cos(t*Math.PI*2/25)*.8*amp}%`);
    opening.style.setProperty('--heading-y',`${Math.sin(t*Math.PI*2/16)*2.5*amp}px`);
-   const artExit=ease(range(ap,.76,1));atmosphere.style.opacity=1-artExit;branchOuter.style.opacity=1-artExit;
+   const artExit=ease(range(ap,.76,1));atmosphere.style.opacity=1-artExit;
    const bp=range(he-(m.bridge-y),0,he*1.8);
-   q('.bridge-petal').style.transform=`perspective(700px) translate3d(${mix(-wi*.25,wi*.3,bp)}px,${mix(-90,180,bp)}px,0) ${flutter(bp)} rotate(${bp*220}deg) scale(${mix(.4,3,bp)})`;
    bridge.style.setProperty('--bridge-reveal',ease(range(bp,.12,.6)));
    q('.journey-indicator i').style.transform=`scaleY(${y/Math.max(1,document.documentElement.scrollHeight-he)})`;
    raf=requestAnimationFrame(draw);

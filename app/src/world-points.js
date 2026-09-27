@@ -5,7 +5,8 @@
 
 export const ROLE = {land: 0, sea: 1, ring: 2, dust: 3};
 
-function random(seed) {
+/** A small seeded generator (mulberry32): the same seed always draws the same points. */
+export function random(seed) {
   let a = seed >>> 0;
   return () => {
     a = (a + 0x6d2b79f5) >>> 0;
