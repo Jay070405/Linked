@@ -241,4 +241,21 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
   check(next.getState().volume===.19 && h.media.volume===.19,'New controller restores saved volume');
   next.dispose();
 }
+// A project film temporarily owns audio without overwriting the music preference.
+{
+  const h=harness(), controller=createMusicController(h.media,h.options);
+  await flush();h.advance(1300);
+  const preferenceBefore=h.data.get(MUSIC_PREFERENCE_KEY);
+  controller.setSuppressed(true);
+  check(h.media.paused && h.media.volume===0,'Project playback immediately pauses background audio');
+  check(controller.getState().enabled && h.data.get(MUSIC_PREFERENCE_KEY)===preferenceBefore,'Film does not overwrite music preference');
+  h.document.emit('visibilitychange');await flush();
+  check(h.media.paused,'Visibility cannot restart music over a playing film');
+  controller.setSuppressed(false);await flush();h.advance(1300);
+  check(!h.media.paused && h.media.currentTime===26,'Closing or pausing film resumes the previous music position');
+  controller.toggle();h.advance(600);
+  controller.setSuppressed(true);controller.setSuppressed(false);await flush();
+  check(h.media.paused && !controller.getState().enabled,'Film cleanup respects music already switched off');
+  controller.dispose();
+}
 console.log(`${checks} background-music assertions passed.`);

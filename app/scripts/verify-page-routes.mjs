@@ -13,6 +13,8 @@ assert.equal(routing.routeFor('/vibecoding/experiment-02'),null);
 assert.equal(routing.resolvePath('/field01/assets/missing.glb'),null);
 assert.equal(routing.resolvePath('/systems/roco').type,'system');
 assert.equal(routing.resolvePath('/systems/roco/model').type,'model');
+assert.equal(routing.resolvePath('/systems/nexus').item.video,'/assets/nexus/nexus-chapter-one.mp4');
+assert.equal(routing.routeFor({type:'system',item:{id:'nexus'}}),'/systems/nexus');
 assert.equal(new Set(allWorks.map(w=>w.href)).size,25);
 for (const work of allWorks) {
   assert.equal(routing.resolvePath(work.href).item.id,work.id);

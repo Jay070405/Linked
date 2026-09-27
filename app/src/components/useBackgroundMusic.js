@@ -23,6 +23,8 @@ export function createMusicController(audio, options = {}) {
   let enabled = preference(storage), status = enabled ? 'pending' : 'off';
   let volume = MUSIC_VOLUME;
   try { const saved = storage?.getItem(MUSIC_VOLUME_KEY); if (saved !== null && saved !== undefined && Number.isFinite(Number(saved))) volume = Math.max(0, Math.min(1, Number(saved))); } catch { /* Local preferences are optional. */ }
+  let suppressed = false;
+  const blocked = () => doc.hidden || suppressed;
   let disposed = false, request = 0, frame = 0, pending = false, needsGesture = false;
   let context = null, gain = null, source = null;
   const emit = next => {
@@ -51,13 +53,13 @@ export function createMusicController(audio, options = {}) {
   const actualPlaying = () => !audio.paused && !audio.ended && audio.readyState >= 3 && (!context || context.state === 'running');
   const playing = () => {
     if (disposed) return;
-    if (!enabled || doc.hidden) { audio.pause(); setLevel(0); return; }
+    if (!enabled || blocked()) { audio.pause(); setLevel(0); return; }
     if (!actualPlaying()) return;
     needsGesture = false;
     if (status !== 'playing') { emit('playing'); fade(volume, 1200); }
   };
   const start = () => {
-    if (disposed || !enabled || doc.hidden || pending) return;
+    if (disposed || !enabled || blocked() || pending) return;
     cancelFade();
     if (actualPlaying() && audio.readyState >= 3) { playing(); fade(volume, 1000); return; }
     const token = ++request;
@@ -75,9 +77,9 @@ export function createMusicController(audio, options = {}) {
     } catch (error) { playRequest = Promise.reject(error); }
     Promise.all([Promise.resolve(playRequest), Promise.resolve(resumeRequest)]).then(() => {
       if (disposed) return;
-      if (token !== request) { if (!enabled || doc.hidden) { audio.pause(); setLevel(0); } return; }
+      if (token !== request) { if (!enabled || blocked()) { audio.pause(); setLevel(0); } return; }
       pending = false;
-      if (!enabled || doc.hidden) { audio.pause(); return; }
+      if (!enabled || blocked()) { audio.pause(); return; }
       if (actualPlaying()) playing();
       else { needsGesture = true; emit('pending'); }
     }).catch(error => {
@@ -87,7 +89,7 @@ export function createMusicController(audio, options = {}) {
       audio.pause();
       setLevel(0);
       if (!enabled) { emit('off'); return; }
-      if (doc.hidden) { emit('suspended'); return; }
+      if (blocked()) { emit('suspended'); return; }
       needsGesture = error?.name === 'NotAllowedError' || error?.name === 'AbortError';
       emit(needsGesture ? 'pending' : 'error');
     });
@@ -102,11 +104,11 @@ export function createMusicController(audio, options = {}) {
     }
   };
   const visibility = () => {
-    if (doc.hidden) stop(true);
+    if (blocked()) stop(true);
     else if (enabled) start();
   };
   const unlock = event => {
-    if (!event.isTrusted || !enabled || doc.hidden || !needsGesture || pending) return;
+    if (!event.isTrusted || !enabled || blocked() || !needsGesture || pending) return;
     if (event.target?.closest?.('[data-music-toggle]')) return;
     if (event.type === 'keydown' && (event.repeat || event.isComposing || ['Shift', 'Control', 'Alt', 'Meta'].includes(event.key))) return;
     start();
@@ -114,16 +116,16 @@ export function createMusicController(audio, options = {}) {
   const paused = () => {
     if (disposed || status === 'stopping') return;
     if (!enabled) emit('off');
-    else if (doc.hidden) emit('suspended');
+    else if (blocked()) emit('suspended');
     else if (status !== 'error' && !pending) emit('pending');
   };
-  const waiting = () => { if (enabled && !doc.hidden && status !== 'stopping') emit('loading'); };
+  const waiting = () => { if (enabled && !blocked() && status !== 'stopping') emit('loading'); };
   const failed = () => {
     request += 1; pending = false; needsGesture = false; cancelFade();
     audio.pause(); setLevel(0); emit(enabled ? 'error' : 'off');
   };
   const contextState = () => {
-    if (!context || disposed || !enabled || doc.hidden) return;
+    if (!context || disposed || !enabled || blocked()) return;
     if (context.state === 'running') playing();
     else { needsGesture = true; emit('pending'); }
   };
@@ -158,15 +160,19 @@ export function createMusicController(audio, options = {}) {
   doc.addEventListener('pointerdown', unlock, { capture: true, passive: true });
   doc.addEventListener('keydown', unlock, true);
   emit(status);
-  if (enabled && !doc.hidden) start();
+  if (enabled && !blocked()) start();
   else { setLevel(0); emit(enabled ? 'suspended' : 'off'); }
   return {
     getState: () => ({ enabled, status, volume }),
+    setSuppressed(value) {
+      suppressed = Boolean(value);
+      if (suppressed) stop(true); else if (enabled) start();
+    },
     setVolume(value) {
       if (!Number.isFinite(value)) return;
       volume = Math.max(0, Math.min(1, value));
       try { storage?.setItem(MUSIC_VOLUME_KEY, String(volume)); } catch { /* Playback works without storage. */ }
-      if (enabled && actualPlaying() && !doc.hidden && status !== 'stopping') fade(volume, 80);
+      if (enabled && actualPlaying() && !blocked() && status !== 'stopping') fade(volume, 80);
       emit(status);
     },
     toggle() {
@@ -176,7 +182,7 @@ export function createMusicController(audio, options = {}) {
       try { storage?.setItem(MUSIC_PREFERENCE_KEY, enabled ? 'on' : 'off'); } catch { /* Playback works without storage. */ }
       if (enabled) {
         if (audio.error) audio.load();
-        if (doc.hidden) emit('suspended'); else start();
+        if (blocked()) emit('suspended'); else start();
       } else stop();
     },
     dispose() {
@@ -205,5 +211,6 @@ export default function useBackgroundMusic(audioRef) {
   }, [audioRef]);
   const toggle = useCallback(() => controller.current?.toggle(), []);
   const setVolume = useCallback(value => controller.current?.setVolume(value), []);
-  return { ...state, toggle, setVolume };
+  const setSuppressed = useCallback(value => controller.current?.setSuppressed?.(value), []);
+  return { ...state, toggle, setVolume, setSuppressed };
 }

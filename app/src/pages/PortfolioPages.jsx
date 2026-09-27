@@ -7,6 +7,7 @@ import './portfolio-pages.css';
 const ArtDesk=lazy(()=>import('./ArtDesk'));
 const RocoCase=lazy(()=>import('./RocoCase'));
 const LeagueCase=lazy(()=>import('./LeagueCase'));
+const NexusCase=lazy(()=>import('./NexusCase'));
 const RocoModel=lazy(()=>import('./RocoModel'));
 const VibeCoding=lazy(()=>import('./VibeCoding'));
 const loadField01=()=>import('./Field01');
@@ -42,7 +43,7 @@ export default function PortfolioPages({page,lang,reduced,onNavigate,onBack,page
    (page.type==='field01'?cameraHost.current:el)?.focus({preventScroll:true});
  },[path,pageScroll]);
  useEffect(()=>{
-   const suffix=page.type==='vibecoding'?'Vibe coding':page.type==='field01'?'FIELD / 01':page.type==='desk'?'Visual Worlds':page.type==='archive'?(en?'Work archive':'作品档案'):page.type==='art'?(en?page.item.titleEn:page.item.title):page.type==='model'?(en?'Roco · Model lab':'洛克 · 模型实验室'):page.item?.id==='league-of-legends'?(en?'League of Legends · Live operations':'英雄联盟 · 长线运营'):(en?'Roco Kingdom · Case study':'洛克王国：世界 · 系统策划');
+   const suffix=page.type==='vibecoding'?'Vibe coding':page.type==='field01'?'FIELD / 01':page.type==='desk'?'Visual Worlds':page.type==='archive'?(en?'Work archive':'作品档案'):page.type==='art'?(en?page.item.titleEn:page.item.title):page.type==='model'?(en?'Roco · Model lab':'洛克 · 模型实验室'):page.item?.id==='nexus'?(en?'NEXUS · The Island':'NEXUS · 孤岛'):page.item?.id==='league-of-legends'?(en?'League of Legends · Live operations':'英雄联盟 · 长线运营'):(en?'Roco Kingdom · Case study':'洛克王国：世界 · 系统策划');
    document.title='JAY LIN — '+suffix;
    return()=>{document.title='JAY LIN — Between rules & wonder · V16';};
  },[page,lang,en]);
@@ -50,7 +51,7 @@ export default function PortfolioPages({page,lang,reduced,onNavigate,onBack,page
  const cameraActive=page.type==='field01';
  return <><main ref={viewport} className={'portfolio-page-viewport route-'+page.type} id="portfolio-page" tabIndex={-1} inert={capture||cameraActive?true:undefined} aria-hidden={capture||cameraActive?true:undefined} data-nav-tone={['desk','archive'].includes(page.type)?'dark':'light'} aria-label={en?'Portfolio page':'作品集页面'} onScroll={event=>{pageScroll.current.set(path,event.currentTarget.scrollTop);}}>
    <PageBoundary key={path} lang={lang}><Suspense fallback={<div className="portfolio-page-loading" role="status"><span>JAY LIN / PORTFOLIO</span><p>{en?'Unfolding the work…':'正在展开作品…'}</p></div>}>
-    {page.type==='vibecoding'?<VibeCoding {...props}/>:cameraActive?null:page.type==='desk'?<ArtDesk {...props}/>:page.type==='archive'?<WorkArchive {...props} archiveState={archiveState}/>:page.type==='art'?<WorkDetail {...props} item={page.item}/>:page.type==='model'?<RocoModel {...props}/>:page.item?.id==='league-of-legends'?<LeagueCase {...props}/>:<RocoCase {...props}/>}
+    {page.type==='vibecoding'?<VibeCoding {...props}/>:cameraActive?null:page.type==='desk'?<ArtDesk {...props}/>:page.type==='archive'?<WorkArchive {...props} archiveState={archiveState}/>:page.type==='art'?<WorkDetail {...props} item={page.item}/>:page.type==='model'?<RocoModel {...props}/>:page.item?.id==='nexus'?<NexusCase {...props} item={page.item}/>:page.item?.id==='league-of-legends'?<LeagueCase {...props}/>:<RocoCase {...props}/>}
    </Suspense></PageBoundary>
   </main>{(capture||cameraActive)&&<div key="field01-host" ref={cameraHost} className={'vc-project-host'+(cameraActive?' is-active':' is-preparing')} tabIndex={-1} inert={!cameraActive?true:undefined} aria-hidden={!cameraActive?true:undefined} role={cameraActive?'main':undefined} aria-label="FIELD / 01">
    <div className="vc-project-content"><PageBoundary lang={lang}><Suspense fallback={null}><Field01 lang={lang} onBack={onBack} onReady={markCameraReady}/></Suspense></PageBoundary></div>

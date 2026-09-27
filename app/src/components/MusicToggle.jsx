@@ -4,8 +4,8 @@ import ExpressiveTitle from './ExpressiveTitle';
 import './MusicToggle.css';
 
 const statusText = {
-  zh: { playing: '正在播放 · 低音量', pending: '等待首次操作后播放', loading: '音乐加载中', off: '音乐已关闭', suspended: '离开页面，暂时暂停', stopping: '正在淡出', error: '音乐暂时无法播放' },
-  en: { playing: 'Playing · low volume', pending: 'Waiting for your first interaction', loading: 'Loading music', off: 'Music off', suspended: 'Paused while away', stopping: 'Fading out', error: 'Music unavailable' },
+  zh: { playing: '正在播放 · 低音量', pending: '等待首次操作后播放', loading: '音乐加载中', off: '音乐已关闭', suspended: '背景音乐暂时暂停', stopping: '正在淡出', error: '音乐暂时无法播放' },
+  en: { playing: 'Playing · low volume', pending: 'Waiting for your first interaction', loading: 'Loading music', off: 'Music off', suspended: 'Background music paused', stopping: 'Fading out', error: 'Music unavailable' },
 };
 const labels = { playing: 'ON', pending: 'WAIT', loading: '···', off: 'OFF', suspended: 'PAUSE', stopping: '···', error: '—' };
 
