@@ -29,9 +29,24 @@ for (const lang of ['zh', 'en']) for (const reduced of [false, true]) {
     assert.match(html, new RegExp(`data-nav-tone="${reduced ? 'dark' : 'light'}"`));
     assert.equal((html.match(/class="mask"/g) || []).length, 8, 'eight masked lines');
     assert.ok(!html.includes('expressive-title'), 'the scrubbed titles do not use the one-shot ExpressiveTitle');
-    assert.match(html, /class="blossom-scene"/, 'the 3D mount renders on the server');
+    assert.match(html, /class="world-scene"/, 'the 3D mount renders on the server');
+    assert.ok(!/blossom-scene|finale-halo|philosophy-ribbon/.test(html), 'the old blossom layers are gone');
   });
 
+}
+
+const TITLE = {zh: ['从一个念头，', '到一个世界。'], en: ['FROM A THOUGHT,', 'TO A WORLD.']};
+
+for (const lang of ['zh', 'en']) {
+  test(`the title is set letter by letter and still reads as one line each · ${lang}`, () => {
+    const html = render({lang, reduced: false});
+    const title = html.match(/<div class="bloom-title">(.*?)<\/div>/)[1];
+    const lines = title.split('<span class="mask" aria-hidden="true">').slice(1).map(line => line.split('<span class="visually-hidden">')[0]);
+    assert.deepEqual(lines.map(line => line.replace(/<[^>]+>/g, '')), TITLE[lang]);
+    const letters = lines.map(line => [...line.matchAll(/<span class="ch">(.*?)<\/span>/g)].map(match => match[1]).join(''));
+    assert.deepEqual(letters, TITLE[lang].map(line => line.replaceAll(' ', '')), 'every letter is its own layer');
+    assert.match(title, new RegExp(`<span class="visually-hidden">${TITLE[lang].join(' ')}</span>`), 'assistive tech hears the whole title once');
+  });
 }
 
 for (const lang of ['zh', 'en']) {
@@ -44,7 +59,7 @@ for (const lang of ['zh', 'en']) {
 
 test('every film-grade layer is decorative', () => {
   const html = render({lang: 'zh', reduced: false});
-  for (const layer of ['finale-halo', 'finale-iris', 'finale-grain', 'philosophy-ribbon']) {
+  for (const layer of ['finale-iris', 'finale-grain']) {
     assert.match(html, new RegExp(`class="${layer}"[^>]*aria-hidden="true"`), `${layer} is hidden from assistive tech`);
   }
 });

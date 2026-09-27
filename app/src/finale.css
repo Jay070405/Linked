@@ -2,34 +2,30 @@
    .mask and the grain carry no finale assumptions: lift them into a shared
    file when a second section uses them. */
 
-/* Masked cuts. The timeline moves .mask-in; initial states are set in JS only,
-   so reduced motion and a failed script both leave every line readable. */
+/* Masked cuts. Hits move .mask-in and the title's letters; initial states are
+   set in JS only, so reduced motion and a failed script leave every line readable. */
 .mask{display:block;overflow:hidden;padding:0 .08em .1em;margin:0 -.08em -.1em}
 .mask-in{display:block}
 .finale-journey .blossom-small-copy .eyebrow,.finale-journey .philosophy>.eyebrow,.finale-journey .return-copy i{display:block}
 .finale-journey .reading-text span{transition:none}
-/* The CTA fades on a wrapper: .text-link keeps its own hover transition, which would otherwise smear a scrubbed opacity. */
+/* The CTA fades on a wrapper: .text-link keeps its own hover transition, which would otherwise smear the fade. */
 .finale-cta{display:inline-block;flex-shrink:0}
 
-/* The grade, bottom to top: ground · halo · lens · iris · type · grain. */
-.finale-halo,.finale-halo-glow,.blossom-lens,.finale-iris{position:absolute;inset:0;pointer-events:none}
-.finale-halo{opacity:0}
-.finale-halo-glow{margin:auto;width:min(92vmin,860px);height:min(92vmin,860px);border-radius:50%;background:radial-gradient(circle,rgba(236,192,202,.5) 0%,rgba(236,192,202,.2) 40%,rgba(236,192,202,0) 70%);opacity:.55}
-.finale-iris{--iris-in:38vmax;--iris-out:80vmax;--iris-a:.14;background:radial-gradient(circle at 50% 50%,rgba(9,9,11,0) var(--iris-in),rgba(9,9,11,var(--iris-a)) var(--iris-out))}
+/* The title, letter by letter: each letter turns up from its baseline. */
+.bloom-title .mask-in{white-space:nowrap;letter-spacing:calc(var(--track,-.07) * 1em)}
+.bloom-title .w{display:inline-block;white-space:nowrap}
+.bloom-title .ch{display:inline-block;transform-origin:0 100%}
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 
-/* The depth layer: out-of-focus disciplines drifting behind the reading. */
-/* Out of focus via a text-shadow baked into the glyph raster, not a CSS filter:
-   a filter needs its own compositor surface, and creating it mid-scroll hitched. */
-.finale-journey .philosophy-ribbon{top:50%;bottom:auto;left:0;margin-top:-.6em;font-size:clamp(96px,15vw,260px);font-weight:300;letter-spacing:-.04em;line-height:1.2;color:transparent;text-shadow:0 0 .1em #fff;z-index:2;transform:none}
-.finale-journey .philosophy-ribbon>span{animation:finale-drift 80s linear infinite;animation-play-state:paused}
+/* The grade, bottom to top: ground · world (night included) · iris · type · grain. */
+.blossom-lens,.finale-iris{position:absolute;inset:0;pointer-events:none}
+.finale-iris{--iris-in:38vmax;--iris-out:80vmax;--iris-a:.14;background:radial-gradient(circle at 50% 50%,rgba(9,9,11,0) var(--iris-in),rgba(9,9,11,var(--iris-a)) var(--iris-out))}
 .finale-journey .philosophy{z-index:3}
 
 /* Film grain: a stepped 24fps-style jitter of a grey noise tile, over everything. */
 .finale-grain{position:absolute;inset:-60%;z-index:6;pointer-events:none;opacity:.001;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px;animation:film-grain .9s steps(8) infinite;animation-play-state:paused}
-.finale-grain.is-running,.finale-journey .philosophy-ribbon.is-running>span{animation-play-state:running}
+.finale-grain.is-running{animation-play-state:running}
 body.portfolio-route-open .finale-grain{animation-play-state:paused}
 @keyframes film-grain{0%,100%{transform:translate3d(0,0,0)}12%{transform:translate3d(-7%,4%,0)}25%{transform:translate3d(5%,-8%,0)}37%{transform:translate3d(-10%,9%,0)}50%{transform:translate3d(8%,6%,0)}62%{transform:translate3d(-4%,-10%,0)}75%{transform:translate3d(10%,2%,0)}87%{transform:translate3d(-8%,-4%,0)}}
-@keyframes finale-drift{to{transform:translate3d(-50%,0,0)}}
 
-.quiet .finale-halo,.quiet .finale-iris,.quiet .finale-grain{display:none}
-@media(max-width:700px){.finale-journey .philosophy-ribbon{font-size:22vw}}
+.quiet .finale-iris,.quiet .finale-grain{display:none}
