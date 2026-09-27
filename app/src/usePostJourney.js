@@ -8,21 +8,20 @@ const mix=(a,b,p)=>a+(b-a)*p;
 
 // Layout follows scroll. Ambient transforms live on separate children, with a
 // clock that pauses offscreen and survives language changes.
-export function usePostJourney({reduced,blossomProgress,lang}) {
- const ambient=useRef({art:0,ribbon:0});
+// The blossom finale runs its own timeline (Finale.jsx).
+export function usePostJourney({reduced,lang}) {
+ const ambient=useRef({art:0});
  useEffect(()=>{
   document.body.classList.toggle('quiet',reduced);
-  if(reduced){blossomProgress.current=0;return;}
+  if(reduced)return;
   const q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
-  const intro=q('.intro-journey'),art=q('.art-journey'),track=q('.art-track'),bridge=q('.art-bridge'),finale=q('.finale-journey');
+  const intro=q('.intro-journey'),art=q('.art-journey'),track=q('.art-track'),bridge=q('.art-bridge');
   const shared=q('.shared-petal'),branchOuter=q('.art-branch-scroll'),branch=q('.art-branch'),light=q('.art-light'),opening=q('.art-opening h2'),atmosphere=q('.art-atmosphere');
-  const ground=q('.finale-ground'),small=q('.blossom-small-copy'),bloom=q('.bloom-title'),philosophy=q('.philosophy'),ribbon=q('.philosophy-ribbon'),returnCopy=q('.return-copy');
-  const words=qa('.reading-text span'),cards=qa('.art-work');
+  const cards=qa('.art-work');
   let raf=0,alive=true,last=performance.now(),previousY=scrollY,energy=1,wi=innerWidth,he=innerHeight,m={};
   const opacity=(el,a)=>{if(!el)return;el.style.opacity=a;el.style.visibility=a>.002?'visible':'hidden';};
-  const show=(el,a,y=0)=>{opacity(el,a);el.style.transform=`translate3d(0,${y}px,0)`;};
-  function resize(){wi=innerWidth;he=innerHeight;m={intro:intro.offsetTop,introH:intro.offsetHeight-he,art:art.offsetTop,artH:art.offsetHeight-he,finale:finale.offsetTop,finaleH:finale.offsetHeight-he,bridge:bridge.offsetTop,travel:Math.max(0,track.scrollWidth-wi)};}
-  resize();const ro=new ResizeObserver(resize);[intro,q('.systems-section'),track,art,bridge,finale].forEach(el=>ro.observe(el));window.addEventListener('resize',resize);
+  function resize(){wi=innerWidth;he=innerHeight;m={intro:intro.offsetTop,introH:intro.offsetHeight-he,art:art.offsetTop,artH:art.offsetHeight-he,bridge:bridge.offsetTop,travel:Math.max(0,track.scrollWidth-wi)};}
+  resize();const ro=new ResizeObserver(resize);[intro,q('.systems-section'),track,art,bridge].forEach(el=>ro.observe(el));window.addEventListener('resize',resize);
   const reveals=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('has-entered');reveals.unobserve(entry.target);}}),{threshold:.16});cards.forEach(el=>reveals.observe(el));
   function draw(now){
    if(!alive)return;
@@ -48,17 +47,6 @@ export function usePostJourney({reduced,blossomProgress,lang}) {
    const bp=range(he-(m.bridge-y),0,he*1.8);
    q('.bridge-petal').style.transform=`translate3d(${mix(-wi*.25,wi*.3,bp)}px,${mix(-90,180,bp)}px,0) rotate(${bp*220}deg) scale(${mix(.4,3,bp)})`;
    bridge.style.setProperty('--bridge-reveal',ease(range(bp,.12,.6)));
-   const f=clamp((y-m.finale)/m.finaleH);blossomProgress.current=f;
-   const dark=ease(range(f,.38,.5))*(1-ease(range(f,.745,.90)));
-   ground.style.background=`rgb(${Math.round(mix(250,9,dark))},${Math.round(mix(251,9,dark))},${Math.round(mix(252,11,dark))})`;
-   const navTone=dark>.48?'dark':'light';if(finale.dataset.navTone!==navTone)finale.dataset.navTone=navTone;
-   show(small,1-ease(range(f,.07,.17)));show(bloom,windowed(f,.15,.23,.43,.49),mix(45,-35,range(f,.15,.48)));
-   show(philosophy,windowed(f,.48,.51,.71,.765));opacity(ribbon,windowed(f,.48,.52,.71,.77));
-   ribbon.style.transform=`translateX(${-range(f,.48,.77)*wi*.65}px) rotate(-8deg)`;
-   if(f>.47&&f<.78)ambient.current.ribbon+=dt*energy;
-   ribbon.firstElementChild.style.transform=`translateX(${-((ambient.current.ribbon*(mobile?7:12))%(wi*.7))}px)`;
-   const reading=range(f,.515,.705);words.forEach((el,i)=>{el.style.color=i/words.length<reading?'#f5f5f7':'#53535c';});
-   show(returnCopy,ease(range(f,.91,.96)),mix(25,0,ease(range(f,.91,.96))));
    q('.journey-indicator i').style.transform=`scaleY(${y/Math.max(1,document.documentElement.scrollHeight-he)})`;
    raf=requestAnimationFrame(draw);
   }

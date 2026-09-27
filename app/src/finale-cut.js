@@ -1,4 +1,4 @@
-import gsap from 'gsap';
+import {gsap} from 'gsap';
 
 /** Named curves, shared by the pure channels below and the timeline tweens in
  *  Finale.jsx, so a beat never moves on two different speed graphs. */

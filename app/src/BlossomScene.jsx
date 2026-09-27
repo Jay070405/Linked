@@ -68,10 +68,10 @@ function createPetalGeometry() {
  * smoothed values the DOM uses, without a React rerender per frame.
  * The plain progress prop remains supported.
  */
-export default function BlossomScene({ progress = 0, reducedMotion = false, getChannels, getProgress }) {
+export default function BlossomScene({ progress = 0, reducedMotion = false, getChannels }) {
   const mountRef = useRef(null);
-  const inputs = useRef({ progress, reducedMotion, getChannels, getProgress });
-  inputs.current = { progress, reducedMotion, getChannels, getProgress };
+  const inputs = useRef({ progress, reducedMotion, getChannels });
+  inputs.current = { progress, reducedMotion, getChannels };
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -187,8 +187,7 @@ export default function BlossomScene({ progress = 0, reducedMotion = false, getC
       const dt = Math.min((now - lastTime) / 1000, 0.05) || 0.016;
       lastTime = now;
       const input = inputs.current;
-      const { p, retreat, close, dark } = input.getChannels ? input.getChannels()
-        : channels(input.getProgress ? input.getProgress() : input.progress);
+      const { p, retreat, close, dark } = input.getChannels ? input.getChannels() : channels(input.progress);
       const still = input.reducedMotion;
       if (!still && visible && !(document.hidden || document.body.classList.contains('portfolio-route-open'))) idleTime += dt * (1 - close);
 

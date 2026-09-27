@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 
 import LegacyHero from './LegacyHero';
 import ContactFinale from './ContactFinale';
-import BlossomScene from './BlossomScene';
+import Finale from './Finale';
 import SiteNavigation from './components/SiteNavigation';
 import AboutPanel from './components/AboutPanel';
 import LoadingScreen from './components/LoadingScreen';
@@ -61,17 +61,14 @@ function Systems({lang,onOpen,reduced=false}) {
 
 function Art({lang,onOpen,onArchive,reduced=false}) {return <><section className="art-bridge" data-nav-tone="light"><Branch/><Petal className="bridge-petal"/><div className="bridge-copy"><span className="eyebrow">FROM RULES TO IMAGINATION</span><h2><ExpressiveTitle variant="stroke" reduced={reduced}>{lang==='en'?<>And then,<br/>a world <i>takes shape.</i></>:<>然后，<br/>想象有了<em>形状。</em></>}</ExpressiveTitle></h2></div></section><section className="art-journey" id="art" data-nav-tone="light"><div className="art-stage"><div className="art-atmosphere"><div className="art-light"/></div><div className="art-branch-scroll"><Branch className="art-branch"/></div><div className="art-top"><span className="eyebrow">02 / VISUAL WORLDS</span><span className="eyebrow">SCROLL TO WANDER →</span></div><div className="art-track"><div className="art-opening"><small>SELECTED<br/>IMAGINATIONS</small><h2><ExpressiveTitle reduced={reduced}>WORLDS<br/><i>worth</i><br/>ENTERING.</ExpressiveTitle></h2><p>{lang==='en'?'A few places I have imagined.':'几个想让人走进去的世界。'}</p></div>{featuredWorks.slice(0,3).map((work,i)=><article className={'art-work art-work-'+i} key={work.slug}><button className="art-image" onClick={()=>onOpen({type:'art',item:work})}><img src={work.image} alt={pick(work,'title',lang)} loading="lazy"/><span className="image-open">↗</span></button><div className="art-caption"><span>0{i+1} / {work.year}</span><div><h3>{pick(work,'title',lang)}</h3><p>{pick(work,'description',lang)}</p></div></div></article>)}<div className="archive-end"><Petal/><span className="eyebrow">THE COLLECTION CONTINUES</span><div className="archive-count">{reduced?<span>{stats.archiveWorks}</span>:<CountUp to={stats.archiveWorks} duration={1.7}/>}<i>original works</i></div><button onClick={onArchive} aria-label={lang==='en'?'Browse the work archive':'浏览作品档案'}><ExpressiveTitle reduced={reduced}>{lang==='en'?<>Browse the<br/>work archive ↗</>:<>浏览<br/>作品档案 ↗</>}</ExpressiveTitle></button><p>{lang==='en'?'Environment art, characters & visual development.':'场景绘画、角色设计与视觉开发。'}</p></div></div><div className="art-bottom"><span>SELECTED WORKS</span><div className="art-progress"><i/></div><span>01—03 / 25</span></div></div></section></>;}
 
-const zhPhilosophy='我希望作品不只被看见，也能让人愿意走近、探索，并留下来。规则赋予选择意义，画面让世界值得相信。真正打动人的体验，藏在两者相遇的地方。';
-const enPhilosophy='I want to make work that invites people to come closer, explore, and stay. Rules give choices meaning. Images make a world believable. The experiences that stay with us happen where the two meet.';
-function Finale({lang,reduced,blossomProgress,onAbout}) {return <section className="finale-journey" id="practice" data-nav-tone={reduced?'dark':'light'}><div className="finale-stage"><div className="finale-ground"/><div className="blossom-wrap"><BlossomScene getProgress={()=>blossomProgress.current} reducedMotion={reduced}/></div><div className="blossom-small-copy"><span className="eyebrow">A SMALL IDEA. AN ENTIRE WORLD.</span><p>{lang==='en'?'Keep going. Let it bloom.':'继续向下，让想法盛放。'}</p></div><div className="bloom-title"><span><ExpressiveTitle reduced={reduced}>{lang==='en'?'FROM A THOUGHT,':'从一个念头，'}</ExpressiveTitle></span><span><ExpressiveTitle reduced={reduced}>{lang==='en'?'TO A WORLD.':'到一个世界。'}</ExpressiveTitle></span></div><div className="philosophy"><span className="eyebrow">03 / PHILOSOPHY & PRACTICE</span><p className="reading-text">{(lang==='en'?enPhilosophy:zhPhilosophy).split(lang==='en'?' ':'').map((c,i)=><span key={i}>{c}{lang==='en'?' ':''}</span>)}</p><div className="philosophy-details"><p>{lang==='en'?'Systems thinking gives a world its logic. Art gives it a reason to be remembered.':'以系统思维构建世界的逻辑，\n以视觉创作留下值得记住的瞬间。'}</p><button onClick={onAbout} className="text-link">{lang==='en'?'Meet the person behind it ↗':'认识我 ↗'}</button></div></div><div className="philosophy-ribbon" aria-hidden="true"><span>WORLDBUILDING · NARRATIVE · SYSTEM DESIGN · VISUAL DEVELOPMENT · WORLDBUILDING · NARRATIVE · SYSTEM DESIGN · VISUAL DEVELOPMENT ·</span></div><div className="return-copy"><i>Back to a beginning.</i><span>{lang==='en'?'Every ending is somewhere to start.':'每个结束，都可以是下一幕的开始。'}</span></div></div></section>;}
 
 export default function App(){
  const[loading,setLoading]=useState(true);
  const[lang,setLang]=useState(localStorage.getItem('jay-lang')||'zh'),[about,setAbout]=useState(false);
  const[reduced,setReduced]=useState(matchMedia('(prefers-reduced-motion: reduce)').matches),[mediaFailed,setMediaFailed]=useState(false);
- const quiet=reduced||mediaFailed,blossomProgress=useRef(0);
+ const quiet=reduced||mediaFailed;
  const {modal,open,close,back,pageScroll,archiveState}=usePortfolioRouting();
- usePostJourney({reduced:quiet,blossomProgress,lang});
+ usePostJourney({reduced:quiet,lang});
  const toggleMotion=()=>{
   if(mediaFailed)return;
   if(modal){setReduced(v=>!v);return;}
@@ -101,7 +98,7 @@ export default function App(){
   <LegacyHero lang={lang} reduced={quiet} onMediaError={()=>setMediaFailed(true)}/>
   <Systems lang={lang} onOpen={open} reduced={quiet}/>
   <Art lang={lang} reduced={quiet} onOpen={open} onArchive={()=>open('/works/archive')}/>
-  <Finale lang={lang} reduced={quiet} blossomProgress={blossomProgress} onAbout={()=>setAbout(true)}/>
+  <Finale lang={lang} reduced={quiet} onAbout={()=>setAbout(true)}/>
   <ContactFinale lang={lang} reduced={quiet} onNavigate={nav} onAbout={()=>setAbout(true)}/>
  </main>
  <div className="journey-indicator"><i/><span><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>SCROLL TO EXPLORE</ExpressiveTitle></span></div>
