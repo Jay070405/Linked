@@ -158,7 +158,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       if(!hit){clearHover();canvas.style.cursor='';return;}
       const id=hit.object.userData.propId||(hit.object.userData.speaker?'speaker':'lamp');
       const en=langRef.current==='en';
-      const names={Prop_Keyboard:['键盘','Keyboard'],Prop_Mouse:['鼠标','Mouse'],Prop_Tablet:['数位板','Drawing tablet'],Prop_Stylus:['数位笔','Stylus'],Prop_Cup:['咖啡杯','Coffee cup'],Prop_Sketchbook:['速写本','Sketchbook'],Prop_Pencil:['铅笔','Pencil'],Prop_Plant:['盆栽','Plant'],speaker:['音响','Speaker'],lamp:['台灯','Desk lamp']};
+      const names={Prop_Keyboard:['键盘','Keyboard'],Prop_Mouse:['鼠标','Mouse'],Prop_Tablet:['数位板','Drawing tablet'],Prop_Stylus:['数位笔','Stylus'],Prop_Cup:['咖啡杯','Coffee cup'],Prop_Sketchbook:['速写本','Sketchbook'],Prop_Pencil:['铅笔','Pencil'],Prop_Plant:['盆栽','Plant'],Prop_PlushDoll:['玩偶','Plush doll'],speaker:['音响','Speaker'],lamp:['台灯','Desk lamp']};
       const name=(names[id]||['参考书','Reference book'])[en?1:0];
       if(id!==hoveredId){
         hoveredId=id;outline.selectedObjects=items.has(id)?[items.get(id)]:id==='speaker'?speakerMeshes:lampMeshes;outline.enabled=true;
@@ -274,7 +274,12 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
           result.root.traverse(object=>{if(object.isMesh)sceneMeshes.push(object);});
           if(result.doll){
             const box=new THREE.Box3().setFromObject(result.doll),size=box.getSize(new THREE.Vector3()).multiplyScalar(.5);
-            physics.fixed(size.toArray(),box.getCenter(new THREE.Vector3()));
+            // The imported doll's origin is at its feet; center the rigid body
+            // around its bounds while retaining the model's authored placement.
+            const prop=new THREE.Group();prop.name='Prop_PlushDoll';prop.position.copy(box.getCenter(new THREE.Vector3()));
+            scene.add(prop);prop.attach(result.doll);items.set(prop.name,prop);
+            physics.add(prop.name,prop.position,size.toArray(),.6,prop.quaternion);
+            prop.traverse(mesh=>{if(mesh.isMesh)mesh.userData.propId=prop.name;});
           }
           host.dataset.companions=JSON.stringify({doll:!!result.doll,kitten:!!result.kitten});
           wake();

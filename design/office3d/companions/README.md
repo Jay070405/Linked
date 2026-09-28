@@ -6,7 +6,7 @@ The user supplied both original GLBs in `E:/工作/建模/homepage model/`. They
 
 Rebuild with `tools/build_companions.ps1` from the repository root after `npm ci` in `app`. The Blender script imports the supplied files, creates and poses the rig, renders three inspection views, saves the native file, and exports separate web assets. The PowerShell wrapper optimizes textures and geometry while preserving the skeleton hierarchy and weights.
 
-Runtime placement and gaze live in `app/src/office3d/companions.js`. The doll sits on the desktop left of the fixed speaker. The cat rests on the window sill; the existing book stack moves left along that sill to leave it space. Pointer tracking rotates only Head and Neck, with limited pitch/yaw, damping and a return to neutral. It uses the office's demand-driven frame loop, stops offscreen/background, and does not respond to touch. The original reduced-motion still fallback remains in use.
+Runtime placement and gaze live in `app/src/office3d/companions.js`. The doll starts on the desktop left of the fixed speaker. It uses the same pickup, throw, collision and lost-object restore behavior as the other desk props; a centered parent keeps its foot-origin mesh aligned with the rigid body. The cat rests on the window sill; the existing book stack moves left along that sill to leave it space. Pointer tracking rotates only Head and Neck, with limited pitch/yaw, damping and a return to neutral. It uses the office's demand-driven frame loop, stops offscreen/background, and does not respond to touch. The original reduced-motion still fallback remains in use.
 
 Both GLBs together are approximately 1.6 MB. The base studio model, camera path, original source files and other projects are unchanged.
 
