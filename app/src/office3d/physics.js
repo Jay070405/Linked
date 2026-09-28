@@ -12,6 +12,7 @@ export class DeskPhysics {
     this.world.numSolverIterations = 8;
     this.items = new Map(); this.lost = new Set(); this.onLost = onLost;
     this.accumulator = 0; this.held = null; this.carried = new Map();
+    this.dropping = new Map();
     this.fixed(DESK.half, DESK);
     // The monitor remains the camera destination; the lamp has a fixed base.
     this.fixed([1.67, 1.09, .12], { x: .55, y: 2.70, z: -.48 });
@@ -32,6 +33,19 @@ export class DeskPhysics {
     this.items.set(id, { body, home: { ...home }, rotation: { ...rotation } });
     return body;
   }
+  dropIn(id, height = 1.15) {
+    const { body, home, rotation } = this.items.get(id);
+    body.setTranslation({ ...home, y: home.y + height }, true);body.setRotation(rotation, true);
+    body.setLinvel({ x: 0, y: 0, z: 0 }, true);body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    // Keep the authored orientation and landing spot during the entrance only.
+    body.lockRotations(true, true);body.setEnabledTranslations(false, true, false, true);
+    this.dropping.set(id, 0);
+  }
+  finishDrop(id) {
+    if (!this.dropping.delete(id)) return;
+    const body = this.items.get(id).body;
+    body.lockRotations(false, true);body.setEnabledTranslations(true, true, true, true);
+  }
   grab(id) {
     this.release();
     const item = this.items.get(id);
@@ -47,7 +61,9 @@ export class DeskPhysics {
         if (contact && contact.normal1.y > .65) this.carried.set(body.handle, body);
       }
     }
-    for (const body of this.carried.values()) body.setBodyType(RAPIER.RigidBodyType.KinematicPositionBased, true);
+    for (const [otherId, { body }] of this.items) if (this.carried.has(body.handle)) {
+      this.finishDrop(otherId);body.setBodyType(RAPIER.RigidBodyType.KinematicPositionBased, true);
+    }
     this.held = id;
   }
   move(p) {
@@ -96,9 +112,14 @@ export class DeskPhysics {
     this.accumulator += Math.min(dt, .08);
     while (this.accumulator >= 1 / 60) {
       this.world.step(); this.accumulator -= 1 / 60;
+      for (const [id, elapsed] of this.dropping) {
+        if (elapsed >= 1.1 && Math.abs(this.items.get(id).body.linvel().y) < .12) this.finishDrop(id);
+        else this.dropping.set(id, elapsed + 1 / 60);
+      }
       for (const [id, { body }] of this.items) {
         if (this.carried.has(body.handle) || this.lost.has(id)) continue;
         if (body.translation().y < .15) {
+          this.finishDrop(id);
           body.setEnabled(false); this.lost.add(id); this.onLost(this.lost.size);
         }
       }
@@ -113,6 +134,6 @@ export class DeskPhysics {
     }
     this.lost.clear(); this.onLost(0);
   }
-  get moving() { return this.held || [...this.items].some(([id, item]) => !this.lost.has(id) && !item.body.isSleeping()); }
+  get moving() { return this.held || this.dropping.size > 0 || [...this.items].some(([id, item]) => !this.lost.has(id) && !item.body.isSleeping()); }
   dispose() { this.world.free(); }
 }

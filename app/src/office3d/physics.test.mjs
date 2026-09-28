@@ -39,6 +39,54 @@ test('all authored loose objects remain on the table after first load',()=>{
     assert.equal(scene.lost.size,0);
   }finally{scene.dispose();}
 });
+
+test('entrance drops all desk props upright into their original places and then releases the locks',()=>{
+  const scene=new DeskPhysics();
+  try {
+    for(const node of gltf.nodes.filter(n=>n.extras?.draggable)) {
+      const {home,halfExtents:h,mass}=node.extras;
+      scene.add(node.name,{x:home[0],y:home[2],z:-home[1]},[h[0],h[2],h[1]],mass);
+    }
+    scene.add('Prop_PlushDoll',{x:-2.94,y:1.794,z:-.67},[.34,.4,.25],.6);
+    for(const [id,{body,home}] of scene.items){
+      const height=id==='Prop_Cup'?.42:1.15;scene.dropIn(id,height);
+      assert.ok(Math.abs(body.translation().y-home.y-height)<.0001);
+    }
+    step(scene,15);
+    for(const [id,{body,home}] of scene.items){
+      const height=id==='Prop_Cup'?.42:1.15;
+      assert.ok(body.translation().y<home.y+height-.1,`${id} visibly falls`);
+      assert.ok(body.translation().y>home.y+.05,`${id} starts above its landing spot`);
+      assert.ok(Math.abs(body.rotation().w-1)<.0001,`${id} stays upright in flight`);
+    }
+    step(scene,345);
+    assert.equal(scene.lost.size,0);assert.equal(scene.dropping.size,0);
+    for(const [id,{body,home}] of scene.items){
+      assert.ok(Math.abs(body.translation().x-home.x)<.035,`${id} keeps its horizontal place`);
+      assert.ok(Math.abs(body.translation().y-home.y)<.035,`${id} lands on the desk/support`);
+      assert.ok(Math.abs(body.rotation().w)>.999,`${id} lands upright`);
+    }
+    const doll=scene.items.get('Prop_PlushDoll').body;
+    doll.setAngvel({x:3,y:0,z:0},true);step(scene,5);
+    assert.ok(Math.abs(doll.rotation().x)>.01,'Normal rotation returns after landing');
+  } finally {scene.dispose();}
+});
+
+test('a falling doll can be caught, thrown away and restored to its seated home',()=>{
+  const scene=new DeskPhysics();
+  try {
+    const home={x:-2.94,y:1.794,z:-.67},body=scene.add('doll',home,[.34,.4,.25],.6);
+    scene.dropIn('doll');step(scene,10);scene.grab('doll');
+    assert.equal(scene.dropping.size,0);
+    scene.move({x:-5.5,y:3,z:-.67});step(scene,10);
+    assert.ok(body.translation().x< -5,'Pickup releases the entrance translation lock');
+    scene.release();step(scene,240);assert.ok(scene.lost.has('doll'));
+    scene.restoreLost();step(scene,180);
+    assert.equal(scene.lost.size,0);
+    assert.ok(Math.abs(body.translation().y-home.y)<.015,'Restore uses the desk position, not the elevated spawn');
+    assert.ok(Math.abs(body.rotation().w)>.999);
+  } finally {scene.dispose();}
+});
 test('released object falls onto the desk; no restore state is created',()=>{
   const scene=new DeskPhysics();
   try{

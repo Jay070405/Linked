@@ -10,4 +10,6 @@ Runtime placement and gaze live in `app/src/office3d/companions.js`. The doll st
 
 Both GLBs together are approximately 1.6 MB. The base studio model, camera path, original source files and other projects are unchanged.
 
+On each page load, all 13 draggable props start above their saved desk positions. Physics waits for the brand intro to uncover the office before dropping them. The entrance temporarily locks rotation and horizontal translation so they land upright, then restores normal free-body interaction. The cup has a shorter fall to clear the lamp shade. Catching an item early also releases these entrance locks; restoring a lost item uses its original desk position.
+
 Verification: `node --test src/office3d/companions.test.mjs src/office3d/camera.test.mjs src/office3d/physics.test.mjs src/office3d/drag.test.mjs` from `app`, then `npm run build` and real pointer checks in the browser.

@@ -110,16 +110,19 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       frame=0;if(!allowed()){previous=0;return;}
       const dt=previous?Math.min(.08,(now-previous)/1000):1/60;previous=now;
       const p=progressRef.current;
+      const introCovered=document.body.classList.contains('brand-loading');
       if(p>.015){if(drag)release();clearHover();if(lastP<=.015)setSpeakerPosition(null);}
-      host.dataset.interactive=p<.015?'true':'false';
-      canvas.tabIndex=p<.015?0:-1;
-      const controls=host.querySelector('.office-tools');if(controls)controls.inert=p>=.015;
+      host.dataset.interactive=!introCovered&&p<.015?'true':'false';
+      canvas.tabIndex=!introCovered&&p<.015?0:-1;
+      const controls=host.querySelector('.office-tools');if(controls)controls.inert=introCovered||p>=.015;
       if(!drag)sway.lerp(cursor,1-Math.exp(-dt*5));
       const pose=cameraPose(p,camera.aspect,start,look,screen,sway);
       camera.position.copy(pose.position);camera.lookAt(pose.target);camera.updateMatrixWorld();
       const gazeMoving=companions?.gaze?.update(cursor,pointerInside&&p<.015,dt);
       if(companions?.gaze)host.dataset.kittenGaze=companions.gaze.angles.toArray().map(v=>v.toFixed(3)).join(',');
-      physics.step(dt);
+      // Render the raised props for warmup, but save their fall for the reveal.
+      if(!introCovered)physics.step(dt);
+      host.dataset.dropping=String(physics.dropping.size);
       const positions={};
       items.forEach((object,id)=>{
         const body=physics.items.get(id).body;object.visible=!physics.lost.has(id);
@@ -134,7 +137,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       host.dataset.progress=p.toFixed(4);host.dataset.camera=camera.position.toArray().map(v=>v.toFixed(3)).join(',');
       host.dataset.items=JSON.stringify(positions);host.dataset.lost=String(physics.lost.size);
       if(host.dataset.mode!=='3d')report('3d');
-      if(physics.moving||drag||gazeMoving||sway.distanceToSquared(cursor)>.000001||Math.abs(lastP-p)>.00001)wake();
+      if(!introCovered&&(physics.moving||drag||gazeMoving||sway.distanceToSquared(cursor)>.000001||Math.abs(lastP-p)>.00001))wake();
       lastP=p;
     }
     function point(event) {
@@ -234,6 +237,8 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
           scene.attach(object);items.set(object.name,object);
           const half=object.userData.halfExtents;
           physics.add(object.name,object.position,[half[0],half[2],half[1]],object.userData.mass,object.quaternion);
+          // The cup starts below the overhanging lamp shade.
+          physics.dropIn(object.name,object.name==='Prop_Cup'?.42:1.15);
           object.traverse(mesh=>{if(mesh.isMesh)mesh.userData.propId=object.name;});
         });
         scene.traverse(object=>{
@@ -279,6 +284,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
             const prop=new THREE.Group();prop.name='Prop_PlushDoll';prop.position.copy(box.getCenter(new THREE.Vector3()));
             scene.add(prop);prop.attach(result.doll);items.set(prop.name,prop);
             physics.add(prop.name,prop.position,size.toArray(),.6,prop.quaternion);
+            physics.dropIn(prop.name);
             prop.traverse(mesh=>{if(mesh.isMesh)mesh.userData.propId=prop.name;});
           }
           host.dataset.companions=JSON.stringify({doll:!!result.doll,kitten:!!result.kitten});
