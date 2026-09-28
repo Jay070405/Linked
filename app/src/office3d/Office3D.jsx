@@ -14,6 +14,7 @@ import { STUDIO_TITLE_FONT } from '../studio-title-composite';
 import { preloadOffice } from './model';
 import { cameraPose, CAMERA_FOV } from './camera';
 import { pickupPlane, pickupPosition } from './drag';
+import { loadCompanions } from './companions';
 import SpeakerVolume from './SpeakerVolume';
 import ExpressiveTitle from '../components/ExpressiveTitle';
 
@@ -47,7 +48,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     const host = hostRef.current, canvas = canvasRef.current, root = host.closest('.legacy-hero');
     let disposed = false, ready = false, visible = true, contextFailed = false, frame = 0, previous = 0;
     let width = 1, height = 1, renderer, model, title, composer, ao, outline, environment, exterior, physics;
-    let start, look, screen, lastP = -1, samples = 0, drag, lightOn = true;
+    let start, look, screen, lastP = -1, samples = 0, drag, lightOn = true, companions, pointerInside = false;
     const items = new Map(), sceneMeshes = [], lampMeshes = [], speakerMeshes = [], lampMaterials = new Map();
     let hoveredId = '';
     const cursor = new THREE.Vector2(), sway = new THREE.Vector2(), raycaster = new THREE.Raycaster();
@@ -116,6 +117,8 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       if(!drag)sway.lerp(cursor,1-Math.exp(-dt*5));
       const pose=cameraPose(p,camera.aspect,start,look,screen,sway);
       camera.position.copy(pose.position);camera.lookAt(pose.target);camera.updateMatrixWorld();
+      const gazeMoving=companions?.gaze?.update(cursor,pointerInside&&p<.015,dt);
+      if(companions?.gaze)host.dataset.kittenGaze=companions.gaze.angles.toArray().map(v=>v.toFixed(3)).join(',');
       physics.step(dt);
       const positions={};
       items.forEach((object,id)=>{
@@ -131,7 +134,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       host.dataset.progress=p.toFixed(4);host.dataset.camera=camera.position.toArray().map(v=>v.toFixed(3)).join(',');
       host.dataset.items=JSON.stringify(positions);host.dataset.lost=String(physics.lost.size);
       if(host.dataset.mode!=='3d')report('3d');
-      if(physics.moving||drag||sway.distanceToSquared(cursor)>.000001||Math.abs(lastP-p)>.00001)wake();
+      if(physics.moving||drag||gazeMoving||sway.distanceToSquared(cursor)>.000001||Math.abs(lastP-p)>.00001)wake();
       lastP=p;
     }
     function point(event) {
@@ -172,7 +175,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     function pointerMove(event) {
       if(!allowed()||progressRef.current>.015)return;
       const xy=point(event);
-      if(event.pointerType!=='touch')cursor.set(Math.max(-1,Math.min(1,xy.x)),Math.max(-1,Math.min(1,xy.y)));
+      if(event.pointerType!=='touch'){pointerInside=true;cursor.set(Math.max(-1,Math.min(1,xy.x)),Math.max(-1,Math.min(1,xy.y)));}
       if(drag){
         const intersection=pickupPosition(drag,raycaster.ray);
         if(intersection)physics.move(intersection);
@@ -191,8 +194,8 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       canvas.setPointerCapture(event.pointerId);canvas.style.cursor='grabbing';host.dataset.held=id;
       pointerMove(event);wake();
     }
-    function leave(){if(!drag){clearHover();cursor.set(0,0);wake();}}
-    function visibility(){if(filmBlocked()){release();stop();}else wake();}
+    function leave(){pointerInside=false;if(!drag){clearHover();cursor.set(0,0);wake();}}
+    function visibility(){if(filmBlocked()){pointerInside=false;release();stop();}else wake();}
     function contextLost(event){event.preventDefault();contextFailed=true;release();fail('WebGL context lost');}
     const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{release();stop();}});
     const sizeObserver=new ResizeObserver(resize),routeObserver=new MutationObserver(visibility);
@@ -259,6 +262,23 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
           if(object.parent?.name==='StudioSpeaker'){object.userData.speaker=true;speakerMeshes.push(object);}
         });
         title=wallTitle();scene.add(title);ready=true;host.dataset.lamp='on';resize();
+        // Decorative assets load independently; the desk stays usable if one fails.
+        loadCompanions().then(result=>{
+          if(disposed){disposeObject(result.root);return;}
+          companions=result;scene.add(result.root);result.root.updateMatrixWorld(true);
+          // These three authored meshes contain only the four sill books.
+          // Move the stack along the same sill to leave the kitten a clear spot.
+          if(result.kitten)['StudioInterior_Ivory_paper','StudioInterior_Graphite','StudioInterior_Clay'].forEach(name=>{
+            const books=model.getObjectByName(name);if(books)books.position.x-=1.45;
+          });
+          result.root.traverse(object=>{if(object.isMesh)sceneMeshes.push(object);});
+          if(result.doll){
+            const box=new THREE.Box3().setFromObject(result.doll),size=box.getSize(new THREE.Vector3()).multiplyScalar(.5);
+            physics.fixed(size.toArray(),box.getCenter(new THREE.Vector3()));
+          }
+          host.dataset.companions=JSON.stringify({doll:!!result.doll,kitten:!!result.kitten});
+          wake();
+        }).catch(error=>{if(!disposed)console.warn('Office companions unavailable',error);});
         if(progressRef.current>=.18)report('3d');wake();
       }).catch(fail);
     }catch(error){fail(error);}
@@ -292,8 +312,9 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
   </div>;
 }
 function disposeObject(root){
-  const materials=new Set(),geometries=new Set(),textures=new Set();
-  root.traverse(object=>{if(object.geometry)geometries.add(object.geometry);if(object.material)(Array.isArray(object.material)?object.material:[object.material]).forEach(m=>materials.add(m));});
+  const materials=new Set(),geometries=new Set(),textures=new Set(),skeletons=new Set();
+  root.traverse(object=>{if(object.skeleton)skeletons.add(object.skeleton);if(object.geometry)geometries.add(object.geometry);if(object.material)(Array.isArray(object.material)?object.material:[object.material]).forEach(m=>materials.add(m));});
+  skeletons.forEach(skeleton=>skeleton.dispose());
   materials.forEach(m=>{Object.values(m).forEach(v=>{if(v?.isTexture)textures.add(v);});m.dispose();});
   const images=new Set();textures.forEach(t=>{if(t.source?.data)images.add(t.source.data);t.dispose();});images.forEach(v=>v.close?.());geometries.forEach(g=>g.dispose());
 }
