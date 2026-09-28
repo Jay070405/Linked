@@ -5,10 +5,14 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "redirects": [
+    { "source": "/vibecoding", "destination": "/other-project", "permanent": true },
+    { "source": "/vibecoding/:path*", "destination": "/other-project/:path*", "permanent": true },
     { "source": "/field01", "destination": "/field01/", "permanent": true },
     { "source": "/about", "destination": "/#about", "permanent": true }
   ],
   "rewrites": [
+    { "source": "/other-project", "destination": "/index.html" },
+    { "source": "/other-project/:path*", "destination": "/index.html" },
     { "source": "/field01/", "destination": "/field01/index.html" },
     { "source": "/vibecoding", "destination": "/index.html" },
     { "source": "/vibecoding/:path*", "destination": "/index.html" },
