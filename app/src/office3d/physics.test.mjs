@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { Quaternion, Vector3 } from 'three';
 import { DeskPhysics, initPhysics } from './physics.js';
 await initPhysics();
 const asset=readFileSync(new URL('../../public/assets/office3d/studio.glb',import.meta.url));
@@ -62,6 +63,44 @@ test('off-table drop is removed; restoring only returns the lost object',()=>{
     assert.deepEqual({...mouse.translation()},existing);
     assert.deepEqual(changes,[1,0]);
   }finally{scene.dispose();}
+});
+
+test('restore resets an on-desk doll with an actual Three quaternion, without moving other props',()=>{
+  const scene=new DeskPhysics();
+  try {
+    const home=new Vector3(-2.94,1.795,-.67),front=new Quaternion();
+    const doll=scene.add('doll',home,[.34,.4,.25],.6,front);
+    const cup=scene.add('cup',{x:2.37,y:1.59,z:.08},[.27,.19,.225],.4);
+    step(scene,120);
+    const cupPosition={...cup.translation()};
+    doll.setTranslation({x:-1.8,y:2.1,z:.1},true);
+    doll.setRotation(new Quaternion().setFromAxisAngle(new Vector3(1,0,0),1.4),true);
+    doll.setLinvel({x:2,y:-1,z:1},true);doll.setAngvel({x:1,y:2,z:3},true);
+    scene.resize('doll',[.5,.4,.35]);
+    scene.restoreLost(['doll']);
+    assert.deepEqual({...doll.rotation()},{x:0,y:0,z:0,w:1});
+    assert.ok(Math.abs(doll.translation().x-home.x)<.0001);
+    assert.ok(Math.abs(doll.translation().y-home.y)<.0001);
+    assert.deepEqual({...doll.linvel()},{x:0,y:0,z:0});
+    assert.deepEqual({...doll.angvel()},{x:0,y:0,z:0});
+    assert.deepEqual({...cup.translation()},cupPosition);
+    assert.ok(Math.abs(doll.collider(0).halfExtents().x-.5)<.0001,'Outfit collider survives reset');
+    step(scene,180);assert.ok(Math.abs(doll.rotation().w)>.999);
+  } finally {scene.dispose();}
+});
+
+test('a lost doll restores a copied authored quaternion even after the render quaternion mutates',()=>{
+  const scene=new DeskPhysics();
+  try {
+    const authored=new Quaternion().setFromAxisAngle(new Vector3(0,1,0),-.08),expected=authored.clone();
+    const body=scene.add('doll',{x:-2.94,y:1.795,z:-.67},[.34,.4,.25],.6,authored);
+    authored.set(1,0,0,0);
+    body.setTranslation({x:-6,y:0,z:0},true);step(scene,1);assert.ok(scene.lost.has('doll'));
+    scene.restoreLost(['doll']);
+    const actual=body.rotation();
+    assert.ok(new Quaternion(actual.x,actual.y,actual.z,actual.w).angleTo(expected)<.0001);
+    step(scene,120);assert.equal(scene.lost.size,0);
+  } finally {scene.dispose();}
 });
 
 test('held object cannot be dragged down through the solid desktop',()=>{

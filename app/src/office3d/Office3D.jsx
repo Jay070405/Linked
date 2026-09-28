@@ -14,8 +14,9 @@ import { STUDIO_TITLE_FONT } from '../studio-title-composite';
 import { preloadOffice } from './model';
 import { cameraPose, CAMERA_FOV } from './camera';
 import { pickupPlane, pickupPosition } from './drag';
-import { loadCompanions } from './companions';
+import { DOLL_ID, DOLL_OUTFITS, loadCompanions, loadDollOutfit } from './companions';
 import SpeakerVolume from './SpeakerVolume';
+import DollWardrobe from './DollWardrobe';
 import ExpressiveTitle from '../components/ExpressiveTitle';
 
 import './office3d.css';
@@ -42,13 +43,18 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
   modeRef.current = onMode;
   const [mode, setMode] = useState('loading'), [lostCount, setLostCount] = useState(0);
   const [speakerPosition, setSpeakerPosition] = useState(null);
+  const [wardrobePosition,setWardrobePosition]=useState(null),[outfitId,setOutfitId]=useState('classic');
+  const [outfitLoading,setOutfitLoading]=useState(''),[outfitError,setOutfitError]=useState(false);
   const english = lang === 'en';
   useEffect(() => {
-    if (reducedMotion) { setMode('image'); modeRef.current?.('image'); return undefined; }
+    if (reducedMotion) { setWardrobePosition(null);setMode('image'); modeRef.current?.('image'); return undefined; }
     const host = hostRef.current, canvas = canvasRef.current, root = host.closest('.legacy-hero');
     let disposed = false, ready = false, visible = true, contextFailed = false, frame = 0, previous = 0;
     let width = 1, height = 1, renderer, model, title, composer, ao, outline, environment, exterior, physics;
-    let start, look, screen, lastP = -1, samples = 0, drag, lightOn = true, companions, pointerInside = false;
+    let start, look, screen, lastP = -1, samples = 0, drag, dollPress, lightOn = true, companions, pointerInside = false;
+    let currentOutfit='classic',changingOutfit=false;
+    const dollOutfits=new Map();
+    setOutfitId('classic');setOutfitLoading('');setOutfitError(false);
     const items = new Map(), sceneMeshes = [], lampMeshes = [], speakerMeshes = [], lampMaterials = new Map();
     let hoveredId = '';
     const cursor = new THREE.Vector2(), sway = new THREE.Vector2(), raycaster = new THREE.Raycaster();
@@ -89,11 +95,15 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       wake();
     }
     function release() {
-      if (!drag) return;
-      host.dataset.lastDrop=JSON.stringify({id:drag.id,...physics?.items.get(drag.id).body.translation()});
-      physics?.release();
-      if(canvas.hasPointerCapture(drag.pointerId))canvas.releasePointerCapture(drag.pointerId);
-      drag=null;canvas.style.cursor='grab';host.dataset.held='';wake();
+      const pointerId=drag?.pointerId??dollPress?.pointerId;
+      if (pointerId===undefined) return;
+      if(drag){
+        host.dataset.lastDrop=JSON.stringify({id:drag.id,...physics?.items.get(drag.id).body.translation()});
+        physics?.release();
+      }
+      drag=null;dollPress=null;
+      if(canvas.hasPointerCapture(pointerId))canvas.releasePointerCapture(pointerId);
+      canvas.style.cursor='grab';host.dataset.held='';wake();
     }
     function toggleLamp() {
       lightOn=!lightOn;lamp.intensity=lightOn?26:0;lampBounce.intensity=lightOn?.35:0;
@@ -101,16 +111,45 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       host.dataset.lamp=lightOn?'on':'off';wake();
     }
     function openSpeaker() {
-      release();clearHover();
+      release();clearHover();setWardrobePosition(null);
       const pos=new THREE.Vector3(-2.02,2,-.67).project(camera);
       setSpeakerPosition({x:(pos.x*.5+.5)*width,y:(-.5*pos.y+.5)*height});
     }
-    apiRef.current={ toggleLamp, openSpeaker, restore:()=>{physics?.restoreLost();wake();} };
+    function openWardrobe() {
+      const doll=items.get(DOLL_ID);if(!doll||physics.lost.has(DOLL_ID))return;
+      release();clearHover();setSpeakerPosition(null);
+      const pos=doll.position.clone().project(camera);
+      setWardrobePosition({x:(pos.x*.5+.5)*width,y:(-.5*pos.y+.5)*height});
+    }
+    async function changeOutfit(id) {
+      if(changingOutfit||id===currentOutfit||!items.has(DOLL_ID)||!DOLL_OUTFITS.some(outfit=>outfit.id===id))return;
+      changingOutfit=true;setOutfitLoading(id);setOutfitError(false);
+      try {
+        let outfit=dollOutfits.get(id);
+        if(!outfit){
+          outfit=await loadDollOutfit(id);
+          if(disposed){disposeObject(outfit.model);return;}
+          items.get(DOLL_ID).add(outfit.model);
+          outfit.model.traverse(mesh=>{if(mesh.isMesh)sceneMeshes.push(mesh);});
+          dollOutfits.set(id,outfit);
+        }
+        dollOutfits.forEach((look,key)=>{look.model.visible=key===id;});
+        physics.resize(DOLL_ID,outfit.half);
+        currentOutfit=id;setOutfitId(id);host.dataset.dollOutfit=id;wake();
+      } catch(error) {
+        if(!disposed){setOutfitError(true);console.warn('Doll outfit unavailable',error);}
+      } finally {
+        changingOutfit=false;if(!disposed)setOutfitLoading('');
+      }
+    }
+    apiRef.current={ toggleLamp, openSpeaker, openWardrobe, changeOutfit, restore:()=>{
+      release();clearHover();physics?.restoreLost([DOLL_ID]);wake();
+    } };
     function draw(now) {
       frame=0;if(!allowed()){previous=0;return;}
       const dt=previous?Math.min(.08,(now-previous)/1000):1/60;previous=now;
       const p=progressRef.current;
-      if(p>.015){if(drag)release();clearHover();if(lastP<=.015)setSpeakerPosition(null);}
+      if(p>.015){if(drag||dollPress)release();clearHover();if(lastP<=.015){setSpeakerPosition(null);setWardrobePosition(null);}}
       host.dataset.interactive=p<.015?'true':'false';
       canvas.tabIndex=p<.015?0:-1;
       const controls=host.querySelector('.office-tools');if(controls)controls.inert=p>=.015;
@@ -126,7 +165,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
         object.position.copy(body.translation());object.quaternion.copy(body.rotation());
         // DOM diagnostics are also useful when checking real pointer interactions.
         const projected=object.position.clone().project(camera);
-        positions[id]={x:+((projected.x*.5+.5)*width).toFixed(0),y:+((-projected.y*.5+.5)*height).toFixed(0),position:object.position.toArray().map(v=>+v.toFixed(3)),lost:!object.visible};
+        positions[id]={x:+((projected.x*.5+.5)*width).toFixed(0),y:+((-projected.y*.5+.5)*height).toFixed(0),position:object.position.toArray().map(v=>+v.toFixed(3)),rotation:object.quaternion.toArray().map(v=>+v.toFixed(4)),lost:!object.visible};
       });
       const renderStart=performance.now();
       renderer.info.reset();composer.render();samples++;
@@ -145,6 +184,8 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     }
     function hit() {
       const nearest=raycaster.intersectObjects(sceneMeshes,false).find(h=>{
+        // Flat raycast lists include cached outfits; hidden parents must not hit.
+        for(let object=h.object;object;object=object.parent)if(!object.visible)return false;
         const id=h.object.userData.propId;return !id||!physics.lost.has(id);
       });
       return nearest&&(nearest.object.userData.propId||nearest.object.userData.speaker||nearest.object.userData.lamp)?nearest:null;
@@ -166,7 +207,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       host.dataset.hovered=id;canvas.style.cursor=items.has(id)?'grab':'pointer';
       const label=hoverRef.current;
       if(label){
-        label.hidden=false;label.textContent=`${name} · ${items.has(id)?(en?'DRAG TO LIFT':'拖动拎起'):id==='speaker'?(en?'ADJUST VOLUME':'调节音量'):(en?'SWITCH LIGHT':'开关灯')}`;
+        label.hidden=false;label.textContent=`${name} · ${id===DOLL_ID?(en?'CLICK TO DRESS / DRAG TO LIFT':'单击换装 / 拖动拎起'):items.has(id)?(en?'DRAG TO LIFT':'拖动拎起'):id==='speaker'?(en?'ADJUST VOLUME':'调节音量'):(en?'SWITCH LIGHT':'开关灯')}`;
         const rect=host.getBoundingClientRect();
         label.style.left=`${Math.max(12,Math.min(width-205,event.clientX-rect.left+20))}px`;
         label.style.top=`${Math.max(12,Math.min(height-40,event.clientY-rect.top-38))}px`;
@@ -174,8 +215,14 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     }
     function pointerMove(event) {
       if(!allowed()||progressRef.current>.015)return;
+      if((drag||dollPress)&&event.pointerId!==(drag||dollPress).pointerId)return;
       const xy=point(event);
       if(event.pointerType!=='touch'){pointerInside=true;cursor.set(Math.max(-1,Math.min(1,xy.x)),Math.max(-1,Math.min(1,xy.y)));}
+      if(dollPress&&event.pointerId===dollPress.pointerId){
+        if(Math.hypot(event.clientX-dollPress.startX,event.clientY-dollPress.startY)<7){wake();return;}
+        drag=dollPress;dollPress=null;physics.grab(drag.id);
+        canvas.style.cursor='grabbing';host.dataset.held=drag.id;
+      }
       if(drag){
         const intersection=pickupPosition(drag,raycaster.ray);
         if(intersection)physics.move(intersection);
@@ -184,15 +231,24 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       wake();
     }
     function pointerDown(event) {
-      if(!allowed()||progressRef.current>.015||event.button!==0)return;
+      if(!allowed()||progressRef.current>.015||event.button!==0||drag||dollPress)return;
       point(event);const selected=hit();if(!selected)return;
       if(!selected.object.userData.propId){event.preventDefault();if(selected.object.userData.speaker)openSpeaker();else toggleLamp();return;}
       event.preventDefault();const id=selected.object.userData.propId;
       const body=physics.items.get(id).body;
       const plane=pickupPlane(body.translation(),raycaster.ray);if(!plane)return;
-      clearHover();drag={id,...plane,pointerId:event.pointerId};physics.grab(id);
+      clearHover();
+      if(id===DOLL_ID){
+        dollPress={id,...plane,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY};
+        canvas.setPointerCapture(event.pointerId);return;
+      }
+      drag={id,...plane,pointerId:event.pointerId};physics.grab(id);
       canvas.setPointerCapture(event.pointerId);canvas.style.cursor='grabbing';host.dataset.held=id;
       pointerMove(event);wake();
+    }
+    function pointerUp(event){
+      if(dollPress?.pointerId===event.pointerId){release();openWardrobe();}
+      else if(drag?.pointerId===event.pointerId)release();
     }
     function leave(){pointerInside=false;if(!drag){clearHover();cursor.set(0,0);wake();}}
     function visibility(){if(filmBlocked()){pointerInside=false;release();stop();}else wake();}
@@ -202,7 +258,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     observer.observe(host);sizeObserver.observe(host);routeObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
     root.addEventListener('office:progress',wake);document.addEventListener('visibilitychange',visibility);
     canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerdown',pointerDown);
-    canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
+    canvas.addEventListener('pointerup',pointerUp);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
     canvas.addEventListener('pointerleave',leave);window.addEventListener('blur',release);canvas.addEventListener('webglcontextlost',contextLost);
     try {
       renderer=new THREE.WebGLRenderer({canvas,alpha:false,antialias:true,powerPreference:'high-performance'});
@@ -276,10 +332,11 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
             const box=new THREE.Box3().setFromObject(result.doll),size=box.getSize(new THREE.Vector3()).multiplyScalar(.5);
             // The imported doll's origin is at its feet; center the rigid body
             // around its bounds while retaining the model's authored placement.
-            const prop=new THREE.Group();prop.name='Prop_PlushDoll';prop.position.copy(box.getCenter(new THREE.Vector3()));
+            const prop=new THREE.Group();prop.name=DOLL_ID;prop.position.copy(box.getCenter(new THREE.Vector3()));
             scene.add(prop);prop.attach(result.doll);items.set(prop.name,prop);
             physics.add(prop.name,prop.position,size.toArray(),.6,prop.quaternion);
             prop.traverse(mesh=>{if(mesh.isMesh)mesh.userData.propId=prop.name;});
+            dollOutfits.set('classic',{model:result.doll,half:size.toArray()});host.dataset.dollOutfit='classic';
           }
           host.dataset.companions=JSON.stringify({doll:!!result.doll,kitten:!!result.kitten});
           wake();
@@ -291,7 +348,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       release();disposed=true;stop();observer.disconnect();sizeObserver.disconnect();routeObserver.disconnect();apiRef.current={};
       root.removeEventListener('office:progress',wake);document.removeEventListener('visibilitychange',visibility);
       canvas.removeEventListener('pointermove',pointerMove);canvas.removeEventListener('pointerdown',pointerDown);
-      canvas.removeEventListener('pointerup',release);canvas.removeEventListener('pointercancel',release);canvas.removeEventListener('lostpointercapture',release);
+      canvas.removeEventListener('pointerup',pointerUp);canvas.removeEventListener('pointercancel',release);canvas.removeEventListener('lostpointercapture',release);
       canvas.removeEventListener('pointerleave',leave);window.removeEventListener('blur',release);canvas.removeEventListener('webglcontextlost',contextLost);
       physics?.dispose();disposeObject(scene);environment?.dispose();exterior?.dispose();composer?.passes.forEach(pass=>pass.dispose?.());composer?.dispose();renderer?.dispose();
     };
@@ -299,11 +356,12 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
   return <div ref={hostRef} className="office-3d" data-mode={mode}>
     {mode!=='3d'&&<LiquidOffice reducedMotion allowAlternate={false} progressRef={progressRef}/>}
     <canvas ref={canvasRef} className={mode==='3d'?'is-ready':''} tabIndex={mode==='3d'?0:-1}
-      aria-label={english?'Interactive office. Drag objects to lift. Click the lamp or speaker. Keyboard: L switches the lamp, S opens volume.':'互动办公室。拖动物件拎起，点击台灯或音响。键盘 L 开关灯，S 调节音量。'}
-      aria-keyshortcuts="L S" onKeyDown={event=>{
+      aria-label={english?'Interactive office. Drag objects to lift. Click the doll to change outfits. Keyboard: L switches the lamp, S opens volume, W opens the wardrobe.':'互动办公室。拖动物件拎起，单击玩偶换装。键盘 L 开关灯，S 调节音量，W 打开衣橱。'}
+      aria-keyshortcuts="L S W" onKeyDown={event=>{
         if(progressRef.current>=.015||event.altKey||event.ctrlKey||event.metaKey)return;
         if(event.key.toLowerCase()==='l'){event.preventDefault();apiRef.current.toggleLamp?.();}
         if(event.key.toLowerCase()==='s'){event.preventDefault();apiRef.current.openSpeaker?.();}
+        if(event.key.toLowerCase()==='w'){event.preventDefault();apiRef.current.openWardrobe?.();}
       }}/>
     <span ref={hoverRef} className="office-hover-label" hidden aria-hidden="true"/>
     {mode==='3d'&&<div className="office-tools" inert={progressRef.current>=.015}>
@@ -314,6 +372,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       <span className="office-3d-description" role="status">{lostCount>0?(english?`${lostCount} objects fell off the desk.`:`${lostCount} 件物品掉出了桌子。`):''}</span>
     </div>}
     {speakerPosition&&<SpeakerVolume lang={lang} position={speakerPosition} returnRef={canvasRef} onClose={()=>setSpeakerPosition(null)} reduced={reducedMotion}/>}
+    {wardrobePosition&&<DollWardrobe lang={lang} position={wardrobePosition} selected={outfitId} loading={outfitLoading} error={outfitError} onSelect={id=>apiRef.current.changeOutfit?.(id)} onClose={()=>setWardrobePosition(null)} returnRef={canvasRef} reduced={reducedMotion}/>}
   </div>;
 }
 function disposeObject(root){

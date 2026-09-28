@@ -1,4 +1,4 @@
-import { Group, Quaternion, Vector2, Vector3, MathUtils } from 'three';
+import { Box3, Group, Quaternion, Vector2, Vector3, MathUtils } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
@@ -6,6 +6,30 @@ export const COMPANION_PLACEMENT = {
   doll: { position: [-2.94, 1.398, -.67], scale: .8, yaw: -.08 },
   kitten: { position: [-4.40, 1.348, -1.36], scale: 1.08, yaw: Math.PI * .36 },
 };
+
+export const DOLL_ID = 'Prop_PlushDoll';
+export const DOLL_OUTFITS = [
+  { id:'classic', zh:'经典黑衣', en:'Classic black' },
+  { id:'cat-ear', zh:'猫耳绒服', en:'Cat ears' },
+  { id:'beret', zh:'贝雷帽套装', en:'Beret set' },
+  { id:'bunny', zh:'兔耳绒服', en:'Bunny ears' },
+];
+
+export async function loadDollOutfit(id) {
+  if (!DOLL_OUTFITS.some(outfit=>outfit.id===id) || id==='classic') throw new Error('Unknown doll outfit');
+  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  const {scene:model} = await loader.loadAsync(`/assets/office3d/plush-doll-${id}.glb`);
+  model.name = `DollOutfit_${id}`;
+  model.scale.setScalar(COMPANION_PLACEMENT.doll.scale);model.rotation.y=COMPANION_PLACEMENT.doll.yaw;
+  const bounds = new Box3().setFromObject(model),half=bounds.getSize(new Vector3()).multiplyScalar(.5);
+  model.position.sub(bounds.getCenter(new Vector3()));
+  model.traverse(mesh=>{
+    if(!mesh.isMesh)return;
+    mesh.userData.propId=DOLL_ID;mesh.castShadow=true;mesh.receiveShadow=true;
+    (Array.isArray(mesh.material)?mesh.material:[mesh.material]).forEach(material=>{material.roughness=.9;material.envMapIntensity=.35;});
+  });
+  return {model,half:half.toArray()};
+}
 
 export function gazeTarget(pointer, active) {
   return new Vector2(-.55 + (active ? MathUtils.clamp(pointer.x, -1, 1) * .46 : 0),

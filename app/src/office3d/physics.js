@@ -4,7 +4,7 @@ let initialization;
 export const initPhysics = () => (initialization ||= RAPIER.init());
 export const DESK = { x: .90, y: 1.30, z: 0, half: [4.45, .095, 1.45] };
 
-/** Independent rigid bodies. Only lost bodies are returned by restoreLost(). */
+/** Independent rigid bodies. Restoration also accepts explicit extra prop IDs. */
 export class DeskPhysics {
   constructor(onLost = () => {}) {
     this.world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
@@ -29,8 +29,15 @@ export class DeskPhysics {
       .setLinearDamping(.6).setAngularDamping(1.5).setCcdEnabled(true).setCanSleep(true));
     this.world.createCollider(RAPIER.ColliderDesc.cuboid(...half)
       .setMass(mass).setFriction(.75).setRestitution(.12), body);
-    this.items.set(id, { body, home: { ...home }, rotation: { ...rotation } });
+    // Three.Quaternion stores private _x/_y/_z/_w fields; copy its public
+    // components explicitly so restoring never passes undefined axes to Rapier.
+    this.items.set(id, { body, home: { x:home.x, y:home.y, z:home.z }, rotation: { x:rotation.x, y:rotation.y, z:rotation.z, w:rotation.w } });
     return body;
+  }
+  resize(id, half) {
+    const body=this.items.get(id).body;
+    body.collider(0).setShape(new RAPIER.Cuboid(...half));
+    body.recomputeMassPropertiesFromColliders();body.wakeUp();
   }
   grab(id) {
     this.release();
@@ -104,8 +111,9 @@ export class DeskPhysics {
       }
     }
   }
-  restoreLost() {
-    for (const id of this.lost) {
+  restoreLost(resetIds = []) {
+    for (const id of new Set([...this.lost, ...resetIds])) {
+      if (!this.items.has(id)) continue;
       const { body, home, rotation } = this.items.get(id);
       body.setTranslation(home, false); body.setRotation(rotation, false);
       body.setLinvel({ x: 0, y: 0, z: 0 }, false); body.setAngvel({ x: 0, y: 0, z: 0 }, false);
