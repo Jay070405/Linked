@@ -21,10 +21,10 @@ export default function Field01({lang, onBack, onReady}) {
     check();return()=>{observer.disconnect();clearTimeout(deadline);cancelAnimationFrame(paint);};
   },[loaded,onReady]);
   return <section className="vc-camera-page" aria-label="FIELD / 01">
-    <header className="vc-camera-bar"><a href="/vibecoding" onClick={event => {
+    <header className="vc-camera-bar"><a href="/other-project" onClick={event => {
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault(); onBack();
-    }}>← Vibe coding</a><h1>FIELD / 01 <span>{en?'Interactive camera':'相机交互实验'}</span></h1><a href="/field01/index.html" target="_blank" rel="noopener noreferrer">{en?'Open full screen':'独立打开'} ↗</a></header>
+    }}>← Other Project</a><h1>FIELD / 01 <span>{en?'Interactive camera':'相机交互实验'}</span></h1><a href="/field01/index.html" target="_blank" rel="noopener noreferrer">{en?'Open full screen':'独立打开'} ↗</a></header>
     <div className="vc-camera-stage">
       {!loaded && <p className="vc-camera-loading" role="status">{en?'Opening FIELD / 01…':'正在打开 FIELD / 01…'}</p>}
       <iframe ref={frame} data-camera-instance={import.meta.env.DEV?instance:undefined} src="/field01/index.html" title="FIELD / 01 — 三维相机交互体验" allow="camera; fullscreen" allowFullScreen onLoad={() => setLoaded(true)}/>

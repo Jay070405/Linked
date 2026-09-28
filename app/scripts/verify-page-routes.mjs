@@ -7,8 +7,13 @@ assert.equal(routing.resolvePath('/works').type,'desk');
 assert.equal(routing.resolvePath('/works/archive').type,'archive');
 assert.equal(routing.resolvePath('/vibecoding').type,'vibecoding');
 assert.equal(routing.resolvePath('/vibecoding/field01/').type,'field01');
-assert.equal(routing.routeFor({type:'vibecoding'}),'/vibecoding');
-assert.equal(routing.routeFor({type:'field01'}),'/vibecoding/field01');
+assert.equal(routing.resolvePath('/other-project').type,'vibecoding');
+assert.equal(routing.resolvePath('/other-project/field01/').type,'field01');
+assert.equal(routing.resolvePath('/other-project/jay-lin').type,'brand-motion');
+assert.equal(routing.routeFor({type:'vibecoding'}),'/other-project');
+assert.equal(routing.routeFor({type:'field01'}),'/other-project/field01');
+assert.equal(routing.routeFor({type:'brand-motion'}),'/other-project/jay-lin');
+assert.equal(routing.routeFor('/other-project/experiment-03'),null);
 assert.equal(routing.routeFor('/vibecoding/experiment-02'),null);
 assert.equal(routing.resolvePath('/field01/assets/missing.glb'),null);
 assert.equal(routing.resolvePath('/systems/roco').type,'system');
@@ -26,4 +31,4 @@ for (const system of systems.filter(s=>s.status==='coming-soon')) {
 }
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; desk/archive/case/model plus Vibe coding/FIELD01 routes; no invented Coming Soon routes.');
+console.log('PASS: 25 original artwork routes; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes.');
