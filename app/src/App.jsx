@@ -28,6 +28,7 @@ export default function App(){
  };
  const nav=id=>{
   if(id==='art'){open('/works');return;}
+  if(id==='systems'){open('/systems');return;}
   if(id==='archive'){open('/works/archive');return;}
   if(id==='vibecoding'){open('/other-project');return;}
   if(id==='about'){setAbout(true);return;}
@@ -42,7 +43,7 @@ export default function App(){
  useEffect(()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>setReduced(preference.matches);preference.addEventListener('change',sync);return()=>preference.removeEventListener('change',sync);},[]);
  return <>
  <a className="skip-link" href={modal?'#portfolio-page':'#systems'}>{lang==='en'?'Skip to content':'跳到正文'}</a>
- <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive'].includes(modal.type)?'dark':'light'):'auto'} onLanguage={setLang} onNavigate={nav} onAbout={()=>setAbout(true)}/>
+ <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive','systems'].includes(modal.type)?'dark':'light'):'auto'} onLanguage={setLang} onNavigate={nav} onAbout={()=>setAbout(true)}/>
  <main className="home-journey" inert={modal?true:undefined} aria-hidden={!!modal}>
   <LegacyHero lang={lang} reduced={quiet}/>
   <OneStroke lang={lang} reduced={quiet} onOpen={open} onArchive={()=>open('/works/archive')} onAbout={()=>setAbout(true)} onNavigate={nav}/>

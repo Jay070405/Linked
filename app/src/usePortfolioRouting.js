@@ -7,6 +7,7 @@ export function resolvePath(pathname) {
   const path = pathname.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
   if (path === '/works') return { type: 'desk' };
   if (path === '/works/archive') return { type: 'archive' };
+  if (path === '/systems') return { type: 'systems' };
   if (path === '/other-project' || path === '/vibecoding') return { type: 'vibecoding' };
   if (path === '/other-project/field01' || path === '/vibecoding/field01') return { type: 'field01' };
   if (path === '/other-project/jay-lin') return { type: 'brand-motion' };
@@ -20,6 +21,7 @@ export function routeFor(page) {
   if (typeof page === 'string') return page.startsWith('/') && !page.startsWith('//') && resolvePath(page) ? page : null;
   if (page?.type === 'desk') return '/works';
   if (page?.type === 'archive') return '/works/archive';
+  if (page?.type === 'systems') return '/systems';
   if (page?.type === 'vibecoding') return '/other-project';
   if (page?.type === 'field01') return '/other-project/field01';
   if (page?.type === 'brand-motion') return '/other-project/jay-lin';
@@ -44,6 +46,7 @@ function parentPath(page) {
   if (page?.type === 'field01' || page?.type === 'brand-motion') return '/other-project';
   if (page?.type === 'art') return '/works/archive';
   if (page?.type === 'archive') return '/works';
+  if (page?.type === 'system') return '/systems';
   if (page?.type === 'model') return '/systems/roco';
   return null;
 }

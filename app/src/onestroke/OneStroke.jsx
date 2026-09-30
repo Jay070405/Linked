@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {createOneStroke, webglAvailable, CHAPTERS, SCREEN_SIDES, TOTAL, MIN_ASPECT} from './engine';
+import {createOneStroke, webglAvailable, CHAPTERS, SCREEN_SIDES, SCROLL_TOTAL, MIN_ASPECT, toScroll} from './engine';
 import {PROJECTS, ART, ABOUT, TIMELINE, COPY, author, pick} from './content';
 import OneStrokeStatic from './OneStrokeStatic';
 import './onestroke.css';
@@ -26,7 +26,7 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
       const p = props.current;
       if (where === 'about') p.onAbout?.();
       else if (where === 'works') p.onNavigate?.('art');
-      else if (where === 'systems') engine.current?.goChapter(1);
+      else if (where === 'systems') p.onNavigate?.('systems');
       else if (where === 'contact') engine.current?.goChapter(5);
       else if (where?.startsWith('art:')) { const a = ART.find(x => x.slug === where.slice(4)); if (a?.item) p.onOpen?.({type: 'art', item: a.item}); }
     };
@@ -45,11 +45,11 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
 
   if (staticMode) return <OneStrokeStatic lang={lang} onOpen={onOpen} onArchive={onArchive} onAbout={onAbout} onNavigate={onNavigate}/>;
 
-  const footNav = (e, id) => { e.preventDefault(); if (id === 'systems') engine.current?.goChapter(1); else props.current.onNavigate?.(id); };
+  const footNav = (e, id) => { e.preventDefault(); props.current.onNavigate?.(id); };
   const O = COPY.outro;
-  return <section ref={sectionRef} className="onestroke" style={{'--os-screens': TOTAL + 1}} aria-label={en ? 'Between rules and wonder — the homepage journey' : '在规则与奇想之间——首页旅程'}>
+  return <section ref={sectionRef} className="onestroke" style={{'--os-screens': SCROLL_TOTAL + 1}} aria-label={en ? 'Between rules and wonder — the homepage journey' : '在规则与奇想之间——首页旅程'}>
     {[['systems', CHAPTERS[1]], ['journey-about', CHAPTERS[2]], ['journey-timeline', CHAPTERS[3]], ['worlds', CHAPTERS[4]], ['contact', CHAPTERS[5]]].map(([id, s]) =>
-      <span key={id} className="os-anchor" id={id} style={{top: `${s * 100}vh`}} tabIndex={-1}/>)}
+      <span key={id} className="os-anchor" id={id} style={{top: `${toScroll(s) * 100}vh`}} tabIndex={-1}/>)}
 
     <div className="os-layer" ref={layerRef}>
       <div className="os-stage">
@@ -89,7 +89,7 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
             <a className="o-btn os-mail" data-h href={`mailto:${author.email}`}><span>{L(O.write)}</span></a>
           </div>
           <div className="o-foot os-mono">
-            <a href="/#systems" data-h onClick={e => footNav(e, 'systems')}>{L(O.foot.systems)}</a>
+            <a href="/systems" data-h onClick={e => footNav(e, 'systems')}>{L(O.foot.systems)}</a>
             <a href="/works" data-h onClick={e => footNav(e, 'art')}>{L(O.foot.art)}</a>
             <a href="/#about" data-h onClick={e => { e.preventDefault(); onAbout?.(); }}>{L(O.foot.about)}</a>
             <a href={author.resume} data-h target="_blank" rel="noreferrer">{L(O.foot.resume)}</a>

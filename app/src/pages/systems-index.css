@@ -1,0 +1,109 @@
+/* Systems collection: the systems projects in one list, black, white and grey like the homepage's lake. */
+.portfolio-page-viewport.route-systems{background:#0c0c0d}
+.si-page{--si-bg:#0c0c0d;--si-ink:#f3f3f4;--si-mute:#8d8d94;--si-line:#ffffff1f;--si-ease:cubic-bezier(.2,.9,.2,1);--si-draw:cubic-bezier(.62,.04,.24,1);
+  position:relative;min-height:100%;padding:124px 5.2vw 0;background:radial-gradient(120% 70% at 12% 0%,#1b1b1e 0%,var(--si-bg) 58%);color:var(--si-ink);font-family:'TikTok Sans','Microsoft YaHei',sans-serif}
+.si-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* the heading: SYSTEMS written as one outline, then filled; a rule drawn under it */
+.si-label{margin:0;font:500 10px Mono,monospace;letter-spacing:.18em;color:#ffffff85}
+.si-title{margin:22px 0 0;line-height:0}
+.si-title svg{display:block;width:100%;height:auto;overflow:visible}
+.si-title text{font:700 300px 'TikTok Sans',sans-serif;fill:#f3f3f400;stroke:var(--si-ink);stroke-width:1.1;stroke-dasharray:1500;stroke-dashoffset:1500;animation:si-draw 2.3s var(--si-draw) .15s forwards,si-fill 1s ease 1.75s forwards}
+.si-rule{display:block;height:1px;margin-top:28px;background:#ffffff40;transform:scaleX(0);transform-origin:left;animation:si-grow 1.5s var(--si-ease) .45s forwards}
+.si-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr) minmax(0,1fr);gap:5vw;align-items:start;padding:34px 0 86px;opacity:0;animation:si-in 1s var(--si-ease) .75s forwards}
+.si-lead{margin:0;font:italic 400 clamp(28px,2.4vw,44px)/1.1 Editorial,serif;letter-spacing:-.01em}
+.si-page:lang(zh-CN) .si-lead{font:620 clamp(24px,2vw,36px)/1.25 'TikTok Sans','Microsoft YaHei',sans-serif;letter-spacing:-.01em}
+.si-body{margin:0;max-width:34em;font-size:15px;line-height:1.85;color:#c4c4ca}
+.si-stats{margin:0;justify-self:end;text-align:right;font:500 10px/2 Mono,monospace;letter-spacing:.16em;color:#ffffff80}
+.si-stats b{font-weight:500;color:var(--si-ink)}
+.si-stats span{margin:0 6px;color:#ffffff40}
+
+/* the list */
+.si-list{list-style:none;margin:0;padding:0;position:relative}
+.si-list:after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--si-line);transform:scaleX(0);transform-origin:left;animation:si-grow 1.2s var(--si-ease) 1.05s forwards}
+.si-row{position:relative;opacity:0;transform:translateY(28px);animation:si-rise 1s var(--si-ease) calc(.6s + var(--i) * .09s) forwards}
+.si-row:before{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:var(--si-line);transform:scaleX(0);transform-origin:left;animation:si-grow 1.2s var(--si-ease) calc(.55s + var(--i) * .09s) forwards}
+.si-row>a,.si-row>.si-soon{position:relative;display:grid;grid-template-columns:110px minmax(0,1.3fr) minmax(0,1fr) 190px;grid-template-areas:'no name meta cta';gap:3vw;align-items:center;min-height:172px;padding:28px 0;color:inherit;text-decoration:none;outline:none;cursor:pointer}
+.si-row>.si-soon{cursor:default}
+.si-row>*>*{transition:opacity .5s var(--si-ease)}
+.si-page.is-hovering .si-row:not(.is-on)>*>:not(.si-line){opacity:.26}
+.si-no{grid-area:no;align-self:start;padding-top:14px;font:500 10px Mono,monospace;letter-spacing:.16em;color:#ffffff66}
+.si-no b{margin-right:8px;font-size:13px;font-weight:500;color:var(--si-ink)}
+.si-name{grid-area:name;min-width:0}
+.si-name b{display:block;font:640 clamp(38px,4.6vw,88px)/1.04 'TikTok Sans','Microsoft YaHei',sans-serif;letter-spacing:-.035em;transition:transform .8s var(--si-ease),color .4s}
+.si-name b.is-serif{font:italic 400 clamp(46px,5.4vw,102px)/1 Editorial,serif;letter-spacing:-.01em}
+.si-name small{display:block;margin-top:12px;font-size:14px;color:var(--si-mute);transition:color .4s,transform .8s var(--si-ease)}
+.si-meta{grid-area:meta;display:grid;gap:10px;align-content:center}
+.si-cat{font:500 10px Mono,monospace;letter-spacing:.16em;color:#ffffff99}
+.si-desc{max-width:44ch;font-size:13.5px;line-height:1.75;color:#a6a6ad}
+.si-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.si-tags i{font:500 9px Mono,monospace;font-style:normal;letter-spacing:.14em;padding:6px 10px;border:1px solid #ffffff26;border-radius:20px;color:#ffffffb0;transition:border-color .4s,color .4s,background .4s}
+.si-cta{grid-area:cta;justify-self:end;display:inline-flex;align-items:center;gap:14px;font-size:13px;font-weight:560;white-space:nowrap}
+.si-cta b{display:inline-grid;place-items:center;width:46px;height:46px;border:1px solid #ffffff45;border-radius:50%;font-weight:400;font-size:15px;transition:transform .7s var(--si-ease),background .45s,color .45s,border-color .45s}
+.si-thumb{grid-area:thumb;display:none}
+.si-line{position:absolute;left:0;right:0;bottom:-1px;z-index:1;height:1px;background:var(--si-ink);transform:scaleX(0);transform-origin:left;transition:transform .8s var(--si-ease)}
+
+/* a row answers the pointer (and the keyboard) */
+.si-row.is-on .si-line,.si-row>:focus-visible .si-line{transform:scaleX(1)}
+.si-row.is-on .si-name b{transform:translateX(18px)}
+.si-row.is-on .si-name small{color:#d9d9de;transform:translateX(18px)}
+.si-row.is-on .si-tags i{border-color:#ffffff70;color:#fff}
+.si-row.is-on:not(.is-soon) .si-cta b{background:var(--si-ink);color:#0c0c0d;border-color:var(--si-ink);transform:rotate(45deg)}
+.si-row.is-soon .si-name b{color:#ffffff5c}
+.si-row.is-soon .si-cta{color:#ffffff70}
+.si-row.is-soon.is-on .si-name b{color:#ffffff8c}
+
+/* the picture that follows the pointer */
+.si-card{position:fixed;left:0;top:0;z-index:1040;width:0;height:0;pointer-events:none;will-change:transform}
+.si-card-in{position:absolute;left:44px;top:-150px;width:clamp(320px,23vw,460px);aspect-ratio:3/2;transition:left .55s var(--si-ease)}
+.si-card.is-left .si-card-in{left:calc(-44px - clamp(320px,23vw,460px))}
+.si-card figure{position:absolute;inset:0;margin:0;overflow:hidden;border-radius:3px;background:#161618;box-shadow:0 30px 70px #00000080;clip-path:inset(0 0 100% 0);transition:clip-path .65s var(--si-ease)}
+.si-card figure.is-on{clip-path:inset(0)}
+.si-card figure img{display:block;width:100%;height:100%;object-fit:cover;transform:scale(1.14);transition:transform 1.2s var(--si-ease)}
+.si-card figure.is-on img{transform:scale(1)}
+.si-card figcaption{position:absolute;left:14px;bottom:12px;font:500 9px Mono,monospace;letter-spacing:.16em;color:#fff;text-shadow:0 1px 8px #0009}
+.si-card-soon,.si-thumb--soon{place-content:center;gap:10px;width:100%;height:100%;text-align:center;
+  background:radial-gradient(1px 1px at 20% 30%,#fff9,transparent),radial-gradient(1px 1px at 70% 60%,#fff7,transparent),radial-gradient(1px 1px at 40% 80%,#fff6,transparent),radial-gradient(1px 1px at 85% 20%,#fff8,transparent),radial-gradient(60% 70% at 50% 45%,#2c2c30,#0a0a0b)}
+.si-card-soon{display:grid}
+.si-card-soon em,.si-thumb--soon em{font:620 34px 'TikTok Sans','Microsoft YaHei',sans-serif;font-style:normal;color:#fff}
+.si-card-soon small{font:500 9px Mono,monospace;letter-spacing:.2em;color:#ffffff99}
+
+/* the way on */
+.si-foot{display:grid;grid-template-columns:1fr auto auto;gap:4vw;align-items:center;margin-top:110px;padding:34px 0 60px;border-top:1px solid var(--si-line);font:500 10px Mono,monospace;letter-spacing:.16em;color:#ffffff70}
+.si-foot p{margin:0;font:italic 400 24px Editorial,serif;letter-spacing:0;color:#d4d4d9}
+.si-page:lang(zh-CN) .si-foot p{font:500 16px 'TikTok Sans','Microsoft YaHei',sans-serif}
+.si-foot a{display:inline-flex;align-items:center;min-height:44px;font:560 15px 'TikTok Sans','Microsoft YaHei',sans-serif;letter-spacing:0;color:var(--si-ink);text-decoration:none;border-bottom:1px solid currentColor;transition:letter-spacing .45s var(--si-ease),opacity .3s}
+.si-foot a:is(:hover,:focus-visible){letter-spacing:.04em}
+
+@keyframes si-draw{to{stroke-dashoffset:0}}
+@keyframes si-fill{to{fill:#f3f3f4;stroke-width:0}}
+@keyframes si-grow{to{transform:scaleX(1)}}
+@keyframes si-rise{to{opacity:1;transform:none}}
+@keyframes si-in{to{opacity:1}}
+
+/* still: no motion, pictures in the rows */
+.si-still :is(.si-row,.si-intro){opacity:1;transform:none;animation:none}
+.si-still :is(.si-row:before,.si-list:after,.si-rule){transform:none;animation:none}
+.si-still .si-title text{animation:none;stroke-dashoffset:0;fill:#f3f3f4;stroke-width:0}
+.si-still .si-card{display:none}
+.si-still .si-row>*,.si-still .si-name :is(b,small),.si-still .si-line,.si-still .si-cta b{transition:none}
+.si-still .si-row>a,.si-still .si-row>.si-soon{grid-template-columns:110px minmax(0,1.2fr) minmax(0,1fr) 220px 150px;grid-template-areas:'no name meta thumb cta'}
+.si-still .si-thumb{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:3px}
+.si-still .si-thumb--soon{display:grid}
+@media (hover:none),(max-width:900px){
+  .si-card{display:none}
+  .si-page.is-hovering .si-row:not(.is-on)>*>:not(.si-line){opacity:1}
+  .si-row.is-on .si-name :is(b,small){transform:none}
+}
+@media (max-width:900px){
+  .si-page{padding:104px 22px 0}
+  .si-intro{grid-template-columns:1fr;gap:18px;padding:26px 0 56px}
+  .si-stats{justify-self:start;text-align:left}
+  .si-row>a,.si-row>.si-soon,.si-still .si-row>a,.si-still .si-row>.si-soon{grid-template-columns:1fr auto;grid-template-areas:'no cta' 'name name' 'thumb thumb' 'meta meta';gap:16px;min-height:0;padding:28px 0 32px}
+  .si-no{padding-top:0;align-self:center}
+  .si-thumb{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:3px}
+  .si-thumb--soon{display:grid}
+  .si-thumb--soon em{font-size:26px}
+  .si-cta b{width:40px;height:40px}
+  .si-foot{grid-template-columns:1fr;gap:14px;margin-top:70px}
+}

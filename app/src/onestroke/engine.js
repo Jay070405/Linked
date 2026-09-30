@@ -25,6 +25,12 @@ import {PROJECTS, ART, ABOUT, TIMELINE, COPY, pick} from './content.js';
 
 export const TOTAL = 23.2;                                   // screens of journey after the switch-on
 export const CHAPTERS = [0, 2.05, 8.3, 10.9, 16.9, 22.6];    // where the index takes you, in screens
+/* The opening gets more scroll than the rest: the first KV_RAW screens of scrolling play its first journey screen, so the
+   stone has room to rise and stand before it sinks. Journey S (what everything below is keyed to) ↔ scroll screens. */
+const KV_HOLD = 0.5, KV_RAW = 1 + KV_HOLD;
+export const SCROLL_TOTAL = TOTAL + KV_HOLD;
+export const toJourney = r => (r < KV_RAW ? r / KV_RAW : r - KV_HOLD);
+export const toScroll = s => (s < 1 ? s * KV_RAW : s + KV_HOLD);
 export const SCREEN_SIDES = [1, -1, 1, -1];                  // which side of its screen each project's words stand on
 export const MIN_ASPECT = 1.11;                              // narrower windows get the static page
 export function webglAvailable() {
@@ -304,11 +310,8 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
       lastLoop.push(loops.length - 1);
       x += widths[k] + gap;
     });
-    TRACE = poseFromStrokes(loops, 2.4, {gapWeight: 0.04});
-    const lens = loops.map(l => l.reduce((a, q, i) => i ? a + q.distanceTo(l[i - 1]) : 0, 0)), gaps = loops.slice(1).map((l, i) => loops[i].at(-1).distanceTo(l[0]) * 0.04);
-    const tot = lens.reduce((a, b) => a + b, 0) + gaps.reduce((a, b) => a + b, 0); let c = 0; const ends = [];
-    loops.forEach((l, i) => { c += lens[i]; if (lastLoop.includes(i)) ends.push(c / tot); if (i < gaps.length) c += gaps[i]; });
-    window.__letterEnds = ends;   // for the recorder: the scroll position where letter k is fully written is 1.2 + 0.7 * ends[k]
+    TRACE = poseFromStrokes(loops, 2.4, {gapWeight: 0.04});   // the pen lifts between loops: no line runs from letter to letter
+    window.__letterEnds = lastLoop.map(i => TRACE.ends[i]);   // for the recorder: letter k is fully written at S = 1.2 + 0.7 * ends[k]
   }
 
   /* ---------------- the projects: frameless screens drawn in row by row ---------------- */
@@ -638,11 +641,16 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   }
 
   /* ---------------- interaction ---------------- */
-  const pointer = {x: W * 0.6, y: H * 0.5, inside: false, down: false};
+  // inside: over the journey itself (hovers and clicks); inWin: anywhere in the window. The view leans toward the pointer
+  // wherever it is, so crossing the site's own navigation or a corner button never snaps the scene back to centre.
+  const pointer = {x: W * 0.6, y: H * 0.5, inside: false, down: false, inWin: false};
   const within = t => t instanceof Element && !!t.closest('.onestroke');
-  const move = e => { pointer.x = e.clientX / UI; pointer.y = e.clientY / UI; pointer.inside = within(e.target); };
+  const move = e => { pointer.x = e.clientX / UI; pointer.y = e.clientY / UI; pointer.inside = within(e.target); pointer.inWin = true; };
   on(window, 'pointermove', move, {passive: true});
-  on(document.documentElement, 'pointerleave', () => { pointer.inside = false; });
+  on(document.documentElement, 'pointerleave', () => { pointer.inside = false; pointer.inWin = false; });
+  on(window, 'blur', () => { pointer.inWin = false; });
+  const leanP = {x: 0, y: 0};   // the pointer as the scene feels it: eased, so it follows like a weight on a string
+  const mag = {x: 0, y: 0};     // how far the letter button has leaned toward the pointer
   const spin = {v: 0, a: 0, lx: 0};
   let splash = false;
   on(window, 'pointerdown', e => { move(e); if (!pointer.inside) return; pointer.down = true; spin.lx = pointer.x; splash = true; }, {passive: true});
@@ -710,6 +718,10 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     setStyle(crtLine, 'transform', `translate(-50%, -50%) scale(${mix(0.006, 1, line).toFixed(4)}, ${(1 + open * 5).toFixed(3)})`);
     setStyle(crtT, 'transform', `translateY(${(-open * 100).toFixed(2)}%)`); setStyle(crtB, 'transform', `translateY(${(open * 100).toFixed(2)}%)`);
   }
+  // The screen's own state, 0 dark … 1 open. It switches on when you arrive from the office and off again when you scroll
+  // back up into it (the layer stays until the picture has collapsed to a dot), or when "back to top" takes you out.
+  const screen = {o: 0, want: 0};
+  const SCREEN_ON = 0.92, SCREEN_OFF = 0.55;   // seconds: dot → line → open, and back
   // chapter jumps fly on their own easing (any wheel, key or touch hands control back); "back to top" switches the screen off
   const power = {off: -1};
   let fly = null, snap = false;
@@ -717,7 +729,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   ['wheel', 'keydown', 'touchstart'].forEach(ev => on(window, ev, () => { fly = null; }, {passive: true}));
   on(window, 'journey:jump', () => { snap = true; fly = null; });
   function goChapter(i) {
-    const to = sectionTop() + CHAPTERS[i] * innerHeight, far = Math.abs(to - scrollY) / innerHeight;
+    const to = sectionTop() + toScroll(CHAPTERS[i]) * innerHeight, far = Math.abs(to - scrollY) / innerHeight;
     fly = {from: scrollY, to, t0: time, dur: clamp(0.9 + far * 0.09, 0.9, 2.6)};
   }
   function backToTop() { if (power.off < 0) power.off = time; }
@@ -745,50 +757,62 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   function frame(now) {
     if (!alive) return;
     const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)) || 0.016; last = now; time += dt;
-    const St = window.__tourS ?? (-section.getBoundingClientRect().top / innerHeight);
+    const St = window.__tourS ?? toJourney(-section.getBoundingClientRect().top / innerHeight);
     const routeOpen = document.body.classList.contains('portfolio-route-open');
     paused = document.hidden || routeOpen;
-    // the page before us (the office) owns the screen until it has gone dark
-    const active = built && St > -0.0005;
+    // the page before us (the office) owns the screen until it has gone dark; scrolling back up into it, the office gets the
+    // screen back once ours has switched off
+    const inJourney = built && St > -0.0005;
+    const active = inJourney || (activeNow && screen.o > 0 && !paused);
     if (active !== activeNow) {
       activeNow = active; root.classList.toggle('is-live', active); section.classList.toggle('is-live', active); document.body.classList.toggle('past-office', active);
-      if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; } else bodyTone(null);
+      if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else bodyTone(null);
     }
     if (!active || paused) { if (!OFFLINE) raf = requestAnimationFrame(frame); return; }
     S += (St - S) * (1 - Math.exp(-dt / 0.12)); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
     if (window.__tourPointer) { const was = pointer.down; Object.assign(pointer, window.__tourPointer); if (pointer.down && !was) spin.lx = pointer.x; }
-    if (power.off >= 0 && time - power.off > 0.62) { power.off = -1; fly = null; scrollTo({top: 0, behavior: 'instant'}); }   // dark: back out through the monitor, into the office
+    // layout is read before this frame writes any style, so reading it never forces a second layout
+    const mailBox = S > 21.3 ? mail.getBoundingClientRect() : null, domHit = domHover();
+    /* the office's dark monitor switches on, the line it opens from is the horizon; at the very top of the journey (or for
+       "back to top") it switches off again: the picture folds into that line, the line into a dot */
+    if (power.off >= 0 || !inJourney || St < 0.012) screen.want = 0; else if (St > 0.03) screen.want = 1;
+    screen.o = clamp(screen.o + (screen.want ? dt / SCREEN_ON : -dt / SCREEN_OFF));
+    crt(screen.o);
+    if (power.off >= 0 && screen.o <= 0) { power.off = -1; fly = null; scrollTo({top: 0, behavior: 'instant'}); }   // dark: back out through the monitor, into the office
     if (fly) { const qf = seg(time, fly.t0, fly.t0 + fly.dur); scrollTo({top: mix(fly.from, fly.to, eio(qf)), behavior: 'instant'}); if (qf >= 1) fly = null; }
     const intro = (now - t0) / 1000;
-    const px = pointer.inside ? pointer.x / W - 0.5 : 0, py = pointer.inside ? pointer.y / H - 0.5 : 0;
+    // the opening plays by itself; once the screen is open, scrolling can hurry it along, so the stone is always up
+    // (by S 0.5) long before the first scroll sinks it (S 1.0)
+    const iv = Math.max(intro, S * 5.4 * seg(screen.o, 0.5, 1));
+    // the pointer as the scene feels it: eased, and wherever it is in the window
+    const inWin = pointer.inWin || pointer.inside, kp = 1 - Math.exp(-dt / 0.3);
+    leanP.x += ((inWin ? clamp(pointer.x / W) - 0.5 : 0) - leanP.x) * kp; leanP.y += ((inWin ? clamp(pointer.y / H) - 0.5 : 0) - leanP.y) * kp;
+    const px = leanP.x, py = leanP.y;
 
     /* camera, leaning a little toward the pointer (not while top-down on paper) */
     camAt(S); const topDown = seg(S, 7.6, 7.9) * (1 - seg(S, 14.2, 14.5));
     cam.position.copy(camPos); cam.up.copy(camUp); cam.lookAt(camLook);
     // while the screen switches on the camera holds still, so the horizon lands exactly on the monitor's line
-    const lean = (1 - topDown) * (S < 1 ? eio(seg(intro, 1.0, 2.2)) : 1); cam.translateX(px * 60 * lean); cam.translateY(-py * 40 * lean); cam.lookAt(camLook);
+    const lean = (1 - topDown) * (S < 1 ? eio(seg(screen.o, 0.7, 1)) : 1); cam.translateX(px * 32 * lean); cam.translateY(-py * 20 * lean); cam.lookAt(camLook);
     cam.updateMatrixWorld();
-
-    /* the office's dark monitor switches on; the line it opens from is the horizon */
-    crt(power.off >= 0 ? 1 - seg(time - power.off, 0, 0.55) : seg(intro, 0.08, 1.0));
 
     /* the monolith: rises out of the lake as the screen opens, turns with the pointer or a drag, sinks on the first scroll */
     const kvW = 1 - seg(S, 0.6, 1.3);
     hov.mark += ((S < 0.9 && pointer.inside && hitTest([jlKV]) ? 1 : 0) - hov.mark) * (1 - Math.exp(-dt / 0.2));
     if (pointer.down && S < 1.2) { spin.v += (pointer.x - spin.lx) * 0.0009; spin.lx = pointer.x; }
     spin.v *= Math.exp(-dt * 2.2); spin.a += spin.v; spin.a *= Math.exp(-dt * (pointer.down ? 0 : 1.1));
-    const turn = 0.55 + hov.mark * 0.35;
-    eul.set(py * 0.2 * turn * kvW, (px * turn + spin.a + Math.sin(time * 0.3) * 0.1) * kvW, 0); qJL.setFromEuler(eul);
-    const rise = eo3(seg(intro, 1.1, 2.7)), sink = Math.pow(seg(S, 1.0, 1.25), 2);
-    [[1.1, 1.5], [1.55, 1.0], [2.3, 0.55]].forEach(([t, a]) => { if (introPrev < t && intro >= t && S < 1) ripple(JLC.x, JLC.z + 25, a); });
+    const turn = 0.3 + hov.mark * 0.2;
+    eul.set(py * 0.16 * turn * kvW, (px * turn + spin.a + Math.sin(time * 0.3) * 0.08) * kvW, 0); qJL.setFromEuler(eul);
+    const rise = eo3(seg(iv, 1.1, 2.7)), sink = Math.pow(seg(S, 1.0, 1.25), 2);
+    [[1.1, 1.5], [1.55, 1.0], [2.3, 0.55]].forEach(([t, a]) => { if (introPrev < t && iv >= t && S < 1) ripple(JLC.x, JLC.z + 25, a); });
     const bob = Math.sin(time * 0.9) * 5;                              // it breathes; now and then the water answers with a ring
-    if (S < 0.95 && intro > 2.9 && Math.floor(time / 3.4) !== ringTick) { ringTick = Math.floor(time / 3.4); ripple(JLC.x, JLC.z + 25, 0.22); }
+    if (S < 0.95 && iv > 2.9 && Math.floor(time / 3.4) !== ringTick) { ringTick = Math.floor(time / 3.4); ripple(JLC.x, JLC.z + 25, 0.22); }
     if (S > 22.3 && Math.floor(time / 3.4) !== ringTick) { ringTick = Math.floor(time / 3.4); ripple(ENDC.x, ENDC.z + 25, 0.22); }
     jlKV.position.set(JLC.x, JLC.y + bob - (1 - rise) * 420 - sink * 460, JLC.z); jlKV.quaternion.copy(qJL); jlKV.scale.setScalar(JL_S); jlKV.visible = S < 1.25 && rise > 0.001;
     stoneKV.envMapIntensity = 2.4 + hov.mark * 0.8;
     const endIn = eo3(seg(S, 21.62, 22.35));
     hov.end += ((S > 22.1 && pointer.inside && hitTest([jlEnd]) ? 1 : 0) - hov.end) * (1 - Math.exp(-dt / 0.2));
-    eulE.set(py * (0.15 + hov.end * 0.15), px * (0.45 + hov.end * 0.35) + Math.sin(time * 0.3) * 0.12, 0); jlEnd.quaternion.setFromEuler(eulE);
+    eulE.set(py * (0.08 + hov.end * 0.08), px * (0.24 + hov.end * 0.18) + Math.sin(time * 0.3) * 0.1, 0); jlEnd.quaternion.setFromEuler(eulE);
     jlEnd.position.set(ENDC.x, ENDC.y + bob - (1 - endIn) * 420, ENDC.z); jlEnd.scale.setScalar(JL_S); jlEnd.visible = S > 21.3 && endIn > 0.001;
     stoneEnd.envMapIntensity = 0.5 + hov.end * 0.5;   // in the white mist the stone stays black: the one dark thing in the frame
 
@@ -819,14 +843,14 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     lu.uSink.value.set(JLC.x, JLC.z + 25, seg(S, 1.0, 1.5) * 2600, S > 1.0 ? 1.8 * (1 - seg(S, 1.0, 1.5)) : 0);
     lake.visible = S < 1.56;
     const hA = headA.mesh.material.uniforms, hB = headB.mesh.material.uniforms;
-    hA.uIn.value = seg(intro, 2.1, 3.1); hB.uIn.value = seg(intro, 2.6, 3.6); hA.uA.value = hB.uA.value = 1 - seg(S, 0.85, 1.1);
+    hA.uIn.value = seg(iv, 2.1, 3.1); hB.uIn.value = seg(iv, 2.6, 3.6); hA.uA.value = hB.uA.value = 1 - seg(S, 0.85, 1.1);
     headA.mesh.visible = headB.mesh.visible = S < 1.1;
     if (splash && S < 0.95) touchWater(waterKV, 1.3, true);
-    else if (pointer.inside && S < 0.95 && intro > 1.2) touchWater(waterKV, 0.4);
+    else if (pointer.inside && S < 0.95 && iv > 1.2) touchWater(waterKV, 0.4);
     if (splash && S > 22.05) touchWater(waterEnd, 1.3, true);
     else if (pointer.inside && S > 22.05) touchWater(waterEnd, 0.4);
     splash = false;
-    const hudA = seg(intro, 2.7, 3.5) * (1 - seg(S, 0.3, 0.8));
+    const hudA = seg(iv, 2.7, 3.5) * (1 - seg(S, 0.62, 0.9));
     [kvMeta, kvHud, kvScroll].forEach(el => setStyle(el, 'opacity', op(hudA)));
     kvHud.classList.toggle('hov', hov.mark > 0.5);
     if (hudA > 0.001) { hudQ.textContent = `Q ${qJL.x.toFixed(3)} ${qJL.y.toFixed(3)} ${qJL.z.toFixed(3)} ${qJL.w.toFixed(3)}`;
@@ -845,7 +869,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
       const u = s.mesh.material.uniforms; u.uReveal.value = onS; s.mesh.visible = onS > 0.001;
       s.hov = (s.hov || 0) + ((hoverScreen === i ? 1 : 0) - (s.hov || 0)) * (1 - Math.exp(-dt / 0.2)); u.uHover.value = s.hov;
       if (hoverScreen === i) { const hit = hitTest([s.mesh]); if (hit) u.uSweep.value += (hit.uv.x * 0.8 + hit.uv.y * 0.35 - u.uSweep.value) * (1 - Math.exp(-dt / 0.1)); }
-      s.mesh.rotation.y = s.yaw + (pointer.x / W - 0.5) * 0.12 * s.hov; s.mesh.rotation.x = (pointer.y / H - 0.5) * 0.08 * s.hov;
+      s.mesh.rotation.y = s.yaw + px * 0.12 * s.hov; s.mesh.rotation.x = py * 0.08 * s.hov;
       s.mesh.position.copy(s.c).add(rotY(V(0, 0, 40 * s.hov), s.yaw));
       const p = seg(S, s.hold[0] - 0.22, s.hold[0] + 0.04) * (1 - seg(S, s.hold[1] + 0.02, s.hold[1] + 0.16));
       setStyle(s.dom, 'opacity', p > 0.001 ? '1' : '0'); setStyle(s.dom, 'visibility', p > 0.001 ? 'visible' : 'hidden');
@@ -932,8 +956,12 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     if (S > 21.3) {
       outroLines.forEach((l, i) => { setStyle(l, 'strokeDashoffset', (l.dataset.len * (1 - eio(clamp(o * 1.5 - i * 0.07)))).toFixed(1)); });
       oParts.forEach((el, i) => { const qq = eo3(clamp((S - 22.0) * 2.2 - i * 0.12)); setStyle(el, 'opacity', op(qq)); setStyle(el, 'transform', `translateY(${((1 - qq) * 24).toFixed(2)}px)`); });
-      const mr = mail.getBoundingClientRect(), mx = (pointer.x * UI - (mr.left + mr.width / 2)) / UI, my = (pointer.y * UI - (mr.top + mr.height / 2)) / UI, md = Math.hypot(mx, my);
-      const mpull = S > 22 && pointer.inside && md < 190 ? (1 - md / 190) : 0; setStyle(mail, 'translate', `${(mx * mpull * 0.35).toFixed(1)}px ${(my * mpull * 0.35).toFixed(1)}px`);
+      // the button leans toward a pointer that comes near; measured from where it rests, not from where it has leaned to
+      // (measuring the leaned button fed its own motion back and made it shiver)
+      const mx = pointer.x - ((mailBox.left + mailBox.width / 2) / UI - mag.x), my = pointer.y - ((mailBox.top + mailBox.height / 2) / UI - mag.y), md = Math.hypot(mx, my);
+      const mpull = S > 22 && pointer.inside && md < 190 ? (1 - md / 190) : 0, km = 1 - Math.exp(-dt / 0.16);
+      mag.x += (mx * mpull * 0.35 - mag.x) * km; mag.y += (my * mpull * 0.35 - mag.y) * km;
+      setStyle(mail, 'translate', `${mag.x.toFixed(1)}px ${mag.y.toFixed(1)}px`);
     }
 
     /* chrome: the site's navigation takes its tone from the page; the index, the headers */
@@ -948,7 +976,6 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     setStyle(artHead, 'opacity', op(ahA)); setStyle(artCount, 'opacity', op(acA)); setStyle(artCount, 'visibility', acA > 0.001 ? 'visible' : 'hidden');
 
     /* cursor */
-    const domHit = domHover();
     const C = COPY.cursor;
     let label = '';
     if (hoverScreen >= 0) label = PROJECTS[hoverScreen].ready ? `${pick(PROJECTS[hoverScreen].cta, lang)} ↗` : pick(C.soon, lang);
@@ -967,7 +994,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     if (window.__plate) { headA.mesh.visible = headB.mesh.visible = false; marqPlane.visible = false; }   // a clean plate of the scene, for the still page's pictures
     composer.render(dt);
     adapt(dt);
-    introPrev = intro;
+    introPrev = iv;
     window.__S = S;
     if (!OFFLINE) raf = requestAnimationFrame(frame);
   }

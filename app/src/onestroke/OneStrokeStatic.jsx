@@ -7,7 +7,7 @@ export default function OneStrokeStatic({lang = 'zh', onOpen, onArchive, onAbout
   const go = where => {
     if (where === 'about') onAbout?.();
     else if (where === 'works') onNavigate?.('art');
-    else if (where === 'systems') document.getElementById('systems')?.scrollIntoView({behavior: 'smooth'});
+    else if (where === 'systems') onNavigate?.('systems');
     else if (where === 'contact') document.getElementById('contact')?.scrollIntoView({behavior: 'smooth'});
     else if (where?.startsWith('art:')) { const a = ART.find(x => x.slug === where.slice(4)); if (a?.item) onOpen?.({type: 'art', item: a.item}); }
   };

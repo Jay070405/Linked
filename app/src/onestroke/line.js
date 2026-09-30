@@ -12,8 +12,9 @@ const eio = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 export function makePose() { return {P: new Float32Array(N * 3), R: new Float32Array(N), D: new Float32Array(N)}; }
 
-/** strokes: arrays of THREE.Vector3; consecutive strokes are joined by invisible gaps. */
-export function poseFromStrokes(strokes, radius, {gapWeight = 0.15} = {}) {
+/** strokes: arrays of THREE.Vector3; consecutive strokes are joined by invisible gaps (the pen lifts between them).
+    pose.ends[k] is where stroke k finishes, as a share of the line (0..1). */
+export function poseFromStrokes(strokes, radius, {gapWeight = 0.15, minGapSamples = 3} = {}) {
   const pts = [], seg = []; // seg[i]: weighted length of pts[i] -> pts[i+1], and whether it is a gap
   strokes.forEach((s, k) => {
     if (k > 0) { seg.push({len: pts.at(-1).distanceTo(s[0]) * gapWeight, gap: true, real: pts.at(-1).distanceTo(s[0])}); }
@@ -22,17 +23,24 @@ export function poseFromStrokes(strokes, radius, {gapWeight = 0.15} = {}) {
   // arc length along its own stroke, and that stroke's length, for every source point
   const along = new Float32Array(pts.length), slen = new Float32Array(pts.length);
   { let i = 0; strokes.forEach(s => { const base = i; const acc = [0]; for (let j = 1; j < s.length; j++) acc.push(acc[j - 1] + s[j - 1].distanceTo(s[j])); const L = acc.at(-1); for (let j = 0; j < s.length; j++) { along[base + j] = acc[j]; slen[base + j] = L; } i += s.length; }); }
-  const cum = [0]; seg.forEach(g => cum.push(cum.at(-1) + g.len)); const total = cum.at(-1);
+  // a gap shorter than the spacing of the samples would be stepped over, and the tube would draw the jump from one stroke
+  // to the next as a straight line: every gap keeps a few samples of its own
+  let cum, total;
+  const sum = () => { cum = [0]; seg.forEach(g => cum.push(cum.at(-1) + g.len)); total = cum.at(-1); };
+  sum();
+  for (let pass = 0; pass < 3 && strokes.length > 1; pass++) { const room = total / (N - 1) * minGapSamples; seg.forEach(g => { if (g.gap) g.len = Math.max(g.real * gapWeight, room); }); sum(); }
   const pose = makePose();
   let j = 0;
   for (let i = 0; i < N; i++) {
     const s = total * i / (N - 1);
     while (j < seg.length - 1 && cum[j + 1] < s) j++;
     const t = seg[j].len > 0 ? clamp((s - cum[j]) / seg[j].len) : 0;
-    const p = pts[j].clone().lerp(pts[j + 1], t);
+    // inside a gap the pen is lifted: its samples wait on the stroke ends instead of crossing the jump
+    const p = seg[j].gap ? pts[t < 0.5 ? j : j + 1].clone() : pts[j].clone().lerp(pts[j + 1], t);
     pose.P.set([p.x, p.y, p.z], i * 3); pose.R[i] = radius;
     if (seg[j].gap) pose.D[i] = 0; else { const al = along[j] + (along[j + 1] - along[j]) * t; pose.D[i] = Math.min(al, slen[j] - al); }
   }
+  { let k = 0, c = 0; pose.ends = []; strokes.forEach((s, n) => { k += s.length - 1; c = cum[k]; pose.ends.push(total ? c / total : 1); k += n < strokes.length - 1 ? 1 : 0; }); }
   return pose;
 }
 

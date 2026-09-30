@@ -1,6 +1,6 @@
 /* One Stroke — the homepage after the office. A tall scroll section (its first screen overlaps the office's last, dark one)
    and a fixed layer: the WebGL canvas, and the words in a 900-unit design space the engine scales to the window. */
-.onestroke{--os-ease:cubic-bezier(.2,.9,.2,1);--os-paper:#f1f0ec;position:relative;height:calc(var(--os-screens,24.2) * 100vh);margin-top:-100vh;z-index:6;pointer-events:none}
+.onestroke{--os-ease:cubic-bezier(.2,.9,.2,1);--os-paper:#f1f0ec;position:relative;height:calc(var(--os-screens,24.7) * 100vh);margin-top:-100vh;z-index:6;pointer-events:none}
 .onestroke.is-live{cursor:none;pointer-events:auto}   /* until the screen is dark the office underneath keeps every click */
 .onestroke.is-live :is(a,button){cursor:none}
 .os-anchor{position:absolute;left:0;width:1px;height:1px;pointer-events:none;scroll-margin-top:0}
