@@ -1,4 +1,0 @@
-/* PointField: a dot grid on paper behind a section's content. */
-.point-field{position:absolute;inset:0;pointer-events:none;z-index:0}
-.systems-section>.section-top,.systems-section>.systems-foot{position:relative;z-index:1}
-.art-bridge>.bridge-copy{z-index:1}

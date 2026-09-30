@@ -8,7 +8,6 @@ Installed 2026-09-10 from the official `https://reactbits.dev/r/{name}.json` reg
 | --- | --- |
 | `SplitFlapText.jsx` | `text` or `words`, `fontSize`, `tileColor`, `textColor`, `tileRadius`, `gap`, `padTo`, `loop`, `flipDuration`, `stagger`, `cycleDelay`, `flipsPerChar`, `charset`, `className`, `style` |
 | `ParticleText.jsx` | `text`, `fontSize`, `fontFamily`, `fontWeight`, `color`, `highlightColor`, `particleSize`, `density`, `scatter`, `gatherDuration`, `stagger`, `pointerRepel`, `repelRadius`, `idleDrift`, `glow`, `trigger` (`mount`, `hover`, `click`), `style`, `className` |
-| `CountUp.jsx` | `to` (required), `from`, `duration`, `delay`, `startWhen`, `separator`, `className`, `onStart`, `onEnd`; numeric values from `stats` in `portfolioData.js` |
 | `FlowingMenu.jsx` | `items: [{link,text,image}]`, `speed`, `textColor`, `bgColor`, `marqueeBgColor`, `marqueeTextColor`, `borderColor` |
 | `GlassSurface.jsx` | `children`, `width`, `height`, `borderRadius`, `borderWidth`, `brightness`, `opacity`, `blur`, `displace`, `backgroundOpacity`, `saturation`, `distortionScale`, `style`, `className` |
 | `Lanyard.jsx` | `position`, `fov`, `gravity`, `transparent`, `frontImage`, `backImage`, `imageFit`, `lanyardImage`, `lanyardWidth` |
