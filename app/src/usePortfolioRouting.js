@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { allWorks, systems } from './portfolioData';
+import {flushSync} from 'react-dom';
+import {preloadPortfolioPage} from './pages/preloadPortfolioPage';
 
 const HISTORY_KEY = '__jayPortfolioModal';
 const HOME = '/#home';
@@ -52,7 +54,7 @@ function parentPath(page) {
 }
 
 /** Full viewport page routes retain the untouched Home scene and native history. */
-export function usePortfolioRouting() {
+export function usePortfolioRouting(transition) {
   const [modal, setModal] = useState(() => resolvePath(location.pathname));
   const pageRef = useRef(modal);
   const depth = useRef(modal ? readMeta()?.depth || 0 : 0);
@@ -69,7 +71,7 @@ export function usePortfolioRouting() {
     if (viewport) pageScroll.current.set(currentPath.current, viewport.scrollTop);
   }, []);
   const commit = useCallback(next => {
-    pageRef.current = next; currentPath.current = location.pathname; setModal(next);
+    pageRef.current = next; currentPath.current = location.pathname; flushSync(()=>setModal(next));
   }, []);
   const restoreHome = useCallback(() => {
     cancelAnimationFrame(frame.current);
@@ -97,23 +99,28 @@ export function usePortfolioRouting() {
       }
       depth.current = next ? meta?.depth || 0 : 0;
       if (meta) origin.current = meta.originURL;
-      closing.current = false; commit(next);
-      if (!next) restoreHome();
+      closing.current = false;
+      const ready=preloadPortfolioPage(next);
+      transition(async isCurrent=>{await ready;if(!isCurrent())return;commit(next);if(!next)restoreHome();});
     };
     window.addEventListener('popstate', sync);
     return () => { window.removeEventListener('popstate',sync); cancelAnimationFrame(frame.current); };
-  }, [captureScroll,commit,restoreHome]);
+  }, [captureScroll,commit,restoreHome,transition]);
   const open = useCallback((next, options = {}) => {
     const path = routeFor(next);
     if (!path || closing.current) return;
     if (location.pathname + location.search + location.hash === path) return;
+    const source=document.activeElement,ready=preloadPortfolioPage(resolvePath(path));
+    transition(async isCurrent=>{
+    await ready;
+    if(closing.current||!isCurrent())return;
     captureScroll(); cancelAnimationFrame(frame.current);
     if (resolvePath(path)?.type === 'archive' && pageRef.current?.type !== 'art') {
       archiveState.current.filter = 'all';
       pageScroll.current.delete('/works/archive');
     }
     if (!pageRef.current) {
-      trigger.current = document.activeElement;
+      trigger.current = source;
       origin.current = location.pathname + location.search + location.hash;
       depth.current = 0;
       window.dispatchEvent(new Event('journey:jump'));
@@ -123,13 +130,14 @@ export function usePortfolioRouting() {
     history[options.replace ? 'replaceState' : 'pushState'](historyState(meta),'',path);
     depth.current = nextDepth;
     commit(resolvePath(path));
-  }, [captureScroll,commit]);
+    });
+  }, [captureScroll,commit,transition]);
   const close = useCallback((homeSection) => {
     if (!pageRef.current || closing.current) return;
     captureScroll(); pendingHome.current = typeof homeSection === 'string' ? homeSection : null;
     if (depth.current > 0) { closing.current = true; history.go(-depth.current); }
-    else { history.replaceState(historyState(null),'',HOME); depth.current = 0; commit(null); restoreHome(); }
-  }, [captureScroll,commit,restoreHome]);
+    else { transition(()=>{history.replaceState(historyState(null),'',HOME); depth.current = 0; commit(null); restoreHome();}); }
+  }, [captureScroll,commit,restoreHome,transition]);
   const back = useCallback(() => {
     if (depth.current > 0) { captureScroll(); history.back(); return; }
     const parent = parentPath(pageRef.current);

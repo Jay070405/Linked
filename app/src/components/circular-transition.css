@@ -1,0 +1,4 @@
+.circular-transition{position:fixed;inset:0;z-index:2000;overflow:hidden;visibility:hidden;pointer-events:none;outline:none;touch-action:none}
+.circular-transition.is-active{visibility:visible;pointer-events:auto}
+.circular-transition-disc{position:absolute;left:50%;top:50%;width:150vmax;height:150vmax;border-radius:50%;background:#141416;transform:translate(-50%,-50%) scale(0)}
+.circular-transition.is-active .circular-transition-disc{will-change:transform}

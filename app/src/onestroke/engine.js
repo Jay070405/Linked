@@ -728,6 +728,10 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   on(window, 'journey:jump', () => { snap = true; fly = null; });
   function goChapter(i) {
     const to = sectionTop() + toScroll(CHAPTERS[i]) * innerHeight, far = Math.abs(to - scrollY) / innerHeight;
+    if (actions.transition) {
+      actions.transition(() => { window.scrollTo({top: to, behavior: 'instant'}); fly = null; snap = true; });
+      return;
+    }
     fly = {from: scrollY, to, t0: time, dur: clamp(0.9 + far * 0.09, 0.9, 2.6)};
   }
   function backToTop() { if (power.off < 0) power.off = time; }

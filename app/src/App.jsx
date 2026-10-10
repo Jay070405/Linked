@@ -9,13 +9,15 @@ import ExpressiveTitle from './components/ExpressiveTitle';
 
 import PortfolioPages from './pages/PortfolioPages';
 import {usePortfolioRouting} from './usePortfolioRouting';
+import CircularTransition,{useCircularTransition} from './components/CircularTransition';
 
 export default function App(){
  const[loading,setLoading]=useState(true);
  const[lang,setLang]=useState(localStorage.getItem('jay-lang')||'zh'),[about,setAbout]=useState(false);
  const[reduced,setReduced]=useState(matchMedia('(prefers-reduced-motion: reduce)').matches);
  const quiet=reduced;
- const {modal,open,close,back,pageScroll,archiveState}=usePortfolioRouting();
+ const {run:transition,layer:transitionLayer}=useCircularTransition(quiet);
+ const {modal,open,close,back,pageScroll,archiveState}=usePortfolioRouting(transition);
  // the whole site reads reduced motion from the body (navigation, titles, pages)
  useEffect(()=>{document.body.classList.toggle('quiet',quiet);},[quiet]);
  // the thin progress line on the right: how far down the whole homepage you are
@@ -33,9 +35,13 @@ export default function App(){
   if(id==='vibecoding'){open('/other-project');return;}
   if(id==='about'){setAbout(true);return;}
   if(modal){close(id);return;}
-  document.getElementById(id)?.scrollIntoView({behavior:'instant'});
-  history.replaceState(history.state,'','/#'+id);
-  window.dispatchEvent(new Event('journey:jump'));
+  transition(()=>{
+   const section=document.getElementById(id);
+   section?.scrollIntoView({behavior:'instant'});
+   history.replaceState(history.state,'','/#'+id);
+   window.dispatchEvent(new Event('journey:jump'));
+   section?.setAttribute('tabindex','-1');section?.focus({preventScroll:true});
+  });
  };
  useEffect(()=>{document.documentElement.lang=lang==='en'?'en':'zh-CN';localStorage.setItem('jay-lang',lang);},[lang]);
  // Direct About links open after the loading dialog releases its focus and scroll lock.
@@ -46,12 +52,13 @@ export default function App(){
  <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive','systems'].includes(modal.type)?'dark':'light'):'auto'} onLanguage={setLang} onNavigate={nav} onAbout={()=>setAbout(true)}/>
  <main className="home-journey" inert={modal?true:undefined} aria-hidden={!!modal}>
   <LegacyHero lang={lang} reduced={quiet}/>
-  <OneStroke lang={lang} reduced={quiet} onOpen={open} onArchive={()=>open('/works/archive')} onAbout={()=>setAbout(true)} onNavigate={nav}/>
+  <OneStroke lang={lang} reduced={quiet} onOpen={open} onArchive={()=>open('/works/archive')} onAbout={()=>setAbout(true)} onNavigate={nav} onTransition={transition}/>
  </main>
  <div className="journey-indicator"><i/><span><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>SCROLL TO EXPLORE</ExpressiveTitle></span></div>
  <button className="motion-toggle" aria-pressed={quiet} aria-label={quiet?(lang==='en'?'Enable motion':'恢复动态'):(lang==='en'?'Reduce motion':'减少动态')} onClick={toggleMotion} title={lang==='en'?'Toggle reduced motion':'切换减少动态'}><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>{quiet?'MOTION −':'MOTION +'}</ExpressiveTitle></button>
  {modal&&<PortfolioPages page={modal} lang={lang} reduced={quiet} onNavigate={open} onBack={back} pageScroll={pageScroll} archiveState={archiveState}/>}
  {about&&<div className="about-shell"><AboutPanel lang={lang} onLanguage={setLang} reducedMotion={quiet} onClose={()=>setAbout(false)}/></div>}
+ <CircularTransition layer={transitionLayer} lang={lang}/>
  {loading&&<LoadingScreen lang={lang} reduced={reduced} onDone={()=>setLoading(false)}/>}
  </>;
 }

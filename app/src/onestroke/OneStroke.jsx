@@ -8,10 +8,10 @@ const wantStatic = reduced => reduced || !webglAvailable() || innerWidth / inner
 const recording = () => new URLSearchParams(location.search).has('h');   // recordings never show the phone number
 
 /** The homepage after the office: one line through a lake, a drafting sheet, a ring and the art worlds, back to the lake. */
-export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchive, onAbout, onNavigate}) {
+export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchive, onAbout, onNavigate, onTransition}) {
   const [staticMode, setStaticMode] = useState(() => wantStatic(reduced));
   const sectionRef = useRef(null), layerRef = useRef(null), engine = useRef(null);
-  const props = useRef({}); props.current = {onOpen, onArchive, onAbout, onNavigate};
+  const props = useRef({}); props.current = {onOpen, onArchive, onAbout, onNavigate, onTransition};
   const en = lang === 'en', L = v => pick(v, lang);
 
   useEffect(() => {
@@ -34,6 +34,7 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
       openProject: pr => props.current.onOpen?.({type: 'system', item: pr.item}),
       openArt: a => a.item && props.current.onOpen?.({type: 'art', item: a.item}),
       node: go,
+      transition: action => props.current.onTransition ? props.current.onTransition(action) : action(),
       mail: () => { location.href = `mailto:${author.email}`; },
     }});
     engine.current = eng;
@@ -94,7 +95,7 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
             <a href="/#about" data-h onClick={e => { e.preventDefault(); onAbout?.(); }}>{L(O.foot.about)}</a>
             <a href={author.resume} data-h target="_blank" rel="noreferrer">{L(O.foot.resume)}</a>
             <span>© 2026 JAY LIN</span>
-            <button type="button" data-h onClick={() => engine.current?.backToTop()}>{L(O.foot.top)}</button>
+            <button type="button" data-h onClick={() => onNavigate ? onNavigate('home') : engine.current?.backToTop()}>{L(O.foot.top)}</button>
           </div>
         </div>
 
