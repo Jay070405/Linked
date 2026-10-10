@@ -1,7 +1,7 @@
 @font-face{font-family:LegacyGelasio;src:url('/assets/fonts/gelasio-latin.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
 @font-face{font-family:LegacyEditorial;src:url('/assets/fonts/cormorant-italic-latin.woff2') format('woff2');font-weight:400;font-style:italic;font-display:swap}
 @font-face{font-family:LegacyMono;src:url('/assets/fonts/GeistMono-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
-.legacy-hero{--legacy-pad:clamp(24px,4.2vw,84px);--legacy-white:#fffdf4;--legacy-paper:#FAFBFC;height:calc(100vh + 960vh * .145);position:relative;background:var(--legacy-paper);color:var(--legacy-white)}
+.legacy-hero{--legacy-pad:clamp(24px,4.2vw,84px);--legacy-white:#fffdf4;--legacy-paper:#FAFBFC;height:380vh;position:relative;background:var(--legacy-paper);color:var(--legacy-white)}
 .legacy-hero *{box-sizing:border-box}
 .legacy-hero .intro-stage{position:sticky;top:0;height:100svh;width:100%;overflow:hidden;isolation:isolate;color:var(--legacy-white)}
 .legacy-hero .legacy-office-wrap{position:absolute;inset:0;width:100%;height:100%;z-index:3;overflow:hidden;transform:scale(1.013);transform-origin:center;will-change:transform,opacity}
@@ -34,7 +34,7 @@
 @keyframes legacy-scroll-cue{from{transform:translateY(-140%)}to{transform:translateY(240%)}}
 
 @media(max-width:700px){
- .legacy-hero{--legacy-pad:22px;height:calc(100svh + 770svh * .145)}
+ .legacy-hero{--legacy-pad:22px;height:320svh}
  .legacy-hero .office-copy{bottom:21%;left:22px;width:calc(100% - 44px)}
  .legacy-hero .legacy-signature{font-size:48px}
  .legacy-hero .office-copy p{font-size:12px}

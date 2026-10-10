@@ -12,6 +12,8 @@ import helvetiker from 'three/examples/fonts/helvetiker_bold.typeface.json';
 import OUTLINE from './jl-outline.json';
 import {N, Tube, jlPose, poseFromStrokes, curve, flow, copyPose, makePose, LOGO_C} from './line.js';
 import {PROJECTS, ART, ABOUT, TIMELINE, COPY, pick} from './content.js';
+import {toJourney, toScroll} from './pacing.js';
+export {TOTAL, SCROLL_TOTAL, toJourney, toScroll} from './pacing.js';
 
 /* The homepage after the office: "One Stroke". The office's dark monitor switches on as a single line of light, and the line
    is the horizon of a lake at dusk. A monolith of the mark rises from the water; the headline hangs in the sky and the lake
@@ -23,14 +25,9 @@ import {PROJECTS, ART, ABOUT, TIMELINE, COPY, pick} from './content.js';
    The page is a 900-unit-tall design space scaled to the window. Its scroll position S is counted in screens from the moment
    the office has gone dark (the section overlaps the office's last screen), so S = 0 is the switch-on. */
 
-export const TOTAL = 23.2;                                   // screens of journey after the switch-on
 export const CHAPTERS = [0, 2.05, 8.3, 10.9, 16.9, 22.6];    // where the index takes you, in screens
-/* The opening gets more scroll than the rest: the first KV_RAW screens of scrolling play its first journey screen, so the
-   stone has room to rise and stand before it sinks. Journey S (what everything below is keyed to) ↔ scroll screens. */
-const KV_HOLD = 0.5, KV_RAW = 1 + KV_HOLD;
-export const SCROLL_TOTAL = TOTAL + KV_HOLD;
-export const toJourney = r => (r < KV_RAW ? r / KV_RAW : r - KV_HOLD);
-export const toScroll = s => (s < 1 ? s * KV_RAW : s + KV_HOLD);
+// All scene timing stays in authored S; pacing.js maps it to wheel travel.
+// Anchors, chapter jumps and section height use the same inverse map.
 export const SCREEN_SIDES = [1, -1, 1, -1];                  // which side of its screen each project's words stand on
 export const MIN_ASPECT = 1.11;                              // narrower windows get the static page
 export function webglAvailable() {

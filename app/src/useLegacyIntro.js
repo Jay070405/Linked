@@ -8,9 +8,9 @@ const smooth = (a, b, value) => {
   return p * p * (3 - 2 * p);
 };
 
-// Canonical V13 progress. The office, its dolly into the monitor and the screen going dark are unchanged and keep their
-// original scroll distances; the section now ends at OFFICE_END, where the screen is fully dark and the homepage journey
-// (onestroke/) switches it on. The section's height in CSS is 100vh plus OFFICE_END of the original 850vh of travel.
+// Keep the authored office camera path and dark-screen handoff at OFFICE_END.
+// CSS now gives that path 2.8 viewport heights of desktop wheel travel (2.2 on
+// mobile), so the room can be read before the dolly reaches the monitor.
 export const OFFICE_END = .145;
 
 export default function useLegacyIntro({ rootRef, progressRef, reduced }) {
