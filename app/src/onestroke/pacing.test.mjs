@@ -25,9 +25,13 @@ test('wheel sensitivity does not jump at scene boundaries', () => {
   }
 });
 
-test('opening gets time, project reading stays intact, timeline loses dead travel', () => {
+test('mark sinking has a full screen of travel and every later chapter slows down', () => {
   assert.equal(toScroll(1), 2.4);
+  assert.ok(toScroll(1.25) - toScroll(1) >= 1);
   assert.ok(toScroll(2.72) - toScroll(2.45) > .5);
-  assert.ok(Math.abs((toScroll(7.3) - toScroll(2.95)) - 4.35) < 1e-9);
-  assert.ok(toScroll(14.2) - toScroll(9.9) < 3.6);
+  for (const [a, b] of [[2.95, 7.3], [7.3, 9.9], [9.9, 14.2], [14.2, 16.9], [16.9, 21.3]])
+    assert.ok((toScroll(b) - toScroll(a)) / (b - a) >= 1.5);
+  // No short interval should turn into a fast burst between the control points.
+  for (let s = 1; s < TOTAL; s += .01)
+    assert.ok((toScroll(s + .001) - toScroll(s)) / .001 > 1.25);
 });

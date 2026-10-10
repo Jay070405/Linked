@@ -1,10 +1,11 @@
 // Authored scene position → physical wheel travel, both in viewport heights.
-// Give the opening and large camera moves room; keep project reading time,
-// and shorten the nearly stationary About sheet and long timeline traversal.
+// Slow the whole journey after the mark starts sinking. The sinking and first
+// camera turn get extra travel; later projects, paper, timeline and worlds
+// keep a comparable wheel pace instead of rushing after the opening.
 export const PACING = Object.freeze([
-  [0, 0], [1, 2.4], [1.75, 3.75], [2.45, 4.65], [2.95, 5.6],
-  [7.3, 9.95], [9.9, 12.15], [14.2, 15.65], [16.9, 18.35],
-  [21.3, 22.75], [23.2, 24.65],
+  [0, 0], [1, 2.4], [1.25, 3.45], [1.75, 5.2], [2.45, 6.65], [2.95, 7.9],
+  [7.3, 15.5], [9.9, 19.65], [14.2, 26.55], [16.9, 31.7],
+  [21.3, 38.75], [23.2, 41.4],
 ].map(point => Object.freeze(point)));
 export const TOTAL = PACING.at(-1)[0];
 export const SCROLL_TOTAL = PACING.at(-1)[1];
