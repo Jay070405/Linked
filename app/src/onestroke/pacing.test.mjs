@@ -29,6 +29,9 @@ test('mark sinking has a full screen of travel and every later chapter slows dow
   assert.equal(toScroll(1), 2.4);
   assert.ok(toScroll(1.25) - toScroll(1) >= 1);
   assert.ok(toScroll(2.72) - toScroll(2.45) > .5);
+  assert.ok(toScroll(2.95) - toScroll(2.45) >= 2 - 1e-9);
+  for (const [a, b] of [[3.5, 3.95], [4.55, 5], [5.6, 6.05]])
+    assert.ok(toScroll(b) - toScroll(a) >= 1.2);
   for (const [a, b] of [[2.95, 7.3], [7.3, 9.9], [9.9, 14.2], [14.2, 16.9], [16.9, 21.3]])
     assert.ok((toScroll(b) - toScroll(a)) / (b - a) >= 1.5);
   // No short interval should turn into a fast burst between the control points.

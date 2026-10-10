@@ -3,9 +3,12 @@
 // camera turn get extra travel; later projects, paper, timeline and worlds
 // keep a comparable wheel pace instead of rushing after the opening.
 export const PACING = Object.freeze([
-  [0, 0], [1, 2.4], [1.25, 3.45], [1.75, 5.2], [2.45, 6.65], [2.95, 7.9],
-  [7.3, 15.5], [9.9, 19.65], [14.2, 26.55], [16.9, 31.7],
-  [21.3, 38.75], [23.2, 41.4],
+  [0, 0], [1, 2.4], [1.25, 3.45], [1.75, 5.2], [2.45, 6.65],
+  // Two screens for the descent; generous turns between the reading frames.
+  [2.95, 8.65], [3.5, 9.65], [3.95, 10.95], [4.55, 12.05],
+  [5, 13.35], [5.6, 14.45], [6.05, 15.75], [6.6, 16.75],
+  [7.3, 18.15], [9.9, 22.3], [14.2, 29.2], [16.9, 34.35],
+  [21.3, 41.4], [23.2, 44.05],
 ].map(point => Object.freeze(point)));
 export const TOTAL = PACING.at(-1)[0];
 export const SCROLL_TOTAL = PACING.at(-1)[1];
@@ -36,7 +39,7 @@ export function toJourney(r) {
   if (r >= SCROLL_TOTAL) return TOTAL + (r - SCROLL_TOTAL) / slopes.at(-1);
   const i = PACING.findIndex(([, next]) => next > r) - 1;
   let lo = PACING[i][0], hi = PACING[i + 1][0];
-  for (let n = 0; n < 26; n++) {
+  for (let n = 0; n < 32; n++) {
     const mid = (lo + hi) / 2;
     if (segment(mid, i) < r) lo = mid; else hi = mid;
   }

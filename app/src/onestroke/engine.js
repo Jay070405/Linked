@@ -13,6 +13,7 @@ import OUTLINE from './jl-outline.json';
 import {N, Tube, jlPose, poseFromStrokes, curve, flow, copyPose, makePose, LOGO_C} from './line.js';
 import {PROJECTS, ART, ABOUT, TIMELINE, COPY, pick} from './content.js';
 import {toJourney, toScroll} from './pacing.js';
+import {createScrollCameraTrack, projectOpacity} from './camera-track.js';
 export {TOTAL, SCROLL_TOTAL, toJourney, toScroll} from './pacing.js';
 
 /* The homepage after the office: "One Stroke". The office's dark monitor switches on as a single line of light, and the line
@@ -311,7 +312,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     window.__letterEnds = lastLoop.map(i => TRACE.ends[i]);   // for the recorder: letter k is fully written at S = 1.2 + 0.7 * ends[k]
   }
 
-  /* ---------------- the projects: frameless screens drawn in row by row ---------------- */
+  /* ---------------- the projects: frameless screens, fading as the camera travels ---------------- */
   const SCREENS = [
     {c: V(-150, -40, -2700), yaw: 0.14, w: 580, hold: [2.95, 3.5]},
     {c: V(1150, -10, -4200), yaw: -0.2, w: 620, hold: [3.95, 4.55]},
@@ -337,15 +338,11 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     void main(){
       vec2 p = (vUv - .5) * uSize; float d = sdRR(p, uSize * .5, 14.);
       float inside = 1. - smoothstep(-.75, .75, d);
-      float rows = 42., k = floor((1. - vUv.y) * rows);
-      float rk = clamp(uReveal * 1.7 - k / rows * .7, 0., 1.);
-      float fill = step(vUv.x, rk);
-      float head = exp(-pow((vUv.x - rk) * uSize.x / 1.6, 2.)) * step(.001, rk) * step(rk, .985) * .55;
       vec3 c = texture2D(map, vUv * uST.xy + uST.zw).rgb;
       float edge = (1. - smoothstep(0., 1.4, abs(d + 1.1))) * .28;
       float band = exp(-pow((vUv.x * .8 + vUv.y * .35 - uSweep) / .08, 2.)) * .2 * uHover;
-      c = c * (1. + uHover * .05) + vec3(edge + band) + vec3(1.) * head * 3.;
-      gl_FragColor = vec4(c, inside * max(fill, head));
+      c = c * (1. + uHover * .05) + vec3(edge + band);
+      gl_FragColor = vec4(c, inside * uReveal);
       #include <colorspace_fragment>
     }`;
   const screenMeshes = [];
@@ -357,7 +354,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
       const ia = im ? im.width / im.height : s.w / s.h, ba = s.w / s.h;
       const st = ba > ia ? new THREE.Vector4(1, ia / ba, 0, (1 - ia / ba) / 2) : new THREE.Vector4(ba / ia, 1, (1 - ba / ia) / 2, 0);
       const mat = new THREE.ShaderMaterial({uniforms: {map: {value: tex}, uST: {value: st}, uSize: {value: new THREE.Vector2(s.w, s.h)}, uReveal: {value: 0}, uHover: {value: 0}, uSweep: {value: 0.5}},
-        vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`, fragmentShader: screenFrag, transparent: true});
+        vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`, fragmentShader: screenFrag, transparent: true, depthWrite: false});
       const m = new THREE.Mesh(geo, mat); m.position.copy(s.c); m.rotation.y = s.yaw; scene.add(m); screenMeshes.push(m); s.mesh = m;
       s.cam = s.c.clone().add(rotY(V(s.side * 215, 40, 1850), s.yaw)); s.look = s.c.clone().add(rotY(V(s.side * 215, 0, 0), s.yaw));
       s.col = grey(im ? AVG[pr.tex] : new THREE.Color('#555558'));
@@ -605,15 +602,16 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
 
   /* ---------------- camera choreography ---------------- */
   const KEYS = [];
+  let systemsCamera;
   function k(s, pos, look, up = V(0, 1, 0), e = 'io') { KEYS.push({s, pos, look, up, e}); }
   function buildKeys() {
     k(0, V(0, 30, 1500), V(0, 30, 0));
     k(1.0, V(0, 28, 1340), V(0, 26, 0));
     k(1.75, V(0, 2050, 2850), V(0, FLOOR, LET.z - 110));
     k(2.45, V(160, 1850, 2600), V(0, FLOOR, LET.z - 130));
-    k(2.72, V(-60, 240, -520), V(-150, -40, -2500));
-    SCREENS.forEach((s, i) => { k(s.hold[0], s.cam, s.look, V(0, 1, 0), i === 0 ? 'out' : 'io'); k(s.hold[1], s.cam.clone().add(rotY(V(-s.side * 40, 6, -70), s.yaw)), s.look.clone().add(rotY(V(-s.side * 30, 0, 0), s.yaw))); });
+    SCREENS.forEach(s => { k(s.hold[0], s.cam, s.look); k(s.hold[1], s.cam.clone().add(rotY(V(-s.side * 40, 6, -70), s.yaw)), s.look.clone().add(rotY(V(-s.side * 30, 0, 0), s.yaw))); });
     k(7.25, V(PX, FLOOR + 1300, PZ + 1650), V(PX, FLOOR, PZ - 160), V(0, 1, 0));
+    systemsCamera = createScrollCameraTrack(KEYS.filter(q => q.s >= 1.75 && q.s <= 7.25));
     k(7.9, V(PX - 40, FLOOR + TOPD, PZ), V(PX - 40, FLOOR, PZ), V(0, 0, -1));
     k(9.6, V(PX + 25, FLOOR + TOPD, PZ), V(PX + 25, FLOOR, PZ), V(0, 0, -1), 'lin');
     k(10.5, V(PX + 60, FLOOR + TOPD, PZ), V(PX + 60, FLOOR, PZ), V(0, 0, -1), 'lin');
@@ -631,6 +629,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   const EASE = {io: eio, lin: t => t, in: t => t * t * t, out: eo3};
   const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), camUp = new THREE.Vector3();
   function camAt(S) {
+    if (S >= 1.75 && S <= 7.25) {
+      systemsCamera(S, camPos, camLook); camUp.set(0, 1, 0); return;
+    }
     let i = KEYS.findIndex(q => q.s > S);
     if (i === -1) i = KEYS.length - 1; if (i === 0) i = 1;
     const a = KEYS[i - 1], b = KEYS[i], e = EASE[b.e](clamp((S - a.s) / (b.s - a.s)));
@@ -858,18 +859,18 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     letters.forEach((m, i) => { const up = eo3(seg(S, 1.92 + i * 0.035, 2.2 + i * 0.035)); m.userData.h = (m.userData.h || 0) + ((hl === i ? 1 : 0) - (m.userData.h || 0)) * (1 - Math.exp(-dt / 0.14));
       m.scale.z = Math.max(0.001, up * (1 + m.userData.h * 0.55)); m.visible = up > 0.001 && S < 3.3; });
 
-    /* screens: drawn in row by row, tilted by the pointer */
+    /* Screens and captions crossfade while the continuous camera track travels. */
     hoverScreen = -1;
     if (S > 2.8 && S < 6.7 && pointer.inside) { const h = hitTest(screenMeshes); if (h) hoverScreen = screenMeshes.indexOf(h.object); }
     SCREENS.forEach((s, i) => {
-      const onS = seg(S, s.hold[0] - 0.5, s.hold[0] - 0.06) * (1 - seg(S, s.hold[1] + 0.05, s.hold[1] + 0.3));
+      const onS = projectOpacity(S, s.hold);
       const u = s.mesh.material.uniforms; u.uReveal.value = onS; s.mesh.visible = onS > 0.001;
       s.hov = (s.hov || 0) + ((hoverScreen === i ? 1 : 0) - (s.hov || 0)) * (1 - Math.exp(-dt / 0.2)); u.uHover.value = s.hov;
       if (hoverScreen === i) { const hit = hitTest([s.mesh]); if (hit) u.uSweep.value += (hit.uv.x * 0.8 + hit.uv.y * 0.35 - u.uSweep.value) * (1 - Math.exp(-dt / 0.1)); }
       s.mesh.rotation.y = s.yaw + px * 0.12 * s.hov; s.mesh.rotation.x = py * 0.08 * s.hov;
       s.mesh.position.copy(s.c).add(rotY(V(0, 0, 40 * s.hov), s.yaw));
-      const p = seg(S, s.hold[0] - 0.22, s.hold[0] + 0.04) * (1 - seg(S, s.hold[1] + 0.02, s.hold[1] + 0.16));
-      setStyle(s.dom, 'opacity', p > 0.001 ? '1' : '0'); setStyle(s.dom, 'visibility', p > 0.001 ? 'visible' : 'hidden');
+      const p = projectOpacity(S, s.hold, true);
+      setStyle(s.dom, 'opacity', op(p)); setStyle(s.dom, 'visibility', p > 0.001 ? 'visible' : 'hidden');
       if (p > 0.001 || s.lines[0]?.__s?.opacity !== '0') s.lines.forEach((l, j) => { const qq = eo3(clamp(p * 1.6 - j * 0.1)); setStyle(l, 'transform', `translateY(${((1 - qq) * 115).toFixed(2)}%)`); setStyle(l, 'opacity', op(qq)); });
     });
 
@@ -883,7 +884,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     skyA.position.copy(cam.position); skyB.position.copy(cam.position);
     const paperMode = (!beyond && S > 7.5 && S < 21.3) || letterOn;
     gl.toneMapping = paperMode ? THREE.NoToneMapping : THREE.NeutralToneMapping;
-    bloom.enabled = S > 1.1 && S < 7.45;                                 // only the pen of light and the screens' reveal heads glow
+    bloom.enabled = S > 1.1 && S < 7.45;                                 // the pen of light and project reflections glow
     bloom.strength = S < 2.6 ? 0.3 : 0.22;
     const paperVis = S > 7.0 && S < 16.0 && !beyond;
     paperObjs.forEach(o => { o.visible = paperVis; });
