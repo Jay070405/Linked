@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {PROJECTS, pick} from '../onestroke/content';
+import titleOutline from './systems-title-outline.json';
 import './systems-index.css';
 
 const T = (zh, en) => ({zh, en});
@@ -56,7 +57,7 @@ export default function SystemsIndex({lang = 'zh', reduced = false, onNavigate})
       <p className="si-label">{L(COPY.label)}</p>
       <h1 className="si-title">
         <span className="si-sr">{en ? 'Systems design' : '系统策划'}</span>
-        <svg viewBox="0 0 1320 250" aria-hidden="true"><text x="4" y="226" textLength="1310" lengthAdjust="spacingAndGlyphs">SYSTEMS</text></svg>
+        <svg viewBox={titleOutline.viewBox} aria-hidden="true">{titleOutline.letters.map((letter,i)=><path key={i} d={letter.d} pathLength="1"/>)}</svg>
       </h1>
       <i className="si-rule" aria-hidden="true"/>
       <div className="si-intro">

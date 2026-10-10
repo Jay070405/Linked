@@ -4,11 +4,11 @@
   position:relative;min-height:100%;padding:124px 5.2vw 0;background:radial-gradient(120% 70% at 12% 0%,#1b1b1e 0%,var(--si-bg) 58%);color:var(--si-ink);font-family:'TikTok Sans','Microsoft YaHei',sans-serif}
 .si-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-/* the heading: SYSTEMS written as one outline, then filled; a rule drawn under it */
+/* the heading: clean glyph silhouettes remain outlined; a rule drawn under it */
 .si-label{margin:0;font:500 10px Mono,monospace;letter-spacing:.18em;color:#ffffff85}
 .si-title{margin:22px 0 0;line-height:0}
 .si-title svg{display:block;width:100%;height:auto;overflow:visible}
-.si-title text{font:700 300px 'TikTok Sans',sans-serif;fill:#f3f3f400;stroke:var(--si-ink);stroke-width:1.1;stroke-dasharray:1500;stroke-dashoffset:1500;animation:si-draw 2.3s var(--si-draw) .15s forwards,si-fill 1s ease 1.75s forwards}
+.si-title path{fill:none;stroke:var(--si-ink);stroke-width:1.1;stroke-dasharray:1;stroke-dashoffset:1;animation:si-draw 2.3s var(--si-draw) .15s forwards}
 .si-rule{display:block;height:1px;margin-top:28px;background:#ffffff40;transform:scaleX(0);transform-origin:left;animation:si-grow 1.5s var(--si-ease) .45s forwards}
 .si-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.45fr) minmax(0,1fr);gap:5vw;align-items:start;padding:34px 0 86px;opacity:0;animation:si-in 1s var(--si-ease) .75s forwards}
 .si-lead{margin:0;font:italic 400 clamp(28px,2.4vw,44px)/1.1 Editorial,serif;letter-spacing:-.01em}
@@ -76,7 +76,6 @@
 .si-foot a:is(:hover,:focus-visible){letter-spacing:.04em}
 
 @keyframes si-draw{to{stroke-dashoffset:0}}
-@keyframes si-fill{to{fill:#f3f3f4;stroke-width:0}}
 @keyframes si-grow{to{transform:scaleX(1)}}
 @keyframes si-rise{to{opacity:1;transform:none}}
 @keyframes si-in{to{opacity:1}}
@@ -84,7 +83,7 @@
 /* still: no motion, pictures in the rows */
 .si-still :is(.si-row,.si-intro){opacity:1;transform:none;animation:none}
 .si-still :is(.si-row:before,.si-list:after,.si-rule){transform:none;animation:none}
-.si-still .si-title text{animation:none;stroke-dashoffset:0;fill:#f3f3f4;stroke-width:0}
+.si-still .si-title path{animation:none;stroke-dashoffset:0}
 .si-still .si-card{display:none}
 .si-still .si-row>*,.si-still .si-name :is(b,small),.si-still .si-line,.si-still .si-cta b{transition:none}
 .si-still .si-row>a,.si-still .si-row>.si-soon{grid-template-columns:110px minmax(0,1.2fr) minmax(0,1fr) 220px 150px;grid-template-areas:'no name meta thumb cta'}
