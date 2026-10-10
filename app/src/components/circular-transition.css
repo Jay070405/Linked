@@ -1,4 +1,8 @@
 .circular-transition{position:fixed;inset:0;z-index:2000;overflow:hidden;visibility:hidden;pointer-events:none;outline:none;touch-action:none}
 .circular-transition.is-active{visibility:visible;pointer-events:auto}
-.circular-transition-disc{position:absolute;left:50%;top:50%;width:150vmax;height:150vmax;border-radius:50%;background:#141416;transform:translate(-50%,-50%) scale(0)}
-.circular-transition.is-active .circular-transition-disc{will-change:transform}
+.portfolio-circle-reveal::view-transition-group(root){animation:none}
+.portfolio-circle-reveal::view-transition-image-pair(root){isolation:auto}
+.portfolio-circle-reveal::view-transition-old(root),
+.portfolio-circle-reveal::view-transition-new(root){animation:none;mix-blend-mode:normal;opacity:1}
+.portfolio-circle-reveal::view-transition-old(root){z-index:1}
+.portfolio-circle-reveal::view-transition-new(root){z-index:2;clip-path:circle(0px at 50% 50%)}

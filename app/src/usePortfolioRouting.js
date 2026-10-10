@@ -64,7 +64,6 @@ export function usePortfolioRouting(transition) {
   const closing = useRef(false);
   const pageScroll = useRef(new Map());
   const archiveState = useRef({ filter: 'all' });
-  const frame = useRef(0);
   const currentPath = useRef(location.pathname);
   const captureScroll = useCallback(() => {
     const viewport = document.querySelector('.portfolio-page-viewport');
@@ -74,19 +73,16 @@ export function usePortfolioRouting(transition) {
     pageRef.current = next; currentPath.current = location.pathname; flushSync(()=>setModal(next));
   }, []);
   const restoreHome = useCallback(() => {
-    cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => {
-      frame.current = requestAnimationFrame(() => {
-        const id = pendingHome.current; pendingHome.current = null;
-        if (id) {
-          document.getElementById(id)?.scrollIntoView({behavior:'instant'});
-          history.replaceState(historyState(null), '', '/#' + id);
-          window.dispatchEvent(new Event('journey:jump'));
-          const section = document.getElementById(id);
-          section?.setAttribute('tabindex','-1'); section?.focus({preventScroll:true});
-        } else if (trigger.current?.isConnected) trigger.current.focus({preventScroll:true});
-      });
-    });
+    // flushSync(commit) has already removed the route and its layout effects.
+    // Restore the destination before the View Transition captures it.
+    const id = pendingHome.current; pendingHome.current = null;
+    if (id) {
+      document.getElementById(id)?.scrollIntoView({behavior:'instant'});
+      history.replaceState(historyState(null), '', '/#' + id);
+      window.dispatchEvent(new Event('journey:jump'));
+      const section = document.getElementById(id);
+      section?.setAttribute('tabindex','-1'); section?.focus({preventScroll:true});
+    } else if (trigger.current?.isConnected) trigger.current.focus({preventScroll:true});
   }, []);
   useEffect(() => {
     const sync = () => {
@@ -104,7 +100,7 @@ export function usePortfolioRouting(transition) {
       transition(async isCurrent=>{await ready;if(!isCurrent())return;commit(next);if(!next)restoreHome();});
     };
     window.addEventListener('popstate', sync);
-    return () => { window.removeEventListener('popstate',sync); cancelAnimationFrame(frame.current); };
+    return () => { window.removeEventListener('popstate',sync); };
   }, [captureScroll,commit,restoreHome,transition]);
   const open = useCallback((next, options = {}) => {
     const path = routeFor(next);
@@ -114,7 +110,7 @@ export function usePortfolioRouting(transition) {
     transition(async isCurrent=>{
     await ready;
     if(closing.current||!isCurrent())return;
-    captureScroll(); cancelAnimationFrame(frame.current);
+    captureScroll();
     if (resolvePath(path)?.type === 'archive' && pageRef.current?.type !== 'art') {
       archiveState.current.filter = 'all';
       pageScroll.current.delete('/works/archive');
