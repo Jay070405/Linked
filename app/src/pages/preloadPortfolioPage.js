@@ -3,6 +3,7 @@
 const importers={
  desk:()=>import('./ArtDesk'), systems:()=>import('./SystemsIndex'),
  roco:()=>import('./RocoCase'), league:()=>import('./LeagueCase'), nexus:()=>import('./NexusCase'),
+ maoxianjia:()=>import('./MaoxianjiaCase'),
  model:()=>import('./RocoModel'), vibecoding:()=>import('./VibeCoding'),
  'brand-motion':()=>import('./BrandMotion'), field01:()=>import('./Field01'),
 };
@@ -12,6 +13,6 @@ export const pageLoaders=Object.fromEntries(Object.entries(importers).map(([type
  promises[type]??=load().then(module=>{loadedPages[type]=module.default;return module;})
 ]));
 export function preloadPortfolioPage(page){
- const type=page?.type==='system'?(page.item.id==='nexus'?'nexus':page.item.id==='league-of-legends'?'league':'roco'):page?.type;
+ const type=page?.type==='system'?(page.item.id==='nexus'?'nexus':page.item.id==='league-of-legends'?'league':page.item.id==='maoxianjia'?'maoxianjia':'roco'):page?.type;
  return pageLoaders[type]?.().catch(()=>{});
 }

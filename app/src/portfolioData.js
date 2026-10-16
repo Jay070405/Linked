@@ -586,6 +586,7 @@ export const systems = [
   { id: 'nexus', slug: 'nexus', title: 'NEXUS', titleEn: 'NEXUS', subtitle: '第一章 · 孤岛 / Unity 作品演示', subtitleEn: 'Chapter 01 · The Island / Unity showcase', status: 'available', detailAvailable: true, kind: 'UNITY / VIDEO', image: '/assets/nexus/nexus-poster.jpg', video: '/assets/nexus/nexus-chapter-one.mp4', description: 'NEXUS 第一章「孤岛」的完整 Unity 作品演示。', descriptionEn: 'The complete Unity showcase for NEXUS, Chapter 01: The Island.' },
   { id: 'league-of-legends', slug: 'league-of-legends', title: '英雄联盟', titleEn: 'League of Legends', subtitle: '长线运营 · 三个系统改进', subtitleEn: 'Live operations · Three system proposals', status: 'available', detailAvailable: true, image: '/assets/lol/pass-clean.webp', description: '通行证目标、加载页解释与两天制无畏杯。', descriptionEn: 'Reward goals, matchmaking context and a two-day Fearless Cup.', classification: '个人研究与提案', classificationEn: 'Personal research & proposal' },
   { id: 'genshin-impact', slug: 'genshin-impact', title: '原神', titleEn: 'Genshin Impact', subtitle: '抽卡系统策划', subtitleEn: 'Wish systems design', status: 'coming-soon', detailAvailable: false, image: null, description: 'Coming Soon', descriptionEn: 'Coming Soon', classification: '筹备中', classificationEn: 'Coming Soon' },
+  { id: 'maoxianjia', slug: 'maoxianjia', title: '毛险家', titleEn: 'Maoxianjia', subtitle: '宠物寻主 · 派对游戏系统设计', subtitleEn: 'A pet-finding party game', status: 'available', detailAvailable: true, kind: 'UNITY / SYSTEMS', image: '/assets/maoxianjia/cover.webp', description: '把棋盘探索、线索推理与小游戏串成宠物寻主的派对玩法，并通过 Unity 原型持续迭代。', descriptionEn: 'A pet-finding party game combining board exploration, clue deduction and minigames, iterated through a Unity prototype.', classification: '玩法与系统设计 · v0.8 开发中', classificationEn: 'Game & systems design · v0.8 in development' },
 ];
 
 export const author = {
@@ -618,9 +619,9 @@ export const author = {
 export const stats = {
   "archiveWorks": 25,
   "observedBatches": 10,
-  "systemProjects": 3,
-  "availableSystemProjects": 2,
-  "comingSoonProjects": 1,
+  "systemProjects": systems.length,
+  "availableSystemProjects": systems.filter(project => project.status === 'available').length,
+  "comingSoonProjects": systems.filter(project => project.status === 'coming-soon').length,
   "otherProjects": 3
 };
 

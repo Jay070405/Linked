@@ -64,6 +64,9 @@
 .os-proj .cta:is(.hov,:hover,:focus-visible) b{transform:translate(4px,-4px)}
 .os-proj .cta.is-soon{color:#ffffff80}
 .os-proj .cta.is-soon:after{display:none}
+.os-proj .all-systems{display:inline-flex;align-items:center;gap:8px;min-height:36px;margin-top:12px;font-size:11px;line-height:1.5;color:#ffffffa8;transition:color .3s}
+.os-proj .all-systems b{font-size:13px;font-weight:400}
+.os-proj .all-systems:is(.hov,:hover,:focus-visible){color:#fff;text-decoration:underline;text-underline-offset:5px}
 
 /* the drafting sheet's tracer */
 .os-tracer{left:0;top:0;opacity:0;will-change:transform}

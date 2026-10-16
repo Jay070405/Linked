@@ -1,7 +1,18 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
 import { allWorks, systems } from '../src/portfolioData.js';
-const result = await build({entryPoints:['src/usePortfolioRouting.js'],bundle:true,platform:'node',format:'esm',write:false});
+// Route resolution needs the data and routing helpers, not the browser-only page
+// imports and CSS pulled in by the navigation preloader.
+const result = await build({
+  entryPoints:['src/usePortfolioRouting.js'],bundle:true,platform:'node',format:'esm',write:false,
+  plugins:[{
+    name:'stub-page-preloader',
+    setup(build) {
+      build.onResolve({filter:/\/preloadPortfolioPage(?:\.js)?$/},args=>({path:args.path,namespace:'route-test'}));
+      build.onLoad({filter:/.*/,namespace:'route-test'},()=>({contents:'export function preloadPortfolioPage() {}',loader:'js'}));
+    },
+  }],
+});
 const routing = await import('data:text/javascript;base64,' + Buffer.from(result.outputFiles[0].text).toString('base64'));
 assert.equal(routing.resolvePath('/works').type,'desk');
 assert.equal(routing.resolvePath('/works/archive').type,'archive');
@@ -23,6 +34,19 @@ assert.equal(routing.resolvePath('/systems/roco').type,'system');
 assert.equal(routing.resolvePath('/systems/roco/model').type,'model');
 assert.equal(routing.resolvePath('/systems/nexus').item.video,'/assets/nexus/nexus-chapter-one.mp4');
 assert.equal(routing.routeFor({type:'system',item:{id:'nexus'}}),'/systems/nexus');
+const maoxianjia = routing.resolvePath('/systems/maoxianjia');
+assert.equal(maoxianjia.type,'system');
+assert.equal(maoxianjia.item.id,'maoxianjia');
+assert.equal(maoxianjia.item.title,'毛险家');
+assert.equal(maoxianjia.item.status,'available');
+assert.equal(routing.routeFor(maoxianjia),'/systems/maoxianjia');
+assert.equal(routing.routeFor('/systems/maoxianjia'),'/systems/maoxianjia');
+assert.equal(routing.resolvePath('/systems/maoxianjia/?preview=1#demo').item.id,'maoxianjia');
+assert.equal(systems.length,5);
+const genshin = systems.find(system=>system.id==='genshin-impact');
+assert.equal(genshin.title,'原神');
+assert.equal(genshin.status,'coming-soon');
+assert.equal(genshin.detailAvailable,false);
 assert.equal(new Set(allWorks.map(w=>w.href)).size,25);
 for (const work of allWorks) {
   assert.equal(routing.resolvePath(work.href).item.id,work.id);
@@ -34,4 +58,4 @@ for (const system of systems.filter(s=>s.status==='coming-soon')) {
 }
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes.');
+console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes.');

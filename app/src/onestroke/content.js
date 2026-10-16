@@ -6,15 +6,16 @@ const work = slug => allWorks.find(w => w.slug === slug);
 const T = (zh, en) => ({zh, en});
 export const pick = (value, lang) => (value && typeof value === 'object' && 'zh' in value ? value[lang === 'en' ? 'en' : 'zh'] : value);
 
-// the four projects the thread runs past, in the order of the systems data
+// The full systems collection, shared by its index and the static homepage.
 const PROJECT_EXTRA = {
   roco: {cat: 'SYSTEMS STUDY', tags: ['RESEARCH', 'PROPOSAL', 'PROTOTYPE'], cta: T('查看项目', 'View the project'), tex: '/assets/home/roco.jpg'},
   nexus: {cat: 'UNITY / VIDEO', tags: ['UNITY', 'GAMEPLAY', 'VIDEO'], cta: T('观看演示', 'Watch the demo'), tex: '/assets/home/nexus.jpg', serif: true},
   'league-of-legends': {cat: 'LIVE OPS', tags: ['RESEARCH', 'PROPOSAL'], cta: T('查看项目', 'View the project'), tex: '/assets/home/lol.jpg'},
   'genshin-impact': {cat: 'COMING SOON', tags: ['WISH SYSTEM', T('筹备中', 'IN PROGRESS')], cta: T('即将上线', 'Coming soon'), tex: null,
     desc: T('一个新的系统研究，正在路上。', 'A new systems study is on its way.')},
+  maoxianjia: {cat: 'UNITY / SYSTEMS', tags: ['UNITY', 'PARTY GAME', 'WIP · v0.8'], cta: T('查看项目', 'View the project'), tex: '/assets/maoxianjia/cover.webp'},
 };
-export const PROJECTS = systems.slice(0, 4).map(s => {
+export const PROJECTS = systems.map(s => {
   const x = PROJECT_EXTRA[s.id] || {cat: s.kind || 'SYSTEMS', tags: [], cta: T('查看项目', 'View the project'), tex: null};
   return {
     id: s.id, item: s, ready: s.status !== 'coming-soon', cat: x.cat, tags: x.tags, cta: x.cta, tex: x.tex, serif: !!x.serif,
@@ -22,6 +23,11 @@ export const PROJECTS = systems.slice(0, 4).map(s => {
     desc: x.desc || T(s.description, s.descriptionEn || s.description),
   };
 });
+
+// These four scenes have authored camera positions. The collection link in each
+// scene opens the complete list, including projects added after this sequence.
+export const CINEMATIC_PROJECTS = ['roco', 'nexus', 'league-of-legends', 'genshin-impact']
+  .map(id => PROJECTS.find(project => project.id === id));
 
 // seven pictures in the art worlds; the Garden Cathedral is shown as painting against its Blender rebuild
 const ART_SLUGS = ['world-tree', 'sword-immortal', 'background-painting', 'enchanted-forest', 'character-vis-dev', 'cathedral', 'sakura-village'];

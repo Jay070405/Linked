@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {createOneStroke, webglAvailable, CHAPTERS, SCREEN_SIDES, SCROLL_TOTAL, MIN_ASPECT, toScroll} from './engine';
-import {PROJECTS, ART, ABOUT, TIMELINE, COPY, author, pick} from './content';
+import {PROJECTS, CINEMATIC_PROJECTS, ART, ABOUT, TIMELINE, COPY, author, pick} from './content';
 import OneStrokeStatic from './OneStrokeStatic';
 import './onestroke.css';
 
@@ -46,7 +46,7 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
 
   if (staticMode) return <OneStrokeStatic lang={lang} onOpen={onOpen} onArchive={onArchive} onAbout={onAbout} onNavigate={onNavigate}/>;
 
-  const footNav = (e, id) => { e.preventDefault(); props.current.onNavigate?.(id); };
+  const footNav = (e, id) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; e.preventDefault(); props.current.onNavigate?.(id); };
   const O = COPY.outro;
   return <section ref={sectionRef} className="onestroke" style={{'--os-screens': SCROLL_TOTAL + 1}} aria-label={en ? 'Between rules and wonder — the homepage journey' : '在规则与奇想之间——首页旅程'}>
     {[['systems', CHAPTERS[1]], ['journey-about', CHAPTERS[2]], ['journey-timeline', CHAPTERS[3]], ['worlds', CHAPTERS[4]], ['contact', CHAPTERS[5]]].map(([id, s]) =>
@@ -62,8 +62,8 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
         <div className="os-l os-kv-hud" aria-hidden="true"><div className="gz"><i className="os-gz-a"/><i className="os-gz-b"/></div><div className="os-hud-q">Q 0.000 0.000 0.000 1.000</div><div>{COPY.hud}</div></div>
         <div className="os-l os-kv-scroll" aria-hidden="true">SCROLL<i/></div>
 
-        {PROJECTS.map((p, i) => <div key={p.id} className="os-l os-proj" data-os-proj={i} style={SCREEN_SIDES[i] > 0 ? {right: 80} : {left: 205}}>
-          <div className="reveal"><span className="no"><b>0{i + 1}</b>/ 0{PROJECTS.length} &nbsp; {p.cat}</span></div>
+        {CINEMATIC_PROJECTS.map((p, i) => <div key={p.id} className="os-l os-proj" data-os-proj={i} style={SCREEN_SIDES[i] > 0 ? {right: 80} : {left: 205}}>
+          <div className="reveal"><span className="no"><b>0{i + 1}</b>/ 0{CINEMATIC_PROJECTS.length} &nbsp; {p.cat}</span></div>
           <h3 className={p.serif ? 'is-serif' : ''}><span className="reveal"><span>{L(p.title)}</span></span></h3>
           <div className="reveal"><span className="sub">{L(p.sub)}</span></div>
           <div className="reveal"><span><p>{L(p.desc)}</p></span></div>
@@ -71,6 +71,7 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
           <div className="reveal"><span>{p.ready
             ? <button type="button" className="cta" data-h onClick={() => onOpen?.({type: 'system', item: p.item})}>{L(p.cta)} <b aria-hidden="true">↗</b></button>
             : <span className="cta is-soon" data-h>{L(p.cta)} <b aria-hidden="true">—</b></span>}</span></div>
+          <div className="reveal"><span><a className="all-systems" href="/systems" data-h onClick={e => footNav(e, 'systems')}>{en ? `All ${PROJECTS.length} systems projects · Maoxianjia added` : `全部 ${PROJECTS.length} 个系统项目 · 新增毛险家`} <b aria-hidden="true">↗</b></a></span></div>
         </div>)}
 
         <div className="os-l os-tracer" aria-hidden="true"><i/><span>s 0.00</span></div>

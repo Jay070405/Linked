@@ -11,7 +11,7 @@ import {Reflector} from 'three/addons/objects/Reflector.js';
 import helvetiker from 'three/examples/fonts/helvetiker_bold.typeface.json';
 import OUTLINE from './jl-outline.json';
 import {N, Tube, jlPose, poseFromStrokes, curve, flow, copyPose, makePose, LOGO_C} from './line.js';
-import {PROJECTS, ART, ABOUT, TIMELINE, COPY, pick} from './content.js';
+import {CINEMATIC_PROJECTS as PROJECTS, ART, ABOUT, TIMELINE, COPY, pick} from './content.js';
 import {toJourney, toScroll} from './pacing.js';
 import {createScrollCameraTrack, projectOpacity} from './camera-track.js';
 export {TOTAL, SCROLL_TOTAL, toJourney, toScroll} from './pacing.js';
