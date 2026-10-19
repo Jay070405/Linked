@@ -8,7 +8,7 @@
 .cn-hero-note{margin-top:14px;font:400 14px/1.4 var(--pp-sans);color:var(--pp-pencil);text-align:right}
 
 /* ---------- "Which plan would you pick?" (v2/modules/PlanQuiz) ---------- */
-.cn-quiz{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(28px,3.4vw,48px)}
+.cn-quiz,.cn-bills{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(28px,3.4vw,48px)}
 
 @media(max-width:760px){.cn-hero-note{text-align:left}}
 

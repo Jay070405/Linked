@@ -26,11 +26,13 @@ import './cn.css';
 const A = '/assets/product/choose-not-to-lose/';
 // Interactive modules load when their place on the page comes near (v2/Try Deferred).
 const PlanQuiz = lazy(() => import('../v2/modules/PlanQuiz'));
+const BillsSlider = lazy(() => import('../v2/modules/BillsSlider'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
   {id: 'cn-quiz', label: 'Pick a plan'},
   {id: 'cn-problem-section', label: 'The problem'},
+  {id: 'cn-bills', label: 'Any year’s bills'},
   {id: 'cn-flow', label: 'The redesign'},
   {id: 'cn-decisions', label: 'Decisions'},
   {id: 'cn-compare', label: 'Before and after'},
@@ -191,6 +193,14 @@ export default function ChooseNotToLoseCase({item, reduced}) {
         <p className="v2-slot-badge">Placeholder</p>
         <p>Quotes from five classmates go here after the test afternoon: how they chose between two fictional menus, and whether they could explain their pick back.</p>
       </aside>
+    </section>
+
+    <section id="cn-bills" className="cn-bills" aria-labelledby="cn-bills-title">
+      <div className="v2-section-head" data-reveal="">
+        <h2 id="cn-bills-title" className="v2-h2">The arithmetic the table leaves to you</h2>
+        <p className="v2-lede">Each plan’s total for the year: premiums plus what you pay toward covered bills under its deductible, coinsurance and out-of-pocket maximum, from the prototype’s tested cost model.</p>
+      </div>
+      <Deferred minHeight={900} label="Yearly cost for any amount of bills"><BillsSlider reduced={reduced}/></Deferred>
     </section>
 
     <Scrolly id="cn-flow" kit={CNTL_PAGE_KIT} frame="browser" steps={STEPS} reduced={reduced} label="The redesigned flow"
