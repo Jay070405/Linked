@@ -3,10 +3,11 @@ import ProductIndex from './ProductIndex';
 import ForPage from './ForPage';
 import DesignToCodeCase from './cases/DesignToCodeCase';
 import AtelierCase from './cases/AtelierCase';
+import ReadyForAgentsCase from './cases/ReadyForAgentsCase';
 import {PRODUCT_HOME} from './content';
 import './product.css';
 
-const CASES = {'design-to-code': DesignToCodeCase, atelier: AtelierCase};
+const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase};
 
 function NotFound() {
   return <div className="pp-page pp-missing" lang="en" data-nav-tone="light">

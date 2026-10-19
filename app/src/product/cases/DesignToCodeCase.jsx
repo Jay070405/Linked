@@ -1,4 +1,5 @@
 import CaseLayout from '../CaseLayout';
+import {Go} from '../Go';
 import {C, Chart, Diagram, Note, Noted, Table, TLDR} from '../CaseKit';
 import {CoherenceCharts, WiringGrid} from '../charts';
 import {LayersCompare, Pipeline, TestSet} from '../figures';
@@ -150,10 +151,10 @@ export default function DesignToCodeCase({item, reduced}) {
       <li>There’s no single readiness grade. The ablation supports one strong finding about variables, and 24 builds can’t justify precise weights.</li>
       <li>Code Connect can’t be read from the plugin API, so it shows “not checked.”</li>
     </ul>
-    {/* Held for the product-design case about this check; becomes a link when that case is published. */}
-    <aside className="pp-slot-card" aria-labelledby="pp-handoff-title">
+    {/* The product-design case about this check. */}
+    <aside className="pp-slot-card is-live" aria-labelledby="pp-handoff-title">
       <h3 id="pp-handoff-title">Designing the handoff</h3>
-      <p>The interaction design for this check is its own case study (coming soon).</p>
+      <p>The interaction design for this check is its own case study: <Go to="/product/ready-for-agents">Ready for agents</Go>.</p>
     </aside>
 
     <h2>Metrics</h2>

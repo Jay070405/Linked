@@ -3,6 +3,14 @@ import {Phone, PROTO_H, PROTO_W, shotSrc} from './Device';
 /* Pictures for the /product tiles. All decorative (the tile's text names the project). Layers marked [data-depth]
    lean toward the pointer; the in-progress drawings animate on hover only, and are complete without it. */
 
+/** D1: the editor in its review state, with the Agent handoff row lifted off the panel in front. */
+export function RfaTileArt() {
+  return <span className="pt-rfa">
+    <span className="pt-rfa-editor" data-depth="8"><img src="/assets/product/ready-for-agents/tile.webp" width={1280} height={830} alt="" loading="lazy" decoding="async"/></span>
+    <span className="pt-rfa-row" data-depth="20"><img src="/assets/product/ready-for-agents/tile-row.webp" width={510} height={434} alt="" loading="lazy" decoding="async"/></span>
+  </span>;
+}
+
 /** D2: a print of one painting on the studio wall, the app's home in front. Screenshots only: no iframe here. */
 export function AtelierTileArt() {
   return <span className="pt-atelier">

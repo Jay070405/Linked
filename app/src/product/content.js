@@ -21,19 +21,17 @@ export const EVIDENCE_MEANING = {
 // in-progress tiles and are skipped by "next case".
 export const PRODUCT_CASES = [
   {
-    slug: 'design-to-code',
-    // The research behind D1. Its handoff design case is still to come; until then the tile opens the research.
+    slug: 'ready-for-agents',
     title: 'Ready for agents',
     subtitle: 'What an AI agent can’t recover from a Figma file — and the handoff I designed around it',
-    // The case page leads with the question; the index tile keeps the project's name.
-    pageTitle: 'What an AI agent can’t recover from a Figma file',
-    summary: 'What coding agents can and can’t recover from a Figma file, tested on 24 builds.',
-    dek: 'I gave coding agents clean and messy versions of the same six screens, 24 builds in all. The messy files produced code that looked just as good. Only variable bindings decided whether that code followed the design system.',
-    kind: 'Benchmark, ablation and plugin prototype',
+    pageTitle: 'Ready for agents',
+    summary: 'I measured what coding agents lose when they build from a Figma file (37 builds), then designed a check in the properties panel that binds raw values in one undo and tells the agent the rest.',
+    kind: 'Research, then product design',
     when: 'Oct 2026',
-    proof: {label: 'Measured', text: 'Variable bindings alone took token-change coverage from 50% to 100% (6 of 6 builds).'},
-    // Two of the six test screens (S2 pricing, S1 sign-in) in browser and phone frames.
-    thumb: {src: '/assets/product/thumb-design-to-code.webp', width: 1080, height: 676},
+    status: 'Testing next',
+    proof: {label: 'Measured', text: 'With only variables bound, 9 of 9 builds followed every token change; without them, the median was 50%.'},
+    // The review state of the prototype, cropped to the canvas, popover and properties panel.
+    thumb: {src: '/assets/product/ready-for-agents/tile.webp', width: 1280, height: 830},
     page: true,
   },
   {
@@ -65,6 +63,27 @@ export const PRODUCT_CASES = [
   },
 ];
 export const PUBLISHED_CASES = PRODUCT_CASES.filter(c => c.page);
+
+// Long-form pages that sit behind a case: reachable by address and linked from their case, but not a tile and not in
+// the "next case" cycle (their "next" leads back into the cycle).
+export const APPENDIX_PAGES = [
+  {
+    slug: 'design-to-code',
+    parent: 'ready-for-agents',
+    title: 'Design-to-code readiness',
+    // The case page leads with the question.
+    pageTitle: 'What an AI agent can’t recover from a Figma file',
+    summary: 'What coding agents can and can’t recover from a Figma file, tested on 24 builds.',
+    dek: 'I gave coding agents clean and messy versions of the same six screens, 24 builds in all. The messy files produced code that looked just as good. Only variable bindings decided whether that code followed the design system.',
+    kind: 'Benchmark, ablation and plugin prototype',
+    when: 'Oct 2026',
+    proof: {label: 'Measured', text: 'Variable bindings alone took token-change coverage from 50% to 100% (6 of 6 builds).'},
+    // Two of the six test screens (S2 pricing, S1 sign-in) in browser and phone frames.
+    thumb: {src: '/assets/product/thumb-design-to-code.webp', width: 1080, height: 676},
+    page: true,
+  },
+];
+const PAGES = [...PUBLISHED_CASES, ...APPENDIX_PAGES];
 
 // Research cases that moved to Systems. Their old product addresses redirect there (vercel.json, and the routers
 // for moves inside the app); /for/* notes still list them, linking to their Systems pages.
@@ -102,7 +121,7 @@ export const FOR_PAGES = {
   figma: {
     slug: 'figma',
     title: 'For the Figma team',
-    order: ['design-to-code', 'where-players-break', 'roco'],
+    order: ['ready-for-agents', 'where-players-break', 'roco'],
     // Source: cases/for-figma.md (the note only).
     note: [
       'Hi, I’m Jay. I trained as an illustrator at ArtCenter, I’m finishing a management degree at Duke Fuqua, and most of what I build now starts as a Figma file that an AI agent turns into code.',
@@ -126,7 +145,7 @@ export function resolveProductPath(pathname) {
   if (MOVED[path]) return {type: 'moved', to: MOVED[path]};
   const match = path.match(/^\/product\/([a-z0-9-]+)$/);
   if (match) {
-    const item = PUBLISHED_CASES.find(c => c.slug === match[1]);
+    const item = PAGES.find(c => c.slug === match[1]);
     return item ? {type: 'product-case', item} : null;
   }
   const unlisted = path.match(/^\/for\/([a-z0-9-]+)$/);
@@ -136,7 +155,7 @@ export function resolveProductPath(pathname) {
 
 export function productRouteFor(page) {
   if (page?.type === 'product') return PRODUCT_HOME;
-  if (page?.type === 'product-case') return PUBLISHED_CASES.some(c => c.slug === page.item?.slug) ? `${PRODUCT_HOME}/${page.item.slug}` : null;
+  if (page?.type === 'product-case') return PAGES.some(c => c.slug === page.item?.slug) ? `${PRODUCT_HOME}/${page.item.slug}` : null;
   if (page?.type === 'for') return FOR_PAGES[page.item?.slug] ? `/for/${page.item.slug}` : null;
   return null;
 }

@@ -242,6 +242,8 @@
 .pp-slot-card{padding:22px 24px;border:1px dashed var(--pp-strong);border-radius:8px;font-family:var(--pp-sans)}
 .pp-slot-card h3{font:600 19px/1.3 var(--pp-sans);letter-spacing:-.01em}
 .pp-slot-card p{margin-top:6px;font:400 16px/1.5 var(--pp-sans);color:var(--pp-pencil)}
+.pp-slot-card.is-live{border-style:solid;border-color:var(--pp-ink)}
+.pp-slot-card a{color:var(--pp-ink);text-decoration:underline;text-underline-offset:.2em}
 .pp-prose>.pp-slot-card{margin-top:40px}
 
 /* the League year as a chain */
