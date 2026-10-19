@@ -15,6 +15,7 @@ import {Register, useHeaderPrint, usePrintOnScroll} from './print';
 import RollYear, {Tally, useRollBook} from './RollYear';
 import {ScrubChart, ScrubLines, useScrub} from './ScrubYear';
 import TearOff from './TearOff';
+import {ThemeToggle, useCaseTheme} from './Theme';
 import {TryTasks, TryWindow, useTry} from './TryLive';
 import {Window} from './Window';
 import {CHANGES, CHAPTERS, DECISIONS, FIELDS, HYPOTHESES, NUMBERS, PAIRS, REFLECTION, RESULTS, STEPS, TASKS, TEST_PLAN} from './content';
@@ -78,6 +79,7 @@ export default function ChooseNotToLoseWorld({item, reduced}) {
   const roll = useRollBook(still);
   const tryIt = useTry();
   const [pick, setPick] = useState(null);
+  const [theme, setTheme, fading] = useCaseTheme(reduced);
 
   // the plain reading mode is an address too (?read=plain), so it survives a reload and can be shared
   const choosePlain = useCallback((on, e) => {
@@ -104,12 +106,15 @@ export default function ChooseNotToLoseWorld({item, reduced}) {
     target.querySelector('h2')?.focus?.({preventScroll: true});
   };
 
-  return <article ref={root} className={`pp-page cnr-page${plain ? ' is-plain' : ''}${flat ? ' is-flat' : ''}${still ? ' is-still' : ''}`} lang="en" data-nav-tone="light">
-    <p className="cnr-skip">
-      {plain
-        ? <a href="?" onClick={e => choosePlain(false, e)}>Back to the receipt</a>
-        : <a href="?read=plain" onClick={e => choosePlain(true, e)}>Skip the experience: read it as a plain page</a>}
-    </p>
+  return <article ref={root} className={`pp-page cnr-page${plain ? ' is-plain' : ''}${flat ? ' is-flat' : ''}${still ? ' is-still' : ''}${fading ? ' is-fading' : ''}`} data-theme={theme} lang="en" data-nav-tone="light">
+    <div className="cnr-top">
+      <p className="cnr-skip">
+        {plain
+          ? <a href="?" onClick={e => choosePlain(false, e)}>Back to the receipt</a>
+          : <a href="?read=plain" onClick={e => choosePlain(true, e)}>Skip the experience: read it as a plain page</a>}
+      </p>
+      <ThemeToggle theme={theme} setTheme={setTheme}/>
+    </div>
     <Chrome root={root} chapters={CHAPTERS} still={still} plain={plain}/>
 
     <div className="cnr-desk">

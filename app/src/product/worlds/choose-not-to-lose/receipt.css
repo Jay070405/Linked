@@ -10,7 +10,8 @@
 @font-face{font-family:'CNR Plex Sans';src:url('./fonts/ibm-plex-sans-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
 
 .pp-page.cnr-page{
-  --desk:#e0e0e0;--paper:#fff;--ink:#161616;--ink-2:#393939;--faded:#525252;--helper:#6f6f6f;--dots:#a8a8a8;--rule-c:#c6c6c6;--layer:#f4f4f4;
+  --desk:#f4f4f4;--desk-ink:#161616;--desk-ink-2:#393939;--desk-faded:#525252;--desk-rule:#c6c6c6;--hole:#c6c6c6;--note:var(--faded);
+  --paper:#fff;--ink:#161616;--ink-2:#393939;--faded:#525252;--helper:#6f6f6f;--dots:#a8a8a8;--rule-c:#c6c6c6;--layer:#f4f4f4;
   --loss:#da1e28;--focus:#0f62fe;
   --mono:Mono,ui-monospace,Menlo,Consolas,monospace;
   --sans:'CNR Plex Sans','IBM Plex Sans',system-ui,-apple-system,sans-serif;
@@ -28,15 +29,26 @@
 .cnr-page img{display:block;max-width:100%;height:auto}
 .pp-page.cnr-page :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:0}
 .pp-page.cnr-page ::selection{background:#d0e2ff;color:var(--ink)}
-.pp-page.cnr-page figcaption{display:block;max-width:60ch;margin-top:12px;font:400 14px/1.5 var(--sans);color:var(--faded)}
+.pp-page.cnr-page figcaption{display:block;max-width:60ch;margin-top:12px;font:400 14px/1.5 var(--sans);color:var(--note)}
 .cnr-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .cnr-page [id]{scroll-margin-top:112px}
 @media(max-width:1199px){.cnr-page [id]{scroll-margin-top:156px}}
 
 /* ---------- top: the way out to plain reading, and the printer ---------- */
-.cnr-skip{position:relative;z-index:4;padding:110px var(--pad-r) 0 var(--pad-l);font:400 14px/1.4 var(--sans)}
-.cnr-skip a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink-2);text-decoration:underline;text-decoration-color:#8d8d8d;text-underline-offset:4px}
-.cnr-skip a:hover{color:var(--ink);text-decoration-color:var(--ink)}
+.cnr-top{position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:106px var(--pad-r) 0 var(--pad-l)}
+.cnr-skip{min-width:0;font:400 14px/1.4 var(--sans)}
+.cnr-skip a{display:inline-flex;align-items:center;min-height:44px;color:var(--desk-ink-2);text-decoration:underline;text-decoration-color:#8d8d8d;text-underline-offset:4px}
+.cnr-skip a:hover{color:var(--desk-ink);text-decoration-color:var(--desk-ink)}
+/* the theme pill: sun and moon, the current one on an ink thumb */
+.cnr-theme{position:relative;flex:none;display:flex;padding:2px;border-radius:999px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--desk-rule)}
+.cnr-theme-thumb{position:absolute;left:2px;top:2px;width:40px;height:40px;border-radius:999px;background:var(--ink);transition:transform 200ms var(--ease-out)}
+.cnr-theme.is-dark .cnr-theme-thumb{transform:translateX(40px)}
+.cnr-theme button{position:relative;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:999px;background:none;color:var(--faded);cursor:pointer;transition:color 200ms ease,transform 140ms var(--ease-out)}
+.cnr-theme button[aria-pressed=true]{color:var(--paper)}
+.cnr-theme button:active{transform:scale(.94)}
+.cnr-theme svg{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.cnr-theme button:last-child svg{fill:currentColor;stroke:none}
+@media(hover:hover) and (pointer:fine){.cnr-theme button[aria-pressed=false]:hover{color:var(--ink)}}
 .cnr-desk{position:relative;padding-top:6px}
 .cnr-printer{position:relative;z-index:3;width:calc(var(--paper-w) + 32px);height:58px;margin-left:calc(var(--pad-l) - 16px)}
 .cnr-printer-body{position:absolute;inset:0 0 9px;display:flex;align-items:center;gap:12px;padding:0 20px;border-radius:9px 9px 3px 3px;background:linear-gradient(#444,#2a2a2a 60%,#222);box-shadow:inset 0 1px 0 #ffffff21,0 2px 3px #0000002e,0 16px 26px -16px #000000a6}
@@ -65,7 +77,7 @@
 
 /* a chapter starts at a perforation: punched holes across the tape, a bite out of each edge, a stub number */
 .cnr-perf{position:relative;display:flex;align-items:center;justify-content:flex-end;height:64px;margin:0 calc(-1 * var(--px)) 34px;padding:0 var(--px)}
-.cnr-perf::before{content:'';position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;background:radial-gradient(circle at 3px 3px,var(--desk) 2.1px,transparent 2.6px) 6px 0/11px 6px repeat-x}
+.cnr-perf::before{content:'';position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;background:radial-gradient(circle at 3px 3px,var(--hole) 2.1px,transparent 2.6px) 6px 0/11px 6px repeat-x}
 .cnr-perf::after{content:'';position:absolute;left:-8px;right:-8px;top:50%;height:16px;margin-top:-8px;background:radial-gradient(circle at 8px 8px,var(--desk) 7.5px,transparent 8px) left/16px 16px no-repeat,radial-gradient(circle at 8px 8px,var(--desk) 7.5px,transparent 8px) right/16px 16px no-repeat}
 .cnr-perf-n{position:relative;z-index:1;padding-left:12px;background:var(--paper);font:500 13px/1 var(--mono);color:var(--faded);font-variant-numeric:tabular-nums}
 
@@ -79,7 +91,10 @@
 .cnr-cap .pp-ev{margin-top:-1px}
 .cnr-rule{height:0;margin:18px 0;border:0;border-top:1.5px dashed var(--rule-c)}
 .cnr-rule.is-double{margin:0;border-top:4px double var(--ink)}
-.cnr-desk-note{margin-top:12px;max-width:60ch;font:400 14px/1.5 var(--sans);color:var(--faded)}
+.cnr-desk-note{margin-top:12px;max-width:60ch;font:400 14px/1.5 var(--sans);color:var(--note)}
+/* on a wide screen the side column is the desk: its loose captions take the desk's ink; paper lying on it doesn't */
+.cnr-page:not(.is-flat) .cnr-side{--note:var(--desk-faded)}
+.cnr-slip,.cnr-card,.cnr-stub-paper{--note:var(--faded)}
 .cnr-link{display:inline-flex;align-items:center;min-height:44px;font:500 14px var(--mono);color:var(--ink);text-decoration:underline;text-decoration-color:#8d8d8d;text-underline-offset:4px}
 .cnr-link:hover{text-decoration-color:var(--ink)}
 .cnr-stamp{display:inline-block;margin-right:4px;padding:0 6px;border:1.5px solid currentColor;color:var(--ink);font:600 13px/1.45 var(--mono);letter-spacing:.06em;text-transform:uppercase;transform:rotate(-2deg)}
@@ -324,10 +339,10 @@
 .cnr-step-shot{margin-top:18px;cursor:zoom-in}
 .cnr-flow-device .cnr-win{transform:rotate(.4deg)}
 .cnr-flow-rail ol{display:flex;flex-wrap:wrap;gap:4px;margin:18px 0 0;padding:0;list-style:none}
-.cnr-flow-rail button{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 10px 0 6px;border:0;background:none;font:500 13px/1 var(--mono);color:var(--faded);cursor:pointer;transition:background-color 110ms var(--ease),color 110ms var(--ease)}
+.cnr-flow-rail button{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 10px 0 6px;border:0;background:none;font:500 13px/1 var(--mono);color:var(--note);cursor:pointer;transition:background-color 110ms var(--ease),color 110ms var(--ease)}
 .cnr-flow-rail-n{display:grid;place-items:center;width:20px;height:20px;box-shadow:inset 0 0 0 1.5px currentColor;font-size:12.5px}
-.cnr-flow-rail button.is-active{background:var(--ink);color:var(--paper)}
-@media(hover:hover) and (pointer:fine){.cnr-flow-rail button:hover:not(.is-active){color:var(--ink);background:#d6d6d6}}
+.cnr-flow-rail button.is-active{background:var(--desk-ink);color:var(--desk)}
+@media(hover:hover) and (pointer:fine){.cnr-flow-rail button:hover:not(.is-active){color:var(--desk-ink);background:color-mix(in srgb,var(--desk-ink) 12%,transparent)}}
 
 /* ---------- windows: captures and the live prototype ---------- */
 .cnr-win{min-width:0;max-width:100%;background:var(--layer);box-shadow:0 0 0 1px #0000001f,var(--lift)}
@@ -452,15 +467,15 @@
 
 /* ---------- after the tape: next project and the footer, on the desk ---------- */
 .cnr-next{padding:72px var(--pad-r) 0 var(--pad-l)}
-.cnr-next-link{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);align-items:center;gap:24px 48px;max-width:1240px;color:var(--ink);text-decoration:none}
+.cnr-next-link{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);align-items:center;gap:24px 48px;max-width:1240px;color:var(--desk-ink);text-decoration:none}
 .cnr-next-text{display:grid;gap:10px}
-.cnr-next-label{font:500 13px/1.4 var(--mono);color:var(--faded)}
+.cnr-next-label{font:500 13px/1.4 var(--mono);color:var(--desk-faded)}
 .cnr-next-title{font:300 clamp(34px,3.6vw,56px)/1.05 var(--sans);letter-spacing:-.02em;text-decoration:underline;text-decoration-thickness:1px;text-decoration-color:transparent;text-underline-offset:.14em;transition:text-decoration-color 160ms ease}
-.cnr-next-sub{max-width:46ch;font:400 16px/1.5 var(--sans);color:var(--faded)}
+.cnr-next-sub{max-width:46ch;font:400 16px/1.5 var(--sans);color:var(--desk-faded)}
 .cnr-next-media{display:block;padding:10px;background:#fff;box-shadow:var(--lift);transform:rotate(.8deg);transition:transform 240ms var(--ease-out)}
 .cnr-next-media img{width:100%;aspect-ratio:16 / 10;object-fit:cover}
 @media(hover:hover) and (pointer:fine){.cnr-next-link:hover .cnr-next-title{text-decoration-color:currentColor}.cnr-next-link:hover .cnr-next-media{transform:rotate(0) translateY(-3px)}}
-.cnr-page .pp-foot{margin:72px var(--pad-r) 0 var(--pad-l);border-top-color:var(--rule-c);font-family:var(--sans)}
+.cnr-page .pp-foot{--pp-ink:var(--desk-ink);--pp-pencil:var(--desk-faded);margin:72px var(--pad-r) 0 var(--pad-l);border-top-color:var(--desk-rule);font-family:var(--sans)}
 .cnr-page .pp-foot a{display:inline-flex;align-items:center;min-height:44px}
 
 /* ---------- chrome: tape fed, the index of the receipt ---------- */
@@ -474,8 +489,9 @@
 .cnr-index li{position:relative}
 .cnr-index a{display:flex;align-items:center;gap:10px;min-height:28px;font:500 13px/1.2 var(--mono);color:var(--faded);text-decoration:none;white-space:nowrap;pointer-events:none}
 .cnr-index-tick{flex:none;width:10px;height:10px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #8d8d8d;transition:background-color 160ms ease,box-shadow 160ms ease}
-.cnr-index a.is-active .cnr-index-tick{background:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
-.cnr-index a:hover .cnr-index-tick{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.cnr-index a.is-active .cnr-index-tick{background:var(--desk-ink);box-shadow:inset 0 0 0 1.5px var(--desk-ink)}
+.cnr-index a:hover .cnr-index-tick{box-shadow:inset 0 0 0 1.5px var(--desk-ink)}
+.cnr-index:is(:hover,:focus-within) a.is-active .cnr-index-tick{background:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
 .cnr-index-n,.cnr-index-label{position:relative;opacity:0;transform:translateX(-4px);transition:opacity 160ms ease,transform 200ms var(--ease-out)}
 .cnr-index:is(:hover,:focus-within) :is(.cnr-index-n,.cnr-index-label){opacity:1;transform:none}
 .cnr-index a.is-active{color:var(--ink)}
@@ -517,10 +533,10 @@
 .is-flat .cnr-win{box-shadow:0 0 0 1px #0000001f}
 .is-flat .cnr-exhibit{max-width:none}
 .is-flat .cnr-printer{width:calc(var(--paper-w) + 24px);margin-left:calc(var(--pad-l) - 12px)}
-.is-flat .cnr-skip{padding-left:var(--pad-l)}
+
 @media(max-width:760px){
   .pp-page.cnr-page{--px:18px;font-size:16px}
-  .cnr-skip{padding-top:104px}
+  .cnr-top{padding-top:100px}
   .cnr-printer{height:50px}
   .cnr-printer-name{display:none}
   .cnr-perf{height:56px;margin-bottom:24px}
@@ -588,3 +604,21 @@
   .cnr-page :is(.cnr-strip,.cnr-s-bar i,.cnr-tally-track i,.cnr-exhibit,.cnr-step,.cnr-key,.cnr-next-media){transition:none}
   .cnr-page :is(.cnr-take-text>span,.cnr-q-mark,.cnr-q-answer,.cnr-y.is-fresh,.v2-shot.is-new,.cnr-tab-pop){animation:none}
 }
+
+/* ---------- dark: a dark desk; the receipt and everything printed on paper stay paper-white ---------- */
+.pp-page.cnr-page[data-theme=dark]{--desk:#161616;--desk-ink:#f4f4f4;--desk-ink-2:#e0e0e0;--desk-faded:#c6c6c6;--desk-rule:#393939;--hole:var(--desk);--lift:0 1px 1px #00000066,0 22px 44px -22px #000000cc}
+.cnr-page[data-theme=dark] .cnr-theme{background:#262626;box-shadow:inset 0 0 0 1px #393939}
+.cnr-page[data-theme=dark] .cnr-theme-thumb{background:#f4f4f4}
+.cnr-page[data-theme=dark] .cnr-theme button{color:#c6c6c6}
+.cnr-page[data-theme=dark] .cnr-theme button[aria-pressed=true]{color:#161616}
+@media(hover:hover) and (pointer:fine){.cnr-page[data-theme=dark] .cnr-theme button[aria-pressed=false]:hover{color:#fff}}
+.cnr-page[data-theme=dark] .cnr-printer-body{box-shadow:inset 0 1px 0 #ffffff2e,0 0 0 1px #ffffff14,0 16px 26px -16px #000}
+.pp-page.cnr-page.is-plain[data-theme=dark]{--desk:#161616;--px:28px;background:var(--desk)}
+.cnr-page.is-plain[data-theme=dark] .cnr-tape::before{display:block}
+.cnr-page.is-plain[data-theme=dark] .cnr-band.is-head .cnr-paper{padding-top:28px}
+.cnr-page.is-plain[data-theme=dark] .cnr-band.is-last .cnr-paper{padding-bottom:48px}
+
+/* the 200 ms crossfade, only while the theme is changing (never under reduced motion) */
+.pp-page.cnr-page.is-fading,.cnr-page.is-fading :is(.cnr-skip a,.cnr-desk-note,figcaption,.cnr-flow-rail button,.cnr-index-tick,.cnr-next-link,.cnr-next-label,.cnr-next-sub,.pp-foot,.pp-foot a,.pp-foot-lead,.cnr-theme,.cnr-theme-thumb,.cnr-theme button,.cnr-printer-body){transition:background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,border-color 200ms ease,transform 200ms var(--ease-out)}
+.cnr-page.is-still .cnr-theme-thumb{transition:none}
+@media(prefers-reduced-motion:reduce){.cnr-page .cnr-theme-thumb,.cnr-page .cnr-theme button{transition:none}}
