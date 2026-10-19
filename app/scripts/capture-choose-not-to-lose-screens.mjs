@@ -74,7 +74,7 @@ log.push(await save(path.join(assets, 'decision-year.webp'), {x: 32, y: 392, wid
 await open('screen=scenarios', PAGE_H, 2);
 log.push(await save(path.join(assets, 'decision-bills.webp'), {x: 208, y: 216, width: 1024, height: 600}));
 await open('screen=math', PAGE_H, 2);
-log.push(await save(path.join(assets, 'decision-inform.webp'), {x: 32, y: 1255, width: 860, height: 560}));
+log.push(await save(path.join(assets, 'decision-inform.webp'), {x: 24, y: 1250, width: 1072, height: 790}));
 await open('screen=review&plan=b', PAGE_H, 2);
 log.push(await save(path.join(assets, 'decision-option.webp'), {x: 16, y: 270, width: 830, height: 560}));
 await open('screen=confirmation&plan=a', PAGE_H, 2);

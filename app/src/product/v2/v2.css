@@ -290,7 +290,7 @@
 .v2-rail.is-horizontal .v2-rail-track{left:0;right:0;top:auto;bottom:0;width:auto;height:1px}
 .v2-rail.is-horizontal .v2-rail-track i{transform-origin:0 50%;transform:scaleX(0)}
 .v2-swipe.is-wide .v2-swipe-track{grid-auto-columns:min(90%,380px)}
-.v2-live.is-wide{grid-template-columns:1fr;gap:36px}
+.v2-live.is-wide{grid-template-columns:minmax(0,1fr);gap:36px}
 .v2-live.is-wide .v2-live-copy{display:grid;gap:24px 64px}
 .v2-live.is-wide .v2-live-device{display:block}
 @media(min-width:1000px){
