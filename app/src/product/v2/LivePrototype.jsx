@@ -39,7 +39,7 @@ export default function LivePrototype({id, heading, lede, phoneLede, tasks, star
       {note && !(phone && phoneNote) ? <p className="v2-live-note" data-reveal="">{note}</p> : null}
     </div>
     <div className="v2-live-device" data-reveal="">
-      {(() => { const Frame = frame === 'browser' ? Browser : Phone; return <Frame label={name}>
+      {(() => { const Frame = frame === 'browser' ? Browser : Phone; return <Frame label={name} address={kit.address}>
         <ProtoScreen kit={kit} screen={state.screen} art={state.art} reload={state.reload} load={phone ? 'never' : 'near'} interactive={!phone}
           reduced={reduced} title={`${name}, live and clickable`} alt={phone ? `${name}, first screen` : ''}/>
       </Frame>; })()}

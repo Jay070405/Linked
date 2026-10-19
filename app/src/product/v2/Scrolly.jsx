@@ -28,8 +28,8 @@ function StepText({step, i, n}) {
   </>;
 }
 
-function Device({frame, label, children}) {
-  return frame === 'browser' ? <Browser label={label}>{children}</Browser> : <Phone label={label}>{children}</Phone>;
+function Device({frame, label, address, children}) {
+  return frame === 'browser' ? <Browser label={label} address={address}>{children}</Browser> : <Phone label={label}>{children}</Phone>;
 }
 
 function Pinned({steps, art, kit, frame, title, note, reduced, label}) {
@@ -75,7 +75,7 @@ function Pinned({steps, art, kit, frame, title, note, reduced, label}) {
           </li>)}</ol>
         </nav>
         <div className="v2-pin-device">
-          <Device frame={frame} label={`Prototype showing step ${active + 1}: ${step.label}`}>
+          <Device frame={frame} address={kit.address} label={`Prototype showing step ${active + 1}: ${step.label}`}>
             <ProtoScreen kit={kit} screen={step.screen} camera={step.camera} art={art} load="near" reduced={reduced} title={title}
               alt={step.alt || `${step.label} screen`}/>
           </Device>
@@ -102,7 +102,7 @@ function Swipe({steps, art, kit, frame, reduced, label}) {
   return <div className={`v2-swipe${frame === 'browser' ? ' is-wide' : ''}`}>
     <ol ref={track} className="v2-swipe-track" aria-label={`${label}, swipe sideways`} tabIndex={0}>
       {steps.map((step, i) => <li key={step.id} data-step={i} className="v2-swipe-card">
-        <Device frame={frame}><ProtoScreen kit={kit} screen={step.screen} camera={step.phoneCamera || step.camera} art={art} load="never" reduced={reduced} alt={step.alt || `${step.label} screen`}/></Device>
+        <Device frame={frame} address={kit.address}><ProtoScreen kit={kit} screen={step.screen} camera={step.phoneCamera || step.camera} art={art} load="never" reduced={reduced} alt={step.alt || `${step.label} screen`}/></Device>
         <div className="v2-swipe-text"><StepText step={step} i={i} n={steps.length}/></div>
       </li>)}
     </ol>

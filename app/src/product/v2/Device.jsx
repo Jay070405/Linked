@@ -44,7 +44,8 @@ export const CNTL_STATES = {
   'worst-year': 'screen=worst-year', 'review-b': 'screen=review&plan=b', 'confirmation': 'screen=confirmation&plan=a',
 };
 export const cntlUrl = screen => `/proto/choose-not-to-lose/index.html?${CNTL_STATES[screen] || `screen=${screen}`}`;
-export const CNTL_KIT = {w: 1440, h: 900, url: cntlUrl, shot: s => `/assets/product/choose-not-to-lose/screens/${s}.webp`, shotW: 1800, shotH: 1125, drive: 'reload'};
+export const CNTL_KIT = {w: 1440, h: 900, url: cntlUrl, shot: s => `/assets/product/choose-not-to-lose/screens/${s}.webp`, shotW: 1800, shotH: 1125, drive: 'reload',
+  address: 'Choose Not to Lose, concept prototype: fictional plans'};
 export const CNTL_PAGE_KIT = {...CNTL_KIT, h: 2080, viewH: 900, shot: s => `/assets/product/choose-not-to-lose/pages/${s}.webp`, shotH: 2600};
 
 /** Moves an already loaded popstate-kit prototype to another screen. */
