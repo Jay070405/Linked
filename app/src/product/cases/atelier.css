@@ -22,7 +22,7 @@
   .at-stage-print{left:6%;top:6%;width:78%}
   .at-stage-device{right:7%;bottom:7%}
   .at-stage-device .v2-phone{--pw:min(46cqw,40cqh)}
-  .at-stage-note{left:6%;bottom:6%;max-width:42%}
+  .at-stage-note{left:6%;bottom:6%;max-width:36%;font-size:13px}
 }
 @media(prefers-reduced-motion:reduce){.at-float{animation:none}}
 .quiet .at-float{animation:none}

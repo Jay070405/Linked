@@ -29,7 +29,7 @@ export const PRODUCT_CASES = [
     pageTitle: 'What an AI agent can’t recover from a Figma file',
     summary: 'What coding agents can and can’t recover from a Figma file, tested on 24 builds.',
     dek: 'I gave coding agents clean and messy versions of the same six screens, 24 builds in all. The messy files produced code that looked just as good. Only variable bindings decided whether that code followed the design system.',
-    kind: 'Research and plugin prototype',
+    kind: 'Benchmark, ablation and plugin prototype',
     when: 'Oct 2026',
     proof: {label: 'Measured', text: 'Variable bindings alone took token-change coverage from 50% to 100% (6 of 6 builds).'},
     // Two of the six test screens (S2 pricing, S1 sign-in) in browser and phone frames.

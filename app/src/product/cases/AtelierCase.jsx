@@ -71,7 +71,7 @@ const TASKS = [
     hint: 'Tap the 12 × 16 size on the ruler to see its dpi and the reason.'},
   {id: 'price', screen: 'price', art: 'blue-hour', title: 'Set a price for an 8 × 10 and see what you keep',
     hint: 'Change the price; the breakdown and “You keep” update as you type.'},
-  {id: 'wall', screen: 'wall', art: 'signal', title: 'As a collector, see A Distant Signal on your wall at each size',
+  {id: 'wall', screen: 'wall', art: 'signal', title: 'As a collector, try A Distant Signal on your wall in each size it’s sold in',
     hint: 'Pick a size: the frame changes to its physical width next to the 36-inch console.'},
   {id: 'buy', screen: 'drop', art: 'signal', title: 'Buy a print, then find the order in the artist’s studio',
     hint: 'Checkout takes no payment. After the receipt, open the screen menu (the three dots) and go to Orders.'},
