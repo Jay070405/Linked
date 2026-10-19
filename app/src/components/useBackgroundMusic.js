@@ -131,7 +131,8 @@ export function createMusicController(audio, options = {}) {
     else { needsGesture = true; emit('pending'); }
   };
   audio.loop = true;
-  audio.preload = 'metadata';
+  // Nothing is fetched until music is actually requested; play() loads the track itself.
+  audio.preload = 'none';
   try { audio.volume = 0.012; } catch { /* Some mobile media elements reject volume writes. */ }
   // iOS may refuse programmatic HTMLMediaElement volume. A GainNode keeps the
   // requested quiet mix there too; an unavailable quiet path never plays loud.

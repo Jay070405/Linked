@@ -108,6 +108,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
   const h = harness();
   const controller = createMusicController(h.media, h.options); await flush();
   check(h.media.count === 0 && controller.getState().status === 'off' && !controller.getState().enabled, 'Music is off until the visitor turns it on');
+  check(h.media.preload === 'none', 'The track is not preloaded while music is off');
   h.document.emit('pointerdown'); h.document.emit('keydown', { key: 'a' }); await flush();
   check(h.media.count === 0, 'Ordinary gestures do not start music that was never turned on');
   controller.toggle(); await flush(); h.advance(1300);
