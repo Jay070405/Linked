@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pricing – Lumen</title>
+  <meta name="description" content="Simple pricing for teams of every size. Start free and upgrade when you are ready.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       Design tokens
+       ========================================================================== */
+    :root {
+      /* colour */
+      --color-background: #f6f7f9;
+      --color-surface: #ffffff;
+      --color-border: #e4e7ec;
+      --color-primary: #4f46e5;
+      --color-primary-contrast: #ffffff;
+      --color-text-primary: #101828;
+      --color-text-secondary: #667085;
+
+      /* radius */
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-full: 999px;
+
+      /* spacing */
+      --space-4: 4px;
+      --space-8: 8px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-24: 24px;
+      --space-32: 32px;
+
+      /* type */
+      --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+      /* Check mark used in every feature list (Figma "Frame 39", 20 x 20) */
+      --icon-check: url("data:image/svg+xml,%3Csvg preserveAspectRatio='none' overflow='visible' style='display: block;' width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg id='Frame 39'%3E%3Cpath id='Vector' d='M4.5 10.5L8 14L15.5 6' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' stroke='%234F46E5'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* ==========================================================================
+       Base
+       ========================================================================== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--color-background);
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 20px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, p, ul, hr {
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================================
+       Buttons
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-12) var(--space-16);
+      border: 0;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      line-height: 20px;
+      white-space: nowrap;
+      transition: background-color .15s ease, border-color .15s ease;
+    }
+
+    .btn--primary {
+      background: var(--color-primary);
+      color: var(--color-primary-contrast);
+    }
+
+    .btn--primary:hover {
+      background: color-mix(in srgb, var(--color-primary) 88%, #000);
+    }
+
+    .btn--secondary {
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn--secondary:hover {
+      background: var(--color-background);
+    }
+
+    .btn--block {
+      display: flex;
+      width: 100%;
+    }
+
+    /* ==========================================================================
+       Site header
+       ========================================================================== */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-16) var(--space-32);
+      padding: var(--space-16) var(--space-32);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+      letter-spacing: -0.005em;
+    }
+
+    .brand__mark {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--color-primary);
+      color: var(--color-primary-contrast);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      letter-spacing: 0;
+    }
+
+    .site-nav__list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8) var(--space-32);
+      font-weight: 600;
+    }
+
+    .site-nav__link {
+      color: var(--color-text-secondary);
+      transition: color .15s ease;
+    }
+
+    .site-nav__link:hover {
+      color: var(--color-text-primary);
+    }
+
+    .site-nav__link[aria-current="page"] {
+      color: var(--color-text-primary);
+    }
+
+    .site-header__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-12);
+    }
+
+    /* ==========================================================================
+       Pricing section
+       ========================================================================== */
+    .pricing {
+      flex: 1;
+      width: 100%;
+      padding: 64px var(--space-32) var(--space-32);
+    }
+
+    .pricing__intro {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-16);
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pricing__eyebrow {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .pricing__title {
+      font-size: clamp(2rem, 1.3rem + 2.2vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    .pricing__lede {
+      color: var(--color-text-secondary);
+      text-wrap: balance;
+    }
+
+    /* Monthly / yearly switch */
+    .billing-toggle {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-8);
+      margin-top: var(--space-8);
+    }
+
+    .billing-toggle__option {
+      padding: var(--space-8) var(--space-16);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      font-weight: 600;
+      line-height: 20px;
+      transition: background-color .15s ease, color .15s ease;
+    }
+
+    .billing-toggle__option:hover {
+      background: var(--color-background);
+    }
+
+    /* The selected pill is borderless; the 1px block margin keeps both states
+       the same outer height so the row never jumps when toggled. */
+    .billing-toggle__option[aria-pressed="true"] {
+      margin-block: 1px;
+      border-width: 0;
+      background: var(--color-primary);
+      color: var(--color-primary-contrast);
+    }
+
+    /* Plan grid */
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-24);
+      max-width: 1176px;
+      margin: var(--space-32) auto 0;
+    }
+
+    .plan {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-24);
+      padding: var(--space-32);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+    }
+
+    .plan--featured {
+      border: 2px solid var(--color-primary);
+      box-shadow: 0 12px 16px rgba(79, 70, 229, 0.12);
+    }
+
+    .plan__header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-8);
+      min-height: 26px;
+    }
+
+    .plan__name {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+      letter-spacing: -0.005em;
+    }
+
+    .plan__badge {
+      padding: var(--space-4) var(--space-8);
+      border-radius: var(--radius-full);
+      background: var(--color-primary);
+      color: var(--color-primary-contrast);
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    .plan__description {
+      margin-top: var(--space-8);
+      color: var(--color-text-secondary);
+    }
+
+    .plan__price {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-8);
+      white-space: nowrap;
+    }
+
+    .plan__amount {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 48px;
+      letter-spacing: -0.02em;
+    }
+
+    .plan__period {
+      color: var(--color-text-secondary);
+    }
+
+    .plan__divider {
+      height: 1px;
+      border: 0;
+      background: var(--color-border);
+    }
+
+    .plan__features-title {
+      font-weight: 600;
+    }
+
+    .plan__features {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-12);
+      margin-top: var(--space-12);
+    }
+
+    .plan__feature {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-12);
+    }
+
+    .plan__feature::before {
+      content: "";
+      flex: none;
+      width: 20px;
+      height: 20px;
+      background: var(--icon-check) no-repeat center / 20px 20px;
+    }
+
+    .pricing__note {
+      max-width: 704px;
+      margin: var(--space-32) auto 0;
+      color: var(--color-text-secondary);
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+    }
+
+    /* ==========================================================================
+       Responsive
+       ========================================================================== */
+
+    /* Header: links drop to their own row before they collide with the logo / actions */
+    @media (max-width: 860px) {
+      .site-header {
+        gap: var(--space-12) var(--space-16);
+        padding-block: var(--space-12);
+      }
+
+      .site-nav {
+        order: 3;
+        flex-basis: 100%;
+      }
+
+      .site-nav__list {
+        justify-content: center;
+        gap: var(--space-8) var(--space-24);
+      }
+    }
+
+    /* Narrow three-column cards: descriptions may wrap, so reserve two lines to
+       keep prices and buttons aligned across the row */
+    @media (min-width: 900px) and (max-width: 1099px) {
+      .plan__description {
+        min-height: 40px;
+      }
+    }
+
+    /* Plans stack into one centred column */
+    @media (max-width: 899px) {
+      .plans {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 480px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .site-header {
+        padding-inline: var(--space-16);
+      }
+
+      .pricing {
+        padding: 40px var(--space-16) var(--space-24);
+      }
+
+      .plans {
+        margin-top: var(--space-24);
+      }
+
+      .pricing__note {
+        margin-top: var(--space-24);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .plan {
+        padding: var(--space-24);
+      }
+
+      .site-nav__list {
+        column-gap: var(--space-12);
+      }
+
+      .site-header__actions {
+        gap: var(--space-8);
+      }
+
+      .site-header__actions .btn {
+        padding-inline: var(--space-12);
+      }
+    }
+
+    @media (max-width: 359px) {
+      .site-header__actions .btn--secondary {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="Lumen home">
+      <span class="brand__mark" aria-hidden="true">L</span>
+      <span>Lumen</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      <ul class="site-nav__list">
+        <li><a class="site-nav__link" href="#">Product</a></li>
+        <li><a class="site-nav__link" href="#" aria-current="page">Pricing</a></li>
+        <li><a class="site-nav__link" href="#">Customers</a></li>
+        <li><a class="site-nav__link" href="#">Changelog</a></li>
+        <li><a class="site-nav__link" href="#">Docs</a></li>
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="btn btn--secondary" href="#">Sign in</a>
+      <a class="btn btn--primary" href="#">Start free trial</a>
+    </div>
+  </header>
+
+  <main class="pricing" aria-labelledby="pricing-title">
+    <div class="pricing__intro">
+      <p class="pricing__eyebrow">Pricing</p>
+      <h1 class="pricing__title" id="pricing-title">Simple pricing for teams of every size</h1>
+      <p class="pricing__lede">Start free and upgrade when you are ready. Every plan includes unlimited viewers and SOC 2 security.</p>
+
+      <div class="billing-toggle" role="group" aria-label="Billing period" data-billing-toggle>
+        <button class="billing-toggle__option" type="button" data-period="monthly" aria-pressed="true">Monthly</button>
+        <button class="billing-toggle__option" type="button" data-period="yearly" aria-pressed="false">Yearly · save 20%</button>
+      </div>
+    </div>
+
+    <div class="plans">
+      <!-- Starter -->
+      <article class="plan" aria-labelledby="plan-starter">
+        <div>
+          <div class="plan__header-row">
+            <h2 class="plan__name" id="plan-starter">Starter</h2>
+          </div>
+          <p class="plan__description">For individuals and side projects.</p>
+        </div>
+
+        <p class="plan__price">
+          <span class="plan__amount">$0</span>
+          <span class="plan__period">free forever</span>
+        </p>
+
+        <a class="btn btn--secondary btn--block" href="#">Get started</a>
+
+        <hr class="plan__divider">
+
+        <div>
+          <p class="plan__features-title" id="plan-starter-features">Includes:</p>
+          <ul class="plan__features" aria-labelledby="plan-starter-features">
+            <li class="plan__feature">Up to 3 projects</li>
+            <li class="plan__feature">1 GB file storage</li>
+            <li class="plan__feature">Basic analytics</li>
+            <li class="plan__feature">Community support</li>
+            <li class="plan__feature">Email notifications</li>
+            <li class="plan__feature">Two-factor authentication</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Pro (featured) -->
+      <article class="plan plan--featured" aria-labelledby="plan-pro">
+        <div>
+          <div class="plan__header-row">
+            <h2 class="plan__name" id="plan-pro">Pro</h2>
+            <span class="plan__badge">Most popular</span>
+          </div>
+          <p class="plan__description">For growing teams that ship weekly.</p>
+        </div>
+
+        <p class="plan__price">
+          <span class="plan__amount" data-price-monthly="24" data-price-yearly="19">$24</span>
+          <span class="plan__period">per user / month</span>
+        </p>
+
+        <a class="btn btn--primary btn--block" href="#">Start free trial</a>
+
+        <hr class="plan__divider">
+
+        <div>
+          <p class="plan__features-title" id="plan-pro-features">Everything in Starter, plus:</p>
+          <ul class="plan__features" aria-labelledby="plan-pro-features">
+            <li class="plan__feature">Unlimited projects</li>
+            <li class="plan__feature">100 GB file storage</li>
+            <li class="plan__feature">Advanced analytics</li>
+            <li class="plan__feature">Priority email support</li>
+            <li class="plan__feature">Custom domains</li>
+            <li class="plan__feature">90-day version history</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Business -->
+      <article class="plan" aria-labelledby="plan-business">
+        <div>
+          <div class="plan__header-row">
+            <h2 class="plan__name" id="plan-business">Business</h2>
+          </div>
+          <p class="plan__description">For orgs with advanced security needs.</p>
+        </div>
+
+        <p class="plan__price">
+          <span class="plan__amount" data-price-monthly="48" data-price-yearly="38">$48</span>
+          <span class="plan__period">per user / month</span>
+        </p>
+
+        <a class="btn btn--secondary btn--block" href="#">Contact sales</a>
+
+        <hr class="plan__divider">
+
+        <div>
+          <p class="plan__features-title" id="plan-business-features">Everything in Pro, plus:</p>
+          <ul class="plan__features" aria-labelledby="plan-business-features">
+            <li class="plan__feature">SAML single sign-on</li>
+            <li class="plan__feature">Unlimited file storage</li>
+            <li class="plan__feature">Audit logs</li>
+            <li class="plan__feature">Dedicated success manager</li>
+            <li class="plan__feature">99.9% uptime SLA</li>
+            <li class="plan__feature">Role-based permissions</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <p class="pricing__note">Prices in USD. Taxes may apply. Cancel or change plans anytime.</p>
+  </main>
+
+  <script>
+    /* Monthly / yearly switch: updates the pressed state and the displayed prices. */
+    (() => {
+      const toggle = document.querySelector('[data-billing-toggle]');
+      if (!toggle) return;
+
+      const options = toggle.querySelectorAll('[data-period]');
+      const prices = document.querySelectorAll('[data-price-monthly]');
+
+      toggle.addEventListener('click', (event) => {
+        const option = event.target.closest('[data-period]');
+        if (!option) return;
+
+        const period = option.dataset.period;
+        options.forEach((el) => el.setAttribute('aria-pressed', String(el === option)));
+        prices.forEach((el) => {
+          el.textContent = '$' + (period === 'yearly' ? el.dataset.priceYearly : el.dataset.priceMonthly);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,9 +1,8 @@
-import {useLayoutEffect, useRef, useState} from 'react';
+import {lazy, useLayoutEffect, useRef, useState} from 'react';
 import {Go} from '../Go';
 import {Ev} from '../CaseKit';
 import {ProductFooter} from '../ProductIndex';
 import {nextCase} from '../content';
-import {WiringGrid} from '../charts';
 import {LayersCompare, Pipeline, TestSet} from '../figures';
 import CaseHero from '../v2/CaseHero';
 import NumberStrip from '../v2/NumberStrip';
@@ -13,6 +12,7 @@ import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
 import CaseChrome, {zoomable} from '../v2/CaseChrome';
+import {Deferred} from '../v2/Try';
 import {Browser, ProtoScreen, RFA_KIT, rfaShot} from '../v2/Device';
 import {AtelierTileArt} from '../v2/TileArt';
 import {ArrowDown, ArrowRight} from '../v2/icons';
@@ -26,10 +26,12 @@ import './rfa.css';
 // the sessions next.
 
 const A = '/assets/product/ready-for-agents/';
+// Interactive modules load when their place on the page comes near (v2/Try Deferred).
+const TryFinding = lazy(() => import('../v2/modules/TryFinding'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
-  {id: 'research', label: 'Research', sections: [{id: 'rfa-method', label: 'How I tested it'}, {id: 'rfa-results', label: 'Results'}]},
+  {id: 'research', label: 'Research', sections: [{id: 'rfa-finding', label: 'Try the finding'}, {id: 'rfa-method', label: 'How I tested it'}, {id: 'rfa-results', label: 'Results'}]},
   {id: 'design', label: 'Design', sections: [{id: 'rfa-principles', label: 'Principles'}, {id: 'rfa-directions', label: 'Directions'}, {id: 'rfa-flow', label: 'The flow'}, {id: 'rfa-compare', label: 'Round 1 → 2'}, {id: 'rfa-theme', label: 'Light and dark'}, {id: 'rfa-agent', label: 'The agent’s side'}]},
   {id: 'try', label: 'Try it'},
   {id: 'testing', label: 'Testing'},
@@ -334,6 +336,14 @@ export default function ReadyForAgentsCase({item, reduced}) {
         <p className="v2-caption"><Ev label="Sourced"/><span>The list of habits is from Figma’s developer docs.</span></p>
       </header>
 
+      <div id="rfa-finding" className="rfa-finding">
+        <div className="v2-section-head" data-reveal="">
+          <h3 className="rfa-h3">Try the finding first</h3>
+          <p className="v2-lede">A fresh agent built this pricing screen twice from the same picture: from the raw Figma file, and from the same file with its colors bound to variables. These are the pages it wrote.</p>
+        </div>
+        <Deferred minHeight={720} label="Live demo of the two pages"><TryFinding reduced={reduced}/></Deferred>
+      </div>
+
       <div id="rfa-method" className="rfa-block" data-reveal="">
         <div className="rfa-block-copy">
           <h3 className="rfa-h3">Six screens, four versions each</h3>
@@ -365,16 +375,9 @@ export default function ReadyForAgentsCase({item, reduced}) {
         <FlatResult reduced={reduced}/>
       </div>
 
-      <figure className="rfa-evidence" data-reveal="">
-        <p className="rfa-result-n">Result 2, the evidence</p>
-        <h3 className="rfa-h3">Same build, different wiring</h3>
-        <WiringGrid/>
-        <figcaption className="v2-caption"><Ev label="Measured"/><span>The pricing screen built from the raw file (L0) and from the raw file with variables bound (L0V). The files look identical in Figma, and so did the builds. Then I injected the same token change into each page: primary to magenta, text to green, background to yellow, border to cyan. The L0 build picked up only the primary and border colors; the L0V build followed all four.</span></figcaption>
-      </figure>
-
       <div className="rfa-result is-flip" data-reveal="">
         <div className="rfa-result-copy">
-          <p className="rfa-result-n">Result 3, the ablation</p>
+          <p className="rfa-result-n">Result 2, the ablation</p>
           <h3 className="rfa-h3">Only variables carried the system’s names</h3>
           <p>L0V is the raw file with variable bindings added and nothing else: no auto layout, no components, meaningless layer names. Every one of those builds followed the whole change. Without variables, agents invented their own names, and a change reached only the ones they happened to guess.</p>
         </div>

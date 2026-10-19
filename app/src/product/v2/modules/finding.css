@@ -1,0 +1,65 @@
+/* D1 "Try the finding" (TryFinding.jsx). Prefix: rf-. The two pages carry their own colors; around them the module
+   stays paper and ink, and the swatches are the only color the page adds. */
+.rf{display:grid;gap:clamp(20px,2.4vw,32px)}
+.rf-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px}
+.rf-picker{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.rf-swatches{display:contents}
+.rf-swatch{position:relative;display:inline-flex;align-items:center;gap:9px;height:44px;padding:0 15px 0 6px;border-radius:22px;background:var(--v2-card);box-shadow:0 0 0 1px var(--v2-hair);font:550 14.5px/1 var(--pp-sans);color:var(--pp-ink);cursor:pointer;
+  transition:box-shadow 160ms ease,transform 160ms var(--v2-out)}
+.rf-swatch:hover{box-shadow:0 0 0 1px #11111433}
+.rf-swatch:active{transform:scale(.97)}
+.rf-swatch[aria-checked=true],.rf-swatch[data-checked]{box-shadow:0 0 0 1.5px var(--pp-ink),0 6px 16px -10px #11111466}
+.rf-dot{flex:none;width:32px;height:32px;border-radius:50%;background:var(--a);box-shadow:inset 0 0 0 4px var(--b,#fff),inset 0 0 0 5px #11111414}
+.rf-swatch.is-custom input{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;opacity:0;cursor:pointer}
+.rf-swatch.is-custom:focus-within{outline:2px solid var(--pp-red);outline-offset:3px}
+.rf-reset{min-height:44px;padding:0 10px;font:500 14.5px/1 var(--pp-sans);color:var(--pp-pencil);text-decoration:underline;text-decoration-color:var(--pp-strong);text-underline-offset:.25em;transition:color 160ms ease}
+.rf-reset:hover{color:var(--pp-ink)}
+.rf-reset:disabled{opacity:.45;text-decoration:none;cursor:default}
+
+.rf-pair{display:grid;gap:clamp(20px,2.2vw,32px)}
+@media(min-width:760px){.rf-pair{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rf-col{display:grid;gap:12px;align-content:start;min-width:0}
+.rf-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font:600 16px/1.3 var(--pp-sans)}
+.rf-level{display:grid;place-items:center;height:26px;padding:0 9px;border-radius:7px;background:var(--pp-ink);color:var(--pp-paper);font:650 13px/1 var(--pp-sans)}
+.rf-score{margin-left:auto;font:450 15px/1.3 var(--pp-sans);color:var(--pp-pencil);font-variant-numeric:tabular-nums}
+.rf-score b{font-weight:650;color:var(--pp-ink)}
+.rf-page-stage{position:absolute;left:0;top:0;transform-origin:0 0}
+.rf-page-stage iframe{display:block;border:0;background:#f6f7f9;pointer-events:none}
+
+.rf-tokens{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 16px;margin:0;padding:0;list-style:none}
+.rf-tokens li{display:grid;grid-template-columns:16px 14px auto minmax(0,1fr);align-items:center;gap:8px;min-height:30px;font:450 14px/1.3 var(--pp-sans);color:var(--pp-pencil)}
+.rf-mark{display:grid;place-items:center;width:16px;height:16px}
+.rf-tokens li.is-ok .rf-mark{color:var(--pp-ink)}
+.rf-tokens li.is-miss .rf-mark{color:var(--pp-pencil)}
+.rf-chip{width:14px;height:14px;border-radius:4px;box-shadow:inset 0 0 0 1px #11111426}
+.rf-token{font-weight:600;color:var(--pp-ink)}
+.rf-why{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rf-tokens li.is-miss .rf-token{color:var(--pp-pencil)}
+.rf-why code{font:500 12.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:2px 4px;border-radius:4px;background:var(--pp-surface);color:var(--pp-ink)}
+.rf .v2-caption{margin-top:0}
+
+@media(max-width:560px){.rf-swatch{padding-right:12px;font-size:14px}}
+@media(prefers-reduced-motion:reduce){.rf-swatch{transition:box-shadow 160ms ease}.rf-swatch:active{transform:none}}
+
+/* phones: both pages side by side, small; what each calls the colors in one table below */
+.rf-table{display:none;width:100%;border-collapse:collapse;font:450 14px/1.3 var(--pp-sans);font-variant-numeric:tabular-nums}
+.rf-table th,.rf-table td{height:40px;padding:0 8px;border-bottom:1px solid var(--pp-rule);text-align:left;vertical-align:middle}
+.rf-table thead th{height:32px;border-bottom-color:var(--pp-ink);font:650 13px/1 var(--pp-sans)}
+.rf-table tbody th{font-weight:600;white-space:nowrap}
+.rf-table tbody th .rf-chip{display:inline-block;margin-right:8px;vertical-align:-2px}
+.rf-table td{color:var(--pp-pencil)}
+.rf-table td.is-ok{color:var(--pp-ink)}
+.rf-table td svg{vertical-align:-2px;margin-right:6px}
+.rf-table code{font:500 11.5px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:2px 4px;border-radius:4px;background:var(--pp-surface);color:var(--pp-ink);white-space:nowrap}
+@media(max-width:759px){
+  .rf-pair{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .rf-tokens{display:none}
+  .rf-table{display:table}
+  .rf-head{gap:4px 6px;font-size:14px}
+  .rf-name{display:none}
+  .rf-score{margin-left:0;flex-basis:100%;font-size:13.5px}
+  .rf-col .v2-browser-shell{border-radius:10px}
+  .rf-col .v2-browser-bar{height:18px;gap:4px;padding:0 8px}
+  .rf-col .v2-browser-bar i{width:6px;height:6px}
+  .rf-col .v2-browser-bar span{display:none}
+}

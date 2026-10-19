@@ -8,7 +8,7 @@ import './try.css';
 /** The one-line instruction above a module. */
 export function Ask({children, className = ''}) {
   return <p className={`v2-ask ${className}`}>
-    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M7.2 3.2v8.9l2.1-2 1.7 4.1 1.6-.7-1.7-4h3Z"/></svg>
+    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M5.5 2.8 15.6 9l-4.7 1.3 2.6 4.9-2 1.1-2.7-4.9L5.5 14.6Z"/></svg>
     <span>{children}</span>
   </p>;
 }

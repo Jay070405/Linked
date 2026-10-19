@@ -129,3 +129,7 @@
   .rfa-principle:hover,.rfa-direction:hover .rfa-direction-img img{transform:none}
 }
 .quiet .rfa-principle:hover,.quiet .rfa-direction:hover .rfa-direction-img img{transform:none}
+
+/* ---------- research: "Try the finding" (v2/modules/TryFinding) ---------- */
+.rfa-finding{display:grid;gap:clamp(28px,3vw,44px)}
+.rfa-finding .v2-section-head .v2-lede{max-width:44ch}

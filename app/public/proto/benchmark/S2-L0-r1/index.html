@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pricing – Lumen</title>
+  <meta name="description" content="Simple pricing for teams of every size. Start free and upgrade when you are ready.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+  <style>
+    /* ---------- Design tokens ---------- */
+    :root {
+      --color-bg: #f6f7f9;
+      --color-surface: #ffffff;
+      --color-border: #e4e7ec;
+      --color-text: #101828;
+      --color-text-muted: #667085;
+      --color-primary: #4f46e5;
+      --color-primary-hover: #4338ca;
+      --color-on-primary: #ffffff;
+
+      --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+      --radius-sm: 6px;
+      --radius-lg: 12px;
+      --radius-pill: 999px;
+
+      --shadow-featured: 0 12px 16px rgba(79, 70, 229, 0.12);
+
+      --page-gutter: 32px;
+      --content-max: 1176px;
+    }
+
+    /* ---------- Base ---------- */
+    *,
+    *::before,
+    *::after { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, p, ul { margin: 0; }
+    ul { padding: 0; list-style: none; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn--primary {
+      /* Figma: filled buttons carry no stroke, so they are 2px shorter than outlined ones */
+      border-width: 0;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+    .btn--primary:hover { background: var(--color-primary-hover); }
+
+    .btn--secondary {
+      border-color: var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+    .btn--secondary:hover { background: var(--color-bg); }
+
+    .btn--block { display: flex; width: 100%; }
+
+    /* ---------- Site header ---------- */
+    .site-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px 24px;
+      padding: 16px var(--page-gutter);
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+      letter-spacing: -0.005em;
+    }
+
+    .brand__mark {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0;
+    }
+
+    .site-nav ul {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .site-nav a {
+      font-weight: 600;
+      color: var(--color-text-muted);
+      transition: color 0.15s ease;
+    }
+    .site-nav a:hover,
+    .site-nav a[aria-current="page"] { color: var(--color-text); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ---------- Pricing section ---------- */
+    .pricing {
+      padding: 64px var(--page-gutter) 32px;
+    }
+
+    .pricing__intro {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto 32px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .pricing__title {
+      font-size: clamp(28px, 1.2rem + 2.4vw, 40px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    .pricing__lede {
+      color: var(--color-text-muted);
+      text-wrap: balance;
+    }
+
+    /* Billing toggle (segmented pills) */
+    .billing-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 8px;
+    }
+
+    .pill {
+      padding: 8px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-weight: 600;
+      line-height: 20px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .pill:hover { background: var(--color-bg); }
+
+    .pill[aria-pressed="true"] {
+      /* Selected pill has no stroke in the design (36px vs 38px tall) */
+      border-width: 0;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+
+    /* Plan grid */
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+
+    .plan {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 32px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface);
+    }
+
+    .plan--featured {
+      border: 2px solid var(--color-primary);
+      box-shadow: var(--shadow-featured);
+    }
+
+    .plan__head { display: grid; gap: 8px; }
+
+    .plan__title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .plan__name {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 26px;
+      letter-spacing: -0.005em;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: var(--radius-pill);
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    .plan__desc { color: var(--color-text-muted); }
+
+    .plan__price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      min-height: 48px;
+    }
+
+    .plan__amount {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 48px;
+      letter-spacing: -0.02em;
+    }
+
+    .plan__period { color: var(--color-text-muted); }
+
+    .plan__divider {
+      height: 1px;
+      margin: 0;
+      border: 0;
+      background: var(--color-border);
+    }
+
+    .plan__features { display: grid; gap: 12px; }
+
+    .plan__features-title { font-weight: 600; }
+
+    .feature-list { display: grid; gap: 12px; }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .feature-list .icon {
+      flex: none;
+      width: 20px;
+      height: 20px;
+      color: var(--color-primary);
+    }
+
+    .pricing__fineprint {
+      margin-top: 32px;
+      color: var(--color-text-muted);
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 959px) {
+      /* Plans stack into a single column */
+      .plans {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 480px;
+      }
+    }
+
+    @media (max-width: 899px) {
+      /* Primary nav drops to its own row under the logo/actions */
+      .site-nav { order: 3; flex-basis: 100%; }
+      .site-nav ul { justify-content: center; }
+    }
+
+    @media (max-width: 599px) {
+      :root { --page-gutter: 16px; }
+
+      .site-nav ul { gap: 10px; justify-content: space-between; overflow-x: auto; padding-block: 2px; }
+      .pricing { padding-top: 40px; }
+      .plan { padding: 24px; }
+    }
+
+    @media (max-width: 400px) {
+      .header-actions { gap: 8px; }
+      .header-actions .btn { padding-inline: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Icon sprite (single check mark reused across all feature lists) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="icon-check" viewBox="0 0 20 20">
+      <path d="M4.5 10.5L8 14L15.5 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="Lumen home">
+      <span class="brand__mark" aria-hidden="true">L</span>
+      <span>Lumen</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      <ul>
+        <li><a href="#">Product</a></li>
+        <li><a href="#" aria-current="page">Pricing</a></li>
+        <li><a href="#">Customers</a></li>
+        <li><a href="#">Changelog</a></li>
+        <li><a href="#">Docs</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a class="btn btn--secondary" href="#">Sign in</a>
+      <a class="btn btn--primary" href="#">Start free trial</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="pricing" aria-labelledby="pricing-title">
+      <div class="pricing__intro">
+        <p class="eyebrow">Pricing</p>
+        <h1 class="pricing__title" id="pricing-title">Simple pricing for teams of every size</h1>
+        <p class="pricing__lede">Start free and upgrade when you are ready. Every plan includes unlimited viewers and SOC 2 security.</p>
+
+        <div class="billing-toggle" role="group" aria-label="Billing period">
+          <button class="pill" type="button" data-billing="monthly" aria-pressed="true">Monthly</button>
+          <button class="pill" type="button" data-billing="yearly" aria-pressed="false">Yearly · save 20%</button>
+        </div>
+      </div>
+
+      <div class="plans">
+        <article class="plan" aria-labelledby="plan-starter">
+          <div class="plan__head">
+            <div class="plan__title-row">
+              <h2 class="plan__name" id="plan-starter">Starter</h2>
+            </div>
+            <p class="plan__desc">For individuals and side projects.</p>
+          </div>
+
+          <p class="plan__price">
+            <span class="plan__amount">$0</span>
+            <span class="plan__period">free forever</span>
+          </p>
+
+          <a class="btn btn--secondary btn--block" href="#">Get started</a>
+
+          <hr class="plan__divider">
+
+          <div class="plan__features">
+            <p class="plan__features-title">Includes:</p>
+            <ul class="feature-list">
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Up to 3 projects</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>1 GB file storage</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Basic analytics</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Community support</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Email notifications</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Two-factor authentication</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="plan plan--featured" aria-labelledby="plan-pro">
+          <div class="plan__head">
+            <div class="plan__title-row">
+              <h2 class="plan__name" id="plan-pro">Pro</h2>
+              <span class="badge">Most popular</span>
+            </div>
+            <p class="plan__desc">For growing teams that ship weekly.</p>
+          </div>
+
+          <p class="plan__price">
+            <span class="plan__amount" data-monthly="$24" data-yearly="$19">$24</span>
+            <span class="plan__period">per user / month</span>
+          </p>
+
+          <a class="btn btn--primary btn--block" href="#">Start free trial</a>
+
+          <hr class="plan__divider">
+
+          <div class="plan__features">
+            <p class="plan__features-title">Everything in Starter, plus:</p>
+            <ul class="feature-list">
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Unlimited projects</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>100 GB file storage</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Advanced analytics</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Priority email support</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Custom domains</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>90-day version history</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="plan" aria-labelledby="plan-business">
+          <div class="plan__head">
+            <div class="plan__title-row">
+              <h2 class="plan__name" id="plan-business">Business</h2>
+            </div>
+            <p class="plan__desc">For orgs with advanced security needs.</p>
+          </div>
+
+          <p class="plan__price">
+            <span class="plan__amount" data-monthly="$48" data-yearly="$38">$48</span>
+            <span class="plan__period">per user / month</span>
+          </p>
+
+          <a class="btn btn--secondary btn--block" href="#">Contact sales</a>
+
+          <hr class="plan__divider">
+
+          <div class="plan__features">
+            <p class="plan__features-title">Everything in Pro, plus:</p>
+            <ul class="feature-list">
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>SAML single sign-on</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Unlimited file storage</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Audit logs</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Dedicated success manager</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>99.9% uptime SLA</span></li>
+              <li><svg class="icon" aria-hidden="true" focusable="false"><use href="#icon-check"/></svg><span>Role-based permissions</span></li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <p class="pricing__fineprint">Prices in USD. Taxes may apply. Cancel or change plans anytime.</p>
+    </section>
+  </main>
+
+  <script>
+    /* Billing toggle: swaps the selected pill and the per-seat prices.
+       The default (Monthly) state is fully rendered in static HTML. */
+    (function () {
+      var pills = document.querySelectorAll('.billing-toggle [data-billing]');
+      var amounts = document.querySelectorAll('.plan__amount[data-monthly]');
+
+      pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          var period = pill.getAttribute('data-billing');
+          pills.forEach(function (p) {
+            p.setAttribute('aria-pressed', String(p === pill));
+          });
+          amounts.forEach(function (el) {
+            el.textContent = el.getAttribute('data-' + period);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
