@@ -14,6 +14,7 @@ import PlanLines from './PlanLines';
 import {Register, useHeaderPrint, usePrintOnScroll} from './print';
 import RollYear, {Tally, useRollBook} from './RollYear';
 import {ScrubChart, ScrubLines, useScrub} from './ScrubYear';
+import TearOff from './TearOff';
 import {TryTasks, TryWindow, useTry} from './TryLive';
 import {Window} from './Window';
 import {CHANGES, CHAPTERS, DECISIONS, FIELDS, HYPOTHESES, NUMBERS, PAIRS, REFLECTION, RESULTS, STEPS, TASKS, TEST_PLAN} from './content';
@@ -76,6 +77,7 @@ export default function ChooseNotToLoseWorld({item, reduced}) {
   const scrub = useScrub(still);
   const roll = useRollBook(still);
   const tryIt = useTry();
+  const [pick, setPick] = useState(null);
 
   // the plain reading mode is an address too (?read=plain), so it survives a reload and can be shared
   const choosePlain = useCallback((on, e) => {
@@ -152,7 +154,7 @@ export default function ChooseNotToLoseWorld({item, reduced}) {
             <figcaption className="cnr-desk-note">Where these numbers usually live: the baseline portal, in the prototype.</figcaption>
           </figure>}>
           <Head id="cn-quiz-title" title="Which plan would you pick?" lede="Before the redesign, the table it replaces: the prototype’s four fictional plans as most benefits portals list them. Same network, same covered services."/>
-          <PlanLines compact={phone} still={still}/>
+          <PlanLines compact={phone} still={still} onPick={setPick}/>
         </Band>
 
         {/* ---------- 02 the problem ---------- */}
@@ -257,6 +259,7 @@ export default function ChooseNotToLoseWorld({item, reduced}) {
         </Band>
         <div className="cnr-tear" aria-hidden="true"/>
       </div>
+      <TearOff pick={pick} scrub={scrub} roll={roll}/>
 
       <nav className="cnr-next" aria-label="Next project">
         <Go to={`${PRODUCT_HOME}/${next.slug}`} className="cnr-next-link">

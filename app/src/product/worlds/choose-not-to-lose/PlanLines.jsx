@@ -19,9 +19,9 @@ const A = plans[0], B = plans[1];
 const GAP = premiumDifference(B, A);   // 60000 cents: $600 a year
 
 /** What a cell in Plan B's column says once you've picked: which terms match A's, and what the premium costs. */
-function Mark({pick, plan, row}) {
+function Mark({pick, plan, row, compact}) {
   if (!pick || plan.id !== 'b') return null;
-  if (row.key === 'monthlyPremium') return <span className="cnr-q-mark is-loss">+{money(B.monthlyPremium - A.monthlyPremium)} vs A</span>;
+  if (row.key === 'monthlyPremium') return <span className="cnr-q-mark is-loss">+{money(B.monthlyPremium - A.monthlyPremium)}{compact ? null : ' vs A'}</span>;
   return plan[row.key] === A[row.key] ? <span className="cnr-q-mark">= A</span> : null;
 }
 
@@ -55,7 +55,7 @@ export default function PlanLines({compact = false, still = false, onPick}) {
           <thead><tr><th scope="col">Plan</th>{ROWS.map(r => <th key={r.key} scope="col">{r.short}</th>)}</tr></thead>
           <tbody>{plans.map(p => <tr key={p.id} className={`${pick && p.id === 'b' ? 'is-flag' : ''}${pick === p.id ? ' is-mine' : ''}`}>
             <th scope="row">{box(p)}</th>
-            {ROWS.map(r => <td key={r.key}>{r.value(p)}<Mark pick={pick} plan={p} row={r}/></td>)}
+            {ROWS.map(r => <td key={r.key}>{r.value(p)}<Mark pick={pick} plan={p} row={r} compact/></td>)}
           </tr>)}</tbody>
         </table>
       : <table className="cnr-q-table" data-print="">

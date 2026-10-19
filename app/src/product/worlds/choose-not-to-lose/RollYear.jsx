@@ -115,7 +115,7 @@ export function Tally({r}) {
     <ul className="cnr-tally-rows">
       {plans.map(p => {
         const c = book.tally[p.id];
-        return <li key={p.id} className={`is-${p.id}${c === 0 && book.n ? ' is-zero' : ''}`}>
+        return <li key={p.id} className={`is-${p.id}${p.id === 'b' && c === 0 && book.n ? ' is-zero' : ''}`}>
           <span className="cnr-tally-name">{p.name}</span>
           <span className="cnr-tally-track" aria-hidden="true"><i style={{width: `${c / most * 100}%`, backgroundSize: `${100 / Math.max(1, c)}% 100%`}}/></span>
           <span className="cnr-tally-n">{c}</span>

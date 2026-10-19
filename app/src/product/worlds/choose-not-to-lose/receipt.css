@@ -308,7 +308,7 @@
 
 /* ---------- 05 the redesign ---------- */
 .cnr-steps{display:grid;grid-template-columns:minmax(0,1fr);margin:0;padding:0;list-style:none}
-.cnr-step{min-height:58vh;padding:26px 0 34px 22px;border-left:3px solid #e0e0e0;transition:border-color 160ms var(--ease)}
+.cnr-step{min-height:50vh;padding:26px 0 34px 22px;border-left:3px solid #e0e0e0;transition:border-color 160ms var(--ease)}
 .cnr-step.is-active{border-left-color:var(--ink)}
 .cnr-step-n{display:flex;flex-wrap:wrap;gap:4px 14px;font:500 13px/1.4 var(--mono);color:var(--faded)}
 .cnr-step-label{color:var(--ink)}
@@ -424,6 +424,27 @@
 .cnr-reflect p{margin-top:6px;font:400 16.5px/1.6 var(--sans);color:var(--ink-2)}
 .cnr-end{margin-top:22px;font:400 13.5px/1.6 var(--mono);color:var(--faded);text-align:center}
 
+/* ---------- the torn-off slip: your receipt ---------- */
+.cnr-stub{position:relative;z-index:1;padding:56px var(--pad-r) 0 var(--pad-l)}
+.cnr-stub-paper{position:relative;width:min(460px,100%);margin-left:max(0px,calc((var(--paper-w) - 460px) / 2));padding:30px 30px 28px;background:var(--paper);transform:rotate(-.6deg);filter:drop-shadow(0 1px 1px #0000001a) drop-shadow(0 14px 18px #00000024)}
+.cnr-stub-paper::before,.cnr-stub-paper::after{content:'';position:absolute;left:0;right:0;height:12px;background-size:14px 14px;background-repeat:repeat-x}
+.cnr-stub-paper::before{top:-12px;background-image:linear-gradient(45deg,var(--paper) 50%,transparent 50%),linear-gradient(-45deg,var(--paper) 50%,transparent 50%);background-position:0 0}
+.cnr-stub-paper::after{bottom:-12px;background-image:linear-gradient(135deg,var(--paper) 50%,transparent 50%),linear-gradient(225deg,var(--paper) 50%,transparent 50%);background-position:0 -2px}
+.cnr-stub-title{font:500 26px/1.1 var(--mono);letter-spacing:-.03em;text-align:center}
+.cnr-stub-sub{margin-top:8px;font:400 14px/1.5 var(--sans);color:var(--faded);text-align:center}
+.cnr-stub-lines{margin-top:18px;font:400 14px/1.5 var(--mono)}
+.cnr-stub-line{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:2px 0}
+.cnr-stub-line b{flex:none;font-weight:500;font-variant-numeric:tabular-nums}
+.cnr-stub-line.is-head{margin-bottom:2px;font-weight:600}
+.cnr-stub-line.is-low{font-weight:600}
+.cnr-stub-line:is(.is-loss,.is-loss-row){color:var(--loss)}
+.cnr-stub-line:is(.is-note,.is-fine){font-size:13px;color:var(--faded)}
+.cnr-stub-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:20px}
+.cnr-stub-note{font:400 13.5px/1.4 var(--sans);color:var(--faded)}
+.is-flat .cnr-stub-paper{margin-left:auto;margin-right:auto;transform:none}
+.is-plain .cnr-stub-paper{filter:none;box-shadow:0 0 0 1px #e0e0e0;margin-left:0}
+.is-plain .cnr-stub-paper::before,.is-plain .cnr-stub-paper::after{display:none}
+
 /* ---------- after the tape: next project and the footer, on the desk ---------- */
 .cnr-next{padding:72px var(--pad-r) 0 var(--pad-l)}
 .cnr-next-link{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);align-items:center;gap:24px 48px;max-width:1240px;color:var(--ink);text-decoration:none}
@@ -435,6 +456,7 @@
 .cnr-next-media img{width:100%;aspect-ratio:16 / 10;object-fit:cover}
 @media(hover:hover) and (pointer:fine){.cnr-next-link:hover .cnr-next-title{text-decoration-color:currentColor}.cnr-next-link:hover .cnr-next-media{transform:rotate(0) translateY(-3px)}}
 .cnr-page .pp-foot{margin:72px var(--pad-r) 0 var(--pad-l);border-top-color:var(--rule-c);font-family:var(--sans)}
+.cnr-page .pp-foot a{display:inline-flex;align-items:center;min-height:44px}
 
 /* ---------- chrome: tape fed, the index of the receipt ---------- */
 .cnr-progress{position:fixed;left:0;right:0;top:95px;z-index:1101;height:2px;pointer-events:none}
@@ -532,6 +554,8 @@
   .cnr-win-bar span{font-size:13px;margin-right:0}
   .cnr-win.is-small .cnr-win-bar span{font-size:13px}
   .cnr-leader{font-size:13.5px}
+  .cnr-q-mark,.cnr-s-table thead th,.cnr-y-stamp,.cnr-tally-sub,.cnr-desk-note,.cnr-cap{font-size:13px}
+  .cnr-s-table th,.cnr-s-table td{padding-left:6px}
 }
 
 /* ---------- plain reading mode: same words and figures, no desk, no motion ---------- */
