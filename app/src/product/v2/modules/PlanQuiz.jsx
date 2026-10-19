@@ -91,10 +91,10 @@ export default function PlanQuiz({reduced = false}) {
     <div className="cq-reveal" aria-live="polite">
       {chosen ? <div key={instant ? 'still' : chosen.id} className="cq-answer">
         <p className="cq-verdict">{beatenBy
-          ? <>You picked a plan that loses every year. <b>{chosen.name}</b> has {beatenBy.name}’s deductible, coinsurance and maximum, and costs <b>{money(GAP)} more a year</b>.</>
+          ? <><b>{chosen.name}</b> costs <b>{money(GAP)} more a year</b> than {beatenBy.name} for the same coverage: the same deductible, coinsurance and out-of-pocket maximum, and a higher premium.</>
           : <>{chosen.name} isn’t beaten on every term by another plan here. But one plan is: <b>Plan B</b> has Plan A’s deductible, coinsurance and maximum, and costs <b>{money(GAP)} more a year</b>.</>}</p>
         <div className="cq-sum">
-          <p className="cq-gap"><span className="cq-gap-n">{money(GAP)}</span><span>a year, for nothing: {money(annualPremium(B))} in Plan B premiums against {money(annualPremium(A))} for Plan A, whatever the year’s bills.</span></p>
+          <p className="cq-gap"><span className="cq-gap-n">{money(GAP)}</span><span>a year more on Plan B: {money(annualPremium(B))} in premiums against {money(annualPremium(A))} for Plan A, whatever the year’s bills.</span></p>
           <p className="cq-study"><Ev label="Sourced"/><span>In a study of 23,894 employees choosing from a menu that included plans like Plan B, most picked one. Bhargava, Loewenstein and Sydnor, Quarterly Journal of Economics, 2017.</span></p>
         </div>
       </div> : <p className="cq-wait">Your pick stays on this page. Nothing is sent or saved.</p>}

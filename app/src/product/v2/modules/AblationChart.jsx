@@ -103,7 +103,17 @@ export default function AblationChart({reduced = false}) {
         {LEVELS.map(g => <button key={g.id} type="button" aria-pressed={level === g.id} onClick={() => filter(g.id)}>{g.id}</button>)}
       </div>
     </div>
-    <div className="ab-plot" onPointerDown={e => { if (!e.target.closest('[data-dot]')) setAt(null); }}>
+    <div className="ab-plot" onPointerDown={e => {
+      if (e.target.closest('[data-dot]')) return;
+      // a finger is wider than a dot: on touch, the nearest visible dot within about 24 px counts
+      if (e.pointerType !== 'mouse') {
+        const svg = e.currentTarget.querySelector('svg'), p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+        const k = W / svg.getBoundingClientRect().width;
+        const near = shown.map(i => [i, Math.hypot(dots[i].cx - p.x, dots[i].cy - p.y)]).sort((a, b) => a[1] - b[1])[0];
+        if (near && near[1] < 24 * k) { show(near[0], false); return; }
+      }
+      setAt(null);
+    }}>
       <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-labelledby="ab-title" className={compact ? 'is-narrow' : ''}>
         <title id="ab-title">Share of a four-token change that reached the code, per build. Without variables, L0 median 50% and L1 median 50%, no build above 67%. With variables bound, all 9 L0V builds and all 10 L2 builds at 100%.</title>
         {[0, 25, 50, 75, 100].map(v => <g key={v} className="ab-grid"><path d={`M${X0 - 20} ${y(v)} H${W - 6}`}/><text x={X0 - 26} y={y(v) + 4}>{v}%</text></g>)}

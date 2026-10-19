@@ -83,7 +83,7 @@ export default function FindTheDoor({reduced = false}) {
       {pick ? STEPS.map((s, i) => {
         const w = WAYPOINTS[i].at, [dx, dy] = THUMB[s.key];
         return <button key={s.key} type="button" className={`fd-photo${hover === i ? ' is-open' : ''}`} style={{left: `${pct(w, 'x')}%`, top: `${pct(w, 'y')}%`, '--dx': `${dx}px`, '--dy': `${dy}px`, '--delay': `${(i ? legStart[i - 1] + legTime[i - 1] : 0) + 700}ms`}}
-          {...zoomable(`${s.title}: ${s.alt}. AI-generated illustrative image.`, {src: s.photo, w: 1280, h: 960})}
+          {...zoomable(`${s.title}: ${s.alt}. AI-generated illustrative image.`, {src: s.photo, w: 1280, h: 960})} data-cursor={undefined}
           onPointerEnter={e => e.pointerType === 'mouse' && setHover(i)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)}>
           <img src={`/assets/product/last-100-feet/photos/${s.photo.split('/').pop()}`} alt="" style={{objectPosition: s.focus}} decoding="async"/>
           <span className="fd-photo-n" aria-hidden="true">{i + 1}</span>

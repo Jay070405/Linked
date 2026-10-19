@@ -29,7 +29,7 @@
   .ll-panel header{height:32px;padding:0 9px;font-size:11.5px}
   .ll-panel header>span:first-child{display:none}
   .ll-panel .pp-layers-page{color:var(--pp-ink);font-weight:600}
-  .ll-panel li{height:25px;padding:0 6px 0 calc(4px + var(--depth) * 8px)}
+  .ll-panel li{height:32px;padding:0 6px 0 calc(4px + var(--depth) * 8px)}
   .ll-panel .pp-layer-vars{display:none}
   .ll-panel .pp-layer-caret{width:7px}
   .ll-shot{grid-template-columns:112px minmax(0,1fr);padding-top:6px}
