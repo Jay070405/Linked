@@ -28,11 +28,12 @@ function drive(win, screen) {
   } catch { return false; }
 }
 
-export function Phone({children, className = '', label}) {
+/** island={false} when the screen draws its own (the round-2 prototype does). */
+export function Phone({children, className = '', label, island = true}) {
   return <div className={`v2-phone ${className}`} role={label ? 'group' : undefined} aria-label={label}>
     <div className="v2-phone-shell">
       <div className="v2-phone-screen">{children}</div>
-      <span className="v2-phone-island" aria-hidden="true"/>
+      {island ? <span className="v2-phone-island" aria-hidden="true"/> : null}
     </div>
   </div>;
 }
@@ -92,7 +93,8 @@ export function ProtoScreen({screen, art, load = 'near', delay = 0, interactive 
     try { await win?.document.fonts?.ready; } catch { /* cross-origin or gone */ }
     if (shown.current !== new URL(win?.location.href || location.href).searchParams.get('screen')) drive(win, shown.current);
     setReady(true);
-    later(() => setCovered(false), reduced ? 0 : 160);
+    // let the app finish its own entrance before lifting the screenshot off it
+    later(() => setCovered(false), reduced ? 0 : 450);
   };
 
   // screen changes

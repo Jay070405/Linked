@@ -180,14 +180,14 @@ export default function AtelierCase({item, reduced}) {
       heading="What I chose, and what I tried first"
       lede="Five choices from the first two rounds of critique. Each card shows the choice; open it to see what it replaced."/>
 
-    <BeforeAfter id="at-compare" reduced={reduced} label="Compare round 1 with the current build of the print check"
-      heading="Round 1, and what comes after testing"
-      lede="Drag across the phone to compare two builds of the print check."
-      before={{src: '/assets/product/atelier/round1-check.webp', label: 'Round 1', caption: 'Left: round 1, captured Oct 19.'}}
-      after={{src: shotSrc('check'), label: 'Current', caption: 'Right: the build embedded on this page.'}}>
-      <p className="v2-slot-badge">Waiting on round 2</p>
-      <p>Round 2 is being built now, from the first review. Until it lands, both sides of this slider show the same round-1 screen: nothing on this page claims a change that hasn’t been made.</p>
-      <p>After the usability tests, the right side becomes the revised screen, with the finding that caused each change.</p>
+    <BeforeAfter id="at-compare" reduced={reduced} label="Compare round 1 and the round-2 build of the print check"
+      heading="Round 1, and round 2 taking shape"
+      lede="Drag across the phone to compare the print check as I first reviewed it with the round-2 build."
+      before={{src: '/assets/product/atelier/round1-check.webp', label: 'Round 1', caption: 'Left: round 1, the build on this page.'}}
+      after={{src: '/assets/product/atelier/round2-check-wip.webp', label: 'Round 2, in progress', caption: 'Right: round 2, captured mid-build on Oct 19.'}}>
+      <p className="v2-slot-badge">Round 2 is still being built</p>
+      <p>So far, round 2 centers the screen title, draws the step bar in ink instead of blue, sets the supporting text larger and turns the main action into a full pill.</p>
+      <p>It isn’t finished or tested, so the prototype embedded on this page is still round 1. When round 2 is done I’ll write down why each change was made, and testing will decide which ones stay.</p>
     </BeforeAfter>
 
     <LivePrototype id="try" reduced={reduced} tasks={TASKS} start={{screen: 'onboarding', art: 'blue-hour'}}

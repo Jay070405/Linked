@@ -42,7 +42,7 @@ export default function BeforeAfter({id, heading, lede, before, after, children,
     </div>
     <div className="v2-compare-body">
       <figure className="v2-compare-figure" data-reveal="">
-        <Phone>
+        <Phone island={false}>
           <div ref={stage} className="v2-ba" style={{'--pos': `${pos}%`}} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={() => { drag.current = null; }}>
             <img className="v2-ba-img" src={after.src} alt="" width={780} height={1688} draggable="false"/>
             <img className="v2-ba-img v2-ba-top" src={before.src} alt="" width={780} height={1688} draggable="false"/>
