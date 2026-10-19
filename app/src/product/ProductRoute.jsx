@@ -3,7 +3,7 @@ import ProductIndex from './ProductIndex';
 import ForPage from './ForPage';
 import DesignToCodeCase from './cases/DesignToCodeCase';
 import AtelierCase from './cases/AtelierCase';
-import ReadyForAgentsCase from './cases/ReadyForAgentsCase';
+import ReadyForAgentsCase from './worlds/ready-for-agents/ReadyForAgentsWorld';
 import ChooseNotToLoseCase from './cases/ChooseNotToLoseCase';
 import LastHundredFeetCase from './cases/LastHundredFeetCase';
 import {PRODUCT_HOME} from './content';
