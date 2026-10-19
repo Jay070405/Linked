@@ -45,7 +45,8 @@ function Pinned({steps, art, reduced, label}) {
     return () => ctx.revert();
   }, [reduced, steps]);
 
-  const jump = i => root.current?.querySelector(`[data-step="${i}"]`)?.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'center'});
+  // a pointer click glides there; Enter or Space (event.detail 0) jumps, like any keyboard action
+  const jump = (i, e) => root.current?.querySelector(`[data-step="${i}"]`)?.scrollIntoView({behavior: reduced || e?.detail === 0 ? 'auto' : 'smooth', block: 'center'});
 
   return <div ref={root} className="v2-pinned">
     <ol ref={list} className="v2-steps">
@@ -58,7 +59,7 @@ function Pinned({steps, art, reduced, label}) {
         <nav className="v2-rail" aria-label={label}>
           <span className="v2-rail-track" aria-hidden="true"><i ref={fill}/></span>
           <ol>{steps.map((step, i) => <li key={step.id}>
-            <button type="button" className={i === active ? 'is-active' : ''} aria-current={i === active ? 'step' : undefined} onClick={() => jump(i)}>
+            <button type="button" className={i === active ? 'is-active' : ''} aria-current={i === active ? 'step' : undefined} onClick={e => jump(i, e)}>
               <span className="v2-rail-dot" aria-hidden="true"/>{step.label}
             </button>
           </li>)}</ol>

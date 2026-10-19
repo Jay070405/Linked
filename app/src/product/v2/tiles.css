@@ -28,7 +28,6 @@ a.pt-link:focus-visible .pt-visual{outline:2px solid var(--pp-red);outline-offse
 /* the words */
 .pt-text{position:relative;display:grid;gap:10px;padding:22px 64px 0 0}
 .pt-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font:500 14px/1.4 var(--pp-sans);color:var(--pp-pencil)}
-.pt-code{font-weight:650;color:var(--pp-ink);font-variant-numeric:tabular-nums}
 .pt-status{display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 10px;border-radius:12px;background:var(--pp-ink);color:var(--pp-paper);font-size:13px}
 .pt-status.is-soon{background:none;color:var(--pp-ink);border:1px dashed var(--pp-pencil)}
 .pt-title{display:block;margin:0;font:700 clamp(34px,3.6vw,56px)/1 var(--pp-sans);letter-spacing:-.045em}
@@ -41,7 +40,7 @@ a.pt-link:active .pt-visual-inner{transform:scale(.99)}
 /* the title rolls through its mask: each glyph leaves upward as its copy (a text-shadow 1.15em below) arrives */
 .pt-roll{display:block}
 .pt-word{display:inline-block;overflow:clip;padding-bottom:.08em;margin-bottom:-.08em;white-space:nowrap;vertical-align:top}
-.pt-ch{display:inline-block;text-shadow:0 1.15em 0 currentColor;transition:transform 380ms var(--v2-out);transition-delay:calc(var(--i) * 14ms)}
+.pt-ch{display:inline-block;text-shadow:0 1.15em 0 currentColor;transition:transform 340ms var(--v2-out);transition-delay:calc(var(--i) * 10ms)}
 @media(hover:hover) and (pointer:fine){a.pt-link:hover .pt-ch,a.pt-link:focus-visible .pt-ch{transform:translateY(-1.15em)}}
 a.pt-link:focus-visible .pt-ch{transform:translateY(-1.15em)}
 

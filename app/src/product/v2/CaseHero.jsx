@@ -6,16 +6,21 @@ import {FINE, gsap, SplitText, TITLE_FROM, TITLE_TO} from './motion';
 /** Case hero: title in large display type, a one-line outcome, role and time chips, and a visual that moves.
     The entrance plays once on load: the title's characters rise the way the homepage's titles do, the copy
     follows, then the visual assembles in depth order ([data-enter="stage" | "back" | "front"]). On desktop the
-    visual leans a little toward the pointer. Reduced motion shows everything in place. */
+    visual leans a little toward the pointer. Reduced motion gets one short fade and no movement. */
 export default function CaseHero({title, kind, outcome, chips = [], actions, children, reduced = false}) {
   const root = useRef(null), heading = useRef(null);
 
   useLayoutEffect(() => {
     const node = root.current;
-    if (!node || reduced) return undefined;
+    if (!node) return undefined;
     let split = null;
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(node);
+      if (reduced) {
+        // reduced motion: one quiet fade, nothing moves
+        gsap.fromTo(q('[data-hero-item], .v2-hero-title, [data-enter]'), {opacity: 0}, {opacity: 1, duration: .3, ease: 'none'});
+        return;
+      }
       const tl = gsap.timeline({defaults: {ease: 'v2out'}});
       try {
         split = new SplitText(heading.current, {type: 'chars', tag: 'span', charsClass: 'v2-char', aria: 'none'});

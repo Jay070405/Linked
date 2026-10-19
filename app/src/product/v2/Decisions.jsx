@@ -8,12 +8,15 @@ import {FINE, PHONE, useMedia} from './motion';
 export default function Decisions({id, heading, lede, items}) {
   const phone = useMedia(PHONE), fine = useMedia(FINE);
   const [open, setOpen] = useState(0);
+  // cards opened from the keyboard change instantly; pointing animates
+  const [keys, setKeys] = useState(false);
   return <section className="v2-decisions" aria-labelledby={`${id}-title`}>
     <div className="v2-section-head" data-reveal="">
       <h2 id={`${id}-title`} className="v2-h2">{heading}</h2>
       {lede ? <p className="v2-lede">{lede}</p> : null}
     </div>
-    <ul className={`v2-cards${phone ? ' is-swipe' : ''}`} data-reveal="" tabIndex={phone ? 0 : undefined} aria-label={phone ? `${heading}, swipe sideways` : undefined}>
+    <ul className={`v2-cards${phone ? ' is-swipe' : ''}${keys ? ' is-keyed' : ''}`} data-reveal=""
+      onKeyDown={() => setKeys(true)} onPointerMove={keys ? () => setKeys(false) : undefined} tabIndex={phone ? 0 : undefined} aria-label={phone ? `${heading}, swipe sideways` : undefined}>
       {items.map((item, i) => {
         const isOpen = phone || open === i;
         return <li key={item.id} className={`v2-card${isOpen ? ' is-open' : ''}`}

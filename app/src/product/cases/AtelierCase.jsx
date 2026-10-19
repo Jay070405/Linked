@@ -121,7 +121,7 @@ export default function AtelierCase({item, reduced}) {
     const target = root.current?.querySelector('#try');
     if (!target) return;
     e.preventDefault();
-    target.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block: 'start'});
+    target.scrollIntoView({behavior: reduced || e.detail === 0 ? 'auto' : 'smooth', block: 'start'});
     target.querySelector('button, a')?.focus({preventScroll: true});
   };
 

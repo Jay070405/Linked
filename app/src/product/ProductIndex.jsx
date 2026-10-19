@@ -75,11 +75,11 @@ function TileVisual({item}) {
 /** One project on /product: a large picture that leans toward the pointer and scales a touch inside its frame,
     the title rolling through its mask, then the one-line subtitle. Cases with a page are links (the site's circular
     transition carries you in); in-progress cases are not, and say so. */
-function Tile({item, index}) {
+function Tile({item}) {
   const inner = <>
     <div className="pt-visual" aria-hidden="true"><div className="pt-visual-inner"><TileVisual item={item}/></div></div>
     <div className="pt-text">
-      <p className="pt-meta"><span className="pt-code">D{index + 1}</span><span>{item.kind}</span>{item.status ? <span className={`pt-status${item.page ? '' : ' is-soon'}`}>{item.status}</span> : null}</p>
+      <p className="pt-meta"><span>{item.kind}</span>{item.status ? <span className={`pt-status${item.page ? '' : ' is-soon'}`}>{item.status}</span> : null}</p>
       <h3 className="pt-title"><RollTitle text={item.title}/></h3>
       <p className="pt-sub">{item.subtitle}</p>
       {item.page ? <span className="pt-go" aria-hidden="true"><ArrowRight/></span> : null}
@@ -144,7 +144,7 @@ export default function ProductIndex({reduced}) {
     </header>
     <section className="pt-section" aria-labelledby="pp-cases-title">
       <h2 id="pp-cases-title" className="pp-section-label">Product design</h2>
-      <ul className="pt-grid">{PRODUCT_CASES.map((item, i) => <Tile key={item.slug} item={item} index={i}/>)}</ul>
+      <ul className="pt-grid">{PRODUCT_CASES.map(item => <Tile key={item.slug} item={item}/>)}</ul>
     </section>
     <ProductFooter/>
     <CursorLabel root={root} reduced={reduced}/>

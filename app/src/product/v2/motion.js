@@ -35,18 +35,21 @@ export const PHONE = '(max-width: 760px)';
 /** Hover effects only where a hovering pointer exists. */
 export const FINE = '(hover: hover) and (pointer: fine)';
 
-/** Section reveals: opacity + 12px, 450ms, 50ms stagger, once. Marks: [data-reveal] inside root. */
+/** Section reveals: opacity + 12px, 450ms, 50ms stagger, once. Marks: [data-reveal] inside root.
+    Reduced motion keeps the fade and drops the movement. */
 export function useReveals(root, reduced, deps = []) {
   useLayoutEffect(() => {
     const node = root.current;
-    if (!node || reduced) return undefined;
+    if (!node) return undefined;
     const ctx = gsap.context(() => {
       const items = gsap.utils.toArray(node.querySelectorAll('[data-reveal]'));
       if (!items.length) return;
-      gsap.set(items, {opacity: 0, y: 12});
+      gsap.set(items, reduced ? {opacity: 0} : {opacity: 0, y: 12});
       ScrollTrigger.batch(items, {
         scroller: scrollerOf(node), start: 'top 90%', once: true, interval: .08,
-        onEnter: batch => gsap.to(batch, {opacity: 1, y: 0, duration: .45, ease: 'v2out', stagger: .05, overwrite: true}),
+        onEnter: batch => gsap.to(batch, reduced
+          ? {opacity: 1, duration: .3, ease: 'none', overwrite: true}
+          : {opacity: 1, y: 0, duration: .45, ease: 'v2out', stagger: .05, overwrite: true}),
       });
     }, node);
     // fonts and late images move things; keep trigger positions honest
