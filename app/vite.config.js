@@ -9,6 +9,8 @@ function productEntry() {
   const rewrite = (req, _res, next) => {
     const [pathname, query] = req.url.split('?');
     if (productPaths.test(pathname)) req.url = '/product.html' + (query ? '?' + query : '');
+    // embedded prototypes in public/proto/*: a folder URL serves its index.html, as static hosts (Vercel) do
+    else if (/^\/proto\/.+\/$/.test(pathname)) req.url = pathname + 'index.html' + (query ? '?' + query : '');
     next();
   };
   return {name: 'product-entry', configureServer(server) { server.middlewares.use(rewrite); }, configurePreviewServer(server) { server.middlewares.use(rewrite); }};
