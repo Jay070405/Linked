@@ -336,6 +336,7 @@ body:has(.atw-world:not(.is-plain)) .v16-navigation:not(.is-menu-open) .v16-lang
 .atw-scale-paper{fill:#fbf9f4}
 .atw-scale-inch{fill:none;stroke:rgb(var(--lamp));stroke-width:.14}
 .atw-check .atw-caption{margin-top:0}
+.atw-hang-link{justify-self:start;color:rgb(var(--lamp))}
 
 /* ---------- hung, then priced ---------- */
 .atw-wall-grid{display:grid;gap:32px;align-items:start}

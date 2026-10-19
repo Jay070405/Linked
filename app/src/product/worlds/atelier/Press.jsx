@@ -4,6 +4,7 @@ import {Takeaway, Tween, useInputMode, useNear} from './kit/Try';
 import {fullSrc, inches, INKS, px, thumbSrc, workOf, WORKS} from './data';
 import {checkSentence, dimensions, largestSharp, printCheck, sizes} from './model';
 import {composite, loadImage, separate} from './separations';
+import {ArrowDown} from './kit/icons';
 
 /* The press. The chosen painting is printed the way a print is built: four passes of a roller, cyan, magenta, yellow,
    then black, each laying its plate over the last (a plain RGB-to-CMYK split, multiplied on white paper). Scroll runs
@@ -214,6 +215,13 @@ function SizeCheck({a, img, sizeId, setSizeId, reduced}) {
   }, [img, exact, focus, a]);
 
   const choose = id => { setSizeId(id); setSeen(true); };
+  // the wall is the next room: a pointer glides there, Enter jumps
+  const hang = e => {
+    const target = document.getElementById('at-wall'); if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({behavior: reduced || e.detail === 0 ? 'auto' : 'smooth', block: 'start'});
+    target.querySelector('.atw-pc-sizes button[aria-pressed=true]')?.focus({preventScroll: true});
+  };
   const onKey = e => {
     const i = sizes.findIndex(z => z.id === s.id);
     const step = {ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1}[e.key];
@@ -268,6 +276,7 @@ function SizeCheck({a, img, sizeId, setSizeId, reduced}) {
           <rect className="atw-scale-inch" x={ix} y={iy} width="1" height="1"/>
         </svg>
         <p className="atw-caption">Drawn to scale: every size the app offers, outlined. Click the print to move the loupe.</p>
+        <a className="atw-link atw-hang-link" href="#at-wall" onClick={hang}><span className="atw-link-text">{r.ok ? `Hang it on the wall at ${inches(a, s)} in` : `Hang the largest sharp size, ${inches(a, top)} in`}</span><ArrowDown/></a>
       </div>
     </div>
     <Takeaway show={seen} instant={instant}>The file sets the ceiling, and the artist sees it before anything is on sale.</Takeaway>
