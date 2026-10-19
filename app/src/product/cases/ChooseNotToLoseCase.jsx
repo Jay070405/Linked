@@ -10,6 +10,7 @@ import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
+import CaseChrome from '../v2/CaseChrome';
 import {Browser, CNTL_KIT, CNTL_PAGE_KIT, ProtoScreen} from '../v2/Device';
 import {ArrowDown} from '../v2/icons';
 import {FINE, PHONE, useMedia, useReveals} from '../v2/motion';
@@ -22,6 +23,17 @@ import './cn.css';
 // Nothing here has been tested with people yet.
 
 const A = '/assets/product/choose-not-to-lose/';
+
+// The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
+const CHAPTERS = [
+  {id: 'cn-problem-section', label: 'The problem'},
+  {id: 'cn-flow', label: 'The redesign'},
+  {id: 'cn-decisions', label: 'Decisions'},
+  {id: 'cn-compare', label: 'Before and after'},
+  {id: 'try', label: 'Try it'},
+  {id: 'cn-testing-section', label: 'Testing'},
+  {id: 'cn-reflection-section', label: 'Reflection'},
+];
 
 const NUMBERS = [
   {value: 23894, label: 'Employees in the “Choose to Lose” study', note: <><Ev label="Sourced"/> Bhargava, Loewenstein and Sydnor, Quarterly Journal of Economics, 2017</>},
@@ -174,6 +186,7 @@ export default function ChooseNotToLoseCase({item, reduced}) {
       </>}>
       <CnHeroShot/>
     </CaseHero>
+    <CaseChrome root={root} chapters={CHAPTERS} reduced={reduced}/>
 
     <NumberStrip items={NUMBERS} reduced={reduced} label="The case in numbers"/>
 
@@ -217,7 +230,7 @@ export default function ChooseNotToLoseCase({item, reduced}) {
       phoneLede="Four things to try. Each opens the prototype in a new tab, where the task starts; it’s built for a desktop screen."
       note="Fictional plans and arithmetic only: no enrollment, no personal data, nothing saved. Reset starts over."/>
 
-    <section className="v2-testing" aria-labelledby="cn-testing">
+    <section id="cn-testing-section" className="v2-testing" aria-labelledby="cn-testing">
       <div className="v2-section-head" data-reveal="">
         <h2 id="cn-testing" className="v2-h2">Testing comes next</h2>
         <p className="v2-lede">Nothing here has been tested with people yet. This is the plan, and the space the results will fill.</p>
@@ -249,7 +262,7 @@ export default function ChooseNotToLoseCase({item, reduced}) {
       </div>
     </section>
 
-    <section className="v2-reflection" aria-labelledby="cn-reflection">
+    <section id="cn-reflection-section" className="v2-reflection" aria-labelledby="cn-reflection">
       <h2 id="cn-reflection" className="v2-h2" data-reveal="">Reflection</h2>
       <div className="v2-reflection-grid">
         <div data-reveal=""><h3 className="v2-h3">What I’d keep</h3><p>Proving the loss instead of inferring it from three dots. Plan B is flagged only because its terms match Plan A’s and its premium is higher, so the claim holds at every bill amount, not just the ones on screen.</p></div>

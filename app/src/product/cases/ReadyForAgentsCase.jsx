@@ -12,6 +12,7 @@ import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
+import CaseChrome, {zoomable} from '../v2/CaseChrome';
 import {Browser, ProtoScreen, RFA_KIT, rfaShot} from '../v2/Device';
 import {AtelierTileArt} from '../v2/TileArt';
 import {ArrowDown, ArrowRight} from '../v2/icons';
@@ -25,6 +26,15 @@ import './rfa.css';
 // the sessions next.
 
 const A = '/assets/product/ready-for-agents/';
+
+// The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
+const CHAPTERS = [
+  {id: 'research', label: 'Research', sections: [{id: 'rfa-method', label: 'How I tested it'}, {id: 'rfa-results', label: 'Results'}]},
+  {id: 'design', label: 'Design', sections: [{id: 'rfa-principles', label: 'Principles'}, {id: 'rfa-directions', label: 'Directions'}, {id: 'rfa-flow', label: 'The flow'}, {id: 'rfa-compare', label: 'Round 1 → 2'}, {id: 'rfa-theme', label: 'Light and dark'}, {id: 'rfa-agent', label: 'The agent’s side'}]},
+  {id: 'try', label: 'Try it'},
+  {id: 'testing', label: 'Testing'},
+  {id: 'rfa-reflection-section', label: 'Reflection'},
+];
 
 const NUMBERS = [
   {value: 37, label: 'Agent builds scored', note: '24 in round 1, including the ablation, and 13 round-2 repeats so far'},
@@ -234,7 +244,7 @@ function ThemeMoment({reduced}) {
     return () => st.kill();
   }, [reduced]);
   const pick = v => { touched.current = true; setDark(v); };
-  return <section ref={root} className="rfa-theme" aria-labelledby="rfa-theme-title">
+  return <section ref={root} id="rfa-theme" className="rfa-theme" aria-labelledby="rfa-theme-title">
     <div className="rfa-theme-copy" data-reveal="">
       <h3 id="rfa-theme-title" className="rfa-h3">Light and dark from the same tokens</h3>
       <p>Every surface uses Figma’s published theme tokens, so the dark theme needed no second design. One deliberate change: blue fills that carry text use #0A78D1, for 4.6:1 contrast instead of 3.0:1.</p>
@@ -255,17 +265,19 @@ function ThemeMoment({reduced}) {
 }
 
 function AgentSide() {
-  return <section className="rfa-agent" aria-labelledby="rfa-agent-title">
+  return <section id="rfa-agent" className="rfa-agent" aria-labelledby="rfa-agent-title">
     <div className="v2-section-head" data-reveal="">
       <h3 id="rfa-agent-title" className="rfa-h3">The other side of the handoff</h3>
       <p className="v2-lede">The designer reads “3 unbound values.” The agent, reading the frame through Figma’s MCP server, gets the same three values, in the same roles, with the same names.</p>
     </div>
     <div className="rfa-agent-grid">
       <figure data-reveal=""><div className="rfa-agent-img"><img src={`${A}agent-designer.webp`} width="775" height="825" loading="lazy" decoding="async"
-        alt="Figma's Agents tab: the note says Home has 3 unbound values and asks which variable FFFFFF should use as a frame fill"/></div>
+        alt="Figma's Agents tab: the note says Home has 3 unbound values and asks which variable FFFFFF should use as a frame fill"
+        {...zoomable("Figma's Agents tab: the note says Home has 3 unbound values and asks which variable FFFFFF should use as a frame fill")}/></div>
         <figcaption className="v2-caption"><span>Designer: the Agents tab, inside the editor.</span></figcaption></figure>
       <figure data-reveal=""><div className="rfa-agent-img is-dark"><img src={`${A}agent-terminal.webp`} width="1400" height="965" loading="lazy" decoding="async"
-        alt="A Claude Code session: get_design_context returns a readiness note listing 3 unbound values, then the agent asks which variable FFFFFF should use as a frame fill"/></div>
+        alt="A Claude Code session: get_design_context returns a readiness note listing 3 unbound values, then the agent asks which variable FFFFFF should use as a frame fill"
+        {...zoomable("A Claude Code session: get_design_context returns a readiness note listing 3 unbound values, then the agent asks which variable FFFFFF should use as a frame fill")}/></div>
         <figcaption className="v2-caption"><span>Agent: a Claude Code session calling get_design_context (my mock of the response).</span></figcaption></figure>
     </div>
     <blockquote className="rfa-quote" data-reveal="">
@@ -309,6 +321,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
       </>}>
       <RfaHeroShot phone={phone} reduced={reduced}/>
     </CaseHero>
+    <CaseChrome root={root} chapters={CHAPTERS} reduced={reduced}/>
 
     <NumberStrip items={NUMBERS} reduced={reduced} label="The study in numbers"/>
 
@@ -321,12 +334,12 @@ export default function ReadyForAgentsCase({item, reduced}) {
         <p className="v2-caption"><Ev label="Sourced"/><span>The list of habits is from Figma’s developer docs.</span></p>
       </header>
 
-      <div className="rfa-block" data-reveal="">
+      <div id="rfa-method" className="rfa-block" data-reveal="">
         <div className="rfa-block-copy">
           <h3 className="rfa-h3">Six screens, four versions each</h3>
           <p>Each screen exists fully systematized (L2), structured without variables (L1), raw (L0), and raw plus the same variable bindings as L2 (L0V). All four export to byte-identical images, so the agent always sees the same picture.</p>
         </div>
-        <div className="rfa-block-figure"><TestSet/></div>
+        <div className="rfa-block-figure"><TestSet zoom/></div>
       </div>
 
       <div className="rfa-block is-flip" data-reveal="">
@@ -343,7 +356,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
         <Pipeline/>
       </div>
 
-      <div className="rfa-result" data-reveal="">
+      <div id="rfa-results" className="rfa-result" data-reveal="">
         <div className="rfa-result-copy">
           <p className="rfa-result-n">Result 1, pre-registered</p>
           <h3 className="rfa-h3">The layout survived the mess</h3>
@@ -383,10 +396,10 @@ export default function ReadyForAgentsCase({item, reduced}) {
         <p className="v2-caption"><Ev label="Sourced"/><span>Plan availability of Check designs: Figma help center.</span></p>
       </header>
 
-      <h3 className="rfa-h3 rfa-sub" data-reveal="">Five principles, each one a test the design has to pass</h3>
+      <h3 id="rfa-principles" className="rfa-h3 rfa-sub" data-reveal="">Five principles, each one a test the design has to pass</h3>
       <Principles/>
 
-      <div className="rfa-explore">
+      <div id="rfa-directions" className="rfa-explore">
         <div className="v2-section-head" data-reveal="">
           <h3 className="rfa-h3">Where should the check live?</h3>
           <p className="v2-lede">Three directions on the same Home frame and the same 12 unbound values.</p>
@@ -456,7 +469,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
       </div>
     </section>
 
-    <section className="v2-reflection" aria-labelledby="rfa-reflection">
+    <section id="rfa-reflection-section" className="v2-reflection" aria-labelledby="rfa-reflection">
       <h2 id="rfa-reflection" className="v2-h2" data-reveal="">Reflection</h2>
       <div className="v2-reflection-grid">
         <div data-reveal=""><h3 className="v2-h3">What I’d keep</h3><p>Counting what the agent will miss instead of grading the file. The study supports one strong finding, about variables, and the design says exactly that and nothing more.</p></div>

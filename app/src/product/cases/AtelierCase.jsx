@@ -10,6 +10,7 @@ import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
+import CaseChrome from '../v2/CaseChrome';
 import {L100TileArt} from '../v2/TileArt';
 import {Phone, ProtoScreen, protoUrl, shotSrc} from '../v2/Device';
 import {ArrowDown, ArrowUpRight} from '../v2/icons';
@@ -23,6 +24,17 @@ import './atelier.css';
 // labeled Hypothesis until Jay's interviews on test day.
 
 const ART = '/proto/atelier/art/';
+
+// The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
+const CHAPTERS = [
+  {id: 'at-problem-section', label: 'The problem'},
+  {id: 'at-flow', label: 'Five steps to a drop'},
+  {id: 'at-decisions', label: 'Decisions'},
+  {id: 'at-compare', label: 'Round 1 → 2'},
+  {id: 'try', label: 'Try it'},
+  {id: 'at-testing-section', label: 'Testing'},
+  {id: 'at-reflection-section', label: 'Reflection'},
+];
 
 // Round 2 of the prototype: five named steps ("Step n of 5") with a saved-draft status, then publish and share.
 const STEPS = [
@@ -176,10 +188,11 @@ export default function AtelierCase({item, reduced}) {
         <p className="at-stage-note" data-enter="note">{phone ? 'The shop page a collector opens from a shared link' : 'Live prototype. Tap around; nothing is saved outside your browser.'}</p>
       </div>
     </CaseHero>
+    <CaseChrome root={root} chapters={CHAPTERS} reduced={reduced}/>
 
     <NumberStrip items={NUMBERS} reduced={reduced} label="Atelier in numbers"/>
 
-    <section className="v2-problem" aria-labelledby="at-problem">
+    <section id="at-problem-section" className="v2-problem" aria-labelledby="at-problem">
       <div className="v2-problem-copy" data-reveal="">
         <h2 id="at-problem" className="v2-h2">Four tools to sell one print</h2>
         <div className="v2-prose">
@@ -216,7 +229,7 @@ export default function AtelierCase({item, reduced}) {
       phoneLede="This is the same prototype. Each task opens it full screen, on the screen where the task starts."
       note="It runs in your browser only: no account, no payment, no shipping. Drafts and test orders stay in this browser until you reset."/>
 
-    <section className="v2-testing" aria-labelledby="at-testing">
+    <section id="at-testing-section" className="v2-testing" aria-labelledby="at-testing">
       <div className="v2-section-head" data-reveal="">
         <h2 id="at-testing" className="v2-h2">Testing comes next</h2>
         <p className="v2-lede">Nothing here has been tested with artists yet. This is the plan, and the space the results will fill.</p>
@@ -248,7 +261,7 @@ export default function AtelierCase({item, reduced}) {
       </div>
     </section>
 
-    <section className="v2-reflection" aria-labelledby="at-reflection">
+    <section id="at-reflection-section" className="v2-reflection" aria-labelledby="at-reflection">
       <h2 id="at-reflection" className="v2-h2" data-reveal="">Reflection</h2>
       <div className="v2-reflection-grid">
         <div data-reveal=""><h3 className="v2-h3">What I’d keep</h3><p>The print check at the center. It is the one thing a storefront or a print service can’t tell an artist before the sale, and everything after it (sizes, price, preview) gets simpler because of it.</p></div>

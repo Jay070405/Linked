@@ -1,0 +1,38 @@
+/* "Try it" modules (Try.jsx and v2/modules/*): the instruction, the takeaway, numbers that morph. */
+.v2-ask{display:flex;align-items:center;gap:8px;font:550 15.5px/1.35 var(--pp-sans);color:var(--pp-ink)}
+.v2-ask svg{flex:none;fill:var(--pp-ink);stroke:var(--pp-paper);stroke-width:1.2;stroke-linejoin:round}
+
+.v2-takeaway{display:grid}
+.v2-takeaway>p{grid-area:1/1;margin:0;padding-left:16px;border-left:2px solid transparent;font:650 clamp(19px,1.5vw,23px)/1.3 var(--pp-sans);letter-spacing:-.015em;text-wrap:balance}
+.v2-takeaway-ghost{visibility:hidden}
+.v2-takeaway-text:not(:empty){border-left-color:var(--pp-ink)}
+.v2-takeaway-text>span{display:block;animation:v2-take-in 260ms var(--v2-out) both}
+.v2-takeaway.is-instant .v2-takeaway-text>span{animation:none}
+@keyframes v2-take-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.v2-num{font-variant-numeric:tabular-nums lining-nums}
+
+.v2-deferred-hold{border-radius:24px;background:repeating-linear-gradient(135deg,transparent 0 9px,#1111140a 9px 10px)}
+
+/* small controls shared by the modules: a segmented switch and chips */
+.v2-seg{display:inline-flex;flex-wrap:wrap;width:fit-content;max-width:100%;padding:4px;border-radius:12px;background:var(--pp-surface);box-shadow:inset 0 0 0 1px var(--v2-hair-2)}
+.v2-seg button{min-height:40px;padding:0 14px;border-radius:9px;font:550 14.5px/1 var(--pp-sans);color:var(--pp-pencil);transition:background-color 160ms ease,color 160ms ease,box-shadow 160ms ease,transform 160ms var(--v2-out)}
+.v2-seg button:hover{color:var(--pp-ink)}
+.v2-seg button[aria-pressed=true],.v2-seg button[aria-selected=true],.v2-seg button[aria-checked=true]{background:var(--v2-card);color:var(--pp-ink);box-shadow:0 0 0 1px var(--v2-hair),0 1px 3px #11111414}
+.v2-seg button:active{transform:scale(.97)}
+
+/* a range slider in the kit's ink: track, filled part, a round thumb that presses */
+.v2-range{--fill:50%;width:100%;height:44px;margin:0;background:none;-webkit-appearance:none;appearance:none;cursor:pointer;touch-action:pan-y}
+.v2-range::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(var(--pp-ink),var(--pp-ink)) 0/var(--fill) 100% no-repeat,var(--pp-rule)}
+.v2-range::-moz-range-track{height:4px;border-radius:2px;background:var(--pp-rule)}
+.v2-range::-moz-range-progress{height:4px;border-radius:2px;background:var(--pp-ink)}
+.v2-range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-11px;border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px var(--pp-ink),0 4px 12px -4px #11111466;transition:transform 160ms var(--v2-out)}
+.v2-range::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 1.5px var(--pp-ink),0 4px 12px -4px #11111466}
+.v2-range:active::-webkit-slider-thumb{transform:scale(.92)}
+.v2-range:focus-visible{outline:none}
+.v2-range:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 1.5px var(--pp-ink),0 0 0 5px #fff,0 0 0 7px var(--pp-red)}
+.v2-range:focus-visible::-moz-range-thumb{box-shadow:0 0 0 1.5px var(--pp-ink),0 0 0 5px #fff,0 0 0 7px var(--pp-red)}
+
+/* reduced motion: state changes are instant */
+@media(prefers-reduced-motion:reduce){.v2-takeaway-text>span,.v2-range::-webkit-slider-thumb{animation:none;transition:none}}
+.quiet .v2-takeaway-text>span{animation:none}

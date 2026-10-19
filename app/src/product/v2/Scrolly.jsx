@@ -1,6 +1,7 @@
 import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {gsap, PHONE, ScrollTrigger, scrollerOf, useMedia} from './motion';
 import {ATELIER_KIT, Browser, Phone, ProtoScreen} from './Device';
+import {zoomable} from './zoom';
 
 /** Sticky scrollytelling. Desktop: the device stays pinned beside the steps; as each step crosses the middle of the
     viewport the live prototype moves to that step's state, and the rail shows where you are (its labels jump to a
@@ -10,7 +11,7 @@ import {ATELIER_KIT, Browser, Phone, ProtoScreen} from './Device';
 export function Scrolly({id, steps, heading, lede, art, kit = ATELIER_KIT, frame = 'phone', title = 'Prototype, following the steps', note = 'The live prototype, moved by your scroll', reduced = false, label = 'Steps'}) {
   const phone = useMedia(PHONE);
   const props = {steps, art, kit, frame, title, note, reduced, label};
-  return <section className="v2-scrolly" aria-labelledby={`${id}-title`}>
+  return <section id={id} className="v2-scrolly" aria-labelledby={`${id}-title`}>
     <div className="v2-section-head" data-reveal="">
       <h2 id={`${id}-title`} className="v2-h2">{heading}</h2>
       {lede ? <p className="v2-lede">{lede}</p> : null}
@@ -102,7 +103,9 @@ function Swipe({steps, art, kit, frame, reduced, label}) {
   return <div className={`v2-swipe${frame === 'browser' ? ' is-wide' : ''}`}>
     <ol ref={track} className="v2-swipe-track" aria-label={`${label}, swipe sideways`} tabIndex={0}>
       {steps.map((step, i) => <li key={step.id} data-step={i} className="v2-swipe-card">
-        <Device frame={frame} address={kit.address}><ProtoScreen kit={kit} screen={step.screen} camera={step.phoneCamera || step.camera} art={art} load="never" reduced={reduced} alt={step.alt || `${step.label} screen`}/></Device>
+        <div className="v2-swipe-zoom" {...zoomable(step.alt || step.label, {src: kit.shot(step.screen), w: kit.shotW, h: kit.shotH})}>
+          <Device frame={frame} address={kit.address}><ProtoScreen kit={kit} screen={step.screen} camera={step.phoneCamera || step.camera} art={art} load="never" reduced={reduced} alt={step.alt || `${step.label} screen`}/></Device>
+        </div>
         <div className="v2-swipe-text"><StepText step={step} i={i} n={steps.length}/></div>
       </li>)}
     </ol>

@@ -10,6 +10,7 @@ import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
+import CaseChrome from '../v2/CaseChrome';
 import {L100_KIT, l100Shot, Phone, ProtoScreen} from '../v2/Device';
 import {ArrowDown, Info} from '../v2/icons';
 import {FINE, PHONE, useMedia, useReveals} from '../v2/motion';
@@ -24,6 +25,17 @@ import './lf.css';
 
 const A = '/assets/product/last-100-feet/';
 const AI = 'Photos are AI-generated illustrative images, not a real location.';
+
+// The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
+const CHAPTERS = [
+  {id: 'lf-problem-section', label: 'The problem'},
+  {id: 'lf-flow', label: 'Two roles, one route'},
+  {id: 'lf-decisions', label: 'Decisions'},
+  {id: 'lf-compare', label: 'Round 1 → 2'},
+  {id: 'try', label: 'Try it'},
+  {id: 'lf-testing-section', label: 'Testing'},
+  {id: 'lf-reflection-section', label: 'Reflection'},
+];
 
 const NUMBERS = [
   {value: 10, unit: 'to 15 min', label: 'Lost per delivery at complexes, by one company’s count', note: <><Ev label="Sourced"/> Beans’ founder. Beans maps complexes for drivers; this is a company claim, not a study.</>},
@@ -180,6 +192,7 @@ export default function LastHundredFeetCase({item, reduced}) {
         : <a className="v2-cta" href="#try" onClick={jumpTo('#try')}><span>Try the prototype</span><span className="v2-cta-icon"><ArrowDown/></span></a>}>
       <Stage phone={phone} reduced={reduced}/>
     </CaseHero>
+    <CaseChrome root={root} chapters={CHAPTERS} reduced={reduced}/>
 
     <NumberStrip items={NUMBERS} reduced={reduced} label="The case in numbers"/>
 
@@ -222,7 +235,7 @@ export default function LastHundredFeetCase({item, reduced}) {
       phoneLede="The same prototype. Each task opens it full screen, on the screen where it starts."
       note={`It runs in your browser only; nothing is sent anywhere. Reset starts over. ${AI}`}/>
 
-    <section className="v2-testing" aria-labelledby="lf-testing">
+    <section id="lf-testing-section" className="v2-testing" aria-labelledby="lf-testing">
       <div className="v2-section-head" data-reveal="">
         <h2 id="lf-testing" className="v2-h2">Testing comes next</h2>
         <p className="v2-lede">Nothing here has been tested with couriers or residents yet. This is the plan, and the space the results will fill.</p>
@@ -257,7 +270,7 @@ export default function LastHundredFeetCase({item, reduced}) {
       </div>
     </section>
 
-    <section className="v2-reflection" aria-labelledby="lf-reflection">
+    <section id="lf-reflection-section" className="v2-reflection" aria-labelledby="lf-reflection">
       <h2 id="lf-reflection" className="v2-h2" data-reveal="">Reflection</h2>
       <div className="v2-reflection-grid">
         <div data-reveal=""><h3 className="v2-h3">What I’d keep</h3><p>Two separations: where to stop is not how to get in, and the order, not the courier’s position, is what grants the code. Both came from asking what happens when something goes wrong at the gate.</p></div>

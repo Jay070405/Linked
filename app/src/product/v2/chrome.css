@@ -1,0 +1,108 @@
+/* Case page chrome (CaseChrome.jsx): reading progress, the chapter rail and chip, the figure viewer.
+   Same paper, ink and curves as the rest of the kit; fixed pieces sit under the site's 96 px nav bar (z 1100). */
+
+/* ---------- reading progress: a 2 px ink line on the nav bar's bottom edge ---------- */
+.v2-progress{position:fixed;left:0;right:0;top:95px;z-index:1101;height:2px;pointer-events:none}
+.v2-progress i{display:block;height:100%;background:var(--pp-ink,#111114);transform-origin:0 50%;transform:scaleX(0)}
+
+/* ---------- chapter rail, wide screens: ticks in the left margin ---------- */
+/* hidden over the hero, but always reachable: focusing a link shows it */
+.v2-toc{position:fixed;left:18px;top:50%;z-index:1050;margin:0!important;pointer-events:none;transform:translateY(-50%);opacity:0;transition:opacity 200ms ease}
+.v2-toc:is(.is-shown,:focus-within){opacity:1}
+.v2-toc ol{position:relative;display:grid;margin:0;padding:10px 8px;list-style:none;border-radius:16px}
+/* the panel the labels sit on: only while you're reading the rail */
+.v2-toc ol::before{content:'';position:absolute;inset:0;right:auto;width:100%;border-radius:16px;background:var(--pp-paper,#fafbfc);box-shadow:0 0 0 1px #11111412,0 18px 40px -22px #11111447;opacity:0;transition:opacity 180ms ease}
+.v2-toc:is(:hover,:focus-within) ol::before{opacity:1}
+.v2-toc li{position:relative}
+.v2-toc a{display:flex;align-items:center;gap:12px;min-height:22px;padding:2px 10px 2px 0;font:500 13.5px/1.2 var(--pp-sans);color:var(--pp-pencil);white-space:nowrap;text-decoration:none}
+.v2-toc li.is-chapter:not(:first-child) a{margin-top:8px}
+.v2-toc-tick{flex:none;display:block;width:28px;height:22px;position:relative}
+.v2-toc-tick::before{content:'';position:absolute;left:0;top:50%;width:14px;height:1.5px;border-radius:1px;background:var(--pp-strong);transform-origin:0 50%;transition:transform 200ms var(--v2-out),background-color 200ms ease}
+.v2-toc li.is-section .v2-toc-tick::before{width:8px;left:6px}
+.v2-toc a:hover .v2-toc-tick::before{background:var(--pp-ink)}
+.v2-toc a.is-active .v2-toc-tick::before{background:var(--pp-ink);transform:scaleX(1.7);height:2px}
+.v2-toc li.is-section a.is-active .v2-toc-tick::before{transform:scaleX(2)}
+.v2-toc-label{position:relative;opacity:0;transform:translateX(-4px);transition:opacity 160ms ease,transform 200ms var(--v2-out)}
+.v2-toc li.is-section .v2-toc-label{font-weight:450}
+.v2-toc a.is-active{color:var(--pp-ink)}
+.v2-toc a.is-active .v2-toc-label{font-weight:600}
+.v2-toc:is(:hover,:focus-within) .v2-toc-label{opacity:1;transform:none}
+.v2-toc a:hover{color:var(--pp-ink)}
+.v2-toc a:focus-visible{outline:2px solid var(--pp-red);outline-offset:1px;border-radius:6px}
+/* at rest only the ticks take the pointer, so the invisible labels never cover the page; once you are on the rail,
+   the whole row (tick and label) is the link */
+.v2-toc a{pointer-events:none}
+.v2-toc.is-shown .v2-toc-tick{pointer-events:auto}
+.v2-toc:is(.is-shown:hover,:focus-within) :is(ol,a){pointer-events:auto}
+
+/* ---------- chapter chip, narrower screens ---------- */
+.v2-chip{position:fixed;left:var(--pp-side);top:108px;z-index:1050;opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity 200ms ease,transform 240ms var(--v2-out)}
+.v2-chip:is(.is-shown,:focus-within){opacity:1;pointer-events:auto;transform:none}
+.v2-chip-button{display:inline-flex;align-items:center;gap:10px;max-width:calc(100vw - 2 * var(--pp-side));min-height:40px;padding:0 14px 0 6px;border-radius:20px;background:#fffffff2;box-shadow:0 0 0 1px #1111141a,0 8px 22px -12px #11111447;font:550 14px/1.2 var(--pp-sans);color:var(--pp-ink);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:transform 160ms var(--v2-out)}
+.v2-chip-button:active{transform:scale(.97)}
+.v2-chip-n{display:grid;place-items:center;min-width:38px;height:28px;padding:0 8px;border-radius:14px;background:var(--pp-ink);color:var(--pp-paper);font:600 12.5px/1 var(--pp-sans);font-variant-numeric:tabular-nums}
+.v2-chip-label{display:flex;align-items:baseline;gap:6px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.v2-chip-sub{min-width:0;overflow:hidden;text-overflow:ellipsis;font-weight:450;color:var(--pp-pencil)}
+.v2-chip-sub::before{content:'/';margin-right:6px;color:var(--pp-strong)}
+.v2-chip-caret{flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform 200ms var(--v2-out)}
+.v2-chip.is-open .v2-chip-caret{transform:rotate(180deg)}
+.v2-chip-pop{position:absolute;left:0;top:calc(100% + 8px);width:min(300px,calc(100vw - 2 * var(--pp-side)));max-height:min(62vh,520px);overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:18px;background:var(--pp-paper);box-shadow:0 0 0 1px #1111141a,0 24px 48px -20px #11111452;transform-origin:20px 0}
+.v2-chip.is-open .v2-chip-pop{animation:v2-pop-in 200ms var(--v2-out)}
+.v2-chip.is-instant .v2-chip-pop{animation:none}
+@keyframes v2-pop-in{from{opacity:0;transform:scale(.96) translateY(-4px)}to{opacity:1;transform:none}}
+.v2-chip-pop ol{margin:0;padding:0;list-style:none}
+.v2-chip-pop a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:12px;font:600 16px/1.25 var(--pp-sans);color:var(--pp-ink);text-decoration:none}
+.v2-chip-pop li.is-section a{min-height:40px;padding-left:26px;font-weight:450;font-size:15px;color:var(--pp-pencil)}
+.v2-chip-pop a[aria-current]{background:var(--pp-surface);color:var(--pp-ink)}
+.v2-chip-pop a:active{background:var(--pp-surface)}
+@media(min-width:1200px){.v2-chip{display:none}}
+
+/* targets clear the nav bar (and the chip under it) when you jump to them */
+.v2-page [id]{scroll-margin-top:120px}
+@media(max-width:1199px){.v2-page [id]{scroll-margin-top:160px}}
+
+/* ---------- figures that open the viewer ---------- */
+.v2-page [data-zoom]{cursor:zoom-in}
+.v2-page [data-zoom]:focus-visible{outline:2px solid var(--pp-red);outline-offset:3px}
+
+/* ---------- the figure viewer ---------- */
+.v2-lb{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#0f0f11;color:#f5f5f7;overflow:hidden;overscroll-behavior:contain}
+.v2-lb::backdrop{background:#0f0f11}
+.v2-lb[open]{animation:v2-lb-fade 200ms ease-out}
+.v2-lb[open]::backdrop{animation:v2-lb-fade 200ms ease-out}
+.v2-lb.is-instant[open],.v2-lb.is-instant[open]::backdrop{animation:none}
+@keyframes v2-lb-fade{from{opacity:0}to{opacity:1}}
+.v2-lb-top{position:absolute;left:0;right:0;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px;padding:0 16px 0 24px}
+.v2-lb-count{font:500 14px/1 'TikTok Sans',sans-serif;color:#b9b9c0;font-variant-numeric:tabular-nums}
+.v2-lb-tools{display:flex;align-items:center;gap:4px}
+.v2-lb button{display:grid;place-items:center;min-width:44px;height:44px;padding:0;border-radius:22px;border:0;background:none;color:inherit;cursor:pointer;font:550 13px/1 'TikTok Sans',sans-serif;font-variant-numeric:tabular-nums;transition:background-color 160ms ease,transform 160ms cubic-bezier(.23,1,.32,1)}
+.v2-lb button:hover{background:#ffffff14}
+.v2-lb button:active{transform:scale(.95)}
+.v2-lb button:disabled{opacity:.35;cursor:default;background:none}
+.v2-lb button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.v2-lb-pct{min-width:56px!important}
+.v2-lb-close{margin-left:8px;background:#ffffff14!important}
+.v2-lb-stage{position:absolute;inset:64px 76px 64px;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);place-items:center;overflow:visible;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.v2-lb-stage:active{cursor:grabbing}
+.v2-lb-img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;border-radius:6px;box-shadow:0 30px 80px -30px #000;transform-origin:50% 50%;will-change:transform;animation:v2-lb-in 220ms cubic-bezier(.23,1,.32,1)}
+.v2-lb.is-instant .v2-lb-img{animation:none}
+@keyframes v2-lb-in{from{opacity:0;transform:scale(.97)}to{opacity:1}}
+.v2-lb-nav{position:absolute!important;top:50%;z-index:2;margin-top:-22px;background:#ffffff14!important}
+.v2-lb-nav.is-prev{left:16px}.v2-lb-nav.is-prev svg{transform:scaleX(-1)}
+.v2-lb-nav.is-next{right:16px}
+.v2-lb-caption{position:absolute;left:24px;right:24px;bottom:0;display:flex;align-items:center;justify-content:center;height:64px;margin:0;font:400 14px/1.4 'TikTok Sans',sans-serif;color:#c9c9cf;text-align:center;text-wrap:balance}
+@media(max-width:760px){
+  .v2-lb-stage{inset:64px 8px 88px}
+  .v2-lb-nav{top:auto;bottom:16px;margin:0}
+  .v2-lb-caption{left:72px;right:72px;height:76px;font-size:13px}
+  .v2-lb-top{padding-left:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .v2-lb[open],.v2-lb[open]::backdrop,.v2-lb-img,.v2-chip-pop{animation:none!important}
+  .v2-toc-tick::before,.v2-toc-label,.v2-chip,.v2-chip-caret{transition-property:opacity,background-color,visibility}
+}
+.quiet .v2-lb[open],.quiet .v2-lb-img,.quiet .v2-chip .v2-chip-pop{animation:none}
+
+/* phones: a step's screenshot in the swipe gallery opens full size */
+.v2-swipe-zoom{justify-self:start;min-width:0;border-radius:20px}
+.v2-swipe.is-wide .v2-swipe-zoom{justify-self:stretch}

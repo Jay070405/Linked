@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {FINE, PHONE, useMedia} from './motion';
+import {zoomable} from './zoom';
 
 /** "Explorations → choice" as a horizontal gallery. On desktop one card is open at a time: pointing at a card or
     focusing it opens it (a click pins it on touch screens), the others narrow to a slice of their picture. Each card
@@ -10,7 +11,7 @@ export default function Decisions({id, heading, lede, items}) {
   const [open, setOpen] = useState(0);
   // cards opened from the keyboard change instantly; pointing animates
   const [keys, setKeys] = useState(false);
-  return <section className="v2-decisions" aria-labelledby={`${id}-title`}>
+  return <section id={id} className="v2-decisions" aria-labelledby={`${id}-title`}>
     <div className="v2-section-head" data-reveal="">
       <h2 id={`${id}-title`} className="v2-h2">{heading}</h2>
       {lede ? <p className="v2-lede">{lede}</p> : null}
@@ -21,7 +22,10 @@ export default function Decisions({id, heading, lede, items}) {
         const isOpen = phone || open === i;
         return <li key={item.id} className={`v2-card${isOpen ? ' is-open' : ''}`}
           onPointerEnter={fine && !phone ? () => setOpen(i) : undefined}>
-          <div className="v2-card-visual" aria-hidden="true">{item.visual}</div>
+          {item.visual?.type === 'img'
+            // a screenshot opens in the figure viewer (only from an open card, so closed cards stay one tab stop)
+            ? <div className="v2-card-visual" {...zoomable(item.title, {src: item.visual.props.src})} tabIndex={isOpen ? 0 : -1}>{item.visual}</div>
+            : <div className="v2-card-visual" aria-hidden="true">{item.visual}</div>}
           <div className="v2-card-text">
             {phone ? <h3 className="v2-card-title">{item.title}</h3>
               : <h3 className="v2-card-title"><button type="button" aria-expanded={isOpen} aria-controls={`${id}-${item.id}`}

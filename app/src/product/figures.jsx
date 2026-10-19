@@ -1,3 +1,5 @@
+import {zoomable} from './v2/zoom';
+
 // Design-to-code figures built from the study's own material: the six test screens, the real layer trees of the
 // sign-in screen, and the benchmark pipeline. HTML and CSS, so the text stays real text at every width.
 
@@ -13,20 +15,22 @@ const MOBILE = [
   {file: 's6', id: 'S6', name: 'Profile', alt: 'S6, profile: an avatar, three stats, tabs and a list of projects.'},
 ];
 
-export function TestSet() {
+/** zoom: each screen opens in the case page's figure viewer. */
+export function TestSet({zoom = false}) {
+  const z = s => (zoom ? zoomable(s.alt) : {});
   return <div className="pp-stage pp-testset">
     <ul className="pp-testset-row is-desktop">
       {DESKTOP.map(s => <li key={s.id}>
         <div className="pp-browser">
           <div className="pp-browser-bar" aria-hidden="true"><i/><i/><i/><b/></div>
-          <img src={`/assets/product/test-set-${s.file}.webp`} width={800} height={433} alt={s.alt} loading="lazy" decoding="async"/>
+          <img src={`/assets/product/test-set-${s.file}.webp`} width={800} height={433} alt={s.alt} loading="lazy" decoding="async" {...z(s)}/>
         </div>
         <p className="pp-device-label"><b>{s.id}</b> {s.name}</p>
       </li>)}
     </ul>
     <ul className="pp-testset-row is-mobile">
       {MOBILE.map(s => <li key={s.id}>
-        <div className="pp-phone"><img src={`/assets/product/test-set-${s.file}.webp`} width={390} height={760} alt={s.alt} loading="lazy" decoding="async"/></div>
+        <div className="pp-phone"><img src={`/assets/product/test-set-${s.file}.webp`} width={390} height={760} alt={s.alt} loading="lazy" decoding="async" {...z(s)}/></div>
         <p className="pp-device-label"><b>{s.id}</b> {s.name}</p>
       </li>)}
     </ul>

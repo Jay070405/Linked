@@ -47,7 +47,7 @@ export default function BeforeAfter({id, heading, lede, pairs, before, after, ch
   };
   const share = Math.round(pos);
   const [w, h] = pair.size || size;
-  return <section className="v2-compare" aria-labelledby={`${id}-title`}>
+  return <section id={id} className="v2-compare" aria-labelledby={`${id}-title`}>
     <div className="v2-section-head" data-reveal="">
       <h2 id={`${id}-title`} className="v2-h2">{heading}</h2>
       {lede ? <p className="v2-lede">{lede}</p> : null}
