@@ -25,12 +25,12 @@ export const PRODUCT_CASES = [
     title: 'Ready for agents',
     subtitle: 'What an AI agent can’t recover from a Figma file — and the handoff I designed around it',
     pageTitle: 'Ready for agents',
-    summary: 'I measured what coding agents lose when they build from a Figma file (37 builds), then designed a check in the properties panel that binds raw values in one undo and tells the agent the rest.',
+    summary: 'I measured what coding agents lose when they build from a Figma file (37 builds), then designed a lens on Figma’s Check designs that binds what you choose in one undo and tells the agent the rest.',
     kind: 'Research, then product design',
     when: 'Oct 2026',
     status: 'Testing next',
     proof: {label: 'Measured', text: 'With only variables bound, 9 of 9 builds followed every token change; without them, the median was 50%.'},
-    // The review state of the prototype, cropped to the canvas, popover and properties panel.
+    // The review state of the prototype (round 2), cropped to the canvas, Check designs and the properties panel.
     thumb: {src: '/assets/product/ready-for-agents/tile.webp', width: 1280, height: 830},
     page: true,
   },

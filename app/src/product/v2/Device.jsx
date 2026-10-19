@@ -22,15 +22,30 @@ export const resetProtoState = () => { try { PROTO_KEYS.forEach(k => localStorag
 export const ATELIER_KIT = {w: PROTO_W, h: PROTO_H, url: protoUrl, shot: shotSrc, shotW: 780, shotH: 1688, drive: 'popstate', param: 'screen'};
 
 // ---------- Ready for agents (D1): a 1440 x 900 desktop editor that reads ?state= once, at load ----------
-// Screen names match scripts/capture-ready-for-agents-screens.mjs.
+// Screen names match scripts/capture-ready-for-agents-screens.mjs (round 2 of the prototype).
 export const RFA_STATES = {
-  'row': 'state=row', 'review': 'state=review', 'hover-c-white': 'state=hover&row=c-white', 'choice': 'state=choice',
-  'bound': 'state=bound', 'after': 'state=after', 'ready': 'state=ready', 'agent': 'state=agent', 'outline': 'state=outline',
-  'review-dark': 'state=review&theme=dark', 'bound-dark': 'state=bound&theme=dark',
+  'row': 'state=row', 'review': 'state=review', 'hover': 'state=hover&row=c-white-frame',
+  'details': 'state=details&row=c-white-frame', 'picker': 'state=picker&row=c-white-frame', 'choice': 'state=choice',
+  'bound': 'state=bound', 'after': 'state=after', 'ready': 'state=ready', 'ready-review': 'state=ready-review',
+  'agent': 'state=agent', 'outline': 'state=outline',
+  'review-dark': 'state=review&theme=dark', 'picker-dark': 'state=picker&row=c-white-frame&theme=dark',
 };
 export const rfaUrl = screen => `/proto/ready-for-agents/index.html?embed=1&${RFA_STATES[screen] || `state=${screen}`}`;
 export const rfaShot = screen => `/assets/product/ready-for-agents/screens/${screen}.webp`;
 export const RFA_KIT = {w: 1440, h: 900, url: rfaUrl, shot: rfaShot, shotW: 1800, shotH: 1125, drive: 'reload'};
+
+// ---------- Choose Not to Lose (D4): a 1440-wide benefits flow addressed by ?screen= plus a plan ----------
+// Screen names match scripts/capture-choose-not-to-lose-screens.mjs. Two kits over the same build:
+// CNTL_KIT is a browser window (1440 x 900) whose page scrolls inside it, for the hero and the live block;
+// CNTL_PAGE_KIT renders the whole page (1440 x 2080) behind a 900-tall window, so a step's camera can pan down the
+// page the way a reader would scroll it.
+export const CNTL_STATES = {
+  'baseline': 'screen=baseline', 'scenarios': 'screen=scenarios', 'compare': 'screen=compare', 'math': 'screen=math',
+  'worst-year': 'screen=worst-year', 'review-b': 'screen=review&plan=b', 'confirmation': 'screen=confirmation&plan=a',
+};
+export const cntlUrl = screen => `/proto/choose-not-to-lose/index.html?${CNTL_STATES[screen] || `screen=${screen}`}`;
+export const CNTL_KIT = {w: 1440, h: 900, url: cntlUrl, shot: s => `/assets/product/choose-not-to-lose/screens/${s}.webp`, shotW: 1800, shotH: 1125, drive: 'reload'};
+export const CNTL_PAGE_KIT = {...CNTL_KIT, h: 2080, viewH: 900, shot: s => `/assets/product/choose-not-to-lose/pages/${s}.webp`, shotH: 2600};
 
 /** Moves an already loaded popstate-kit prototype to another screen. */
 function drive(win, screen, param) {
@@ -43,8 +58,9 @@ function drive(win, screen, param) {
   } catch { return false; }
 }
 
-/** island={false} when the screen draws its own (the round-2 Atelier prototype does). */
-export function Phone({children, className = '', label, island = true}) {
+/** island: draw the frame's own Dynamic Island. Off by default: the round-2 Atelier prototype draws its own status bar
+    and island inside the screen. */
+export function Phone({children, className = '', label, island = false}) {
   return <div className={`v2-phone ${className}`} role={label ? 'group' : undefined} aria-label={label}>
     <div className="v2-phone-shell">
       <div className="v2-phone-screen">{children}</div>
@@ -63,11 +79,13 @@ export function Browser({children, className = '', label, address = 'Ready for a
   </div>;
 }
 
-/** Transform that frames `camera` ({x, y, w} in prototype pixels) in a host `hostW` px wide, or the whole screen. */
+/** Transform that frames `camera` ({x, y, w} in prototype pixels) in a host `hostW` px wide, or the whole screen.
+    The host shows kit.w x (kit.viewH || kit.h); a taller kit (a whole page) is clipped below that, so the camera's y
+    can reach anywhere down the page. */
 function frameFor(kit, camera, hostW) {
   const s = hostW / kit.w;
   if (!camera) return `scale(${s})`;
-  const z = Math.max(1, kit.w / camera.w), vh = kit.h / z;
+  const z = Math.max(1, kit.w / camera.w), vh = (kit.viewH || kit.h) / z;
   const x = Math.min(Math.max(0, camera.x), kit.w - kit.w / z), y = Math.min(Math.max(0, camera.y), kit.h - vh);
   return `scale(${s * z}) translate(${-x}px, ${-y}px)`;
 }

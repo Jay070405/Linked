@@ -7,7 +7,7 @@ import {Phone, PROTO_H, PROTO_W, shotSrc} from './Device';
 export function RfaTileArt() {
   return <span className="pt-rfa">
     <span className="pt-rfa-editor" data-depth="8"><img src="/assets/product/ready-for-agents/tile.webp" width={1280} height={830} alt="" loading="lazy" decoding="async"/></span>
-    <span className="pt-rfa-row" data-depth="20"><img src="/assets/product/ready-for-agents/tile-row.webp" width={510} height={434} alt="" loading="lazy" decoding="async"/></span>
+    <span className="pt-rfa-row" data-depth="20"><img src="/assets/product/ready-for-agents/tile-row.webp" width={300} height={295} alt="" loading="lazy" decoding="async"/></span>
   </span>;
 }
 

@@ -8,7 +8,7 @@ import {LayersCompare, Pipeline, TestSet} from '../figures';
 import CaseHero from '../v2/CaseHero';
 import NumberStrip from '../v2/NumberStrip';
 import Scrolly from '../v2/Scrolly';
-import BeforeAfter from '../v2/BeforeAfter';
+import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
@@ -20,8 +20,9 @@ import '../v2/v2.css';
 import './rfa.css';
 
 // Sources: cases/p2-design-to-code/draft.md and p2-benchmark/results/results.md (37 scored builds, Oct 19 2026);
-// cases/pd-ready-for-agents/BRIEF.md and pd-prototype/README.md. Concept work, not affiliated with Figma.
-// Nothing in the design chapter has been tested with designers yet; Jay runs the sessions next.
+// cases/pd-ready-for-agents/BRIEF.md and pd-prototype/README.md (round 2, after a model-assisted design review).
+// Concept work, not affiliated with Figma. Nothing in the design chapter has been tested with designers yet; Jay runs
+// the sessions next.
 
 const A = '/assets/product/ready-for-agents/';
 
@@ -48,51 +49,51 @@ const FLAT = [
   {name: 'Colors routed through CSS variables', values: ['97%', '94%', '97%'], share: [.97, .94, .97]},
 ];
 
-// Camera rects are in the editor's own 1440 x 900 pixels.
+// Camera rects are in the editor's own 1440 x 900 pixels (round 2 of the prototype).
 const STEPS = [
-  {id: 'row', screen: 'row', label: 'Panel row', title: 'Selecting a frame says what an agent would miss',
-    camera: {x: 420, y: 40, w: 1020}, phoneCamera: {x: 1010, y: 110, w: 430},
-    alt: 'The properties panel with an Agent handoff row: 12 raw values, 10 match variables, and a Review button',
-    body: <p>Agent handoff sits under the frame header, above Position, so it’s there the moment you select a frame. It counts distinct raw values: 12 raw values, 10 match variables. No score.</p>},
-  {id: 'review', screen: 'review', label: 'Review', title: 'Review opens next to the row',
-    camera: {x: 300, y: 118, w: 1140}, phoneCamera: {x: 870, y: 140, w: 430},
-    alt: 'The review popover listing raw colors with the variable each one matches',
-    body: <p>A popover anchored to the row groups colors, spacing and radius. The two values that need a decision sit on top, and rows don’t move once they resolve.</p>},
-  {id: 'hover', screen: 'hover-c-white', label: 'Hover outline', title: 'Hover a value to see where it lives',
+  {id: 'row', screen: 'row', label: 'Panel row', title: 'Selecting a frame says what isn’t bound',
+    camera: {x: 640, y: 50, w: 800}, phoneCamera: {x: 1120, y: 90, w: 320},
+    alt: 'The properties panel with a Variables row under the frame header: 12 unbound values, and a Check button',
+    body: <p>One 40&nbsp;px row sits under the frame header: 12 unbound values, Check, and a menu. It counts values the agent will read as plain hex and px. No score.</p>},
+  {id: 'review', screen: 'review', label: 'Check designs', title: 'Check opens a lens on Check designs',
+    camera: {x: 440, y: 130, w: 1000}, phoneCamera: {x: 840, y: 140, w: 360},
+    alt: 'Check designs with the Variables for agents lens: one row per value and role, each with a checkbox, and Apply 9',
+    body: <p>Figma’s Check designs already suggests variables for hard-coded values. The concept adds a Variables for agents lens: one row per value and role, a checkbox on each, and Apply&nbsp;9 for what’s checked.</p>},
+  {id: 'hover', screen: 'hover', label: 'Hover outline', title: 'Hover a row to see where it lives',
     camera: {x: 380, y: 40, w: 1060}, phoneCamera: {x: 410, y: 60, w: 470},
-    alt: 'Hovering the FFFFFF row outlines three print cards on the canvas, with a 3 layers badge',
-    body: <p>Each row outlines its layers on the canvas, with a count badge in one fixed spot. That’s direction B, folded into A.</p>},
-  {id: 'choice', screen: 'choice', label: 'Needs a choice', title: 'Ask when two variables match',
-    camera: {x: 760, y: 128, w: 680}, phoneCamera: {x: 876, y: 260, w: 330},
-    alt: 'FFFFFF matches color/surface and color/on-accent; color/surface is chosen and remembered for this file',
-    body: <p>#FFFFFF is both color/surface and color/on-accent. The hint states facts from the file, nothing is preselected, and the answer is remembered for that value.</p>},
-  {id: 'bound', screen: 'bound', label: 'Bind and undo', title: 'Bind in one step, undo in one step',
-    camera: {x: 560, y: 350, w: 880}, phoneCamera: {x: 640, y: 600, w: 560},
-    alt: 'A toast reads 10 values bound with an Undo button; the bound rows show a check',
-    body: <p>Bind applies every exact match as one history entry. The toast’s Undo and ⌘Z both take it back.</p>},
-  {id: 'ready', screen: 'ready', label: 'Ready', title: 'Quiet when it’s fine',
-    camera: {x: 760, y: 0, w: 680}, phoneCamera: {x: 1180, y: 60, w: 260},
-    alt: 'The Agent handoff section collapsed to one line: Ready for agents, with a check',
-    body: <p>Once #FFFFFF has a variable and the gold is left raw on purpose, the section folds into one calm line: Ready for agents.</p>},
+    alt: 'Hovering the FFFFFF frame fill row outlines three print cards on the canvas, dashed, with a 3 layers badge',
+    body: <p>Hovering FFFFFF as a frame fill outlines its three print cards, dashed so it never reads as the selection, with a count badge in one fixed spot. That’s direction&nbsp;B, folded into&nbsp;A.</p>},
+  {id: 'picker', screen: 'picker', label: 'Picker', title: 'Pick a variable, don’t flip a toggle',
+    camera: {x: 540, y: 250, w: 760}, phoneCamera: {x: 556, y: 286, w: 300},
+    alt: 'The variable picker for FFFFFF as frame fill: two variables allowed here, one hidden from pickers, others below, with Light and Dark swatches',
+    body: <p>#FFFFFF matches two variables. The picker searches every variable, separates the ones allowed in this role from the ones that aren’t (and says why), and shows each one’s Light and Dark values. The Dark value settles it: surface goes dark, on-accent stays white.</p>},
+  {id: 'bound', screen: 'bound', label: 'Apply and undo', title: 'Apply in one step, undo in one step',
+    camera: {x: 560, y: 300, w: 880}, phoneCamera: {x: 600, y: 640, w: 420},
+    alt: 'A toast reads Bound 9 values on 29 layers, with Undo; three rows are left to review',
+    body: <p>Apply binds what’s checked as one history entry: 9 values on 29 layers. The toast’s Undo and ⌘Z both take it back. Applied rows fold away; the three that need a decision stay.</p>},
+  {id: 'ready', screen: 'ready-review', label: 'Applied', title: 'Applied, exempt, and quiet when it’s done',
+    camera: {x: 480, y: 150, w: 960}, phoneCamera: {x: 1100, y: 120, w: 340},
+    alt: 'Check designs with an Applied list, each FFFFFF choice remembered per role with Forget, and the gold kept as a raw value; the panel row reads All values use variables',
+    body: <p>To review, applied and exempt stay apart. A choice is remembered per value and role, only after Apply, and can be forgotten. When nothing is left, the row reads All values use variables, in secondary text.</p>},
   {id: 'agent', screen: 'agent', label: 'Agents tab', title: 'The agent hears the same counts',
     camera: {x: 0, y: 0, w: 960}, phoneCamera: {x: 64, y: 140, w: 400},
-    alt: 'The Agents tab: the readiness note names the 2 raw colors and asks which variable the print cards should use',
-    body: <p>In the Agents tab, the note uses the designer’s words: 2 raw colors, which ones, and a question instead of an invented token name.</p>},
+    alt: 'The Agents tab: the note names the 3 unbound values and asks which variable FFFFFF should use as a frame fill',
+    body: <p>In the Agents tab, the note uses the same words: Home has 3 unbound values, which ones, and a question about FFFFFF instead of an invented token name.</p>},
 ];
 
 // Each principle shows the piece of the prototype that passes its test, at the editor's own size (dw x dh CSS px).
 const PRINCIPLES = [
-  {title: 'Say what the agent will miss, not a score', test: '“12 raw values, 10 match variables.” No grades, and no percentage without a count.', img: 'principle-row.webp', dw: 239, dh: 82},
-  {title: 'Fix it where it lives, in one undo', test: 'No new window or mode. Binding is one action and one ⌘Z.', img: 'principle-toast.webp', dw: 200, dh: 58},
-  {title: 'Never guess between equal options', test: 'A value that matches two variables gets asked about once, and the answer is remembered.', img: 'principle-choice.webp', dw: 314, dh: 118},
-  {title: 'Quiet when it’s fine', test: 'A ready frame shows one calm line, nothing alarming.', img: 'principle-ready.webp', dw: 239, dh: 100},
-  {title: 'Same words on both sides', test: 'The panel and the agent’s note use the same counts and names.', img: 'principle-words.webp', dw: 236, dh: 98},
+  {title: 'Say what the agent will miss, not a score', test: '“12 unbound values,” and a Check button. No grade, and no percentage without a count.', img: 'principle-row.webp', dw: 239, dh: 53},
+  {title: 'Fix it where it lives, in one undo', test: 'No new window or mode. Apply is one history entry, and one Undo reverts it.', img: 'principle-toast.webp', dw: 254, dh: 52},
+  {title: 'Never guess between equal options', test: 'A value that matches two variables is asked about per role, and the answer is remembered only after Apply.', img: 'principle-choice.webp', dw: 344, dh: 76},
+  {title: 'Quiet when it’s fine', test: 'A frame with nothing left reads “All values use variables,” in secondary text.', img: 'principle-ready.webp', dw: 239, dh: 53},
+  {title: 'Same words on both sides', test: 'The row, Check designs and the agent’s note all say “unbound values,” with the same counts.', img: 'principle-words.webp', dw: 227, dh: 112},
 ];
 
 const DIRECTIONS = [
-  {id: 'a', name: 'Properties panel section', idea: 'A compact Agent handoff row for the selected frame; Review opens a popover anchored to it.',
-    plus: ['Visible every time a frame is selected, with no new surface to learn', 'Fix values where they live, in one undo'],
-    minus: ['One row in a dense panel is easy to scroll past'], role: 'The home', chosen: true},
+  {id: 'a', name: 'Properties panel section', idea: 'A one-line Variables row for the selected frame; Check opens Check designs with a Variables for agents lens.',
+    plus: ['Visible at selection in one 40 px row; details open on demand', 'Reuses Check designs: pick scoped variables, apply in one undo'],
+    minus: ['One row in a dense panel is easy to scroll past'], role: 'The home, as a lens on Check designs', chosen: true},
   {id: 'b', name: 'Canvas overlay', idea: 'A toggle outlines every raw-value layer and labels it on the canvas.',
     plus: ['Spatial: you see exactly where each raw value sits'],
     minus: ['Noisy fast: 9 labels already crowd one phone screen', 'Competes with selection, hover and annotations'], role: 'Folded into A as the hover outline'},
@@ -102,10 +103,30 @@ const DIRECTIONS = [
 ];
 
 const TASKS = [
-  {id: 'miss', screen: 'row', title: 'Find what an agent would miss on the Home frame', hint: 'Read the Agent handoff row in the right panel, then open Review.'},
-  {id: 'bind', screen: 'review', title: 'Bind every exact match, then undo it', hint: 'Bind 10 values, then press Undo in the toast or ⌘Z.'},
-  {id: 'white', screen: 'review', title: 'Decide what #FFFFFF should be', hint: 'It matches two variables; the line under the choice says where each one is used.'},
+  {id: 'miss', screen: 'row', title: 'Find what an agent would miss on the Home frame', hint: 'Read the Variables row in the right panel, then press Check.'},
+  {id: 'bind', screen: 'review', title: 'Apply the suggested variables, then undo', hint: 'Press Apply 9, then Undo in the toast or ⌘Z.'},
+  {id: 'white', screen: 'review', title: 'Decide what #FFFFFF should be in each role', hint: 'It’s a frame fill and a text color. Open each row’s picker; the Dark swatch is the tell.'},
   {id: 'agent', screen: 'after', title: 'Check what the agent will be told', hint: 'Open Agents in the left navigation bar.'},
+];
+
+// Round 1 → round 2 of the same states, cropped to Check designs and the properties panel (scripts/build-round-pairs.mjs).
+const R = `${A}rounds/`;
+const ROUNDS = [
+  {id: 'row', tab: 'Panel row', size: [800, 946], caption: 'Home selected. Round 1 added an 88 px Agent handoff section above Position; round 2 is one 40 px row.',
+    before: {src: `${R}row-r1.webp`, label: 'Round 1'}, after: {src: `${R}row-r2.webp`, label: 'Round 2'}},
+  {id: 'review', tab: 'Review', caption: 'The review. Round 1 was its own popover; round 2 is Check designs with a Variables for agents lens.',
+    before: {src: `${R}review-r1.webp`, label: 'Round 1'}, after: {src: `${R}review-r2.webp`, label: 'Round 2'}},
+  {id: 'choice', tab: '#FFFFFF', caption: 'Deciding #FFFFFF. Round 1 asked once, with a two-way toggle; round 2 asks per role, from a picker.',
+    before: {src: `${R}choice-r1.webp`, label: 'Round 1'}, after: {src: `${R}choice-r2.webp`, label: 'Round 2'}},
+];
+// From pd-prototype/README.md, "Round 2: design review".
+const CHANGES = [
+  {what: 'Rows are a value plus its role, and only variables scoped to that role are proposed.', why: 'One hex value can mean different things. An unscoped exact match can be confidently wrong.'},
+  {what: 'A lens on Check designs instead of a separate checker.', why: 'It extends what Figma already ships instead of duplicating it.'},
+  {what: 'A checkbox on every row and layer, and a button that counts: Apply 9.', why: 'The designer decides exactly what changes; round 1 bound every match at once.'},
+  {what: 'One 40 px row replaces the 88 px section above Position.', why: 'An occasional check shouldn’t outrank everyday editing.'},
+  {what: 'A searchable picker replaces the two-option toggle.', why: 'Real libraries have more than two candidates, and the Dark value settles surface vs on-accent.'},
+  {what: '“Unbound values” replaces “raw values,” “agents invent names” and “Ready for agents.”', why: 'Name the issue and the action without overclaiming readiness.'},
 ];
 
 /** Result 1: the pre-registered layout checks came out the same at every level. Bars grow once, together. */
@@ -186,7 +207,7 @@ function Directions() {
   return <div className="rfa-directions">
     <ul className="rfa-direction-list">
       {DIRECTIONS.map(d => <li key={d.id} className={`rfa-direction${d.chosen ? ' is-chosen' : ''}`} data-reveal="">
-        <div className="rfa-direction-img"><img src={`${A}explore-${d.id}.webp`} width="960" height="998" alt={`Direction ${d.id.toUpperCase()}, ${d.name}, on the same Home frame`} loading="lazy" decoding="async"/></div>
+        <div className="rfa-direction-img"><img src={`${A}explore-${d.id}.webp`} width="965" height="1008" alt={`Direction ${d.id.toUpperCase()}, ${d.name}, on the same Home frame`} loading="lazy" decoding="async"/></div>
         <p className="rfa-direction-tag"><b>{d.id.toUpperCase()}</b>{d.name}</p>
         <p className="rfa-direction-idea">{d.idea}</p>
         <ul className="rfa-direction-pm">
@@ -237,18 +258,18 @@ function AgentSide() {
   return <section className="rfa-agent" aria-labelledby="rfa-agent-title">
     <div className="v2-section-head" data-reveal="">
       <h3 id="rfa-agent-title" className="rfa-h3">The other side of the handoff</h3>
-      <p className="v2-lede">The designer reads “2 raw colors”. The agent, reading the frame through Figma’s MCP server, gets the same two colors and the same names.</p>
+      <p className="v2-lede">The designer reads “3 unbound values.” The agent, reading the frame through Figma’s MCP server, gets the same three values, in the same roles, with the same names.</p>
     </div>
     <div className="rfa-agent-grid">
-      <figure data-reveal=""><div className="rfa-agent-img"><img src={`${A}agent-designer.webp`} width="775" height="700" loading="lazy" decoding="async"
-        alt="Figma's Agents tab: the note says the frame has 2 raw colors and asks which variable the print cards should use"/></div>
+      <figure data-reveal=""><div className="rfa-agent-img"><img src={`${A}agent-designer.webp`} width="775" height="825" loading="lazy" decoding="async"
+        alt="Figma's Agents tab: the note says Home has 3 unbound values and asks which variable FFFFFF should use as a frame fill"/></div>
         <figcaption className="v2-caption"><span>Designer: the Agents tab, inside the editor.</span></figcaption></figure>
-      <figure data-reveal=""><div className="rfa-agent-img is-dark"><img src={`${A}agent-terminal.webp`} width="1400" height="945" loading="lazy" decoding="async"
-        alt="A Claude Code session: get_design_context returns a readiness note listing the 2 raw colors, then the agent asks which variable to use for FFFFFF"/></div>
+      <figure data-reveal=""><div className="rfa-agent-img is-dark"><img src={`${A}agent-terminal.webp`} width="1400" height="965" loading="lazy" decoding="async"
+        alt="A Claude Code session: get_design_context returns a readiness note listing 3 unbound values, then the agent asks which variable FFFFFF should use as a frame fill"/></div>
         <figcaption className="v2-caption"><span>Agent: a Claude Code session calling get_design_context (my mock of the response).</span></figcaption></figure>
     </div>
     <blockquote className="rfa-quote" data-reveal="">
-      <p>“This frame has 2 raw colors that don’t match a single variable. I’ll use your tokens for everything else and ask before choosing or inventing names.”</p>
+      <p>“Home has 3 unbound values: FFFFFF as frame fill and FFFFFF as text each match more than one; C9A66B matches none. I’ll use variables where they’re bound and ask about the rest instead of inventing names.”</p>
       <footer>The agent’s note, generated from the same summary as the designer’s row</footer>
     </blockquote>
   </section>;
@@ -258,10 +279,10 @@ function RfaHeroShot({phone, reduced}) {
   return <div className="rfa-hero-shot" data-enter="tilt">
     <Browser label="The Ready for agents prototype">
       <ProtoScreen kit={RFA_KIT} screen="review" load={phone ? 'never' : 'idle'} delay={1500} interactive={!phone} reduced={reduced}
-        title="Ready for agents prototype: the review popover in a Figma-style editor"
-        alt="A Figma-style editor: the Home frame of a print shop app, an Agent handoff row in the properties panel, and a review popover listing 12 raw values"/>
+        title="Ready for agents prototype: Check designs with the Variables for agents lens, in a Figma-style editor"
+        alt="A Figma-style editor: the Home frame of a print shop app, a Variables row in the properties panel, and Check designs listing 12 unbound values"/>
     </Browser>
-    <p className="rfa-hero-note" data-enter="note">{phone ? 'The editor needs a screen at least 1024 px wide to try.' : 'Live prototype. Click around; Review, Bind and Undo all work.'}</p>
+    <p className="rfa-hero-note" data-enter="note">{phone ? 'The editor needs a screen at least 1024 px wide to try.' : 'Live prototype. Click around; Check, Apply and Undo all work.'}</p>
   </div>;
 }
 
@@ -280,7 +301,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
 
   return <article ref={root} className="pp-page v2-page rfa-page" lang="en" data-nav-tone="light">
     <CaseHero stacked reduced={reduced} title="Ready for agents" kind="Research, then product design"
-      outcome="Coding agents rebuild a Figma frame’s layout from the picture but invent their own names for its design tokens. I measured that across 37 builds, then designed a check in the properties panel that fixes it in one undo and tells the agent the rest."
+      outcome="Coding agents rebuild a Figma frame’s layout from the picture but invent their own names for its design tokens. I measured that across 37 builds, then designed a lens on Figma’s Check designs that binds what you choose in one undo and tells the agent the rest."
       chips={['Solo: study, analysis, design and prototype', 'October 2026', 'Desktop, Figma UI3', 'Concept, not affiliated with Figma']}
       actions={<>
         {phone ? null : <a className="v2-cta" href="#try" onClick={jumpTo('#try')}><span>Try the prototype</span><span className="v2-cta-icon"><ArrowDown/></span></a>}
@@ -368,7 +389,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
       <div className="rfa-explore">
         <div className="v2-section-head" data-reveal="">
           <h3 className="rfa-h3">Where should the check live?</h3>
-          <p className="v2-lede">Three directions on the same Home frame and the same 12 raw values.</p>
+          <p className="v2-lede">Three directions on the same Home frame and the same 12 unbound values.</p>
         </div>
         <Directions/>
       </div>
@@ -376,17 +397,15 @@ export default function ReadyForAgentsCase({item, reduced}) {
 
     <Scrolly id="rfa-flow" kit={RFA_KIT} frame="browser" steps={STEPS} reduced={reduced} label="The handoff flow"
       title="Ready for agents prototype, following the steps" note="The live prototype, moved by your scroll"
-      heading="From raw values to ready, in seven states"
+      heading="From unbound to applied, in seven states"
       lede="Scroll through the flow; the editor on the right is the real prototype, framed on the part each step is about."/>
 
-    <BeforeAfter id="rfa-compare" reduced={reduced} frame="panel" ratio="1280 / 1520" size={[1280, 1520]}
-      label="Compare the plugin version 0.3 review with the new review popover"
-      heading="From plugin to panel"
-      lede="Drag across to compare the plugin I built during the research with the review popover."
-      before={{src: `${A}compare-plugin-v03.webp`, label: 'Plugin v0.3', caption: 'Left: my plugin, v0.3.'}}
-      after={{src: `${A}compare-popover.webp`, label: 'Review popover', caption: 'Right: the popover in the prototype.'}}>
-      <p>The plugin was its own window: a long list grouped by match type, all-caps section labels, a benchmark footnote, and binding behind a second screen.</p>
-      <p>The popover opens from the row it explains, groups values by property, puts the two decisions on top, and binds with one undoable button. Both read the same matching logic; the popover drops everything that doesn’t reach the code.</p>
+    <BeforeAfter id="rfa-compare" reduced={reduced} frame="panel" ratio="1200 / 1420" size={[1200, 1420]} pairs={ROUNDS}
+      label="Compare round 1 with round 2"
+      heading="Round 1 → Round 2"
+      lede="Round 2 came out of a design review. Pick a state and drag across it to compare the two rounds.">
+      <p className="v2-review-note"><span><b>A model-assisted design review.</b> I asked a model to critique round 1 as a Figma design lead would. It scored craft 7, interaction 5 and product thinking 6, and ranked eight fixes; round 2 builds them. It’s a critique, not a test with designers.</span></p>
+      <RoundChanges items={CHANGES}/>
     </BeforeAfter>
 
     <ThemeMoment reduced={reduced}/>

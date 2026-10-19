@@ -77,7 +77,7 @@
 @media(min-width:900px){.rfa-direction-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .rfa-direction{display:flex;flex-direction:column;gap:12px;padding:8px 8px 22px;border-radius:22px;background:var(--v2-card);box-shadow:0 0 0 1px var(--v2-hair)}
 .rfa-direction.is-chosen{box-shadow:0 0 0 1.5px var(--pp-ink),var(--v2-lift)}
-.rfa-direction-img{overflow:hidden;border-radius:16px;background:#f5f5f5;aspect-ratio:960/998}
+.rfa-direction-img{overflow:hidden;border-radius:16px;background:#f5f5f5;aspect-ratio:965/1008}
 .rfa-direction-img img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 0;transition:transform 400ms var(--v2-out)}
 @media(hover:hover) and (pointer:fine){.rfa-direction:hover .rfa-direction-img img{transform:scale(1.03)}}
 .rfa-direction-tag{display:flex;align-items:center;gap:10px;margin:8px 12px 0;font:650 19px/1.25 var(--pp-sans);letter-spacing:-.01em}
