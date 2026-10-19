@@ -2,10 +2,10 @@ import {Go, NavigateContext} from './Go';
 import ProductIndex from './ProductIndex';
 import ForPage from './ForPage';
 import DesignToCodeCase from './cases/DesignToCodeCase';
-import AtelierCase from './cases/AtelierCase';
+import AtelierCase from './worlds/atelier/AtelierWorld';
 import ReadyForAgentsCase from './worlds/ready-for-agents/ReadyForAgentsWorld';
 import ChooseNotToLoseCase from './cases/ChooseNotToLoseCase';
-import LastHundredFeetCase from './cases/LastHundredFeetCase';
+import LastHundredFeetCase from './worlds/last-100-feet/LastHundredFeetWorld';
 import {PRODUCT_HOME} from './content';
 import './product.css';
 
