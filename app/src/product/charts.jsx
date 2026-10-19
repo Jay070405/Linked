@@ -68,6 +68,21 @@ export function GapChart() {
   </svg>;
 }
 
+/* The index thumbnail for "where players break": the same simulation, drawn large enough to read at card size
+   (0 to 100 points; the bins above 100 hold under 0.3% of games). */
+export function GapThumb() {
+  const W = 800, H = 500, L = 56, R = 40, T = 130, B = 74, bins = GAP_BINS.slice(0, 20), max = 18;
+  const bw = (W - L - R) / bins.length;
+  const y = v => T + (1 - v / max) * (H - T - B);
+  return <svg viewBox={`0 0 ${W} ${H}`} className="pp-thumb-chart" aria-hidden="true">
+    <path d={`M${L + 3} ${T - 30} H${L + bw * 5 - 3} M${L + 3} ${T - 38} V${T - 22} M${L + bw * 5 - 3} ${T - 38} V${T - 22}`} className="s-stroke-red"/>
+    <text x={L} y={T - 56} className="s-thumb-text"><tspan className="s-text-red s-text-strong">69.4% of games</tspan> have team averages within 25 points</text>
+    {bins.map((v, i) => <rect key={i} x={L + i * bw + 3} y={y(v)} width={bw - 6} height={Math.max(1.5, y(0) - y(v))} className={i < 5 ? 's-red' : 's-ink'}/>)}
+    <line x1={L} x2={W - R} y1={y(0)} y2={y(0)} className="s-stroke-strong"/>
+    {[0, 25, 50, 75, 100].map(t => <text key={t} x={L + t / 5 * bw} y={H - B + 38} textAnchor={t ? 'middle' : 'start'} className="s-thumb-text s-thumb-axis">{t}</text>)}
+  </svg>;
+}
+
 /* Design-to-code, exploratory measures (not pre-registered): median per level, whisker = min-max, n = 6 each.
    Source: p2-benchmark/results/results.md (harness/summarize.js, 24 runs). The harness's own chart
    (results/figures/exploratory-coherence.svg) has the same numbers but its text is too small for this column. */

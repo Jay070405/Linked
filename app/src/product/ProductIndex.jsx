@@ -1,20 +1,29 @@
 import {Go} from './Go';
 import {Annotated, Ev, Note, Noted} from './CaseKit';
+import {GapThumb} from './charts';
 import {EVIDENCE, POSITIONING_LINES, PRODUCT_CASES, PRODUCT_HOME, SUBLINE} from './content';
 import {author} from '../portfolioData';
 
 const RESUME = '/assets/docs/jay-lin-resume-en.pdf';
 
+/** A real figure from the case. Decorative here (the title link and summary carry the meaning), so it is hidden
+    from screen readers; the same picture is described properly on the case page. */
+function Thumb({thumb}) {
+  if (!thumb) return null;
+  return <div className="pp-row-thumb" aria-hidden="true">
+    {thumb.chart === 'gap' ? <GapThumb/> : <img src={thumb.src} width={thumb.width} height={thumb.height} alt="" loading="lazy" decoding="async"/>}
+  </div>;
+}
+
 /** The case-study rows, divided by rules. The title link covers the row; screen readers hear only the title. */
 export function CaseRows({cases = PRODUCT_CASES, level = 2}) {
   const H = `h${level}`;
   return <ul className="pp-rows">
-    {cases.map(c => <li key={c.slug} className="pp-row">
-      <div className="pp-row-text">
-        <H className="pp-row-title"><Go to={`${PRODUCT_HOME}/${c.slug}`} className="pp-row-link">{c.title}</Go></H>
-        <p className="pp-row-summary">{c.summary}</p>
-        <p className="pp-row-proof"><Ev label={c.proof.label}/><span>{c.proof.text}</span></p>
-      </div>
+    {cases.map(c => <li key={c.slug} className={`pp-row${c.thumb ? ' has-thumb' : ''}`}>
+      <H className="pp-row-title"><Go to={`${PRODUCT_HOME}/${c.slug}`} className="pp-row-link">{c.title}</Go></H>
+      <Thumb thumb={c.thumb}/>
+      <p className="pp-row-summary">{c.summary}</p>
+      <p className="pp-row-proof"><Ev label={c.proof.label}/><span>{c.proof.text}</span></p>
       <p className="pp-row-meta"><span>{c.kind}</span><span>{c.when}</span>{c.status ? <span className="pp-row-status">{c.status}</span> : null}</p>
     </li>)}
   </ul>;

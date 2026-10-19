@@ -28,6 +28,8 @@ export const PRODUCT_CASES = [
     kind: 'Benchmark, ablation and plugin prototype',
     when: 'Oct 2026',
     proof: {label: 'Measured', text: 'Variable bindings alone took token-change coverage from 50% to 100% (6 of 6 builds).'},
+    // Two of the six test screens (S2 pricing, S1 sign-in) in browser and phone frames.
+    thumb: {src: '/assets/product/thumb-design-to-code.webp', width: 1080, height: 676},
   },
   {
     slug: 'roco',
@@ -36,6 +38,8 @@ export const PRODUCT_CASES = [
     kind: 'Personal research',
     when: 'Aug – Sep 2026',
     proof: {label: 'Measured', text: '6,632 throws and 499 clover sketches, logged over 10 co-op sessions.'},
+    // A crop of the case's own gameplay screenshot (assets/roco/current/s3-4.png), below the in-game banner.
+    thumb: {src: '/assets/product/thumb-roco.webp', width: 960, height: 600},
   },
   {
     slug: 'where-players-break',
@@ -44,6 +48,8 @@ export const PRODUCT_CASES = [
     kind: 'Playtests and live-ops research',
     when: 'Jan 2025 – Sep 2026',
     proof: {label: 'Simulated', text: '20,000 simulated matches set the tiers for a fairer loading screen.'},
+    // The case's gap-distribution chart, redrawn at card size (charts.jsx, GapThumb).
+    thumb: {chart: 'gap'},
   },
 ];
 
