@@ -103,9 +103,21 @@ const flush = async () => { await Promise.resolve(); await Promise.resolve(); aw
 let checks = 0;
 const check = (condition, message) => { assert.ok(condition, message); checks += 1; };
 
-// Honest autoplay state; WAIT button starts instead of disabling the request.
+// No saved preference: music stays off, makes no play request, and only the toggle turns it on.
 {
-  const h = harness(); h.media.mode = 'blocked';
+  const h = harness();
+  const controller = createMusicController(h.media, h.options); await flush();
+  check(h.media.count === 0 && controller.getState().status === 'off' && !controller.getState().enabled, 'Music is off until the visitor turns it on');
+  h.document.emit('pointerdown'); h.document.emit('keydown', { key: 'a' }); await flush();
+  check(h.media.count === 0, 'Ordinary gestures do not start music that was never turned on');
+  controller.toggle(); await flush(); h.advance(1300);
+  check(controller.getState().status === 'playing' && h.data.get(MUSIC_PREFERENCE_KEY) === 'on', 'Turning it on plays and is remembered');
+  controller.dispose();
+}
+
+// Honest autoplay state (for visitors who turned music on before); WAIT button starts instead of disabling the request.
+{
+  const h = harness('on'); h.media.mode = 'blocked';
   const controller = createMusicController(h.media, h.options);
   await flush();
   check(controller.getState().status === 'pending', 'Policy rejection displays WAIT');
@@ -145,7 +157,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
 
 // Only a trusted qualifying interaction unlocks an autoplay rejection.
 {
-  const h = harness(); h.media.mode = 'blocked';
+  const h = harness('on'); h.media.mode = 'blocked';
   const controller = createMusicController(h.media, h.options); await flush();
   const calls = h.media.count;
   h.document.emit('pointerdown', { isTrusted: false });
@@ -161,7 +173,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
 
 // Cancelled play promises may resolve after the user has already turned off.
 {
-  const h = harness(); h.media.mode = 'deferred';
+  const h = harness('on'); h.media.mode = 'deferred';
   const controller = createMusicController(h.media, h.options);
   controller.toggle(); h.media.finish(); await flush();
   check(!controller.getState().enabled, 'Late play resolution retains off preference');
@@ -173,7 +185,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
 
 // A real media error is distinct from browser policy and can be retried.
 {
-  const h = harness(); h.media.mode = 'error';
+  const h = harness('on'); h.media.mode = 'error';
   const controller = createMusicController(h.media, h.options); await flush();
   check(controller.getState().status === 'error', 'Unsupported media has error status');
   h.media.mode = 'ok'; controller.toggle(); await flush();
@@ -183,7 +195,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
 
 // The quiet GainNode fallback covers browsers with readonly media volume.
 {
-  const h = harness(undefined, new ReadonlyVolumeMedia()); h.options.AudioContext = ContextDouble;
+  const h = harness('on', new ReadonlyVolumeMedia()); h.options.AudioContext = ContextDouble;
   const controller = createMusicController(h.media, h.options); await flush(); h.advance(1300);
   const context = ContextDouble.latest;
   check(controller.getState().status === 'playing', 'Running gain context can play');
@@ -199,7 +211,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
 
 // Safari interruption recovery and no premature ON from context.statechange.
 {
-  const h = harness(undefined, new ReadonlyVolumeMedia());
+  const h = harness('on', new ReadonlyVolumeMedia());
   h.media.mode = 'deferred'; h.media.readyState = 0; h.options.AudioContext = ContextDouble;
   const controller = createMusicController(h.media, h.options);
   const context = ContextDouble.latest;
@@ -220,7 +232,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
 
 // The speaker and header operate on one controller, preserving mute and seek.
 {
-  const h = harness();
+  const h = harness('on');
   const controller = createMusicController(h.media, h.options); await flush(); h.advance(1300);
   controller.setVolume(.37); h.advance(100);
   check(h.media.volume === .37, 'Dial changes the actual media volume');
@@ -243,7 +255,7 @@ const check = (condition, message) => { assert.ok(condition, message); checks +=
 }
 // A project film temporarily owns audio without overwriting the music preference.
 {
-  const h=harness(), controller=createMusicController(h.media,h.options);
+  const h=harness('on'), controller=createMusicController(h.media,h.options);
   await flush();h.advance(1300);
   const preferenceBefore=h.data.get(MUSIC_PREFERENCE_KEY);
   controller.setSuppressed(true);

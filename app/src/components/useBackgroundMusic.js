@@ -4,8 +4,9 @@ export const MUSIC_PREFERENCE_KEY = 'jay-background-music-v1';
 export const MUSIC_VOLUME = 0.14;
 export const MUSIC_VOLUME_KEY = 'jay-background-volume-v1';
 
+// Music starts off. It plays only after the visitor turns it on, and that choice is remembered.
 function preference(storage) {
-  try { return storage?.getItem(MUSIC_PREFERENCE_KEY) !== 'off'; } catch { return true; }
+  try { return storage?.getItem(MUSIC_PREFERENCE_KEY) === 'on'; } catch { return false; }
 }
 
 // play() is an asynchronous request, not proof of playback:
@@ -204,7 +205,7 @@ export function createMusicController(audio, options = {}) {
 
 export default function useBackgroundMusic(audioRef) {
   const controller = useRef(null);
-  const [state, setState] = useState({ enabled: true, status: 'pending', volume: MUSIC_VOLUME });
+  const [state, setState] = useState({ enabled: false, status: 'off', volume: MUSIC_VOLUME });
   useEffect(() => {
     controller.current = createMusicController(audioRef.current, { onChange: setState });
     return () => { controller.current?.dispose(); controller.current = null; };
