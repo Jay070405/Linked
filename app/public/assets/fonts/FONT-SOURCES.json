@@ -106,27 +106,5 @@
     "fontModified": false,
     "license": "SIL OFL 1.1",
     "licenseSha256": "1512ba278b24098e4113767e818ba8a65009bb3e364ae8137883349b9fe64aa7"
-  },
-  {
-    "file": "fonts/source-serif-4-italic-latin-variable.woff2",
-    "family": "Source Serif 4",
-    "style": "italic",
-    "weight": "200 900",
-    "sourceUrl": null,
-    "cssUrl": "https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap",
-    "licenseUrl": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourceserif4/OFL.txt",
-    "licenseFile": "fonts/SourceSerif4-OFL-1.1.txt",
-    "localPath": "source-serif-4-italic-latin-variable.woff2",
-    "url": "/assets/fonts/source-serif-4-italic-latin-variable.woff2",
-    "kind": "official-google-font",
-    "note": "Latin subset as served by Google Fonts, taken from the next/font build cache of the product-site prototype.",
-    "mimeType": "font/woff2",
-    "subset": "latin",
-    "bytes": 129940,
-    "sha256": "011e0ca2bd14c5dff94aa4c61121b8d057b95dbdbb2af621b175fed1059cfd5e",
-    "magic": "wOF2",
-    "fontModified": false,
-    "license": "SIL OFL 1.1",
-    "licenseSha256": "1512ba278b24098e4113767e818ba8a65009bb3e364ae8137883349b9fe64aa7"
   }
 ]

@@ -1,7 +1,6 @@
 /* Product case studies. Light, monochrome and editorial like the rest of the site, with one accent:
    the redline that ties a claim in the reading column to its evidence in the margin. Prefix: pp-. */
 @font-face{font-family:'Source Serif 4';src:url('/assets/fonts/source-serif-4-latin-variable.woff2') format('woff2');font-weight:200 900;font-style:normal;font-display:swap}
-@font-face{font-family:'Source Serif 4';src:url('/assets/fonts/source-serif-4-italic-latin-variable.woff2') format('woff2');font-weight:200 900;font-style:italic;font-display:swap}
 
 .pp-page{
   --pp-paper:#fafbfc;--pp-ink:#111114;--pp-pencil:#5d5f67;--pp-rule:#e1e2e6;--pp-strong:#c4c6cc;--pp-surface:#f1f2f4;
@@ -16,7 +15,8 @@
 /* zero-specificity resets, so every rule below wins without  */
 :where(.pp-page) :where(h1,h2,h3,p,ul,ol,dl,dd,figure){margin:0}
 :where(.pp-page) p{line-height:inherit}
-.pp-page em{font-style:italic}
+/* no italic font file: the few emphasised words use a synthesized slant instead of a 130 KB download */
+.pp-page em{font-style:italic;font-synthesis:style}
 .pp-page :focus-visible{outline:2px solid var(--pp-red);outline-offset:3px;border-radius:2px}
 .pp-page ::selection{background:#f2c9d4;color:var(--pp-ink)}
 .pp-section-label{font:500 15px/1.4 var(--pp-sans);color:var(--pp-pencil);padding-bottom:14px}
