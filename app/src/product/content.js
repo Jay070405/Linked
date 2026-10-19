@@ -23,12 +23,11 @@ export const PRODUCT_CASES = [
     title: 'Design-to-code readiness',
     // The case page leads with the question; the index row keeps the project's name.
     pageTitle: 'What an AI agent can’t recover from a Figma file',
-    summary: 'What breaks when coding agents build from Figma files, and what Figma could do about it.',
+    summary: 'What coding agents can and can’t recover from a Figma file, tested on 24 builds.',
     dek: 'I gave coding agents clean and messy versions of the same six screens, 24 builds in all. The messy files produced code that looked just as good. Only variable bindings decided whether that code followed the design system.',
-    kind: 'Benchmark and plugin',
-    when: 'Oct 2026 – now',
-    status: 'In progress',
-    proof: {label: 'Hypothesis', text: 'A file can look right and still be built wrong.'},
+    kind: 'Benchmark, ablation and plugin prototype',
+    when: 'Oct 2026',
+    proof: {label: 'Measured', text: 'Variable bindings alone took token-change coverage from 50% to 100% (6 of 6 builds).'},
   },
   {
     slug: 'roco',
