@@ -40,16 +40,17 @@ export const waypointFor = feet => AT_WAYPOINT.reduce((w, at, i) => (feet >= at 
 /* ---------- the hot bag ----------
    A small store the HUD reads and the modules write: warmth from 1 (just picked up) toward 0. Illustrative only:
    it cools while the visitor waits at the locked gate and when "Find the door" sends the courier the wrong way. */
-let bagState = {warmth: 1, note: null, delivered: false, gateSeconds: null};
+let bagState = {warmth: 1, note: null, notes: [], delivered: false, gateSeconds: null};
 const subs = new Set();
 const emit = () => subs.forEach(fn => fn());
 export const bag = {
   get: () => bagState,
-  reset() { bagState = {warmth: 1, note: null, delivered: false, gateSeconds: null}; emit(); },
+  reset() { bagState = {warmth: 1, note: null, notes: [], delivered: false, gateSeconds: null}; emit(); },
   cool(amount, note) {
     const warmth = Math.max(.2, bagState.warmth - amount);
     if (warmth === bagState.warmth && note === bagState.note) return;
-    bagState = {...bagState, warmth, note: note ?? bagState.note}; emit();
+    const notes = note && !bagState.notes.includes(note) ? [...bagState.notes, note] : bagState.notes;
+    bagState = {...bagState, warmth, note: note ?? bagState.note, notes}; emit();
   },
   set(patch) { bagState = {...bagState, ...patch}; emit(); },
   subscribe(fn) { subs.add(fn); return () => subs.delete(fn); },

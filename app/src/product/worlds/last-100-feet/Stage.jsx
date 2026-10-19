@@ -119,7 +119,7 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
     const target = () => legs.reduce((s, t, i) => s + (t ? t.progress : 0) * LEGS[i].feet, 0);
     // the HUD steps aside whenever a panel of the page slides under it
     const hudbar = node.querySelector('.w3-hudbar'), hud = hudbar?.firstElementChild;
-    const covers = () => [...node.querySelectorAll('.w3-sheet,.w3-col,.w3-photo,.w3-lock-col,.w3-run-end')];
+    const covers = () => [...node.querySelectorAll('.w3-sheet,.w3-col,.w3-photo,.w3-lock-col,.w3-leg-card,.w3-run-end')];
     let coverEls = covers(), coverTick = 0, covered = false;
     let shown = target(), angle = walkAt(shown).angle, z = null, zoomMul = .8, fyMul = null, acc = 0, still = 0, frame = 'stand', wp = -1;
     let last = {count: counts.map(() => null), stop: null, delivered: false};

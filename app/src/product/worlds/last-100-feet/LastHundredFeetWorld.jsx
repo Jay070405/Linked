@@ -61,7 +61,7 @@ function Delivered() {
   return <p className="w3-delivered" aria-live="polite">
     <span className="w3-delivered-dot" data-on={b.delivered || undefined} aria-hidden="true"/>
     {b.delivered
-      ? <>Delivered {warmthWord(b.warmth).toLowerCase()}, {TOTAL_FEET} ft from the stop.{b.gateSeconds ? ` You were through the gate in ${b.gateSeconds} s.` : ''}{b.note ? ` The bag cooled on the way: ${b.note.toLowerCase()}.` : ''}</>
+      ? <>Delivered {warmthWord(b.warmth).toLowerCase()}, {TOTAL_FEET} ft from the stop.{b.gateSeconds ? ` You were through the gate in ${b.gateSeconds} s.` : ''}{b.notes.length ? ` The bag cooled on the way: ${b.notes.join(', ').toLowerCase()}.` : ''}</>
       : <>{TOTAL_FEET} ft from the stop to this door, five turns.</>}
   </p>;
 }
