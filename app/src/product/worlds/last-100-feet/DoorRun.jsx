@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {gsap} from '../../v2/motion';
+import {PHONE, gsap, useMedia} from '../../v2/motion';
 import {Ask, Takeaway, useInputMode} from '../../v2/Try';
 import {GARAGE_GATE, GATE, STEPS, WAYPOINTS, feetBetween} from '../../v2/data/l100-route';
 import {DuskPlan, REGION} from './DuskPlan';
@@ -54,6 +54,7 @@ export default function DoorRun({reduced = false}) {
   const mode = useInputMode();
   const svg = useRef(null), mark = useRef(null), trail = useRef(null), route = useRef(null), tl = useRef(null);
   const view = useViewer();
+  const phone = useMedia(PHONE);
   const instant = reduced || mode.keyed.current;
 
   const atGarage = pick && feetBetween(pick, GARAGE_GATE) < 45;
@@ -146,7 +147,7 @@ export default function DoorRun({reduced = false}) {
         tabIndex={pick ? -1 : 0} onKeyDown={onKey} onFocus={() => !pick && !cross && setCross({x: GARAGE_GATE.x + 30, y: GARAGE_GATE.y + 40})}
         onClick={e => { if (e.detail) choose(toPlan(e)); }}>
         <defs><MarkGlow/></defs>
-        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd"/>
+        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone}/>
         {pick ? <>
           <polyline ref={trail} className={`w3-fd-trail is-${kind}`} points={run.map(p => `${p.x},${p.y}`).join(' ')}
             style={{strokeDasharray: length(run), strokeDashoffset: length(run)}}/>

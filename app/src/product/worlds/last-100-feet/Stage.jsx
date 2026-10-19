@@ -213,8 +213,8 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
       <Courier ref={courier} px={L.S}/>
       <div ref={labels} className="w3-labels">
         <span className="w3-label is-pin" data-x={GARAGE_GATE.x} data-y={GARAGE_GATE.y - 15}><span>1450 Elm St, where map apps drop the pin</span></span>
-        <span className="w3-label is-fence" data-x={GATE.x + 96} data-y={GATE.y - 132}><span>{GEOFENCE_FT} ft: the code can show</span></span>
-        <span className="w3-label is-car" data-x={206} data-y={480}><span>Your stop, curb rules checked</span></span>
+        <span className="w3-label is-fence" data-x={GATE.x} data-y={GATE.y - GEOFENCE_FT - 4}><span>{GEOFENCE_FT} ft: the code can show</span></span>
+        <span className="w3-label is-car" data-x={206} data-y={480}><span>You, at a verified stop</span></span>
         <span className="w3-label is-done" data-x={262} data-y={192}><span>Delivered</span></span>
       </div>
       <div className="w3-vignette"/>
