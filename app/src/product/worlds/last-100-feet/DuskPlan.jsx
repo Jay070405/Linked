@@ -1,6 +1,6 @@
 import {memo} from 'react';
 
-/* Jacaranda Court at dusk, from above: the prototype's site plan (d3-last-100-feet-prototype/src/components/
+/* Jacaranda Court from above, by day (the default) and at dusk (dark mode): the prototype's site plan (d3-last-100-feet-prototype/src/components/
    SitePlan.tsx: the same lots, roads, walks, buildings, stairs, trees and curb paint, in plan units, about a foot
    each) repainted for the hour after sunset. The sky's last light comes from the west, so every roof and tree throws
    a long shadow east; sodium streetlights and porch lights pool warm on the walks. Static: it is painted once and the
@@ -9,13 +9,30 @@ import {memo} from 'react';
 /** the rectangle of plan units this layer paints; outside it the page's own color is the land */
 export const REGION = {x: -360, y: -200, w: 980, h: 860};
 
-const C = {
-  land: '#1b2030', lot: '#1f2537', neighbor: '#191d2b', road: '#151925', roadEdge: '#2b3146', lane: '#3a4055',
-  sidewalk: '#262c3e', curb: '#3a4158', redCurb: '#c4473a', yellowCurb: '#b88d2f', lawn: '#1c2a2b', bed: '#203430',
-  gravel: '#252b3d', walk: '#3c4359', walkEdge: '#2d3346', roofLit: '#3d4560', roofMid: '#333a52', roofShade: '#272c40',
-  roofLine: '#4a5270', hip: '#4d5574', shadow: '#05070f', balcony: '#2d3349', stair: '#737a96', tree: '#1e3532',
-  treeLit: '#2c4a44', agave: '#2b423f', pool: '#1b5361', poolEdge: '#3f8d9c', deck: '#2a3044', car: '#2b3142',
-  carRoof: '#353c50', wall: '#3d445c', wallLine: '#545c7a', label: '#8e93ab', lamp: '#ffb25e',
+/** dusk: the dark mode. day: the prototype's own quiet basemap (SitePlan.tsx colors), the default. */
+export const PALETTES = {
+  dusk: {
+    land: '#1b2030', lot: '#1f2537', neighbor: '#191d2b', road: '#151925', roadEdge: '#2b3146', lane: '#3a4055',
+    sidewalk: '#262c3e', curb: '#3a4158', redCurb: '#c4473a', yellowCurb: '#b88d2f', lawn: '#1c2a2b', bed: '#203430',
+    gravel: '#252b3d', walk: '#3c4359', walkEdge: '#2d3346', roofLit: '#3d4560', roofMid: '#333a52', roofShade: '#272c40',
+    roofLine: '#4a5270', hip: '#4d5574', shadow: '#05070f', balcony: '#2d3349', stair: '#737a96', tree: '#1e3532',
+    treeLit: '#2c4a44', agave: '#2b423f', pool: '#1b5361', poolEdge: '#3f8d9c', deck: '#2a3044', car: '#2b3142',
+    wall: '#3d445c', wallLine: '#545c7a', label: '#8e93ab', number: '#9aa0bb', lamp: '#ffb25e', glass: '#9fb4dc2e',
+    mutedLit: '#2a3044', mutedMid: '#262c3e', mutedShade: '#222738', mutedHip: '#30364a', mutedLine: '#2c3245',
+    stairFill: '#2f3549', rail: '#7d84a0', post: '#8a8fa8', drive: '#2a3043', rollGate: '#5a6078',
+    shadowOpacity: .42, shadowDx: 26, shadowDy: 9, night: true,
+  },
+  day: {
+    land: '#ededeb', lot: '#f3f3f1', neighbor: '#e7e7e5', road: '#ffffff', roadEdge: '#d9d9d7', lane: '#e1e1df',
+    sidewalk: '#f7f7f6', curb: '#d2d2cf', redCurb: '#e2685a', yellowCurb: '#e3b33c', lawn: '#e2e7de', bed: '#d6decf',
+    gravel: '#efeeeb', walk: '#ffffff', walkEdge: '#dedede', roofLit: '#ffffff', roofMid: '#f7f7f5', roofShade: '#eeeeeb',
+    roofLine: '#cbcbc7', hip: '#e3e3e0', shadow: '#191919', balcony: '#e7e7e4', stair: '#8a8a86', tree: '#d3dccd',
+    treeLit: '#e1e7dc', agave: '#cad7d2', pool: '#dce8eb', poolEdge: '#bfd3d9', deck: '#f7f7f6', car: '#dadad7',
+    wall: '#e0e0dd', wallLine: '#bdbdb9', label: '#606060', number: '#606060', lamp: '#ffb25e', glass: '#19191929',
+    mutedLit: '#f1f1ef', mutedMid: '#ededeb', mutedShade: '#e7e7e5', mutedHip: '#dadad7', mutedLine: '#dadad7',
+    stairFill: '#ffffff', rail: '#9a9a96', post: '#8a8a86', drive: '#f0f0ee', rollGate: '#494949',
+    shadowOpacity: .1, shadowDx: 9, shadowDy: 7, night: false,
+  },
 };
 
 const BUILDINGS = [
@@ -31,11 +48,10 @@ const LAMPS = [[118, 446, 46, .9], [300, 446, 46, .9], [430, 446, 46, .8], [-6, 
   [70, 92, 26, .8], [212, 424, 22, 1], [222, 376, 30, .85], [222, 300, 28, .8], [218, 226, 28, .75], [244, 296, 18, .9],
   [258, 198, 16, 1], [252, 168, 12, .7], [252, 250, 12, .7], [200, 180, 12, .6], [200, 330, 12, .6], [252, 360, 12, .6],
   [366, 250, 34, .5]];
-const SHADOW = {dx: 26, dy: 9};
 
-function HipRoof({x, y, w, h, muted}) {
+function HipRoof({x, y, w, h, muted, c}) {
   const s = Math.min(w, h) / 2, horiz = w >= h;
-  const lit = muted ? '#2a3044' : C.roofLit, mid = muted ? '#262c3e' : C.roofMid, shade = muted ? '#222738' : C.roofShade;
+  const lit = muted ? c.mutedLit : c.roofLit, mid = muted ? c.mutedMid : c.roofMid, shade = muted ? c.mutedShade : c.roofShade;
   const r1 = {x: x + s, y: y + s}, r2 = horiz ? {x: x + w - s, y: y + s} : {x: x + s, y: y + h - s};
   const tl = `${x},${y}`, tr = `${x + w},${y}`, br = `${x + w},${y + h}`, bl = `${x},${y + h}`;
   const a = `${r1.x},${r1.y}`, b = `${r2.x},${r2.y}`;
@@ -52,22 +68,22 @@ function HipRoof({x, y, w, h, muted}) {
       <polygon points={`${tl} ${tr} ${a}`} fill={mid}/>
       <polygon points={`${bl} ${br} ${b}`} fill={shade}/>
     </>}
-    <path d={`M${tl} L${a} L${tr} M${bl} L${b} L${br} M${a} L${b}`} stroke={muted ? '#30364a' : C.hip} strokeWidth=".5" fill="none"/>
-    <rect x={x} y={y} width={w} height={h} fill="none" stroke={muted ? '#2c3245' : C.roofLine} strokeWidth=".6"/>
+    <path d={`M${tl} L${a} L${tr} M${bl} L${b} L${br} M${a} L${b}`} stroke={muted ? c.mutedHip : c.hip} strokeWidth=".5" fill="none"/>
+    <rect x={x} y={y} width={w} height={h} fill="none" stroke={muted ? c.mutedLine : c.roofLine} strokeWidth=".6"/>
   </g>;
 }
 
 /** a long shadow cast east from a box */
-const boxShadow = ({x, y, w, h}, k = 1) => {
-  const dx = SHADOW.dx * k, dy = SHADOW.dy * k;
+const boxShadow = ({x, y, w, h}, c, k = 1) => {
+  const dx = c.shadowDx * k, dy = c.shadowDy * k;
   return `${x + w},${y} ${x + w + dx},${y + dy} ${x + w + dx},${y + h + dy} ${x + dx},${y + h + dy} ${x},${y + h}`;
 };
 
-function Car({x, y, w, h, vertical, lit}) {
-  const glass = '#9fb4dc2e';
+function Car({x, y, w, h, vertical, c}) {
+  const glass = c.glass;
   return <g>
-    <rect x={x + 6} y={y + 3} width={w} height={h} rx="4" fill={C.shadow} opacity=".4"/>
-    <rect x={x} y={y} width={w} height={h} rx="4" fill={lit ? '#3b4256' : C.car}/>
+    <rect x={x + c.shadowDx * .25} y={y + 3} width={w} height={h} rx="4" fill={c.shadow} opacity={c.night ? .4 : .08}/>
+    <rect x={x} y={y} width={w} height={h} rx="4" fill={c.car}/>
     {vertical ? <>
       <rect x={x + 2.5} y={y + h * .22} width={w - 5} height={h * .18} rx="1.5" fill={glass}/>
       <rect x={x + 2.5} y={y + h * .66} width={w - 5} height={h * .13} rx="1.5" fill={glass}/>
@@ -78,23 +94,23 @@ function Car({x, y, w, h, vertical, lit}) {
   </g>;
 }
 
-function Stairs({x, y, w, h}) {
+function Stairs({x, y, w, h, c}) {
   const treads = Math.floor(h / 3);
   return <g>
-    <rect x={x} y={y} width={w} height={h} fill="#2f3549" stroke={C.stair} strokeWidth=".5"/>
-    {Array.from({length: treads - 1}, (_, i) => <line key={i} x1={x} x2={x + w} y1={y + (i + 1) * (h / treads)} y2={y + (i + 1) * (h / treads)} stroke={C.stair} strokeWidth=".35" opacity=".8"/>)}
+    <rect x={x} y={y} width={w} height={h} fill={c.stairFill} stroke={c.stair} strokeWidth=".5"/>
+    {Array.from({length: treads - 1}, (_, i) => <line key={i} x1={x} x2={x + w} y1={y + (i + 1) * (h / treads)} y2={y + (i + 1) * (h / treads)} stroke={c.stair} strokeWidth=".35" opacity=".8"/>)}
   </g>;
 }
 
-function Agave({x, y, r = 3.6}) {
+function Agave({x, y, r = 3.6, c}) {
   const pts = Array.from({length: 16}, (_, i) => { const a = i / 16 * Math.PI * 2, rr = i % 2 ? r * .38 : r; return `${x + Math.cos(a) * rr},${y + Math.sin(a) * rr}`; });
-  return <polygon points={pts.join(' ')} fill={C.agave}/>;
+  return <polygon points={pts.join(' ')} fill={c.agave}/>;
 }
 
-function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3"}) {
-  const R = REGION;
-  const id = n => `${ids}-${n}`;
-  return <svg className="w3-plan" viewBox={`${R.x} ${R.y} ${R.w} ${R.h}`} x={x} y={y} width={width} height={height} aria-hidden="true" focusable="false">
+function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3", palette = "day"}) {
+  const R = REGION, C = PALETTES[palette];
+  const id = n => `${ids}-${palette}-${n}`;
+  return <svg className={`w3-plan is-${palette}`} viewBox={`${R.x} ${R.y} ${R.w} ${R.h}`} x={x} y={y} width={width} height={height} aria-hidden="true" focusable="false">
     <defs>
       <radialGradient id={id("lamp")}>
         <stop offset="0" stopColor={C.lamp} stopOpacity=".55"/>
@@ -117,10 +133,10 @@ function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3"}) {
     <rect x={62} y={0} width={342} height={432} fill={C.lot}/>
     <rect x={404} y={10} width={180} height={418} fill={C.neighbor}/>
     <rect x={62} y={-60} width={360} height={62} fill={C.neighbor}/>
-    <polygon points={boxShadow({x: 418, y: 60, w: 120, h: 150}, .8)} fill={C.shadow} opacity=".35"/>
-    <polygon points={boxShadow({x: 418, y: 250, w: 120, h: 150}, .8)} fill={C.shadow} opacity=".35"/>
-    <HipRoof x={418} y={60} w={120} h={150} muted/>
-    <HipRoof x={418} y={250} w={120} h={150} muted/>
+    <polygon points={boxShadow({x: 418, y: 60, w: 120, h: 150}, C, .8)} fill={C.shadow} opacity={C.shadowOpacity * .8}/>
+    <polygon points={boxShadow({x: 418, y: 250, w: 120, h: 150}, C, .8)} fill={C.shadow} opacity={C.shadowOpacity * .8}/>
+    <HipRoof x={418} y={60} w={120} h={150} muted c={C}/>
+    <HipRoof x={418} y={250} w={120} h={150} muted c={C}/>
     <line x1={62} y1={6} x2={404} y2={6} stroke={C.wallLine} strokeWidth=".4" strokeDasharray="1 1.5"/>
 
     {/* Elm St along the bottom, Cypress Ave on the left */}
@@ -131,7 +147,7 @@ function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3"}) {
     <rect x={R.x} y={532} width={R.w} height={22} fill={C.sidewalk}/>
     <rect x={44} y={432} width={R.x + R.w - 44} height={20} fill={C.sidewalk}/>
     <rect x={44} y={R.y} width={18} height={652} fill={C.sidewalk}/>
-    <rect x={44} y={72} width={36} height={28} fill="#2a3043"/>
+    <rect x={44} y={72} width={36} height={28} fill={C.drive}/>
     <path d={`M44 ${R.y} V444 Q44 452 52 452 H${R.x + R.w}`} fill="none" stroke={C.curb} strokeWidth=".7"/>
     <rect x={238} y={450.2} width={62} height={3.6} rx=".8" fill={C.redCurb}/>
     <rect x={300} y={450.2} width={48} height={3.6} rx=".8" fill={C.yellowCurb}/>
@@ -139,10 +155,10 @@ function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3"}) {
     <line x1={-38} y1={R.y} x2={-38} y2={452} stroke={C.lane} strokeWidth=".7" strokeDasharray="12 8"/>
     {Array.from({length: 9}, (_, i) => <rect key={`cw${i}`} x={46} y={456 + i * 8} width={16} height={4} fill={C.lane}/>)}
     {Array.from({length: 8}, (_, i) => <rect key={`cv${i}`} x={-12 + i * 7} y={434} width={3.6} height={15} fill={C.lane}/>)}
-    <Car x={92} y={455} w={40} h={17}/>
-    <Car x={356} y={455} w={42} h={17}/>
-    <Car x={22} y={176} w={17} h={40} vertical/>
-    <Car x={22} y={262} w={17} h={38} vertical/>
+    <Car x={92} y={455} w={40} h={17} c={C}/>
+    <Car x={356} y={455} w={42} h={17} c={C}/>
+    <Car x={22} y={176} w={17} h={40} vertical c={C}/>
+    <Car x={22} y={262} w={17} h={38} vertical c={C}/>
 
     {/* lawns, the courtyard, the pool, the walks */}
     <rect x={62} y={412} width={342} height={17} fill={C.lawn}/>
@@ -154,7 +170,7 @@ function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3"}) {
     <rect x={198} y={150} width={14} height={180} rx="4" fill={C.bed}/>
     <rect x={232} y={206} width={8} height={40} rx="3" fill={C.bed}/>
     <rect x={336} y={188} width={60} height={112} rx="6" fill={C.deck}/>
-    <circle cx={366} cy={244} r={70} fill={`url(#${id("pool")})`}/>
+    {C.night ? <circle cx={366} cy={244} r={70} fill={`url(#${id("pool")})`}/> : null}
     <rect x={344} y={196} width={44} height={96} rx="8" fill={C.pool} stroke={C.poolEdge} strokeWidth=".6"/>
     <g fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path d="M226 431 V346 L248 324 V318 M226 346 L218 338 V150 M66 300 H132 M326 310 H400" stroke={C.walkEdge} strokeWidth="13"/>
@@ -162,28 +178,28 @@ function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3"}) {
     </g>
     <path d="M62 430.5 H213 M239 430.5 H404 M63.5 430 V100 M63.5 72 V2" stroke={C.wall} strokeWidth="3" fill="none"/>
     <path d="M62 430.5 H213 M239 430.5 H404 M63.5 430 V100 M63.5 72 V2" stroke={C.wallLine} strokeWidth=".4" fill="none"/>
-    <rect x={209} y={426} width={4} height={4} fill="#8a8fa8"/>
-    <rect x={62} y={72} width={18} height={28} fill="#2a3043"/>
-    <rect x={76.5} y={71} width={3.5} height={30} fill="#5a6078"/>
+    <rect x={209} y={426} width={4} height={4} fill={C.post}/>
+    <rect x={62} y={72} width={18} height={28} fill={C.drive}/>
+    <rect x={76.5} y={71} width={3.5} height={30} fill={C.rollGate}/>
 
     {/* long shadows east, then the buildings */}
-    <g fill={C.shadow} opacity=".42">
-      {BUILDINGS.map(b => <polygon key={b.id} points={boxShadow(b)}/>)}
-      {TREES.map(([x, y, r], i) => <ellipse key={i} cx={x + r * .9} cy={y + r * .35} rx={r * 1.7} ry={r * .8}/>)}
+    <g fill={C.shadow} opacity={C.shadowOpacity}>
+      {BUILDINGS.map(b => <polygon key={b.id} points={boxShadow(b, C)}/>)}
+      {TREES.map(([x, y, r], i) => <ellipse key={i} cx={x + r * (C.night ? .9 : .35)} cy={y + r * (C.night ? .35 : .3)} rx={r * (C.night ? 1.7 : 1)} ry={r * (C.night ? .8 : .92)}/>)}
     </g>
-    {BUILDINGS.map(b => <HipRoof key={b.id} {...b}/>)}
-    <rect x={196} y={154} width={8} height={126} fill={C.balcony}/><line x1={204} y1={154} x2={204} y2={280} stroke="#7d84a0" strokeWidth=".4"/>
-    <rect x={196} y={304} width={8} height={106} fill={C.balcony}/><line x1={204} y1={304} x2={204} y2={410} stroke="#7d84a0" strokeWidth=".4"/>
-    <rect x={248} y={154} width={8} height={144} fill={C.balcony}/><line x1={248} y1={154} x2={248} y2={298} stroke="#7d84a0" strokeWidth=".4"/>
-    <rect x={248} y={322} width={8} height={88} fill={C.balcony}/><line x1={248} y1={322} x2={248} y2={410} stroke="#7d84a0" strokeWidth=".4"/>
-    <Stairs x={241} y={258} w={14} h={34}/>
-    <Stairs x={241} y={160} w={14} h={30}/>
-    <Stairs x={197} y={236} w={14} h={30}/>
-    <Stairs x={197} y={344} w={14} h={30}/>
-    <Stairs x={241} y={366} w={14} h={30}/>
+    {BUILDINGS.map(b => <HipRoof key={b.id} {...b} c={C}/>)}
+    <rect x={196} y={154} width={8} height={126} fill={C.balcony}/><line x1={204} y1={154} x2={204} y2={280} stroke={C.rail} strokeWidth=".4"/>
+    <rect x={196} y={304} width={8} height={106} fill={C.balcony}/><line x1={204} y1={304} x2={204} y2={410} stroke={C.rail} strokeWidth=".4"/>
+    <rect x={248} y={154} width={8} height={144} fill={C.balcony}/><line x1={248} y1={154} x2={248} y2={298} stroke={C.rail} strokeWidth=".4"/>
+    <rect x={248} y={322} width={8} height={88} fill={C.balcony}/><line x1={248} y1={322} x2={248} y2={410} stroke={C.rail} strokeWidth=".4"/>
+    <Stairs x={241} y={258} w={14} h={34} c={C}/>
+    <Stairs x={241} y={160} w={14} h={30} c={C}/>
+    <Stairs x={197} y={236} w={14} h={30} c={C}/>
+    <Stairs x={197} y={344} w={14} h={30} c={C}/>
+    <Stairs x={241} y={366} w={14} h={30} c={C}/>
 
     {/* trees and agaves, with the last light on their west side */}
-    {AGAVES.map(([x, y], i) => <Agave key={i} x={x} y={y}/>)}
+    {AGAVES.map(([x, y], i) => <Agave key={i} x={x} y={y} c={C}/>)}
     {TREES.map(([x, y, r], i) => <g key={i}>
       <circle cx={x - r * .35} cy={y + r * .1} r={r * .68} fill={C.tree}/>
       <circle cx={x + r * .32} cy={y - r * .12} r={r * .72} fill={C.tree}/>
@@ -191,20 +207,22 @@ function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3"}) {
       <circle cx={x - r * .3} cy={y - r * .25} r={r * .42} fill={C.treeLit}/>
     </g>)}
 
-    {/* the light: sky wash, then lamps */}
-    <rect x={R.x} y={R.y} width={R.w} height={R.h} fill={`url(#${id("sky")})`}/>
-    <g style={{mixBlendMode: 'screen'}}>
-      {LAMPS.map(([x, y, r, k], i) => <circle key={i} cx={x} cy={y} r={r} fill={`url(#${id("lamp")})`} opacity={k}/>)}
-    </g>
-    <g fill="#ffe2b0">
-      {LAMPS.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r > 30 ? 1.6 : 1.1}/>)}
-    </g>
+    {/* the light: at dusk a sky wash, then lamps; by day only the sun's crisp shadows */}
+    {C.night ? <>
+      <rect x={R.x} y={R.y} width={R.w} height={R.h} fill={`url(#${id("sky")})`}/>
+      <g style={{mixBlendMode: 'screen'}}>
+        {LAMPS.map(([x, y, r, k], i) => <circle key={i} cx={x} cy={y} r={r} fill={`url(#${id("lamp")})`} opacity={k}/>)}
+      </g>
+      <g fill="#ffe2b0">
+        {LAMPS.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r > 30 ? 1.6 : 1.1}/>)}
+      </g>
+    </> : null}
 
     {labels ? <g className="w3-plan-text" fill={C.label} fontWeight="650">
       <text x={104} y={516} fontSize="11">Elm St</text>
       <text x={0} y={0} fontSize="11" transform="translate(-6 300) rotate(-90)">Cypress Ave</text>
       <text x={86} y={124} fontSize="10">Garage</text>
-      {BUILDINGS.map(b => <text key={b.id} x={b.id === '5' ? b.x + b.w * .62 : b.x + b.w / 2} y={b.y + b.h / 2} fontSize="15" fontWeight="750" textAnchor="middle" dominantBaseline="central" fill="#9aa0bb">{b.id}</text>)}
+      {BUILDINGS.map(b => <text key={b.id} x={b.id === '5' ? b.x + b.w * .62 : b.x + b.w / 2} y={b.y + b.h / 2} fontSize="15" fontWeight="750" textAnchor="middle" dominantBaseline="central" fill={C.number}>{b.id}</text>)}
     </g> : null}
   </svg>;
 }

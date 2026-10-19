@@ -48,10 +48,10 @@ function RouteLayer({width, height, gateOpen}) {
     <circle className="w3-fence" cx={GATE.x} cy={GATE.y} r={GEOFENCE_FT}/>
     {/* the courier's car at the verified stop, parked facing west, lights on */}
     <g className="w3-car">
-      <path d="M184 458 L138 444 L138 486 L184 470 Z" fill="url(#w3-headlight)" opacity=".7"/>
-      <circle cx="229" cy="463.5" r="7" fill="url(#w3-taillight)"/>
-      <rect x="190" y="458" width="44" height="17" rx="4" fill="#04060d" opacity=".4"/>
-      <rect x="184" y="455" width="44" height="17" rx="4" fill="#4a5168"/>
+      <g className="w3-carglow"><path d="M184 458 L138 444 L138 486 L184 470 Z" fill="url(#w3-headlight)" opacity=".7"/>
+      <circle cx="229" cy="463.5" r="7" fill="url(#w3-taillight)"/></g>
+      <rect x="187" y="458" width="44" height="17" rx="4" fill="#04060d" opacity=".18"/>
+      <rect className="w3-car-body" x="184" y="455" width="44" height="17" rx="4"/>
       <rect x={184 + 44 * .62} y="457.5" width={44 * .17} height="12" rx="1.5" fill="#a9bde34d"/>
       <rect x={184 + 44 * .2} y="457.5" width={44 * .12} height="12" rx="1.5" fill="#a9bde34d"/>
       <rect x="184.6" y="457" width="1.4" height="3" rx=".5" fill="#fff4d6"/><rect x="184.6" y="467" width="1.4" height="3" rx=".5" fill="#fff4d6"/>
@@ -207,7 +207,8 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
   return <div ref={stage} className="w3-stage" data-at="hero">
     <div className="w3-world" aria-hidden="true">
       <div ref={cam} className="w3-cam" style={{width: pw, height: ph}}>
-        <DuskPlan width={pw} height={ph}/>
+        <DuskPlan width={pw} height={ph} palette="day"/>
+        <DuskPlan width={pw} height={ph} palette="dusk"/>
         <RouteLayer width={pw} height={ph} gateOpen={gateOpen}/>
       </div>
       <Courier ref={courier} px={L.S}/>

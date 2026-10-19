@@ -55,7 +55,8 @@ export default function GateCode({reduced = false}) {
     <div className="w3-gc-grid">
       <div className="w3-gc-map">
         <svg viewBox={`${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}`} role="img" aria-label={`Site plan around the Elm St gate. The courier is ${ft} feet from the gate, ${inside ? 'inside' : 'outside'} the ${GEOFENCE_FT}-foot circle where the code can show.`}>
-          <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3gc" labels={false}/>
+          <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3gc" labels={false} palette="day"/>
+          <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3gc" labels={false} palette="dusk"/>
           <circle className={`w3-gc-fence${inside ? ' is-in' : ''}`} cx={GATE.x} cy={GATE.y} r={GEOFENCE_FT}/>
           <g className="w3-gc-gate"><rect x={GATE.x - 10} y={GATE.y - 10} width="20" height="20" rx="5.5"/><path d={`M${GATE.x - 5} ${GATE.y + 5} V${GATE.y - 5} M${GATE.x + 5} ${GATE.y + 5} V${GATE.y - 5} M${GATE.x - 5} ${GATE.y - 2.5} H${GATE.x + 5} M${GATE.x - 1.7} ${GATE.y - 2.5} V${GATE.y + 5} M${GATE.x + 1.7} ${GATE.y - 2.5} V${GATE.y + 5}`}/></g>
           <g className="w3-gc-dot" transform={`translate(${dot.x} ${dot.y})`}><circle r="14"/><circle r="8"/><circle r="5.5"/></g>

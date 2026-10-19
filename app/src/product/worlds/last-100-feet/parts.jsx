@@ -1,6 +1,7 @@
 import {createContext, Suspense, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {scrollRootOf} from '../../v2/motion';
 import {StopGlyph} from './Hud';
+import {ThemeContext} from './theme';
 import {AI, photoLarge, photoSmall, shot} from './content';
 
 /* Small pieces the walk is built from: the step label (the route's own token), a resident's photo card, a phone
@@ -14,6 +15,7 @@ export const useViewer = () => useContext(ViewerContext);
 export function PhotoViewer({children}) {
   const dialog = useRef(null), opener = useRef(null);
   const [item, setItem] = useState(null);
+  const theme = useContext(ThemeContext);
   const open = useCallback((next, from) => { opener.current = from || document.activeElement; setItem(next); }, []);
   useEffect(() => {
     const d = dialog.current;
@@ -22,7 +24,7 @@ export function PhotoViewer({children}) {
   const close = () => { dialog.current?.close(); };
   return <ViewerContext.Provider value={open}>
     {children}
-    <dialog ref={dialog} className="w3-viewer" aria-label={item?.title || 'Photo'}
+    <dialog ref={dialog} className={`w3-viewer is-${theme === 'dark' ? 'dusk' : 'day'}`} aria-label={item?.title || 'Photo'}
       onClose={() => { setItem(null); opener.current?.focus?.({preventScroll: true}); }}
       onClick={e => { if (e.target === dialog.current) close(); }}>
       {item ? <figure>

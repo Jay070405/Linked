@@ -147,7 +147,8 @@ export default function DoorRun({reduced = false}) {
         tabIndex={pick ? -1 : 0} onKeyDown={onKey} onFocus={() => !pick && !cross && setCross({x: GARAGE_GATE.x + 30, y: GARAGE_GATE.y + 40})}
         onClick={e => { if (e.detail) choose(toPlan(e)); }}>
         <defs><MarkGlow/></defs>
-        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone}/>
+        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone} palette="day"/>
+        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone} palette="dusk"/>
         {pick ? <>
           <polyline ref={trail} className={`w3-fd-trail is-${kind}`} points={run.map(p => `${p.x},${p.y}`).join(' ')}
             style={{strokeDasharray: length(run), strokeDashoffset: length(run)}}/>

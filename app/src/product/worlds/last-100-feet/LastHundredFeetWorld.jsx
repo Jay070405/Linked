@@ -9,6 +9,7 @@ import {ArrowDown, ArrowRight, Info} from '../../v2/icons';
 import {LEGS} from '../../v2/data/l100-route';
 import Stage from './Stage';
 import Hud from './Hud';
+import {ThemeContext, ThemeToggle, useCaseTheme} from './theme';
 import GateLock from './GateLock';
 import {Beat, Decision, Deferred, PhoneShot, PhotoCard, PhotoViewer, Step} from './parts';
 import {AI, BEATS, CHANGES, DECISIONS, LEG_CARDS, NUMBERS, ROUNDS, STOPS, TASKS} from './content';
@@ -70,6 +71,7 @@ export default function LastHundredFeetWorld({item, reduced}) {
   const root = useRef(null);
   const size = useViewport(root);
   const [plain, setPlain] = useState(false);
+  const {theme, toggle: toggleTheme, fading} = useCaseTheme(reduced);
   const [gate, setGate] = useState('closed');     // closed | open | skipped
   const [reached, setReached] = useState(0);
   const next = nextCase(item.slug);
@@ -111,7 +113,8 @@ export default function LastHundredFeetWorld({item, reduced}) {
     scrollToId(to ? 'w3-curb' : 'w3-top', {preventDefault() {}, detail: 0});
   };
 
-  return <article ref={root} id="w3-top" className={`w3${plain ? ' is-plain' : ''}${reduced ? ' is-reduced' : ''}`} lang="en" data-nav-tone="dark" tabIndex={-1}>
+  return <ThemeContext.Provider value={theme}><article ref={root} id="w3-top" className={`w3${plain ? ' is-plain' : ''}${reduced ? ' is-reduced' : ''}${fading ? ' is-theming' : ''}`} lang="en" data-theme={theme} data-nav-tone={theme === 'dark' ? 'dark' : 'light'} tabIndex={-1}>
+    <ThemeToggle theme={theme} onToggle={toggleTheme}/>
     <a className="w3-skipwalk" href="#w3-curb" onClick={togglePlain}>{plain ? 'Take the walk instead' : 'Skip the walk: read the case plainly'}</a>
     <PhotoViewer>
       <div className="w3-run">
@@ -341,5 +344,5 @@ export default function LastHundredFeetWorld({item, reduced}) {
       </Go>
     </nav>
     <div className="w3-foot"><ProductFooter/></div>
-  </article>;
+  </article></ThemeContext.Provider>;
 }

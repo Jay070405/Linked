@@ -26,12 +26,14 @@ export default function Hud({reached, onJump, plainLink}) {
   const word = b.delivered ? `Delivered ${warmthWord(b.warmth).toLowerCase()}` : warmthWord(b.warmth);
   const temp = Math.round(b.warmth * 100);
   return <aside className="w3-hud" aria-label="Your delivery" data-warmth={b.warmth >= .62 ? 'hot' : b.warmth >= .42 ? 'cooling' : 'cold'}>
+    <div className="w3-hud-pill">
     <p className="w3-order"><span className="w3-order-dot" aria-hidden="true"/><span className="w3-order-text">{ADDRESS.resident} · Apt {ADDRESS.unit} · 1 of 2</span></p>
     <div className="w3-bag">
       <span className="w3-bag-icon"><BagIcon/></span>
       <span className="w3-bag-meter" aria-hidden="true"><span style={{transform: `scaleX(${b.warmth})`}}/></span>
       <span className="w3-bag-word" aria-live="polite"><span className="w3-sr">Hot bag: </span>{word}</span>
       <span className="w3-sr">{temp >= 85 ? '' : b.note ? ` (${b.note})` : ''}</span>
+    </div>
     </div>
     {b.note ? <p className="w3-bag-note" aria-hidden="true">{b.note}</p> : null}
     <nav className="w3-rail" aria-label="Stops on the route">
