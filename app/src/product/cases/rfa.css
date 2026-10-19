@@ -45,19 +45,6 @@
 .rfa-flat-bar i{display:block;flex:0 0 auto;width:calc(var(--w) * (100% - 52px));height:10px;border-radius:5px;background:var(--pp-ink);transform-origin:0 50%}
 .rfa-flat-bar b{font:600 14px/1 var(--pp-sans);font-variant-numeric:tabular-nums}
 
-.rfa-dots svg{display:block;width:100%;height:auto;overflow:visible}
-.rfa-dots-grid path{stroke:var(--pp-rule);stroke-width:1}
-.rfa-dots-grid text{font:500 12px var(--pp-sans);fill:var(--pp-pencil);text-anchor:end}
-.rfa-dots-split{stroke:var(--pp-ink);stroke-width:1;stroke-dasharray:3 4}
-.rfa-dots-tag{font:600 13px var(--pp-sans);fill:var(--pp-ink)}
-.rfa-dot{fill:var(--pp-paper);stroke:var(--pp-ink);stroke-width:1.6}
-.rfa-dots-group.is-bound .rfa-dot{fill:var(--pp-ink)}
-.rfa-dots-median{stroke:var(--pp-pencil);stroke-width:2;stroke-linecap:round}
-.rfa-dots-name{font:600 13.5px var(--pp-sans);fill:var(--pp-ink);text-anchor:middle}
-.rfa-dots-med{font:500 12.5px var(--pp-sans);fill:var(--pp-pencil);text-anchor:middle}
-
-.rfa-evidence{display:grid;gap:14px}
-.rfa-evidence .pp-wiring{margin-top:10px}
 
 .rfa-insight{display:grid;gap:22px;justify-items:start;max-width:62rem;padding:clamp(28px,3.4vw,48px);border-radius:24px;background:var(--pp-surface)}
 .rfa-insight p{font:650 clamp(26px,2.6vw,40px)/1.15 var(--pp-sans);letter-spacing:-.03em;text-wrap:balance}

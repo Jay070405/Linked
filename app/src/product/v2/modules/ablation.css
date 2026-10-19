@@ -1,0 +1,61 @@
+/* D1 Result 2, the ablation (AblationChart.jsx). Prefix: ab-. The chart keeps the static version's drawing; the dots
+   become targets, a tooltip shows the build, chips pick out one level. */
+.ab{display:grid;gap:18px}
+.ab-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}
+.ab-chips button{min-width:48px}
+.ab-plot{position:relative}
+.ab-plot>svg{display:block;width:100%;height:auto;overflow:visible;-webkit-tap-highlight-color:transparent}
+.ab-grid path{stroke:var(--pp-rule);stroke-width:1}
+.ab-grid text{font:500 12px var(--pp-sans);fill:var(--pp-pencil);text-anchor:end}
+.ab-split{stroke:var(--pp-ink);stroke-width:1;stroke-dasharray:3 4}
+.ab-tag{font:600 13px var(--pp-sans);fill:var(--pp-ink)}
+.ab-median{stroke:var(--pp-pencil);stroke-width:2;stroke-linecap:round;transition:opacity 200ms ease}
+.ab-name{font:600 13.5px var(--pp-sans);fill:var(--pp-ink);text-anchor:middle;transition:opacity 200ms ease}
+.ab-med{font:500 12.5px var(--pp-sans);fill:var(--pp-pencil);text-anchor:middle;transition:opacity 200ms ease}
+.ab-group.is-dim :is(.ab-median,.ab-name,.ab-med){opacity:.25}
+.ab-hit{cursor:pointer;outline:none}
+.ab-hit.is-dim{cursor:default;pointer-events:none}
+.ab-target{fill:transparent}
+.ab-dot{fill:var(--pp-paper);stroke:var(--pp-ink);stroke-width:1.6;transform-box:fill-box;transform-origin:50% 50%;transition:transform 160ms var(--v2-out),stroke-width 160ms ease}
+.ab-hit.is-bound .ab-dot{fill:var(--pp-ink)}
+.ab-hit.is-dim{opacity:.14}
+.ab-hit{transition:opacity 200ms ease}
+.ab-hit.is-on .ab-dot{transform:scale(1.45);stroke-width:2}
+.ab-hit:focus-visible .ab-target{stroke:var(--pp-red);stroke-width:2;fill:none}
+
+/* the tooltip: a white card with the build's render, above its dot */
+.ab-tip{position:absolute;z-index:3;width:0;height:0;pointer-events:none}
+.ab-tip-card{position:absolute;left:0;bottom:16px;display:flex;gap:12px;width:max-content;max-width:min(400px,86vw);padding:8px 14px 8px 8px;border-radius:14px;background:var(--v2-card);box-shadow:0 0 0 1px #1111141f,0 18px 40px -16px #11111459;
+  --oy:100%;transform:translateX(-50%);transform-origin:50% var(--oy);animation:ab-tip-in 150ms var(--v2-out)}
+.ab-tip.is-left .ab-tip-card{transform:translateX(-24px);transform-origin:24px var(--oy)}
+.ab-tip.is-right .ab-tip-card{transform:translateX(calc(-100% + 24px));transform-origin:calc(100% - 24px) var(--oy)}
+.ab-tip.is-below .ab-tip-card{--oy:0%;bottom:auto;top:16px}
+.ab-tip.is-instant .ab-tip-card{animation:none}
+@keyframes ab-tip-in{from{opacity:0;scale:.96}to{opacity:1;scale:1}}
+.ab-tip-card img{flex:none;display:block;width:auto;height:118px;border-radius:8px;box-shadow:0 0 0 1px #11111414;background:var(--pp-surface)}
+.ab-tip-text{display:grid;align-content:start;gap:3px;min-width:168px;font:450 13.5px/1.35 var(--pp-sans);color:var(--pp-pencil)}
+.ab-tip-id{font:650 15px/1.25 var(--pp-sans);color:var(--pp-ink)}
+.ab-tip-share{margin-top:6px;color:var(--pp-ink)}
+.ab-tip-share b{font-weight:650;font-variant-numeric:tabular-nums}
+.ab-tip-text ul{display:grid;grid-template-columns:repeat(2,auto);justify-content:start;gap:2px 14px;margin:6px 0 0;padding:0;list-style:none}
+.ab-tip-text li{display:flex;align-items:center;gap:5px}
+.ab-tip-text li.is-ok{color:var(--pp-ink)}
+.ab-tip-text li.is-na{opacity:.6}
+.ab-na{display:inline-block;width:13px;text-align:center}
+.ab .v2-caption{margin-top:0}
+
+@media(max-width:760px){
+  .ab-tip-card img{height:84px}
+  .ab-tip-text{min-width:140px;font-size:12.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ab-tip-card{animation:none}
+  .ab-dot{transition:none}
+  .ab-hit.is-on .ab-dot{transform:none;stroke-width:3}
+}
+.quiet .ab-tip-card{animation:none}
+/* phones: the build shows in a panel under the chart instead of over it */
+.ab-plot>svg.is-narrow .ab-med{font-size:11.5px}
+.ab-detail{min-height:118px}
+.ab-detail .ab-tip-card{position:static;transform:none;width:100%;max-width:none;animation:none;box-shadow:0 0 0 1px #1111141f}
+.ab-detail-empty{display:grid;place-items:center;min-height:118px;margin:0;border-radius:14px;border:1px dashed var(--pp-strong);font:450 14px/1.4 var(--pp-sans);color:var(--pp-pencil)}

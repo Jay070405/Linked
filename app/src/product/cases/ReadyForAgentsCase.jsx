@@ -28,6 +28,7 @@ import './rfa.css';
 const A = '/assets/product/ready-for-agents/';
 // Interactive modules load when their place on the page comes near (v2/Try Deferred).
 const TryFinding = lazy(() => import('../v2/modules/TryFinding'));
+const AblationChart = lazy(() => import('../v2/modules/AblationChart'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
@@ -43,15 +44,6 @@ const NUMBERS = [
   {value: 9, unit: 'of 9', label: 'Followed every token change', note: 'Builds from a raw file with only variables added'},
   {value: 50, unit: '%', label: 'Median that reached the code without variables', note: '18 builds; none followed the whole change'},
 ];
-
-// Theme propagation per build (share of a 4-token change that reached the code), from results.md.
-const PROPAGATION = [
-  {id: 'L0', name: 'L0 Raw', values: [67, 67, 50, 25, 47, 50, 25, 50, 67], bound: false},
-  {id: 'L1', name: 'L1 Structured', values: [67, 67, 50, 25, 50, 25, 25, 25, 67], bound: false},
-  {id: 'L0V', name: 'L0V Raw + variables', values: Array(9).fill(100), bound: true},
-  {id: 'L2', name: 'L2 Systematized', values: Array(10).fill(100), bound: true},
-];
-const median = v => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 
 // Pre-registered measures, medians of all scored builds per level (n = 9, 9, 10).
 const FLAT = [
@@ -162,46 +154,6 @@ function FlatResult({reduced}) {
       </div>)}
     </div>
     <figcaption className="v2-caption"><Ev label="Measured"/><span>Medians of 9, 9 and 10 builds. These checks hit a ceiling, so the honest reading is “no detectable difference”, not “identical”.</span></figcaption>
-  </figure>;
-}
-
-/** The ablation as every build at once: how much of an injected token change reached each build's code. */
-function PropagationDots({reduced}) {
-  const root = useRef(null);
-  const W = 760, H = 372, top = 48, bottom = 300, col = 160, x0 = 120;
-  const y = v => bottom - (bottom - top) * v / 100;
-  useLayoutEffect(() => {
-    const node = root.current;
-    if (!node || reduced) return undefined;
-    const ctx = gsap.context(() => {
-      const dots = node.querySelectorAll('.rfa-dot');
-      gsap.from(dots, {attr: {cy: bottom}, opacity: 0, duration: .9, ease: 'v2out', stagger: {each: .02, from: 'start'},
-        scrollTrigger: {trigger: node, scroller: scrollerOf(node), start: 'top 75%', once: true}});
-    }, node);
-    return () => ctx.revert();
-  }, [reduced]);
-  return <figure ref={root} className="rfa-dots" data-reveal="">
-    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="rfa-dots-title">
-      <title id="rfa-dots-title">Share of a four-token change that reached the code, per build. Without variables, L0 median 50% and L1 median 50%, no build above 67%. With variables bound, all 9 L0V builds and all 10 L2 builds at 100%.</title>
-      {[0, 25, 50, 75, 100].map(v => <g key={v} className="rfa-dots-grid"><path d={`M${x0 - 20} ${y(v)} H${W - 10}`}/><text x={x0 - 30} y={y(v) + 4}>{v}%</text></g>)}
-      <path className="rfa-dots-split" d={`M${x0 + col * 2 - 10} ${top - 34} V${bottom + 8}`}/>
-      <text className="rfa-dots-tag" x={x0 + col * 2 + 4} y={top - 22}>Variables bound</text>
-      {PROPAGATION.map((g, gi) => {
-        const cx = x0 + 50 + gi * col, m = median(g.values);
-        const counts = {};
-        return <g key={g.id} className={`rfa-dots-group${g.bound ? ' is-bound' : ''}`}>
-          <path className="rfa-dots-median" d={`M${cx - 44} ${y(m)} H${cx + 44}`}/>
-          {g.values.map((v, i) => {
-            const k = (counts[v] = (counts[v] || 0) + 1) - 1, spread = g.values.filter(o => o === v).length;
-            const dx = (k - (spread - 1) / 2) * 9.5;
-            return <circle key={i} className="rfa-dot" cx={cx + dx} cy={y(v)} r="5.5"/>;
-          })}
-          <text className="rfa-dots-name" x={cx} y={bottom + 30}>{g.name}</text>
-          <text className="rfa-dots-med" x={cx} y={bottom + 50}>median {m}%</text>
-        </g>;
-      })}
-    </svg>
-    <figcaption className="v2-caption"><Ev label="Measured"/><span>Each dot is one build: how much of a four-token change, injected after the build, reached its code. An exploratory measure I added after round 1’s first results.</span></figcaption>
   </figure>;
 }
 
@@ -381,7 +333,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
           <h3 className="rfa-h3">Only variables carried the system’s names</h3>
           <p>L0V is the raw file with variable bindings added and nothing else: no auto layout, no components, meaningless layer names. Every one of those builds followed the whole change. Without variables, agents invented their own names, and a change reached only the ones they happened to guess.</p>
         </div>
-        <PropagationDots reduced={reduced}/>
+        <Deferred minHeight={460} label="Chart of every build"><AblationChart reduced={reduced}/></Deferred>
       </div>
 
       <div className="rfa-insight" data-reveal="">
