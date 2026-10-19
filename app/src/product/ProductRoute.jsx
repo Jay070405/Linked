@@ -4,7 +4,7 @@ import ForPage from './ForPage';
 import DesignToCodeCase from './cases/DesignToCodeCase';
 import AtelierCase from './worlds/atelier/AtelierWorld';
 import ReadyForAgentsCase from './worlds/ready-for-agents/ReadyForAgentsWorld';
-import ChooseNotToLoseCase from './cases/ChooseNotToLoseCase';
+import ChooseNotToLoseCase from './worlds/choose-not-to-lose/ChooseNotToLoseWorld';
 import LastHundredFeetCase from './worlds/last-100-feet/LastHundredFeetWorld';
 import {PRODUCT_HOME} from './content';
 import './product.css';
