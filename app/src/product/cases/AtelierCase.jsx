@@ -6,7 +6,7 @@ import CaseHero from '../v2/CaseHero';
 import NumberStrip from '../v2/NumberStrip';
 import Scrolly from '../v2/Scrolly';
 import Decisions from '../v2/Decisions';
-import BeforeAfter from '../v2/BeforeAfter';
+import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
@@ -16,45 +16,47 @@ import {PHONE, useMedia, useReveals} from '../v2/motion';
 import '../v2/v2.css';
 import './atelier.css';
 
-// Sources: cases/d2-atelier/BRIEF.md and d2-atelier-prototype/README.md + DESIGN.md (Oct 19, 2026).
+// Sources: cases/d2-atelier/BRIEF.md and d2-atelier-prototype/README.md + DESIGN.md (Oct 19, 2026; round 2, after a
+// model-assisted design review).
 // Every number below comes from the prototype or the brief. Research is still a plan: illustrator pain points are
 // labeled Hypothesis until Jay's interviews on test day.
 
 const ART = '/proto/atelier/art/';
 
+// Round 2 of the prototype: five named steps ("Step n of 5") with a saved-draft status, then publish and share.
 const STEPS = [
-  {id: 'upload', screen: 'upload', label: 'Choose a work', title: 'Start from the finished piece',
-    alt: 'Choose an artwork: a grid of eight paintings with their pixel sizes',
-    body: <p>A drop begins with the original file, not a product form. The sample archive is eight of my own paintings, each listed with its real pixel&nbsp;size.</p>},
-  {id: 'check', screen: 'check', label: 'Print check', title: 'Check the print before anything else',
-    alt: 'Print check: sharp up to 8 by 10 inches, with paper sizes compared on a ruler',
-    body: <p>Atelier reads the file’s pixels. <em>The Blue Hour</em> is 4,096&nbsp;×&nbsp;2,160&nbsp;px, so it prints sharp up to 8&nbsp;×&nbsp;10&nbsp;in at 300&nbsp;dpi. Bigger sizes stay on the ruler, greyed out, and a tap explains why.</p>},
+  {id: 'upload', screen: 'upload', label: 'Artwork', title: 'Start from the finished piece',
+    alt: 'Step 1 of 5, Artwork: a grid of eight paintings with their pixel sizes',
+    body: <p>A drop begins with the original file, not a product form. The sample archive is eight of my own paintings, each listed with its real pixel&nbsp;size. Every step is named, and the draft saves as you go.</p>},
+  {id: 'check', screen: 'check', label: 'Print quality', title: 'Check the print before anything else',
+    alt: 'Step 2 of 5, Print check: offer prints up to 10 by 8 inches, sharp at 300 dpi, with the details folded away',
+    body: <p>Atelier reads the file’s pixels and leads with the answer. <em>The Blue Hour</em> is 4,096&nbsp;×&nbsp;2,160&nbsp;px, so it can be sold up to 10&nbsp;×&nbsp;8&nbsp;in at 300&nbsp;dpi, whole, with a white border. The ruler and the dpi behind each size open on request.</p>},
   {id: 'sizes', screen: 'sizes', label: 'Sizes and paper', title: 'Offer only sizes that print well',
-    alt: 'Sizes and paper: 5 by 7 and 8 by 10 offered, larger sizes marked too small',
-    body: <p>Sizes that failed the check can’t be selected. Paper is one decision: studio matte is included, cotton rag adds $4 to the production cost.</p>},
+    alt: 'Step 3 of 5, Sizes and paper: 3 by 2, 5 by 3, 7 by 5 and 10 by 8 inches, with 7 by 5 and 10 by 8 offered',
+    body: <p>Only sizes that passed the check are on the list, the paper turned to match the painting. Studio matte is included; cotton rag adds $4 to the production cost.</p>},
   {id: 'price', screen: 'price', label: 'Price', title: 'See what you keep before you publish',
-    alt: 'Set your price: $38 for 8 by 10, minus $11 print and paper and $3.34 fee, you keep $23.66',
-    body: <p>At $38 for an 8&nbsp;×&nbsp;10: $11 for print and paper, $3.34 in fees (8%&nbsp;+&nbsp;$0.30), $23.66 to the artist. Other sizes are priced so the artist keeps the same amount.</p>},
-  {id: 'preview', screen: 'preview', label: 'Preview', title: 'Look at it the way a collector will',
-    alt: 'Review your drop: the shop page with the painting, sizes, paper and starting price',
-    body: <p>The shop page before it goes live: the whole painting inside its white border, the offered sizes, the paper, the starting price. No listing fee.</p>},
-  {id: 'share', screen: 'share', label: 'Publish and share', title: 'Publish and share in one step',
-    alt: 'Share this drop: a story image with the painting, title, price and a Shop tag',
-    body: <p>Publishing opens the share sheet: one shop link and a 1080&nbsp;×&nbsp;1920 story image with the title, the price and a Shop&nbsp;tag.</p>},
+    alt: 'Step 4 of 5, Set your price: $38 for 10 by 8, minus $11 print and paper and $3.34 fee, you keep $23.66',
+    body: <p>At $38 for a 10&nbsp;×&nbsp;8: $11 for print and paper, $3.34 in fees (8%&nbsp;+&nbsp;$0.30), $23.66 to the artist. Other sizes are priced so the artist keeps the same amount.</p>},
+  {id: 'preview', screen: 'preview', label: 'Review', title: 'Look at it the way a collector will',
+    alt: 'Step 5 of 5, Review your drop: the painting large, the sizes on offer and the starting price, from $33.65',
+    body: <p>The shop page before it goes live: the painting large inside its white border, the sizes on offer, and the starting price, from $33.65. No listing fee.</p>},
+  {id: 'share', screen: 'share', label: 'Publish and share', title: 'Publish, then share the whole story',
+    alt: 'Share this drop: the full 1080 by 1920 story image with the painting, title, price and a Shop tag, above Save story image and Copy shop link',
+    body: <p>Publishing opens the share sheet with the whole 1080&nbsp;×&nbsp;1920 story in view: the painting, the title, the price and a Shop&nbsp;tag. Save the image or copy the shop link.</p>},
 ];
 
 const DECISIONS = [
-  {id: 'ruler', title: 'A ruler, not a checklist', verdict: 'Explain the one decision the product exists for.',
-    tried: 'A ladder of sizes with checkmarks.',
-    chose: 'Every paper size drawn on a ruler at 12 px per inch, the largest safe size named, and the dpi behind each verdict one tap away.',
-    visual: <img src={shotSrc('check')} alt="" loading="lazy" style={{objectPosition: '50% 62%'}}/>},
+  {id: 'ruler', title: 'The answer first, the ruler on request', verdict: 'Lead with what the artist can sell; explain it when asked.',
+    tried: 'A ladder of checkmarks, then a ruler of every paper size up front.',
+    chose: '“Offer prints up to 10 × 8 inches” first. The ruler at 12 px per inch and the dpi behind each size open one tap away.',
+    visual: <img src={shotSrc('check')} alt="" loading="lazy" style={{objectPosition: '50% 40%'}}/>},
   {id: 'fees', title: 'Earnings that don’t shrink', verdict: 'A bigger print shouldn’t pay the artist less.',
     tried: 'Raising each larger size by its extra print cost.',
     chose: 'Dividing the extra cost by 0.92 before rounding, so the 8% fee doesn’t eat into the artist’s cut.',
     visual: <img src={shotSrc('price')} alt="" loading="lazy" style={{objectPosition: '50% 66%'}}/>},
   {id: 'wall', title: 'Scale you can trust', verdict: 'A size only means something next to furniture.',
     tried: 'A flat room with a small, static print.',
-    chose: 'A lit wall, a 36-inch console and a fixed 48-inch view. The print is drawn at its physical width.',
+    chose: 'A lit wall, a 36-inch console and a fixed 48-inch view. The print is drawn at its physical width; Apply keeps a size, Cancel puts it back.',
     visual: <img src="/assets/product/atelier/wall-room.webp" alt="" loading="lazy" style={{objectPosition: '50% 50%'}}/>},
   {id: 'ink', title: 'Ink for actions', verdict: 'The paintings should be the only color on screen.',
     tried: 'Royal-blue, full-width pill buttons.',
@@ -67,18 +69,38 @@ const DECISIONS = [
 ];
 
 const TASKS = [
-  {id: 'size', screen: 'check', art: 'blue-hour', title: 'Check whether The Blue Hour can be sold at 12 × 16 in',
-    hint: 'Tap the 12 × 16 size on the ruler to see its dpi and the reason.'},
-  {id: 'price', screen: 'price', art: 'blue-hour', title: 'Set a price for an 8 × 10 and see what you keep',
+  {id: 'size', screen: 'check', art: 'blue-hour', title: 'Check whether The Blue Hour can be sold at 16 × 12 in',
+    hint: 'Open Print quality & size details, then tap 16 × 12 on the ruler to see its dpi and the reason.'},
+  {id: 'price', screen: 'price', art: 'blue-hour', title: 'Set a price for a 10 × 8 and see what you keep',
     hint: 'Change the price; the breakdown and “You keep” update as you type.'},
-  {id: 'wall', screen: 'wall', art: 'signal', title: 'As a collector, try A Distant Signal on your wall in each size it’s sold in',
-    hint: 'Pick a size: the frame changes to its physical width next to the 36-inch console.'},
+  {id: 'wall', screen: 'wall', art: 'signal', title: 'As a collector, try A Distant Signal on the wall in each size it’s sold in',
+    hint: 'Pick a size: the print changes to its physical width next to the 36-inch console. Apply keeps it; Cancel puts it back.'},
   {id: 'buy', screen: 'drop', art: 'signal', title: 'Buy a print, then find the order in the artist’s studio',
-    hint: 'Checkout takes no payment. After the receipt, open the screen menu (the three dots) and go to Orders.'},
+    hint: 'Checkout takes no money: pay with the Apple Pay demo. After the receipt, open the screen menu (the three dots) and go to Orders.'},
+];
+
+// Round 1 → round 2 of the same screens, from the archived shots (scripts/build-round-pairs.mjs).
+const R = '/assets/product/atelier/rounds/';
+const ROUNDS = [
+  {id: 'check', tab: 'Print check', caption: 'The print check. Round 1 put every paper size on a ruler; round 2 leads with the largest sharp size and keeps the ruler one tap away.',
+    before: {src: `${R}check-r1.webp`, label: 'Round 1'}, after: {src: `${R}check-r2.webp`, label: 'Round 2'}},
+  {id: 'wall', tab: 'Size sheet', caption: 'Choosing a size on the wall. Round 1 offered Done and Buy in the same sheet; round 2 has Cancel and Apply, and you buy on the product page.',
+    before: {src: `${R}wall-r1.webp`, label: 'Round 1'}, after: {src: `${R}wall-r2.webp`, label: 'Round 2'}},
+  {id: 'checkout', tab: 'Checkout', caption: 'Checkout. Round 1 placed the order as soon as the address was in; round 2 is step 1 of 3, before payment and a review of the total.',
+    before: {src: `${R}checkout-r1.webp`, label: 'Round 1'}, after: {src: `${R}checkout-r2.webp`, label: 'Round 2'}},
+];
+// From d2-atelier-prototype/README.md, "Round 2: design review".
+const CHANGES = [
+  {what: 'Collectors choose only from sizes the artist offers and the file can print; other formats say why they’re missing.', why: 'No “Too small” options sitting next to the ones you can buy.'},
+  {what: 'Cancel and Apply in the size sheet; Buy print lives on the product page.', why: 'Changing an option and committing to a purchase are different moments.'},
+  {what: 'One price calculation everywhere: +$4 production cost for the artist, the exact +$4.35 retail difference for collectors.', why: 'The artist’s earnings hold, and every total on every screen agrees.'},
+  {what: 'A full checkout: delivery, an Apple Pay-style demo or a card, a review with the total, and a way back from a declined card.', why: 'Round 1 created the order the moment an address went in. Now it exists only after a (simulated) payment.'},
+  {what: 'Five named steps, “Step 2 of 5,” a saved-draft status, and a way back in from Home.', why: 'You can see how much is left, and leave and come back.'},
+  {what: 'Larger artwork, a full-screen inspector with zoom, and the whole 9:16 story in view before you save it.', why: 'Collectors look at the actual work; artists see the image they’re about to post.'},
 ];
 
 const NUMBERS = [
-  {value: 19, label: 'Screens in the coded prototype', note: 'Artist and collector sides, all clickable'},
+  {value: 22, label: 'Screens in the coded prototype', note: 'Artist and collector sides, checkout included, all clickable'},
   {value: 8, label: 'Paintings of mine as the catalog', note: 'No stock art and no generated images'},
   {value: 300, unit: 'dpi', label: 'Floor for every print size', note: 'A size below it can’t be sold'},
 ];
@@ -127,7 +149,7 @@ export default function AtelierCase({item, reduced}) {
 
   return <article ref={root} className="pp-page v2-page at-page" lang="en" data-nav-tone="light">
     <CaseHero reduced={reduced} title="Atelier" kind={item.kind}
-      outcome="A print studio for illustrators: from a finished painting to a published, shareable print in six steps, with print quality and earnings checked before anything goes live."
+      outcome="A print studio for illustrators: from a finished painting to a published, shareable print in five named steps, with print quality and earnings checked before anything goes live."
       chips={['Solo: research, product and visual design, code', 'October 2026', 'iOS concept', 'Not yet tested with artists']}
       actions={phone
         ? <a className="v2-cta" href={protoUrl('onboarding')} target="_blank" rel="noopener"><span>Open the prototype</span><span className="v2-cta-icon"><ArrowUpRight/></span><span className="v2-sr"> (opens in a new tab)</span></a>
@@ -173,21 +195,18 @@ export default function AtelierCase({item, reduced}) {
     </section>
 
     <Scrolly id="at-flow" reduced={reduced} steps={STEPS} art="blue-hour" label="The drop flow" title="Atelier prototype, following the steps"
-      heading="One drop, six steps"
+      heading="Five steps to a drop, then share it"
       lede="The artist side is where the product earns its keep. Scroll through a drop; the phone runs the real prototype."/>
 
     <Decisions id="at-decisions" items={DECISIONS}
       heading="What I chose, and what I tried first"
-      lede="Five choices from the first two rounds of critique. Each card shows the choice; open it to see what it replaced."/>
+      lede="Five choices from three rounds of critique. Each card shows the choice; open it to see what it replaced."/>
 
-    <BeforeAfter id="at-compare" reduced={reduced} label="Compare round 1 and the round-2 build of the print check"
-      heading="Round 1, and round 2 taking shape"
-      lede="Drag across the phone to compare the print check as I first reviewed it with the round-2 build."
-      before={{src: '/assets/product/atelier/round1-check.webp', label: 'Round 1', caption: 'Left: round 1, the build on this page.'}}
-      after={{src: '/assets/product/atelier/round2-check-wip.webp', label: 'Round 2, in progress', caption: 'Right: round 2, captured mid-build on Oct 19.'}}>
-      <p className="v2-slot-badge">Round 2 is still being built</p>
-      <p>So far, round 2 centers the screen title, draws the step bar in ink instead of blue, sets the supporting text larger and turns the main action into a full pill.</p>
-      <p>It isn’t finished or tested, so the prototype embedded on this page is still round 1. When round 2 is done I’ll write down why each change was made, and testing will decide which ones stay.</p>
+    <BeforeAfter id="at-compare" reduced={reduced} pairs={ROUNDS} label="Compare round 1 with round 2"
+      heading="Round 1 → Round 2"
+      lede="Round 2 came out of a design review. Pick a screen and drag across the phone to compare the two rounds.">
+      <p className="v2-review-note"><span><b>A model-assisted design review.</b> I asked a model to critique round 1 as an Apple design lead would. It scored craft 6, interaction 5 and product thinking 7, and ranked eight fixes; round 2 builds all eight. It’s a critique, not a test with artists.</span></p>
+      <RoundChanges items={CHANGES}/>
     </BeforeAfter>
 
     <LivePrototype id="try" reduced={reduced} tasks={TASKS} start={{screen: 'onboarding', art: 'blue-hour'}}
@@ -233,7 +252,7 @@ export default function AtelierCase({item, reduced}) {
       <div className="v2-reflection-grid">
         <div data-reveal=""><h3 className="v2-h3">What I’d keep</h3><p>The print check at the center. It is the one thing a storefront or a print service can’t tell an artist before the sale, and everything after it (sizes, price, preview) gets simpler because of it.</p></div>
         <div data-reveal=""><h3 className="v2-h3">What I don’t know yet</h3><p>Whether the money works at 2–20 sales a month. The 8% + $0.30 fee is a concept number and the print costs are assumptions, not a vendor quote.</p></div>
-        <div data-reveal=""><h3 className="v2-h3">What’s next</h3><p>Test day, then round 2 of the prototype. The collector side, a smaller set of screens, gets the same scrutiny as the drop flow.</p></div>
+        <div data-reveal=""><h3 className="v2-h3">What’s next</h3><p>Test day. Round 2 answered a model’s critique; artists decide round 3. The collector side, now with a full checkout, gets the same scrutiny as the drop flow.</p></div>
       </div>
     </section>
 
