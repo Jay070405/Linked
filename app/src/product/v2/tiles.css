@@ -63,8 +63,10 @@ a.pt-link:focus-visible .pt-ch{transform:translateY(-1.15em)}
 .pt-l100{position:absolute;inset:0;display:block;container-type:size;background:#ecede8}
 .pt-l100-plan{position:absolute;left:7%;top:8%;width:62%;display:block}
 .pt-l100-plan img{display:block;width:100%;height:auto;border-radius:14px;box-shadow:0 1px 1px #11111412,0 12px 26px -16px #11111440}
-.pt-l100-phone{position:absolute;right:9%;top:16%;display:block}
-.pt-l100-phone .v2-phone{--pw:min(34cqw,44cqh)}
+.pt-l100-phone{position:absolute;right:8%;top:8%;display:block}
+.pt-l100-phone .v2-phone{--pw:min(30cqw,37cqh)}
+/* the next-project frame is wider than it is tall: keep the plan on its left so the phone doesn't cover the route */
+.v2-next-art .pt-l100-plan{width:56%}
 .pt-l100-phone .v2-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 /* D4: the yearly-cost chart, the cost-difference note lifted in front */
