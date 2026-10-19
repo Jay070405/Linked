@@ -56,6 +56,16 @@ for (const system of systems.filter(s=>s.status==='coming-soon')) {
   assert.equal(routing.resolvePath('/systems/'+system.slug),null);
   assert.equal(routing.routeFor({type:'system',item:system}),null);
 }
+assert.equal(routing.resolvePath('/product').type,'product');
+assert.equal(routing.resolvePath('/product/').type,'product');
+for (const slug of ['design-to-code','roco','where-players-break']) {
+  assert.equal(routing.resolvePath('/product/'+slug).item.slug,slug);
+  assert.equal(routing.routeFor({type:'product-case',item:{slug}}),'/product/'+slug);
+}
+assert.equal(routing.resolvePath('/product/missing'),null);
+assert.equal(routing.resolvePath('/for/figma').type,'for');
+assert.equal(routing.resolvePath('/for/elsewhere'),null);
+assert.equal(routing.routeFor('/product/roco'),'/product/roco');
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes.');
+console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes; product index, three product cases and /for/figma.');

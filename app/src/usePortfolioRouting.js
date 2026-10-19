@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { allWorks, systems } from './portfolioData';
 import {flushSync} from 'react-dom';
 import {preloadPortfolioPage} from './pages/preloadPortfolioPage';
+import { resolveProductPath, productRouteFor } from './product/content';
 
 const HISTORY_KEY = '__jayPortfolioModal';
 const HOME = '/#home';
@@ -14,6 +15,8 @@ export function resolvePath(pathname) {
   if (path === '/other-project/field01' || path === '/vibecoding/field01') return { type: 'field01' };
   if (path === '/other-project/jay-lin') return { type: 'brand-motion' };
   if (path === '/systems/roco/model') return { type: 'model' };
+  const product = resolveProductPath(path);
+  if (product) return product;
   const work = allWorks.find(item => item.href === path);
   if (work) return { type: 'art', item: work };
   const system = systems.find(item => item.status === 'available' && '/systems/' + item.slug === path);
@@ -28,6 +31,7 @@ export function routeFor(page) {
   if (page?.type === 'field01') return '/other-project/field01';
   if (page?.type === 'brand-motion') return '/other-project/jay-lin';
   if (page?.type === 'model') return '/systems/roco/model';
+  if (['product', 'product-case', 'for'].includes(page?.type)) return productRouteFor(page);
   if (page?.type === 'art') return allWorks.find(w => w.id === page.item?.id || w.slug === page.item?.slug)?.href || null;
   if (page?.type === 'system') {
     const item = systems.find(s => s.status === 'available' && (s.id === page.item?.id || s.slug === page.item?.slug));
@@ -50,6 +54,7 @@ function parentPath(page) {
   if (page?.type === 'archive') return '/works';
   if (page?.type === 'system') return '/systems';
   if (page?.type === 'model') return '/systems/roco';
+  if (page?.type === 'product-case') return '/product';
   return null;
 }
 
