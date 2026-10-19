@@ -1,6 +1,7 @@
 import CaseLayout from '../CaseLayout';
 import {C, Chart, Diagram, Note, Noted, Table, TLDR} from '../CaseKit';
 import {CoherenceCharts, WiringGrid} from '../charts';
+import {LayersCompare, Pipeline, TestSet} from '../figures';
 
 // Source: cases/p2-design-to-code/draft.md (v2). The author's wording is kept; bracketed evidence labels became
 // margin notes or table labels. The repo and Figma file links are not public yet, and plugin validation comes later.
@@ -45,6 +46,10 @@ export default function DesignToCodeCase({item, reduced}) {
 
     <h2>Evidence</h2>
     <p><strong>Test file.</strong> Six screens (sign-in, pricing, settings, product grid, dashboard, profile), each built at three levels, plus one ablation level I added later:</p>
+    <Diagram wide
+      caption="The test set: six screens from one small design system. Sign-in (S1), settings (S3) and profile (S6) are 390 px mobile frames; pricing (S2), product grid (S4) and dashboard (S5) are 1440 px desktop frames. Each screen exists in four structural versions that render identically; shown here are the L2 exports, cropped at the top.">
+      <TestSet/>
+    </Diagram>
     <Table wide plainFirst name="The four levels of the test file"
       head={['Level', 'What the file has']}
       rows={[
@@ -57,7 +62,14 @@ export default function DesignToCodeCase({item, reduced}) {
       <p><C id="identical">All versions of a screen export to byte-identical PNGs,</C> so the agents saw the same picture every time. Only the structure behind it changed.</p>
       <Note label="Measured" claim="identical">Compared the PNG exports of every level of each screen.</Note>
     </Noted>
+    <Diagram wide label="Measured"
+      caption="Same picture, different structure. The first 14 layers of the sign-in screen (S1), read from the test file. In L2 the layers have semantic names, 10 of the 14 use auto layout, 3 are component instances and 13 are bound to variables for color, spacing or radius. In L0 the same screen is generic frames and text: no auto layout, no instances, nothing bound. Both export to the same PNG.">
+      <LayersCompare/>
+    </Diagram>
     <p><strong>Protocol.</strong> Before running anything I wrote down the setup, metrics and five hypotheses (the protocol is in the repo; link coming soon). The main one (H2) was that without auto layout, the code would break when resized. Each frame went to a fresh Claude agent (Sonnet 5.5) with the same prompt: build this frame as one production-quality HTML file using the Figma MCP tools. A harness I built rendered each result in headless Chrome and scored it. This page reports one run per frame, 24 builds; a second round, as pre-registered, is in progress. Every change to the plan is logged with its date and reason in the protocol’s amendments section.</p>
+    <Diagram wide caption="One build, start to finish. Each of the 24 frames went through this once, with nothing shared between builds.">
+      <Pipeline/>
+    </Diagram>
 
     <h3>Result 1, pre-registered: no detectable difference</h3>
     <Table wide numeric name="Pre-registered results by level" label="Measured" caption="Median of 6 builds per level."

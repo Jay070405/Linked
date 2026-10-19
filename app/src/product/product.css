@@ -184,6 +184,60 @@
 .pp-wiring-label{margin-top:8px;font:500 14px/1.4 var(--pp-sans)}
 .pp-wiring-narrow{display:none}
 
+/* figures staged on a soft neutral ground: the test set and the layers panels */
+.pp-stage{padding:clamp(16px,3.4vw,44px);border-radius:8px;background:var(--pp-ground)}
+
+/* the six test screens: desktop screens in browser frames, mobile screens in phone frames */
+.pp-testset-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2.4vw,28px);list-style:none;margin:0;padding:0}
+.pp-prose .pp-testset-row>li{margin:0}
+.pp-testset-row>li{display:flex;flex-direction:column;align-items:center;min-width:0}
+.pp-testset-row.is-mobile{margin-top:clamp(22px,3vw,36px)}
+.pp-browser{width:100%;overflow:hidden;border-radius:8px;background:#fff;border:1px solid #11111417;box-shadow:var(--pp-lift)}
+.pp-browser-bar{display:flex;align-items:center;gap:4px;height:18px;padding:0 8px;background:var(--pp-paper);border-bottom:1px solid #11111410}
+.pp-browser-bar i{width:5px;height:5px;border-radius:50%;background:#d6d8dd}
+.pp-browser-bar b{width:42%;height:7px;margin-left:12px;border-radius:4px;background:var(--pp-ground)}
+.pp-browser img,.pp-phone img{display:block;width:100%;height:auto}
+.pp-phone{position:relative;width:min(100%,144px);padding:14px 4px 4px;border-radius:22px;background:#fff;border:1px solid #1111141f;box-shadow:var(--pp-lift)}
+.pp-phone::before{content:'';position:absolute;top:5px;left:50%;width:22%;height:5px;border-radius:3px;background:#111114;transform:translateX(-50%)}
+.pp-phone img{border-radius:3px 3px 18px 18px}
+.pp-device-label{margin-top:10px;font:400 13px/1.3 var(--pp-sans);color:var(--pp-pencil);text-align:center}
+.pp-device-label b{margin-right:4px;font-weight:600;color:var(--pp-ink)}
+
+/* two layers panels, drawn like Figma's, from the file's real layer names */
+.pp-layers{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2.4vw,28px)}
+.pp-layers-panel{overflow:hidden;border-radius:8px;background:#fff;border:1px solid #11111417;box-shadow:var(--pp-lift);font:400 12.5px/1 var(--pp-sans);color:#1e1e22}
+.pp-layers-panel header{display:flex;align-items:center;justify-content:space-between;gap:12px;height:38px;padding:0 14px;border-bottom:1px solid #11111412;font-weight:600}
+.pp-layers-page{font-weight:400;color:var(--pp-pencil)}
+.pp-layers-panel ol{list-style:none;margin:0;padding:6px 0}
+.pp-prose .pp-layers-panel li{margin:0}
+.pp-layers-panel li{display:flex;align-items:center;gap:6px;height:26px;padding:0 10px 0 calc(8px + var(--depth) * 14px);white-space:nowrap}
+.pp-layer-caret{display:inline-flex;flex:none;width:9px}
+.pp-layer-caret svg{fill:none;stroke:var(--pp-pencil);stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+.pp-layer-icon{flex:none;fill:none;stroke:#6b6d74;stroke-width:1.2;stroke-linecap:round}
+.pp-layers-panel li.is-instance .pp-layer-icon{stroke:#8638e5}
+.pp-layers-panel li.is-instance .pp-layer-name{color:#8638e5}
+.pp-layer-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.pp-layer-vars{display:flex;flex:none;gap:4px;margin-left:auto;padding-left:8px}
+.pp-var-chip{display:inline-flex;align-items:center;gap:3px;height:18px;padding:0 6px;border-radius:5px;background:var(--pp-surface);color:#45474e;font-size:11px}
+.pp-var-chip svg{fill:none;stroke:currentColor;stroke-width:1}
+.pp-layers-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0;padding:12px 14px 14px;border-top:1px solid #11111412;background:var(--pp-paper)}
+.pp-layers-sum dt{font-size:11.5px;line-height:1.3;color:var(--pp-pencil)}
+.pp-layers-sum dd{margin-top:4px;font:600 15px/1 var(--pp-sans)}
+
+/* the benchmark, one build at a time */
+.pp-pipeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,1.35fr);gap:12px;list-style:none;margin:0;padding:0;font-family:var(--pp-sans)}
+.pp-prose .pp-pipeline>li{margin:0}
+.pp-pipeline>li{position:relative;padding:14px 12px 16px;border:1px solid var(--pp-rule);border-radius:8px;background:#fff}
+.pp-pipeline>li:not(:last-child)::after{content:'';position:absolute;top:25px;right:-13px;width:13px;height:1px;background:var(--pp-strong)}
+.pp-pipeline>li.is-last{border-color:var(--pp-ink)}
+.pp-step-n{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid var(--pp-ink);border-radius:50%;font:600 12px/1 var(--pp-sans)}
+.pp-step-name{margin-top:12px;font:600 15px/1.25 var(--pp-sans)}
+.pp-step-detail{margin-top:6px;font:400 13px/1.45 var(--pp-sans);color:var(--pp-pencil)}
+.pp-step-detail ul{margin:0;padding-left:1.1em}
+.pp-prose .pp-step-detail li{margin:2px 0 0}
+.pp-pipeline code{padding:1px 4px;border-radius:3px;background:var(--pp-surface);font:500 11px Mono,ui-monospace,monospace;white-space:nowrap}
+.pp-step-name code{font-size:13px}
+
 /* the League year as a chain */
 .pp-chain{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;list-style:none;margin:0;padding:0;font-family:var(--pp-sans)}
 .pp-prose .pp-chain>li{margin:0}
@@ -247,9 +301,17 @@
 @media(max-width:900px){
   .pp-chain{grid-template-columns:1fr 1fr}
   .pp-chain>li:nth-child(2)::after{display:none}
+  .pp-pipeline{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pp-pipeline>li:nth-child(3)::after{display:none}
 }
 @media(max-width:700px){
-  .pp-chart-pair,.pp-wiring{grid-template-columns:1fr}
+  .pp-chart-pair,.pp-wiring,.pp-layers,.pp-testset-row.is-desktop{grid-template-columns:1fr}
+  .pp-testset-row.is-mobile{gap:10px}
+  .pp-pipeline{grid-template-columns:1fr;gap:10px}
+  .pp-pipeline>li{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:12px;padding:12px 14px 14px}
+  .pp-step-n{grid-row:1 / span 2}
+  .pp-step-name{margin-top:2px}
+  .pp-pipeline>li:not(:last-child)::after,.pp-pipeline>li:nth-child(3)::after{display:block;top:auto;right:auto;bottom:-11px;left:25px;width:1px;height:10px}
   .pp-wiring-cell.is-wide-only,.pp-wiring-wide{display:none}
   .pp-wiring-narrow{display:inline}
 }
