@@ -82,7 +82,7 @@
 .pp-prose li::marker{color:var(--pp-pencil)}
 .pp-prose a{color:var(--pp-ink);text-decoration:underline;text-decoration-color:var(--pp-strong);text-underline-offset:.2em}
 .pp-prose a:hover{text-decoration-color:currentColor}
-.pp-prose code{white-space:nowrap;font:500 .82em Mono,ui-monospace,monospace;padding:.1em .3em;border-radius:3px;background:var(--pp-surface)}
+.pp-prose code{white-space:nowrap;font:500 .82em ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:.1em .3em;border-radius:3px;background:var(--pp-surface)}
 .pp-prose>:is(.pp-tldr,.pp-figure,.pp-table,.pp-callout,.pp-metrics){margin-top:48px}
 .pp-prose>:is(.pp-figure,.pp-table,.pp-callout,.pp-metrics)+:not(h2,h3){margin-top:48px}
 .pp-prose>:first-child{margin-top:0}
@@ -235,7 +235,7 @@
 .pp-step-detail{margin-top:6px;font:400 13px/1.45 var(--pp-sans);color:var(--pp-pencil)}
 .pp-step-detail ul{margin:0;padding-left:1.1em}
 .pp-prose .pp-step-detail li{margin:2px 0 0}
-.pp-pipeline code{padding:1px 4px;border-radius:3px;background:var(--pp-surface);font:500 11px Mono,ui-monospace,monospace;white-space:nowrap}
+.pp-pipeline code{padding:1px 4px;border-radius:3px;background:var(--pp-surface);font:500 11px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}
 .pp-step-name code{font-size:13px}
 
 /* a place held for a case study that isn't published yet */
