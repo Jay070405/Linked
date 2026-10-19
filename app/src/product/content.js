@@ -96,7 +96,7 @@ export function productRouteFor(page) {
 export const isProductPath = pathname => /^\/(product|for)(\/|$)/.test(clean(pathname) + '/');
 
 export function productTitle(page) {
-  if (page?.type === 'product-case') return page.item.title;
+  if (page?.type === 'product-case') return page.item.pageTitle || page.item.title;
   if (page?.type === 'for') return 'For the Figma team';
   if (page?.type === 'product') return 'Product work';
   return 'Page not found';
