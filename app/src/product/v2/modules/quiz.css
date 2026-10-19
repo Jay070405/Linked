@@ -1,0 +1,60 @@
+/* D4 "Which plan would you pick?" (PlanQuiz.jsx). Prefix: cq-. Inside the browser frame, the prototype's baseline
+   portal in its own plain enterprise look (gray header, ruled rows, right-aligned money); around it, the page's paper
+   and ink. After a pick, Plan B's column says what the table never did. */
+.cq{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.cq-browser,.cq-portal{min-width:0}
+.cq-browser .v2-browser-screen{background:#fff}
+.cq-portal{padding:clamp(18px,2.6vw,36px) clamp(16px,2.6vw,36px) clamp(20px,2.6vw,32px);font:400 15px/1.4 var(--pp-sans);color:#161616}
+.cq-crumb{font-size:13px;color:#525252}
+.cq-title{margin-top:8px;font:400 clamp(24px,2.4vw,32px)/1.2 var(--pp-sans);letter-spacing:-.01em}
+.cq-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;margin-top:18px;padding:14px 16px;background:#f4f4f4;font-size:14px}
+.cq-meta b{font-weight:600}
+.cq-scroll{margin-top:14px;overflow-x:auto;overscroll-behavior-x:contain}
+.cq-table{width:100%;min-width:720px;border-collapse:collapse;font-variant-numeric:tabular-nums lining-nums}
+.cq-table th,.cq-table td{padding:11px 14px;border-bottom:1px solid #e0e0e0;text-align:right;vertical-align:top;font-size:14.5px;line-height:1.35;background:#f4f4f4;transition:background-color 200ms ease}
+.cq-table thead th{background:#e0e0e0;font-weight:600;vertical-align:bottom}
+.cq-table thead th small{display:block;margin-top:2px;font-weight:400;font-size:12.5px;color:#525252}
+.cq-table th[scope=row],.cq-table thead th:first-child{text-align:left;font-weight:400;width:30%}
+.cq-table thead th:first-child{font-weight:600}
+.cq-select td,.cq-select th{vertical-align:middle;background:#fff}
+.cq-select label{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 4px;cursor:pointer;white-space:nowrap}
+.cq-select input{width:18px;height:18px;margin:0;accent-color:#161616;cursor:pointer}
+.cq-select input:focus-visible{outline:2px solid var(--pp-red);outline-offset:3px}
+.cq-table td.is-mine{background:#e8e8e8}
+.cq-select td.is-mine{background:#f4f4f4}
+.cq-table .is-flag{box-shadow:inset 2px 0 var(--pp-ink),inset -2px 0 var(--pp-ink)}
+.cq-table thead th.is-flag{box-shadow:inset 2px 0 var(--pp-ink),inset -2px 0 var(--pp-ink),inset 0 2px var(--pp-ink)}
+.cq-table .cq-select .is-flag{box-shadow:inset 2px 0 var(--pp-ink),inset -2px 0 var(--pp-ink),inset 0 -2px var(--pp-ink)}
+.cq-note{display:block;width:fit-content;margin:4px 0 0 auto;padding:1px 7px;border-radius:9px;background:#fff;box-shadow:inset 0 0 0 1px #11111426;font:550 12px/1.5 var(--pp-sans);color:var(--pp-pencil);animation:cq-in 220ms var(--v2-out) both}
+.cq-note.is-more{background:var(--pp-ink);box-shadow:none;color:var(--pp-paper)}
+.cq.is-instant .cq-note,.cq.is-instant .cq-answer{animation:none}
+@keyframes cq-in{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.cq-notice{margin-top:16px;padding:14px 16px;background:#f4f4f4;font-size:13.5px;line-height:1.45;color:#393939}
+
+/* the answer: space held before you pick, so nothing below moves */
+.cq-reveal{min-height:212px}
+.cq-wait{display:grid;place-items:center;min-height:212px;border:1px dashed var(--pp-strong);border-radius:20px;font:450 15px/1.4 var(--pp-sans);color:var(--pp-pencil);text-align:center;padding:0 20px}
+.cq-answer{display:grid;gap:22px;padding:clamp(20px,2.6vw,32px);border-radius:24px;background:var(--v2-card);box-shadow:0 0 0 1px var(--v2-hair),var(--v2-lift);animation:cq-in 260ms var(--v2-out) both}
+.cq-verdict{max-width:62ch;font:450 clamp(19px,1.5vw,22px)/1.42 var(--pp-sans);letter-spacing:-.01em;text-wrap:pretty}
+.cq-verdict b{font-weight:650}
+.cq-sum{display:grid;gap:18px 48px;align-items:end}
+@media(min-width:900px){.cq-sum{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.cq-gap{display:grid;gap:8px;font:400 15.5px/1.45 var(--pp-sans);color:var(--pp-pencil)}
+.cq-gap-n{font:700 clamp(56px,6vw,92px)/.9 var(--pp-sans);letter-spacing:-.055em;color:var(--pp-ink);font-variant-numeric:tabular-nums}
+.cq-study{display:flex;align-items:flex-start;gap:10px;font:400 14.5px/1.5 var(--pp-sans);color:var(--pp-pencil)}
+@media(prefers-reduced-motion:reduce){.cq-note,.cq-answer{animation:none}.cq-table :is(th,td){transition:none}}
+.quiet .cq-note,.quiet .cq-answer{animation:none}
+/* phones: one plan per row */
+.cq-table.is-compact{min-width:0;table-layout:fixed;margin-top:14px}
+.cq-table.is-compact th,.cq-table.is-compact td{padding:9px 4px;font-size:12.5px;vertical-align:middle}
+.cq-table.is-compact td{white-space:nowrap}
+.cq-table.is-compact thead th{font-size:11px;line-height:1.25;font-weight:600;vertical-align:bottom;hyphens:manual}
+.cq-table.is-compact thead th:first-child,.cq-table.is-compact th[scope=row]{width:29%;padding-left:8px}
+.cq-table.is-compact th[scope=row] label{display:flex;align-items:center;gap:7px;min-height:36px;font-weight:600;cursor:pointer;white-space:nowrap}
+.cq-table.is-compact th[scope=row] input{flex:none;width:18px;height:18px;margin:0;accent-color:#161616}
+.cq-table.is-compact tr.is-mine :is(th,td){background:#e8e8e8}
+.cq-table.is-compact tr.is-flag :is(th,td){box-shadow:inset 0 2px var(--pp-ink),inset 0 -2px var(--pp-ink)}
+.cq-table.is-compact tr.is-flag th{box-shadow:inset 2px 0 var(--pp-ink),inset 0 2px var(--pp-ink),inset 0 -2px var(--pp-ink)}
+.cq-table.is-compact tr.is-flag td:last-child{box-shadow:inset -2px 0 var(--pp-ink),inset 0 2px var(--pp-ink),inset 0 -2px var(--pp-ink)}
+.cq-table.is-compact .cq-note{margin-top:3px;padding:0 5px;font-size:11px}
+@media(max-width:760px){.cq-reveal,.cq-wait{min-height:180px}.cq-portal{padding:16px 12px 18px}.cq-meta{font-size:12.5px;padding:10px 12px}}

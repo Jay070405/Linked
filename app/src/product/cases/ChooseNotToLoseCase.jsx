@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {lazy, useRef} from 'react';
 import {Ev} from '../CaseKit';
 import {ProductFooter} from '../ProductIndex';
 import {nextCase} from '../content';
@@ -11,6 +11,7 @@ import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
 import CaseChrome from '../v2/CaseChrome';
+import {Deferred} from '../v2/Try';
 import {Browser, CNTL_KIT, CNTL_PAGE_KIT, ProtoScreen} from '../v2/Device';
 import {ArrowDown} from '../v2/icons';
 import {FINE, PHONE, useMedia, useReveals} from '../v2/motion';
@@ -23,9 +24,12 @@ import './cn.css';
 // Nothing here has been tested with people yet.
 
 const A = '/assets/product/choose-not-to-lose/';
+// Interactive modules load when their place on the page comes near (v2/Try Deferred).
+const PlanQuiz = lazy(() => import('../v2/modules/PlanQuiz'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
+  {id: 'cn-quiz', label: 'Pick a plan'},
   {id: 'cn-problem-section', label: 'The problem'},
   {id: 'cn-flow', label: 'The redesign'},
   {id: 'cn-decisions', label: 'Decisions'},
@@ -126,30 +130,6 @@ const TASKS = [
     hint: 'Select Plan B, then review it. Saving asks you to confirm the $600 first.'},
 ];
 
-/** The two plans as the portal's table shows them: everything you need, and nothing that says it. */
-function SameCoverage() {
-  const rows = [
-    ['Premium per month', '$180', '$230', '+$50'],
-    ['Deductible per year', '$1,500', '$1,500', null],
-    ['Member coinsurance', '20%', '20%', null],
-    ['Out-of-pocket maximum per year', '$6,000', '$6,000', null],
-  ];
-  return <figure className="cn-ab" data-reveal="">
-    <div className="cn-ab-grid">
-      <table className="cn-ab-table">
-        <caption className="v2-sr">Plan A and Plan B in the benefits table</caption>
-        <thead><tr><th scope="col">Benefit</th><th scope="col">Plan A</th><th scope="col">Plan B</th><th scope="col"><span className="v2-sr">Difference</span></th></tr></thead>
-        <tbody>{rows.map(([name, a, b, d]) => <tr key={name} className={d ? 'is-diff' : ''}>
-          <th scope="row">{name}</th><td>{a}</td><td>{b}</td>
-          <td>{d ? <span className="cn-ab-diff">{d}</span> : <span className="cn-ab-same">Same</span>}</td>
-        </tr>)}</tbody>
-      </table>
-      <p className="cn-ab-total"><span className="cn-ab-num">$600</span><span>more a year on Plan B, for the same coverage. Nothing in the table says so.</span></p>
-    </div>
-    <figcaption className="v2-caption">Two of the prototype’s four fictional plans, as the baseline table lists them. Same network and covered services.</figcaption>
-  </figure>;
-}
-
 /** The comparison as the hero. A capture, not the live page: a scrolling page under the pointer would take the wheel
     from the case page in its first screen. The live prototype is in the try-it block. */
 function CnHeroShot() {
@@ -190,6 +170,14 @@ export default function ChooseNotToLoseCase({item, reduced}) {
 
     <NumberStrip items={NUMBERS} reduced={reduced} label="The case in numbers"/>
 
+    <section id="cn-quiz" className="cn-quiz" aria-labelledby="cn-quiz-title">
+      <div className="v2-section-head" data-reveal="">
+        <h2 id="cn-quiz-title" className="v2-h2">Which plan would you pick?</h2>
+        <p className="v2-lede">Before the redesign, the table it replaces: the prototype’s four fictional plans as most benefits portals list them. Same network, same covered services.</p>
+      </div>
+      <Deferred minHeight={820} label="The plan table, to try"><PlanQuiz reduced={reduced}/></Deferred>
+    </section>
+
     <section id="cn-problem-section" className="v2-problem" aria-labelledby="cn-problem">
       <div className="v2-problem-copy" data-reveal="">
         <h2 id="cn-problem" className="v2-h2" tabIndex={-1}>The table has the answer, and hides it</h2>
@@ -203,7 +191,6 @@ export default function ChooseNotToLoseCase({item, reduced}) {
         <p className="v2-slot-badge">Placeholder</p>
         <p>Quotes from five classmates go here after the test afternoon: how they chose between two fictional menus, and whether they could explain their pick back.</p>
       </aside>
-      <SameCoverage/>
     </section>
 
     <Scrolly id="cn-flow" kit={CNTL_PAGE_KIT} frame="browser" steps={STEPS} reduced={reduced} label="The redesigned flow"
