@@ -14,12 +14,14 @@ import {AT_WAYPOINT, ROUTE_D, ROUTE_LEN, TOTAL_FEET, bag, walkAt, waypointFor} f
 
 const R = REGION;
 const GLYPH = ['P', 'gate', '4', 'stairs', '214'];
+/** the courier is drawn a little larger than the plan's scale, so a person reads at walking zoom */
+const BOOST = 1.3;
 
 /** Per breakpoint: px per plan unit at walking zoom, where the courier sits on screen, and the overview. */
 export function layoutFor(w, h) {
-  if (w >= 1000) return {S: 3, walk: [.7, .58], over: [.68, .5], overAt: {x: 222, y: 278}, oz: Math.min(w * .5 / (430 * 3), h * .86 / (600 * 3)), ahead: 16};
-  if (w > 760) return {S: 2.6, walk: [.7, .6], over: [.66, .56], overAt: {x: 222, y: 290}, oz: Math.min(w * .52 / (430 * 2.6), h * .8 / (600 * 2.6)), ahead: 14};
-  return {S: 2.4, walk: [.5, .7], over: [.5, .7], overAt: {x: 230, y: 300}, oz: Math.min(w * 1.02 / (420 * 2.4), h * .52 / (560 * 2.4)), ahead: 10};
+  if (w >= 1000) return {S: 3, zw: .8, walk: [.62, .64], over: [.68, .5], overAt: {x: 222, y: 278}, oz: Math.min(w * .5 / (430 * 3), h * .86 / (600 * 3)), ahead: 16};
+  if (w > 760) return {S: 2.6, zw: .85, walk: [.66, .64], over: [.66, .56], overAt: {x: 222, y: 290}, oz: Math.min(w * .52 / (430 * 2.6), h * .8 / (600 * 2.6)), ahead: 14};
+  return {S: 2.4, zw: .85, walk: [.5, .7], over: [.5, .7], overAt: {x: 230, y: 300}, oz: Math.min(w * 1.02 / (420 * 2.4), h * .52 / (560 * 2.4)), ahead: 10};
 }
 
 function Token({i, at}) {
@@ -66,6 +68,12 @@ function RouteLayer({width, height, gateOpen}) {
       <line className="w3-leaf is-right" x1="239" y1="430.5" x2="226" y2="430.5"/>
     </g>
     {WAYPOINTS.map((w, i) => <Token key={w.key} i={i} at={i === 0 ? {x: 206, y: 463} : w.at}/>)}
+    {/* delivered: the bag on the mat outside door 214 */}
+    <g className="w3-dropped">
+      <rect x="258.2" y="201.4" width="6.8" height="6.2" rx="1.3" fill="#04060d" opacity=".45"/>
+      <rect x="257" y="199.6" width="6.8" height="5.6" rx="1.3" fill="#eb1700" stroke="#fff" strokeWidth=".5"/>
+      <rect x="257" y="203" width="6.8" height=".55" fill="#ffd9cf" opacity=".8"/>
+    </g>
     <g className="w3-pin">
       <ellipse cx={pin.x} cy={pin.y} rx="3.4" ry="1.4" fill="#04060d" opacity=".5"/>
       <path d={`M${pin.x} ${pin.y} C${pin.x - 1.4} ${pin.y - ph * .38} ${pin.x - pr} ${pin.y - ph * .5} ${pin.x - pr} ${pin.y - ph + pr} A${pr} ${pr} 0 1 1 ${pin.x + pr} ${pin.y - ph + pr} C${pin.x + pr} ${pin.y - ph * .5} ${pin.x + 1.4} ${pin.y - ph * .38} ${pin.x} ${pin.y} Z`} fill="#8b90a6" stroke="#f2ece0" strokeWidth=".9"/>
@@ -85,7 +93,8 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
   const reach = useRef(onReach); reach.current = onReach;
 
   useLayoutEffect(() => {
-    const node = root.current, el = stage.current;
+    // the page's own ref attaches after this child's layout effect runs: find the page from the stage
+    const el = stage.current, node = el?.closest('.w3');
     if (!node || !el) return undefined;
     const scroller = scrollerOf(node);
     const legs = [], stops = [];
@@ -108,8 +117,12 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
     const lab = [...(labels.current?.children || [])].map(n => ({n, x: +n.dataset.x, y: +n.dataset.y}));
     const ease = gsap.parseEase('power2.inOut');
     const target = () => legs.reduce((s, t, i) => s + (t ? t.progress : 0) * LEGS[i].feet, 0);
-    let shown = target(), angle = walkAt(shown).angle, z = null, zoomMul = 1, acc = 0, still = 0, frame = 'stand', wp = -1;
-    let last = {count: counts.map(() => null), stop: null};
+    // the HUD steps aside whenever a panel of the page slides under it
+    const hudbar = node.querySelector('.w3-hudbar'), hud = hudbar?.firstElementChild;
+    const covers = () => [...node.querySelectorAll('.w3-sheet,.w3-col,.w3-photo,.w3-lock-col,.w3-run-end')];
+    let coverEls = covers(), coverTick = 0, covered = false;
+    let shown = target(), angle = walkAt(shown).angle, z = null, zoomMul = .8, fyMul = null, acc = 0, still = 0, frame = 'stand', wp = -1;
+    let last = {count: counts.map(() => null), stop: null, delivered: false};
 
     const tick = (_, deltaMs) => {
       const dt = Math.min(.05, (deltaMs || 16) / 1000);
@@ -129,19 +142,22 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
 
       // camera: overview behind the hero, then a game camera that keeps the courier at a fixed point
       const active = stops.find(s => s.st.isActive);
-      zoomMul += ((active ? active.zoom : 1) - zoomMul) * (reduced ? 1 : 1 - Math.exp(-dt * 3));
+      zoomMul += ((active ? active.zoom : 1) * lay.zw - zoomMul) * (reduced ? 1 : 1 - Math.exp(-dt * 3));
       const hp = hero ? (reduced ? (hero.progress > .5 ? 1 : 0) : ease(hero.progress)) : 1;
       const ahead = walkAt(Math.min(TOTAL_FEET, shown + lay.ahead));
       const look = {x: (w.x + ahead.x) / 2, y: (w.y + ahead.y) / 2};
       const zt = lay.oz + (zoomMul - lay.oz) * hp;
       z = z == null || reduced ? zt : z + (zt - z) * (1 - Math.exp(-dt * 8));
       const px = lay.overAt.x + (look.x - lay.overAt.x) * hp, py = lay.overAt.y + (look.y - lay.overAt.y) * hp;
-      const fx = (lay.over[0] + (lay.walk[0] - lay.over[0]) * hp) * W, fy = (lay.over[1] + (lay.walk[1] - lay.over[1]) * hp) * H;
+      // on phones a stop can ask for the courier higher on screen (the gate panel sits low)
+      const fyWant = W <= 760 && active?.el.dataset.fy ? +active.el.dataset.fy : lay.walk[1];
+      fyMul = fyMul == null || reduced ? fyWant : fyMul + (fyWant - fyMul) * (1 - Math.exp(-dt * 4));
+      const fx = (lay.over[0] + (lay.walk[0] - lay.over[0]) * hp) * W, fy = (lay.over[1] + (fyMul - lay.over[1]) * hp) * H;
       const k = z * lay.S, tx = fx - (px - R.x) * k, ty = fy - (py - R.y) * k;
       cam.current.style.transform = `translate3d(${tx.toFixed(2)}px,${ty.toFixed(2)}px,0) scale(${z.toFixed(4)})`;
       const sx = tx + (w.x - R.x) * k, sy = ty + (w.y - R.y) * k;
       if (courier.current) {
-        courier.current.style.transform = `translate3d(${sx.toFixed(2)}px,${sy.toFixed(2)}px,0) scale(${(z * (1 + .14 * w.up)).toFixed(4)})`;
+        courier.current.style.transform = `translate3d(${sx.toFixed(2)}px,${sy.toFixed(2)}px,0) scale(${(z * BOOST * (1 + .14 * w.up)).toFixed(4)})`;
         if (courier.current.dataset.frame !== frame) courier.current.dataset.frame = frame;
       }
       if (turn) turn.style.transform = `rotate(${angle.toFixed(1)}deg)`;
@@ -160,10 +176,22 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
         wp = now;
         tokens.forEach((t, i) => { t.dataset.state = i < now ? 'done' : i === now ? 'current' : 'upcoming'; });
         reach.current?.(now);
-        if (now === WAYPOINTS.length - 1 && shown >= TOTAL_FEET - .5 && !bag.get().delivered) bag.set({delivered: true});
+      }
+      // at the door: the bag goes down on the mat
+      const delivered = shown >= TOTAL_FEET - .4;
+      if (delivered !== last.delivered) {
+        last.delivered = delivered;
+        el.toggleAttribute('data-delivered', delivered);
+        if (delivered && !bag.get().delivered) bag.set({delivered: true});
       }
       const stopKey = active ? active.el.dataset.stop : hp < .5 ? 'hero' : 'walk';
       if (last.stop !== stopKey) { last.stop = stopKey; el.dataset.at = stopKey; }
+      if (hud && ++coverTick % 4 === 0) {
+        if (coverTick % 120 === 0) coverEls = covers();
+        const r = hud.getBoundingClientRect();
+        const over = coverEls.some(c => { const b = c.getBoundingClientRect(); return b.bottom > r.top - 8 && b.top < r.bottom + 8 && b.right > r.left && b.left < r.right; });
+        if (over !== covered) { covered = over; hudbar.toggleAttribute('data-covered', over); }
+      }
     };
     gsap.ticker.add(tick);
 
@@ -185,8 +213,9 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
       <Courier ref={courier} px={L.S}/>
       <div ref={labels} className="w3-labels">
         <span className="w3-label is-pin" data-x={GARAGE_GATE.x} data-y={GARAGE_GATE.y - 15}><span>1450 Elm St, where map apps drop the pin</span></span>
-        <span className="w3-label is-fence" data-x={GATE.x - 112} data-y={GATE.y - 118}><span>{GEOFENCE_FT} ft: the code can show</span></span>
+        <span className="w3-label is-fence" data-x={GATE.x + 96} data-y={GATE.y - 132}><span>{GEOFENCE_FT} ft: the code can show</span></span>
         <span className="w3-label is-car" data-x={206} data-y={480}><span>Your stop, curb rules checked</span></span>
+        <span className="w3-label is-done" data-x={262} data-y={192}><span>Delivered</span></span>
       </div>
       <div className="w3-vignette"/>
     </div>

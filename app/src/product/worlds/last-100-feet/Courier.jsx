@@ -34,7 +34,7 @@ function Figure({pose, glow = "w3-phone-glow"}) {
       <path d="M-5.2 .2 A5.4 3.3 0 0 1 1.6 -2.7 A5.4 3.6 0 0 0 -3.6 1.6 Z" fill={JACKET_LIT} opacity=".9"/>
       {/* right arm and the hot bag */}
       <path d={`M4.6 -.2 Q6.6 ${.8 + ra * .4} 7 ${1.6 + ra}`} stroke={JACKET} strokeWidth="2.3" strokeLinecap="round" fill="none"/>
-      <g transform={`translate(${8.6} ${3.4 + ra})`}>
+      <g className="w3-bagheld" transform={`translate(${8.6} ${3.4 + ra})`}>
         <rect x="-3.4" y="-2.2" width="6.8" height="6.2" rx="1.3" fill={RED_SIDE}/>
         <rect x="-3.4" y="-2.8" width="6.8" height="5.6" rx="1.3" fill={RED}/>
         <rect x="-2.6" y="-2.2" width="5.2" height="1.1" rx=".5" fill={RED_LIT} opacity=".8"/>

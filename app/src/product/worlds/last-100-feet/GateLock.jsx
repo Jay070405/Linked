@@ -110,7 +110,7 @@ export default function GateLock({reduced, plain, state, onOpen, onSkip}) {
   const label = seen ? 'Show code again' : tap ? 'Show gate code' : 'Hold to show gate code';
   const secs = bag.get().gateSeconds;
 
-  return <section ref={sec} id="w3-gate" className={`w3-lock${open ? ' is-open' : ''}${engaged ? ' is-engaged' : ''}`} data-stop="1" data-zoom=".74" aria-labelledby="w3-gate-title">
+  return <section ref={sec} id="w3-gate" className={`w3-lock${open ? ' is-open' : ''}${engaged ? ' is-engaged' : ''}`} data-stop="1" data-zoom=".74" data-fy=".2" aria-labelledby="w3-gate-title">
     <div className="w3-col w3-lock-col">
       <p className="w3-step"><StopGlyph i={1}/><span>Step 2 of 5, Elm St gate</span></p>
       <h2 id="w3-gate-title" className="w3-h2" tabIndex={-1}>{open ? 'The gate is open' : 'The gate is locked'}</h2>

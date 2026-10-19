@@ -313,6 +313,7 @@ export default function LastHundredFeetWorld({item, reduced}) {
             <div className="w3-aside"/>
           </div>
         </section>
+        <div className="w3-run-end" aria-hidden="true"/>
       </div>
     </PhotoViewer>
 

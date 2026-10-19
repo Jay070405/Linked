@@ -22,8 +22,8 @@
 .w3 *,.w3 *::before,.w3 *::after{box-sizing:border-box}
 :where(.w3) :where(h1,h2,h3,h4,p,ul,ol,dl,dd,figure){margin:0}
 :where(.w3) :where(ul,ol){padding:0;list-style:none}
-.w3 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-.w3 a{color:inherit}
+:where(.w3) button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:where(.w3) a{color:inherit}
 .w3 :focus-visible{outline:2px solid var(--lamp);outline-offset:3px;border-radius:4px}
 .w3 ::selection{background:#eb170066;color:#fff}
 .w3-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -31,6 +31,7 @@
 /* the shared nav and page, while this world is on screen: dusk, not paper */
 body.product-shell:has(.w3){background:#1b2030}
 body:has(.w3) .v16-navigation:not(.is-menu-open)[data-tone=light]{--nav-ink:#f2ece0;background:linear-gradient(#10131fe8,#10131f00);border-bottom-color:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+body:has(.w3) .v16-navigation:not(.is-menu-open) .sm-toggle{color:#f2ece0 !important}
 body:has(.w3) .v16-navigation[data-tone=light] .v16-language{background:#0d101bb3;border-color:#ffffff24}
 body:has(.w3) .v16-navigation[data-tone=light] .v16-language button{color:#a9acbf}
 body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed=true]{color:#111114}
@@ -50,7 +51,9 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
 .w3-col>.w3-h2{margin-top:18px}
 
 /* ---------- the stage: sticky behind everything in the run ---------- */
-.w3-run{position:relative}
+.w3-run{position:relative;padding-bottom:10vh}
+.w3-run-end{position:absolute;left:0;right:0;bottom:0;height:60vh;pointer-events:none}
+.w3-run::after{content:"";position:absolute;left:0;right:0;bottom:0;z-index:2;height:42vh;background:linear-gradient(#121624 0%,#12162400 0%,#121624 100%);background:linear-gradient(180deg,#12162400,#121624 92%);pointer-events:none}
 .w3-stage{position:sticky;top:0;z-index:0;height:100vh;height:100lvh;margin-bottom:-100vh;margin-bottom:-100lvh;overflow:hidden;pointer-events:none;contain:layout paint}
 .w3-world{position:absolute;inset:0;background:var(--land)}
 .w3-cam{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
@@ -81,6 +84,11 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
 .w3-route.is-open .w3-leaf.is-left{transform:rotate(-80deg)}
 .w3-route.is-open .w3-leaf.is-right{transform:rotate(80deg)}
 .w3-pin{transition:opacity 300ms ease}
+.w3-dropped{opacity:0;transition:opacity 300ms ease}
+.w3-stage[data-delivered] .w3-dropped{opacity:1}
+.w3-stage[data-delivered] .w3-bagheld{display:none}
+.w3-stage[data-delivered] .w3-label.is-done{opacity:1}
+.w3-label.is-done>span{background:#0f2a1c;box-shadow:0 0 0 1px #3fd27a80;color:#c9f5da}
 .w3-stage:not([data-at=hero]):not([data-at="0"]) .w3-pin{opacity:.3}
 
 /* the courier: one of five poses shows */
@@ -103,6 +111,8 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
 
 /* ---------- the HUD: the courier's screen ---------- */
 .w3-hudbar{position:sticky;top:0;z-index:5;height:0}
+.w3-hud{transition:opacity 200ms ease,transform 260ms var(--out),visibility 0s}
+.w3-hudbar[data-covered] .w3-hud{opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity 160ms ease,transform 200ms var(--out),visibility 0s 160ms}
 .w3-hud{position:absolute;top:calc(var(--nav) + 8px);right:var(--side);display:grid;gap:8px;justify-items:end;width:max-content;max-width:calc(100vw - 2 * var(--side))}
 .w3-order,.w3-bag{display:flex;align-items:center;gap:10px;min-height:40px;padding:0 14px;border-radius:20px;background:#0d101be6;box-shadow:0 0 0 1px var(--line-2),0 12px 30px -16px #000;font:620 14.5px/1.2 var(--sans);color:var(--paper);white-space:nowrap}
 .w3-order-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px #eb170033}
@@ -155,7 +165,7 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
 .w3-step{display:flex;align-items:center;gap:12px;font:650 15px/1.3 var(--sans);color:var(--pencil)}
 
 /* the resident's photo pops as you reach the stop */
-.w3-photo{position:sticky;top:calc(var(--nav) + 116px);width:min(330px,24vw);margin:0 clamp(0px,2vw,24px) 0 auto;padding:8px 8px 14px;border-radius:18px;background:#0d101bf0;box-shadow:0 0 0 1px var(--line-2),0 30px 60px -24px #000;
+.w3-photo{position:sticky;top:calc(var(--nav) + 176px);width:min(300px,22vw);margin:0 clamp(0px,2vw,24px) 0 auto;padding:8px 8px 14px;border-radius:18px;background:#0d101bf0;box-shadow:0 0 0 1px var(--line-2),0 30px 60px -24px #000;
   opacity:0;transform:translateY(14px) scale(.96);transform-origin:20% 100%;transition:opacity 240ms ease,transform 420ms var(--out)}
 .w3-stop.is-here .w3-photo{opacity:1;transform:none}
 .w3-photo-btn{display:block;width:100%;border-radius:11px;overflow:hidden;cursor:zoom-in}
@@ -260,8 +270,11 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
 @media(hover:hover) and (pointer:fine){.w3-pill:hover{box-shadow:inset 0 0 0 1px var(--paper)}}
 
 /* Find the door */
-.w3-fd{display:grid;gap:20px}
-.w3-fd-text{display:grid;gap:16px;align-content:start}
+.w3-fd{display:grid;gap:16px}
+.w3-fd-map{order:1}
+.w3-fd-status{order:2}
+.w3-fd-take{order:3}
+.w3-fd-note{order:4}
 .w3-fd-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;min-height:44px}
 .w3-fd-status{max-width:44ch;min-height:4.4em;font:500 clamp(18px,1.45vw,21px)/1.45 var(--sans);color:var(--paper);text-wrap:pretty}
 .w3-fd-map{position:relative;width:100%;max-width:640px;margin:0 auto;border-radius:22px;background:var(--land);box-shadow:0 0 0 1px var(--line)}
@@ -297,9 +310,9 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
 @keyframes w3-pop{from{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.7)}}
 .w3-fd.is-instant .w3-fd-photo{animation:none}
 @media(min-width:1000px){
-  .w3-fd{grid-template-columns:minmax(0,1fr) auto;column-gap:clamp(36px,4.4vw,72px);align-items:start}
-  .w3-fd-map{grid-column:2;grid-row:1;width:min(600px,calc((100svh - 160px) * 440 / 510));margin:0}
-  .w3-fd-text{grid-column:1;grid-row:1}
+  .w3-fd{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto auto 1fr;column-gap:clamp(36px,4.4vw,72px);row-gap:18px;align-items:start}
+  .w3-fd>*{grid-column:1;order:0}
+  .w3-fd-map{grid-column:2;grid-row:1/-1;width:min(600px,calc((100svh - 160px) * 440 / 510));margin:0}
 }
 
 /* the gate code with distance */
@@ -460,6 +473,17 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
   .w3-fd-label{font-size:13px;padding:2px 6px}
   .w3-gc-card{min-height:180px;padding:14px}
   .w3-viewer figcaption{padding-right:18px;padding-bottom:70px}
+  /* the hero reads over a dusk scrim; the plan shows through below the words */
+  .w3-stage[data-at=hero] .w3-vignette{background:linear-gradient(180deg,#11141ff2 0%,#11141fe6 56%,#11141f80 80%,#11141f00 100%)}
+  .w3-label:not(.is-done){display:none}
+  /* the gate: the courier and the gate stay visible above a compact panel */
+  .w3-lock{align-content:end;padding-bottom:20px}
+  .w3-lock-col{gap:12px;padding:18px 18px 16px}
+  .w3-lock-col .w3-lede{font-size:16px;line-height:1.45}
+  .w3-lock-col .w3-h2{font-size:32px}
+  .w3-lock-col .w3-small{font-size:13px}
+  .w3-gatebox{min-height:0;padding:10px;border-radius:18px}
+  .w3-lock-tools{gap:0 16px}
 }
 
 /* ---------- reading mode: the same page, no walk ---------- */

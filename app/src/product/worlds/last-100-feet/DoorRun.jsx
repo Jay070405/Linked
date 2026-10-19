@@ -49,6 +49,7 @@ export default function DoorRun({reduced = false}) {
   const [phase, setPhase] = useState('idle');     // idle | run | route | done
   const [reached, setReached] = useState(-1);     // photos shown up to this waypoint
   const [hover, setHover] = useState(null);
+  const [arrived, setArrived] = useState(false);   // the courier has reached the spot you chose
   const [round, setRound] = useState(0);
   const mode = useInputMode();
   const svg = useRef(null), mark = useRef(null), trail = useRef(null), route = useRef(null), tl = useRef(null);
@@ -77,23 +78,24 @@ export default function DoorRun({reduced = false}) {
     const draw = d => { if (trail.current) trail.current.style.strokeDashoffset = String(Math.max(0, runLen - d)); };
     const routeTo = feet => { if (route.current) route.current.style.strokeDashoffset = String(Math.max(0, ROUTE_LEN - walkAt(feet).drawn)); };
     const wpFor = feet => AT_WAYPOINT.reduce((w, at, i) => (feet >= at - .5 ? i : w), 0);
-    if (kind !== 'found') bag.cool(kind === 'garage' ? .3 : Math.min(.25, extra / 1400 + .06), kind === 'garage' ? 'Garage detour' : 'Wrong turn');
+    const arrive = () => { setArrived(true); if (kind !== 'found') bag.cool(kind === 'garage' ? .3 : Math.min(.25, extra / 1400 + .06), kind === 'garage' ? 'Garage detour' : 'Wrong turn'); };
     if (instant) {
       draw(runLen); routeTo(TOTAL_FEET);
       const w = walkAt(TOTAL_FEET); place({...w, angle: 90}, 'stand');
-      setReached(4); setPhase('done');
+      arrive(); setReached(4); setPhase('done');
       return undefined;
     }
-    setPhase('run'); setReached(-1);
+    setPhase('run'); setReached(-1); setArrived(false);
     const o = {d: 0, f: AT_WAYPOINT[1]};
     const t = gsap.timeline({onComplete: () => setPhase('done')});
     const out = kind === 'garage' ? length(run.slice(0, 5)) : runLen;
     const stepFrame = d => String(Math.floor(d / 2.6) % 4);
     t.to(o, {d: out, duration: Math.max(.6, out * .0032), ease: 'none', onUpdate: () => { place(along(run, o.d), stepFrame(o.d)); draw(o.d); }, onStart: () => setReached(0)});
     if (kind === 'garage') {
-      t.add(() => { place(along(run, o.d), 'stand'); }).to({}, {duration: .7});
+      t.add(() => { place(along(run, o.d), 'stand'); arrive(); }).to({}, {duration: .9});
       t.to(o, {d: runLen, duration: (runLen - out) * .0026, ease: 'none', onUpdate: () => { place(along(run, o.d), stepFrame(o.d)); draw(o.d); }});
     }
+    if (kind !== 'garage') t.add(arrive);
     t.add(() => { setPhase('route'); routeTo(AT_WAYPOINT[1]); setReached(1); });
     t.to(o, {f: TOTAL_FEET, duration: (TOTAL_FEET - AT_WAYPOINT[1]) * .011, ease: 'none', onUpdate: () => {
       const w = walkAt(o.f); place(w, stepFrame(o.f * 1.2)); routeTo(o.f);
@@ -121,24 +123,23 @@ export default function DoorRun({reduced = false}) {
       setCross({x: Math.min(VIEW.x + VIEW.w - 4, Math.max(VIEW.x + 4, c.x + move[0])), y: Math.min(VIEW.y + VIEW.h - 4, Math.max(VIEW.y + 4, c.y + move[1]))});
     } else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(c); }
   };
-  const reset = () => { tl.current?.kill(); setPick(null); setCross(null); setHover(null); setPhase('idle'); setReached(-1); setRound(r => r + 1); };
+  const reset = () => { tl.current?.kill(); setPick(null); setCross(null); setHover(null); setPhase('idle'); setReached(-1); setArrived(false); setRound(r => r + 1); };
 
   const verdict = !pick ? null
+    : !arrived ? (kind === 'garage' ? 'Your courier follows the pin around the block to Cypress Ave…' : 'Your courier walks to the spot you chose…')
     : found ? `You found the walk-in gate on Elm St. The pin sits on the garage, ${pinToGate} ft away.`
     : atGarage ? `That’s the garage gate: residents only, with a card reader. The walk-in gate is around the corner on Elm St, ${pinToGate} ft from the pin. Your courier walked about ${extra.toLocaleString('en-US')} ft more to find out.`
     : `The walk-in gate is on Elm St, about ${off} ft from where you chose.`;
   const start = walkAt(0);
 
   return <div className={`w3-fd${pick ? ' is-picked' : ''}${instant ? ' is-instant' : ''}`} data-phase={phase} {...mode.bind}>
-    <div className="w3-fd-text">
-      <div className="w3-fd-top">
-        <Ask>Choose where you’d walk in.</Ask>
-        {pick ? <button type="button" className="w3-pill" onClick={reset}>Try again</button> : null}
-      </div>
-      <p className="w3-fd-status" aria-live="polite">{verdict || 'Map apps route to the address. This is where its pin lands.'}</p>
-      <Takeaway show={phase === 'done'} instant={instant}>With a pin you guessed. With the route you’d have walked straight in.</Takeaway>
-      <p className="w3-small">A fictional complex drawn by the prototype, about a foot per plan unit. The photos are AI-generated illustrative images, not a real location. Watch the hot bag, top right.</p>
+    <div className="w3-fd-top">
+      <Ask>Choose where you’d walk in.</Ask>
+      {pick ? <button type="button" className="w3-pill" onClick={reset}>Try again</button> : null}
     </div>
+    <p className="w3-fd-status" aria-live="polite">{verdict || 'Map apps route to the address. This is where its pin lands.'}</p>
+    <Takeaway show={phase === 'done'} instant={instant} className="w3-fd-take">With a pin you guessed. With the route you’d have walked straight in.</Takeaway>
+    <p className="w3-small w3-fd-note">A fictional complex drawn by the prototype, about a foot per plan unit. The photos are AI-generated illustrative images, not a real location. Watch the hot bag in the corner.</p>
     <div className="w3-fd-map">
       <svg key={round} ref={svg} viewBox={`${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}`} className="w3-fd-plan"
         role="application" aria-label="Site plan of a fictional garden-style complex, 1450 Elm St, at dusk. A map pin marks the address on the garage gate, on Cypress Ave. Choose where you would walk in: arrow keys move a crosshair, Enter chooses."
@@ -162,7 +163,7 @@ export default function DoorRun({reduced = false}) {
       <span className="w3-fd-label is-pin" style={{left: `${pct(GARAGE_GATE, 'x')}%`, top: `${pct(GARAGE_GATE, 'y')}%`}} aria-hidden="true">1450 Elm St</span>
       {pick ? <span className="w3-fd-label is-you" style={{left: `${pct(pick, 'x')}%`, top: `${pct(pick, 'y')}%`}} aria-hidden="true">You</span> : null}
       {pick && phase !== 'run' ? <span className="w3-fd-label is-gate" style={{left: `${pct(GATE, 'x')}%`, top: `${pct(GATE, 'y')}%`}} aria-hidden="true">Walk-in gate</span> : null}
-      {kind === 'garage' && phase !== 'idle' ? <span className="w3-fd-label is-garage" style={{left: `${pct(GARAGE_GATE, 'x')}%`, top: `${pct(GARAGE_GATE, 'y')}%`}} aria-hidden="true">Residents only</span> : null}
+      {kind === 'garage' && arrived ? <span className="w3-fd-label is-garage" style={{left: `${pct(GARAGE_GATE, 'x')}%`, top: `${pct(GARAGE_GATE, 'y')}%`}} aria-hidden="true">Residents only</span> : null}
       {pick ? STEPS.map((s, i) => {
         if (i > reached) return null;
         const w = WAYPOINTS[i].at, [dx, dy] = THUMB[s.key], name = s.photo.split('/').pop().replace('.webp', '');
