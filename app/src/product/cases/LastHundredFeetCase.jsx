@@ -28,12 +28,14 @@ const A = '/assets/product/last-100-feet/';
 const AI = 'Photos are AI-generated illustrative images, not a real location.';
 // Interactive modules load when their place on the page comes near (v2/Try Deferred).
 const FindTheDoor = lazy(() => import('../v2/modules/FindTheDoor'));
+const GateCode = lazy(() => import('../v2/modules/GateCode'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
   {id: 'lf-problem-section', label: 'The problem'},
   {id: 'lf-door', label: 'Find the door'},
   {id: 'lf-flow', label: 'Two roles, one route'},
+  {id: 'lf-gate', label: 'The gate code'},
   {id: 'lf-decisions', label: 'Decisions'},
   {id: 'lf-compare', label: 'Round 1 → 2'},
   {id: 'try', label: 'Try it'},
@@ -207,6 +209,14 @@ export default function LastHundredFeetCase({item, reduced}) {
     <Scrolly id="lf-flow" kit={L100_KIT} steps={STEPS} reduced={reduced} label="Resident, then courier" title="Last 100 Feet prototype, following the steps"
       heading="Two roles, one route"
       lede={`From the resident’s first tap to the courier’s last. The phone runs the real prototype. ${AI}`}/>
+
+    <section id="lf-gate" className="lf-gate" aria-labelledby="lf-gate-title">
+      <div className="v2-section-head" data-reveal="">
+        <h2 id="lf-gate-title" className="v2-h2">The gate code, in your hands</h2>
+        <p className="v2-lede">The courier’s gate step from the prototype, on its own. The code belongs to the order; walking up to the gate only reveals it, and it hides again on its own.</p>
+      </div>
+      <Deferred minHeight={620} label="The gate step, to try"><GateCode reduced={reduced}/></Deferred>
+    </section>
 
     <Decisions id="lf-decisions" items={DECISIONS}
       heading="What I chose, and what I tried first"

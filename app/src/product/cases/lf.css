@@ -31,6 +31,7 @@
 /* ---------- problem: "Find the door" (v2/modules/FindTheDoor) ---------- */
 .lf-door{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(24px,3vw,40px);margin-top:clamp(8px,2vw,24px)}
 @media(min-width:1000px){.v2-problem>.lf-door{grid-column:1/-1}}
+.lf-gate{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(28px,3.4vw,48px)}
 .lf-h3{font:700 clamp(28px,2.6vw,40px)/1.05 var(--pp-sans);letter-spacing:-.035em}
 
 /* "Last 100" on one line beside the stage, "Feet" on the next */
