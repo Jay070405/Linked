@@ -17,6 +17,18 @@ const BASE = '/proto/ready-for-agents/';
 const out = path.join(app, 'public', 'proto', 'ready-for-agents');
 
 if (!fs.existsSync(path.join(source, 'package.json'))) throw new Error(`pd-prototype not found at ${source}`);
+// Vite keeps an outDir outside the prototype's own root even with --emptyOutDir; start clean so stale hashed
+// bundles from an earlier build don't ship. (A file-by-file walk: recursive fs.rmSync silently leaves files on some
+// Windows setups.)
+const clean = dir => {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) clean(full); else fs.unlinkSync(full);
+  }
+  fs.rmdirSync(dir);
+};
+clean(out);
 // Run through Node (not Git Bash), so the base path isn't rewritten into a Windows path.
 execSync(`npx vite build --configLoader native --base ${BASE} --outDir "${out}" --emptyOutDir`, {cwd: source, stdio: 'inherit'});
 
