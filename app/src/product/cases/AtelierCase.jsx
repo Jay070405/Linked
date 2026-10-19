@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {lazy, useRef} from 'react';
 import {Ev} from '../CaseKit';
 import {ProductFooter} from '../ProductIndex';
 import {nextCase} from '../content';
@@ -11,6 +11,7 @@ import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
 import CaseChrome from '../v2/CaseChrome';
+import {Deferred} from '../v2/Try';
 import {L100TileArt} from '../v2/TileArt';
 import {Phone, ProtoScreen, protoUrl, shotSrc} from '../v2/Device';
 import {ArrowDown, ArrowUpRight} from '../v2/icons';
@@ -24,11 +25,14 @@ import './atelier.css';
 // labeled Hypothesis until Jay's interviews on test day.
 
 const ART = '/proto/atelier/art/';
+// The three checks load when their place on the page comes near (v2/Try Deferred).
+const AtelierChecks = lazy(() => import('../v2/modules/AtelierChecks'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
   {id: 'at-problem-section', label: 'The problem'},
   {id: 'at-flow', label: 'Five steps to a drop'},
+  {id: 'at-checks', label: 'Try the checks'},
   {id: 'at-decisions', label: 'Decisions'},
   {id: 'at-compare', label: 'Round 1 → 2'},
   {id: 'try', label: 'Try it'},
@@ -211,6 +215,14 @@ export default function AtelierCase({item, reduced}) {
     <Scrolly id="at-flow" reduced={reduced} steps={STEPS} art="blue-hour" label="The drop flow" title="Atelier prototype, following the steps"
       heading="Five steps to a drop, then share it"
       lede="The artist side is where the product earns its keep. Scroll through a drop; the phone runs the real prototype."/>
+
+    <section id="at-checks" className="at-checks" aria-labelledby="at-checks-title">
+      <div className="v2-section-head" data-reveal="">
+        <h2 id="at-checks-title" className="v2-h2">Three checks, by hand</h2>
+        <p className="v2-lede">The print check, the price and the wall, with the prototype’s own numbers and eight of my paintings. Pick a painting once; all three follow it.</p>
+      </div>
+      <Deferred minHeight={1400} label="The print check, earnings and wall, to try"><AtelierChecks reduced={reduced}/></Deferred>
+    </section>
 
     <Decisions id="at-decisions" items={DECISIONS}
       heading="What I chose, and what I tried first"

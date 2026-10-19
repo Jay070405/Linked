@@ -65,3 +65,6 @@
 .at-ink-old::after{content:'Tried'}.at-ink-new::after{content:'Chose'}
 .at-ink-old{border-radius:999px;background:#3557e0;color:#fff;opacity:.45;filter:saturate(.7)}
 .at-ink-new{border-radius:12px;background:#151515;color:#faf9f6}
+
+/* ---------- three checks, by hand (v2/modules/AtelierChecks) ---------- */
+.at-checks{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(36px,4vw,56px)}
