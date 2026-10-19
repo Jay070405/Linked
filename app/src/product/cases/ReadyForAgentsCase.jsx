@@ -12,7 +12,7 @@ import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
 import CaseChrome, {zoomable} from '../v2/CaseChrome';
-import {Deferred} from '../v2/Try';
+import {Ask, Deferred, Takeaway, useInputMode} from '../v2/Try';
 import {Browser, ProtoScreen, RFA_KIT, rfaShot} from '../v2/Device';
 import {AtelierTileArt} from '../v2/TileArt';
 import {ArrowDown, ArrowRight} from '../v2/icons';
@@ -96,13 +96,13 @@ const PRINCIPLES = [
 ];
 
 const DIRECTIONS = [
-  {id: 'a', name: 'Properties panel section', idea: 'A one-line Variables row for the selected frame; Check opens Check designs with a Variables for agents lens.',
+  {id: 'a', name: 'Properties panel section', short: 'Panel row', idea: 'A one-line Variables row for the selected frame; Check opens Check designs with a Variables for agents lens.',
     plus: ['Visible at selection in one 40 px row; details open on demand', 'Reuses Check designs: pick scoped variables, apply in one undo'],
     minus: ['One row in a dense panel is easy to scroll past'], role: 'The home, as a lens on Check designs', chosen: true},
-  {id: 'b', name: 'Canvas overlay', idea: 'A toggle outlines every raw-value layer and labels it on the canvas.',
+  {id: 'b', name: 'Canvas overlay', short: 'Canvas', idea: 'A toggle outlines every raw-value layer and labels it on the canvas.',
     plus: ['Spatial: you see exactly where each raw value sits'],
     minus: ['Noisy fast: 9 labels already crowd one phone screen', 'Competes with selection, hover and annotations'], role: 'Folded into A as the hover outline'},
-  {id: 'c', name: 'Ready-for-dev checklist', idea: 'Marking a section ready for dev runs the same check as one step of a checklist.',
+  {id: 'c', name: 'Ready-for-dev checklist', short: 'Checklist', idea: 'Marking a section ready for dev runs the same check as one step of a checklist.',
     plus: ['Fits a ritual teams already have at handoff'],
     minus: ['Late: people have stopped editing by then', 'Only reaches teams that use dev status'], role: 'Reuses A’s row in the dev status flow'},
 ];
@@ -168,21 +168,55 @@ function Principles() {
   </ul>;
 }
 
-function Directions() {
-  return <div className="rfa-directions">
-    <ul className="rfa-direction-list">
-      {DIRECTIONS.map(d => <li key={d.id} className={`rfa-direction${d.chosen ? ' is-chosen' : ''}`} data-reveal="">
-        <div className="rfa-direction-img"><img src={`${A}explore-${d.id}.webp`} width="965" height="1008" alt={`Direction ${d.id.toUpperCase()}, ${d.name}, on the same Home frame`} loading="lazy" decoding="async"/></div>
+/** Three directions as tabs over one large preview. Switching crossfades the board (instant from the keyboard and with
+    reduced motion); beside it, the direction's idea, strengths, weaknesses and what became of it. The call stays
+    labeled a hypothesis. Arrow keys move between tabs, as in any tab list. */
+function Directions({reduced}) {
+  const [at, setAt] = useState(0);
+  const [seen, setSeen] = useState(false);
+  const mode = useInputMode();
+  const tabs = useRef(null);
+  const d = DIRECTIONS[at];
+  const pick = i => { setAt(i); setSeen(true); };
+  const onKey = e => {
+    const step = {ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1}[e.key];
+    const next = step ? (at + step + DIRECTIONS.length) % DIRECTIONS.length : e.key === 'Home' ? 0 : e.key === 'End' ? DIRECTIONS.length - 1 : null;
+    if (next == null) return;
+    e.preventDefault();
+    pick(next);
+    tabs.current?.querySelectorAll('[role=tab]')[next]?.focus();
+  };
+  const instant = reduced || mode.keyed.current;
+  return <div className="rfa-directions" {...mode.bind}>
+    <div className="rfa-dir-top" data-reveal="">
+      <Ask>Pick a direction.</Ask>
+      <div ref={tabs} className="rfa-dir-tabs" role="tablist" aria-label="Directions" onKeyDown={onKey}>
+        {DIRECTIONS.map((x, i) => <button key={x.id} type="button" role="tab" id={`rfa-dir-tab-${x.id}`} aria-selected={i === at} aria-controls="rfa-dir-panel"
+          tabIndex={i === at ? 0 : -1} onClick={() => pick(i)}>
+          <b>{x.id.toUpperCase()}</b><span className="rfa-dir-long">{x.name}</span><span className="rfa-dir-short" aria-hidden="true">{x.short}</span>
+        </button>)}
+      </div>
+    </div>
+    <div id="rfa-dir-panel" className={`rfa-dir${instant ? ' is-instant' : ''}`} role="tabpanel" aria-labelledby={`rfa-dir-tab-${d.id}`} data-reveal="">
+      <div className="rfa-dir-shot" data-zoom-group="">
+        {DIRECTIONS.map((x, i) => <img key={x.id} className={i === at ? 'is-on' : ''} src={`${A}explore-${x.id}.webp`} width="965" height="1008"
+          alt={`Direction ${x.id.toUpperCase()}, ${x.name}, on the same Home frame`} loading="lazy" decoding="async"
+          {...(i === at ? zoomable(`Direction ${x.id.toUpperCase()}, ${x.name}, on the same Home frame`)
+            // the other two join the viewer's set (its arrows step A, B, C) without being tab stops
+            : {'data-zoom': '', 'data-zoom-alt': `Direction ${x.id.toUpperCase()}, ${x.name}, on the same Home frame`, 'aria-hidden': true})}/>)}
+      </div>
+      <div className="rfa-dir-text">
         <p className="rfa-direction-tag"><b>{d.id.toUpperCase()}</b>{d.name}</p>
         <p className="rfa-direction-idea">{d.idea}</p>
         <ul className="rfa-direction-pm">
           {d.plus.map(t => <li key={t} className="is-plus"><span className="v2-sr">Strength: </span>{t}</li>)}
           {d.minus.map(t => <li key={t} className="is-minus"><span className="v2-sr">Weakness: </span>{t}</li>)}
         </ul>
-        <p className="rfa-direction-role">{d.role}</p>
-      </li>)}
-    </ul>
+        <p className="rfa-dir-verdict"><span>Verdict</span>{d.role}</p>
+      </div>
+    </div>
     <p className="rfa-decision" data-reveal=""><Ev label="Hypothesis"/><span><b>The call so far:</b> A is the home. B moves inside A, so hovering a row outlines its layers on the canvas. C reuses A’s row when a section is marked ready for dev. The five sessions decide whether it holds.</span></p>
+    <Takeaway show={seen} instant={instant}>One home for the check, with the other two folded into it.</Takeaway>
   </div>;
 }
 
@@ -360,7 +394,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
           <h3 className="rfa-h3">Where should the check live?</h3>
           <p className="v2-lede">Three directions on the same Home frame and the same 12 unbound values.</p>
         </div>
-        <Directions/>
+        <Directions reduced={reduced}/>
       </div>
     </section>
 
