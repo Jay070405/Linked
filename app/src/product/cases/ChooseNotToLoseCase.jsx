@@ -88,8 +88,8 @@ const DECISIONS = [
 
 const R = `${A}rounds/`;
 const PAIRS = [
-  {id: 'portal', tab: 'Portal → yearly view', caption: 'The same four fictional plans. Left: the benefits table most portals show. Right: the yearly view, premiums and covered care on one axis.',
-    before: {src: `${R}portal.webp`, label: 'Benefits portal'}, after: {src: `${R}compare-r2.webp`, label: 'Yearly view'}},
+  {id: 'portal', tab: 'Portal → yearly view', ratio: '1440 / 1119', size: [1440, 1119], caption: 'The same four fictional plans. Left: the benefits table most portals show. Right: the yearly view, premiums and covered care on one axis.',
+    before: {src: `${R}portal.webp`, label: 'Benefits portal'}, after: {src: `${R}compare-portal.webp`, label: 'Yearly view'}},
   {id: 'rounds', tab: 'Round 1 → Round 2', caption: 'The comparison in both rounds: bill amounts instead of scenario names, a blue note instead of a red error, and no plan preselected.',
     before: {src: `${R}compare-r1.webp`, label: 'Round 1'}, after: {src: `${R}compare-r2.webp`, label: 'Round 2'}},
 ];

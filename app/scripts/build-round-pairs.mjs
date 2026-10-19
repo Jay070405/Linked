@@ -53,10 +53,19 @@ for (const [name, shot] of [['check', '06-check'], ['wall', '17-wall'], ['checko
   await pair(path.join(at, 'shots', `${shot}.png`), path.join(assets, 'atelier/rounds', `${name}-r2.webp`));
 }
 
-// Choose Not to Lose: full pages at 1440 wide, the top 1310 px (both rounds' cost-difference notes included).
+// Last 100 Feet: whole 390 x 844 screens at 2x. Round 2 renumbered some screens, so each pair names both files.
+const l1 = path.join(cases, 'd3-last-100-feet');
+for (const [name, v1, v2] of [['gps', 'e02-c-gps-weak', 'e02-c-gps-weak'], ['stop', 'c02-c-step-park', 'c04-c-step-park'],
+  ['photos', 'r04-r-steps', 'r06-r-steps'], ['dropoff', 'c10-c-dropoff', 'c12-c-dropoff']]) {
+  await pair(path.join(l1, 'shots-v1', `${v1}.png`), path.join(assets, 'last-100-feet/rounds', `${name}-r1.webp`));
+  await pair(path.join(l1, 'shots', `${v2}.png`), path.join(assets, 'last-100-feet/rounds', `${name}-r2.webp`));
+}
+
+// Choose Not to Lose: full pages at 1440 wide. Round 1 vs round 2: the top 1310 px, both cost-difference notes
+// included. Portal vs yearly view: the baseline page's own height, so neither side ends in blank paper.
 const cn = path.join(cases, 'd4-choose-not-to-lose');
-const top = {left: 0, top: 0, width: 1440, height: 1310};
-await pair(path.join(cn, 'shots', 'baseline.png'), path.join(assets, 'choose-not-to-lose/rounds', 'portal.webp'), top);
+const top = {left: 0, top: 0, width: 1440, height: 1310}, portal = {left: 0, top: 0, width: 1440, height: 1119};
+await pair(path.join(cn, 'shots', 'baseline.png'), path.join(assets, 'choose-not-to-lose/rounds', 'portal.webp'), portal);
 await pair(path.join(cn, 'shots-v1', 'compare.png'), path.join(assets, 'choose-not-to-lose/rounds', 'compare-r1.webp'), top);
 // round 2 from this site's own capture (1.25x), scaled to the same 1440 px width
 const r2 = await sharp(path.join(assets, 'choose-not-to-lose/pages/compare.webp')).resize(1440).png().toBuffer();
@@ -64,5 +73,6 @@ const r2file = path.join(app, 'node_modules/.cache/compare-r2.png');
 await fs.mkdir(path.dirname(r2file), {recursive: true});
 await fs.writeFile(r2file, r2);
 await pair(r2file, path.join(assets, 'choose-not-to-lose/rounds', 'compare-r2.webp'), top);
+await pair(r2file, path.join(assets, 'choose-not-to-lose/rounds', 'compare-portal.webp'), portal);
 
 console.log(`Built ${log.length} images:\n  ${log.join('\n  ')}`);
