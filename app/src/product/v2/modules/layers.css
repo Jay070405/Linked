@@ -1,0 +1,38 @@
+/* D1 "Same picture, different structure" (LinkedLayers.jsx). Prefix: ll-. The panels keep the kit's Figma-like layer
+   panels (product.css .pp-layers-panel); hovering borrows Figma's own hover blue, the one place it appears. */
+.ll{display:grid;gap:16px}
+.ll-stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,168px) minmax(0,1fr);grid-template-areas:'l2 shot l0';gap:clamp(12px,1.6vw,20px);align-items:start}
+.ll-panel.is-L2{grid-area:l2}.ll-panel.is-L0{grid-area:l0}.ll-shot{grid-area:shot}
+.ll-panel li{cursor:default;outline:none;transition:background-color 120ms ease}
+.ll-panel li.is-hot,.ll-panel li.is-twin{background:#e5f4ff}
+.ll-panel li.is-twin{box-shadow:inset 2px 0 #0d99ff}
+.ll-panel li:focus-visible{box-shadow:inset 0 0 0 2px var(--pp-red)}
+.ll-shot{display:grid;gap:12px;align-content:start}
+.ll-screen{position:relative;overflow:hidden;border-radius:12px;background:#fff;box-shadow:0 0 0 1px #11111417,var(--pp-lift)}
+.ll-screen img{display:block;width:100%;height:auto}
+.ll-screen svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ll-box rect{fill:#0d99ff14;stroke:#0d99ff;stroke-width:1.5;vector-effect:non-scaling-stroke;animation:ll-box-in 140ms var(--v2-out)}
+.ll-box[data-still] rect{animation:none}
+@keyframes ll-box-in{from{opacity:0}to{opacity:1}}
+.ll-tag{position:absolute;z-index:1;max-width:100%;padding:2px 5px;border-radius:3px;background:#0d99ff;color:#fff;font:600 10px/1.3 var(--pp-sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transform:translateY(calc(-100% - 2px))}
+.ll-tag.is-inside{transform:translate(2px,2px)}
+.ll-tag-twin{font-weight:450;opacity:.85}
+.ll-status{min-height:6.2em;font:450 13.5px/1.45 var(--pp-sans);color:var(--pp-pencil);text-wrap:pretty}
+.ll .v2-caption{margin-top:0}
+@media(max-width:999px){
+  .ll-stage{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:'l2 l0' 'shot shot'}
+  .ll-shot{grid-template-columns:132px minmax(0,1fr);align-items:start;gap:16px}
+}
+@media(max-width:700px){
+  .ll-stage{padding:10px;gap:8px}
+  .ll-panel{font-size:11.5px}
+  .ll-panel header{height:32px;padding:0 9px;font-size:11.5px}
+  .ll-panel header>span:first-child{display:none}
+  .ll-panel .pp-layers-page{color:var(--pp-ink);font-weight:600}
+  .ll-panel li{height:25px;padding:0 6px 0 calc(4px + var(--depth) * 8px)}
+  .ll-panel .pp-layer-vars{display:none}
+  .ll-panel .pp-layer-caret{width:7px}
+  .ll-shot{grid-template-columns:112px minmax(0,1fr);padding-top:6px}
+}
+@media(prefers-reduced-motion:reduce){.ll-box rect{animation:none}.ll-panel li{transition:none}}
+.quiet .ll-box rect{animation:none}

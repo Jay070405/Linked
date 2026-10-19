@@ -40,7 +40,7 @@ export function TestSet({zoom = false}) {
 /* The sign-in screen's layer trees, read (never written) from the benchmark file with the Figma MCP server on
    19 Oct 2026: fileKey 1PYbZtPUlwIkd6rZDY552l, S1-L2 = node 6:62 on page 0:1, S1-L0 = node 10:2195 on page 1:3.
    Each entry: [depth, name, type, layoutMode, bound variable fields]. Instances were not expanded. */
-const L2 = [
+export const L2 = [
   [0, 'S1-L2', 'FRAME', 'VERTICAL', ['paddingLeft', 'paddingTop', 'paddingRight', 'paddingBottom', 'fills']],
   [1, 'Main', 'FRAME', 'VERTICAL', ['itemSpacing']],
   [2, 'Brand', 'FRAME', 'HORIZONTAL', ['itemSpacing']],
@@ -57,7 +57,7 @@ const L2 = [
   [4, 'Remember me', 'INSTANCE', 'HORIZONTAL', ['itemSpacing']],
   [4, 'Forgot password link', 'TEXT', null, ['fills']],
 ];
-const L0 = [
+export const L0 = [
   [0, 'S1-L0', 'FRAME', 'NONE', []],
   [1, 'Frame 1', 'FRAME', 'NONE', []],
   [2, 'Frame 2', 'FRAME', 'NONE', []],
@@ -74,14 +74,14 @@ const L0 = [
   [3, 'Frame 8', 'FRAME', 'NONE', []],
   [4, 'Text', 'TEXT', null, []],
 ];
-const SHOWN = 14;
-const kindsOf = fields => [
+export const SHOWN = 14;
+export const kindsOf = fields => [
   fields.some(f => f === 'fills' || f === 'strokes') && 'color',
   fields.some(f => f === 'itemSpacing' || f.startsWith('padding')) && 'spacing',
   fields.some(f => f.endsWith('Radius')) && 'radius',
 ].filter(Boolean);
 
-function LayerIcon({type, layout}) {
+export function LayerIcon({type, layout}) {
   const p = {width: 14, height: 14, viewBox: '0 0 14 14', 'aria-hidden': true, className: 'pp-layer-icon'};
   if (type === 'TEXT') return <svg {...p}><path d="M3.5 3.5h7M7 3.5v7.5" /></svg>;
   if (type === 'RECTANGLE') return <svg {...p}><rect x="3" y="3" width="8" height="8" rx="1"/></svg>;

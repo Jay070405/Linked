@@ -3,7 +3,7 @@ import {Go} from '../Go';
 import {Ev} from '../CaseKit';
 import {ProductFooter} from '../ProductIndex';
 import {nextCase} from '../content';
-import {LayersCompare, Pipeline, TestSet} from '../figures';
+import {Pipeline, TestSet} from '../figures';
 import CaseHero from '../v2/CaseHero';
 import NumberStrip from '../v2/NumberStrip';
 import Scrolly from '../v2/Scrolly';
@@ -29,6 +29,7 @@ const A = '/assets/product/ready-for-agents/';
 // Interactive modules load when their place on the page comes near (v2/Try Deferred).
 const TryFinding = lazy(() => import('../v2/modules/TryFinding'));
 const AblationChart = lazy(() => import('../v2/modules/AblationChart'));
+const LinkedLayers = lazy(() => import('../v2/modules/LinkedLayers'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
@@ -309,7 +310,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
           <h3 className="rfa-h3">Same picture, different structure</h3>
           <p>In L2 the sign-in screen’s layers have names, auto layout, instances and variable bindings. In L0 they’re generic frames and text with nothing bound. Both export the same PNG.</p>
         </div>
-        <div className="rfa-block-figure"><LayersCompare/></div>
+        <div className="rfa-block-figure"><Deferred minHeight={560} label="The sign-in screen’s layers in both files"><LinkedLayers reduced={reduced}/></Deferred></div>
       </div>
 
       <div className="rfa-wide" data-reveal="">
