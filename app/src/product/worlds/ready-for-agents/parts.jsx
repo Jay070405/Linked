@@ -2,10 +2,10 @@ import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {Ev} from '../../CaseKit';
 import {gsap, PHONE, useMedia} from '../../v2/motion';
 import {Ask, Takeaway, useInputMode} from '../../v2/Try';
-import {Browser, ProtoScreen, RFA_KIT, rfaShot} from '../../v2/Device';
+import {Browser, ProtoScreen, RFA_KIT, rfaShot, rfaUrl} from '../../v2/Device';
 import {zoomable} from '../../v2/zoom';
 import {A, DIRECTIONS, FLAT, PRINCIPLES} from './data';
-import {useArrive} from './context';
+import {useArrive, useWorld} from './context';
 import {FigIcon} from './icons';
 
 /* The frames' own modules, re-made for the canvas. Where the v4 page waited for a ScrollTrigger, these wait for the
@@ -160,9 +160,18 @@ export function AgentSide() {
 }
 
 /** The live prototype, life-size in the last frame: tasks along the top, the editor below at the frame's width. */
+// The prototype reads ?theme=dark; dark captures exist for two of its states.
+const DARK_SHOTS = {review: 'review-dark', picker: 'picker-dark'};
+const RFA_DARK_KIT = {...RFA_KIT, url: s => `${rfaUrl(s)}&theme=dark`, shot: s => rfaShot(DARK_SHOTS[s] || s)};
+
 export function LiveEditor({tasks, reduced, head}) {
   const live = !useMedia(PHONE);
+  const dark = useWorld().theme === 'dark';
+  const kit = dark ? RFA_DARK_KIT : RFA_KIT;
   const [state, setState] = useState({task: null, screen: 'row', reload: 0});
+  // a theme change reloads the editor in that theme, on the same state
+  const first = useRef(true);
+  useEffect(() => { if (first.current) { first.current = false; return; } setState(s => ({...s, reload: s.reload + 1})); }, [dark]);
   const run = (task, i) => { setState(s => ({task: i, screen: task.screen, reload: s.reload + 1})); setOn(true); };
   const reset = () => setState(s => ({task: null, screen: 'row', reload: s.reload + 1}));
   const current = state.task == null ? null : tasks[state.task];
@@ -183,7 +192,7 @@ export function LiveEditor({tasks, reduced, head}) {
         </ol>
         {live ? <div className="rfaw-live-tools">
           <button type="button" className="rfaw-btn" onClick={reset}><FigIcon name="reset"/>Reset the prototype</button>
-          <a className="rfaw-btn is-quiet" href={RFA_KIT.url(current?.screen || 'row')} target="_blank" rel="noopener"><FigIcon name="arrow-up-right"/>Open it in a new tab<span className="v2-sr"> (opens in a new tab)</span></a>
+          <a className="rfaw-btn is-quiet" href={kit.url(current?.screen || 'row')} target="_blank" rel="noopener"><FigIcon name="arrow-up-right"/>Open it in a new tab<span className="v2-sr"> (opens in a new tab)</span></a>
         </div> : null}
         <p className="rfaw-live-hint" aria-live="polite">{live ? (current?.hint || 'Pick a task, or click around: Check, Apply and Undo all work. Everything runs in your browser.') : 'The prototype is a desktop editor. Open this page on a screen at least 1024 px wide to try it.'}</p>
       </div>
@@ -191,7 +200,7 @@ export function LiveEditor({tasks, reduced, head}) {
     <div ref={device} className={`rfaw-live-device${on || !live ? ' is-on' : ''}`} data-jay=".5,.02" onPointerLeave={e => { if (e.pointerType === 'mouse') setOn(false); }}>
       {live && !on ? <button type="button" className="rfaw-live-cover" onClick={activate} aria-label="Use the editor"><span><FigIcon name="move"/>Click to use the editor</span></button> : null}
       <Browser label="Ready for agents prototype">
-        <ProtoScreen kit={RFA_KIT} screen={state.screen} reload={state.reload} load={live ? 'near' : 'never'} interactive={live}
+        <ProtoScreen kit={kit} screen={state.screen} reload={state.reload} load={live ? 'near' : 'never'} interactive={live}
           reduced={reduced} title="Ready for agents prototype, live and clickable" alt={live ? '' : 'Ready for agents prototype, first screen'}/>
       </Browser>
     </div>

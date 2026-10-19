@@ -36,6 +36,9 @@ const LightboxViewer = lazy(() => import('../../v2/Lightbox'));
 const CANVAS_MIN = '(min-width: 1000px) and (min-height: 600px)';
 const SIDEBAR_MIN = 1200;
 const PREF = 'rfaw-plain';
+// Light or dark, shared by every case page (Figma UI3's light and dark themes here).
+const THEME_KEY = 'jl-case-theme';
+const readTheme = () => { try { return localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light'; } catch { return 'light'; } };
 const readPref = () => { try { return sessionStorage.getItem(PREF) === '1'; } catch { return false; } };
 const writePref = v => { try { sessionStorage.setItem(PREF, v ? '1' : '0'); } catch { /* storage blocked */ } };
 
@@ -77,6 +80,26 @@ export default function ReadyForAgentsWorld({item, reduced}) {
   const [zoomMenu, setZoomMenu] = useState(false);
   const [tab, setTab] = useState('file');
   const [zoom, setZoom] = useState(null);
+  const [theme, setThemeState] = useState(readTheme);
+  const themeTimer = useRef(0);
+  // a 200 ms crossfade of every color while the theme changes; instant with reduced motion
+  const setTheme = useCallback(t => {
+    if (t === theme) return;
+    const node = root.current;
+    if (node && !reduced) {
+      clearTimeout(themeTimer.current);
+      node.classList.add('is-theming');
+      themeTimer.current = setTimeout(() => node.classList.remove('is-theming'), 240);
+    }
+    setThemeState(t);
+    try { localStorage.setItem(THEME_KEY, t); } catch { /* storage blocked */ }
+  }, [theme, reduced]);
+  // another case page (or tab) changed it
+  useEffect(() => {
+    const sync = e => { if (e.key === THEME_KEY) setThemeState(e.newValue === 'dark' ? 'dark' : 'light'); };
+    addEventListener('storage', sync);
+    return () => { removeEventListener('storage', sync); clearTimeout(themeTimer.current); };
+  }, []);
   const place = useRef(0);          // the frame the reader is on, kept across mode switches
   const next = nextCase(item.slug);
 
@@ -201,7 +224,7 @@ export default function ReadyForAgentsWorld({item, reduced}) {
     return () => { node.removeEventListener('click', click); node.removeEventListener('keydown', key); };
   }, []);
 
-  const ctx = useMemo(() => ({mode, arrived, camera, go}), [mode, arrived, camera, go]);
+  const ctx = useMemo(() => ({mode, arrived, camera, go, theme}), [mode, arrived, camera, go, theme]);
   const activeFrame = FRAMES[active];
   const minimized = mode === 'canvas' && activeFrame?.wide && !free;
   const motionOff = reduced || mode === 'plain';
@@ -212,10 +235,15 @@ export default function ReadyForAgentsWorld({item, reduced}) {
   };
 
   return <WorldCtx.Provider value={ctx}>
-    <article ref={root} className={`rfaw is-${mode}${minimized ? ' is-minimized' : ''}${free ? ' is-free' : ''}${active > 0 ? ' is-past-cover' : ''}`} lang="en" data-nav-tone="light">
+    <article ref={root} className={`rfaw is-${mode}${minimized ? ' is-minimized' : ''}${free ? ' is-free' : ''}${active > 0 ? ' is-past-cover' : ''}`} lang="en" data-theme={theme} data-nav-tone={theme === 'dark' ? 'dark' : 'light'}>
       <a className="rfaw-skip" href="#rfa-cover" onClick={togglePlain}>
         <FigIcon name={plain ? 'frame' : 'page'}/>{plain ? (roomy && !reduced ? 'Back to the canvas' : 'Back to the full version') : 'Read as a plain page'}
       </a>
+
+      <div className="rfaw-themes" role="group" aria-label="Color theme">
+        <button type="button" aria-pressed={theme === 'light'} onClick={() => setTheme('light')} title="Light"><FigIcon name="sun"/><span className="v2-sr">Light</span></button>
+        <button type="button" aria-pressed={theme === 'dark'} onClick={() => setTheme('dark')} title="Dark"><FigIcon name="moon"/><span className="v2-sr">Dark</span></button>
+      </div>
 
       <div ref={track} className="rfaw-track">
         <div ref={viewport} className="rfaw-viewport">

@@ -24,6 +24,8 @@ const P = {
   minus: <path d="M3.75 8h8.5"/>,
   plus: <path d="M8 3.75v8.5M3.75 8h8.5"/>,
   check: <path d="M4 8.25 6.6 10.85 12 5.25"/>,
+  sun: <><circle cx="8" cy="8" r="2.75"/><path d="M8 1.75v1.5m0 9.5v1.5M1.75 8h1.5m9.5 0h1.5M3.6 3.6l1.05 1.05m6.7 6.7 1.05 1.05m0-8.8-1.05 1.05m-6.7 6.7L3.6 12.4"/></>,
+  moon: <path d="M12.75 9.6A5.25 5.25 0 0 1 6.4 3.25a5.25 5.25 0 1 0 6.35 6.35z"/>,
 };
 
 export function FigIcon({name, size = 16, className = ''}) {
