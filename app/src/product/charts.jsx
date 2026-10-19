@@ -122,7 +122,7 @@ const WIRING = [
   {src: 'design-to-code-s2-l0-themed', wide: 'L0 Raw: after a token change', alt: 'The L0 build after the change: buttons and borders turned magenta and cyan, but the text stayed dark and the page stayed grey.'},
   {src: 'design-to-code-s2-l0v-themed', wide: 'L0V Raw + variables: after the same token change', alt: 'The L0V build after the change: magenta buttons, cyan borders, green text and a yellow page.'},
 ];
-export const WiringGrid = () => <div className="pp-wiring">
+export const WiringGrid = () => <div className="pp-stage pp-wiring">
   {WIRING.map(cell => <div key={cell.src} className={`pp-wiring-cell${cell.wideOnly ? ' is-wide-only' : ''}`}>
     <div className="pp-figure-media"><img src={`/assets/product/${cell.src}.webp`} alt={cell.alt} width={1080} height={480} loading="lazy" decoding="async"/></div>
     <p className="pp-wiring-label">{cell.narrow ? <><span className="pp-wiring-wide">{cell.wide}</span><span className="pp-wiring-narrow">{cell.narrow}</span></> : cell.wide}</p>
