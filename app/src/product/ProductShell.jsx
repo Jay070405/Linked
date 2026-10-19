@@ -25,7 +25,8 @@ export default function ProductShell() {
     return () => { document.body.classList.remove('product-shell'); removeEventListener('popstate', sync); media.removeEventListener('change', motion); };
   }, []);
   useEffect(() => { document.body.classList.toggle('quiet', reduced); }, [reduced]);
-  useEffect(() => { document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN'; saveLanguage(lang); }, [lang]);
+  useEffect(() => { document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN'; }, [lang]);
+  const chooseLang = value => { setLang(value); saveLanguage(value); };
   useEffect(() => { document.title = `Jay Lin — ${productTitle(resolveProductPath(path))}`; }, [path]);
 
   // A new page starts at the top (or where you left it, going back) with focus on the page, not the old link.
@@ -48,7 +49,7 @@ export default function ProductShell() {
 
   return <>
     <a className="skip-link" href="#product-main">{lang === 'en' ? 'Skip to content' : '跳到正文'}</a>
-    <SiteNavigation lang={lang} reducedMotion={reduced} tone="light" onLanguage={setLang} onNavigate={onNavigate} onAbout={() => location.assign(SITE.about)}/>
+    <SiteNavigation lang={lang} reducedMotion={reduced} tone="light" onLanguage={chooseLang} onNavigate={onNavigate} onAbout={() => location.assign(SITE.about)}/>
     <main id="product-main" ref={main} tabIndex={-1} className="product-shell-main">
       <ProductRoute page={page} reduced={reduced} onNavigate={navigate}/>
     </main>
