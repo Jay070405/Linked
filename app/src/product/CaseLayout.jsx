@@ -10,8 +10,8 @@ export default function CaseLayout({item, legend, reduced, children}) {
     <header className="pp-case-head">
       <Go to={PRODUCT_HOME} className="pp-back"><span aria-hidden="true">←</span> All product work</Go>
       <p className="pp-case-kind">{item.kind}, {item.when}</p>
-      <h1 className="pp-case-title">{item.title}</h1>
-      <p className="pp-case-summary">{item.summary}</p>
+      <h1 className="pp-case-title">{item.pageTitle || item.title}</h1>
+      <p className="pp-case-summary">{item.dek || item.summary}</p>
       <Legend {...legend}/>
     </header>
     <Annotated reduced={reduced}>{children}</Annotated>

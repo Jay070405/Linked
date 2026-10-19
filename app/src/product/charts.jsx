@@ -68,27 +68,51 @@ export function GapChart() {
   </svg>;
 }
 
-/* Design-to-code: the chart the benchmark will fill. Empty frames on purpose. */
-export function DesignToCodeChartSlot() {
-  const W = 960, H = 340, L = 64, R = 30, T = 36, B = 50;
-  const y = p => T + (1 - p) * (H - T - B);
-  const cols = ['Raw', 'Structured', 'Systematized'], band = (W - L - R) / cols.length;
-  return <svg viewBox={`0 0 ${W} ${H}`} className="pp-chart" style={{minWidth: 600}}>
-    <text x={L} y={18} className="s-text">Responsive checks passed, median of 12 generations (placeholder: results pending)</text>
-    {[0, .5, 1].map(p => <g key={p}>
-      <line x1={L} x2={W - R} y1={y(p)} y2={y(p)} className={p ? 's-stroke-rule' : 's-stroke-strong'}/>
-      <text x={L - 12} y={y(p) + 4} textAnchor="end" className="s-text">{p * 100}%</text>
+/* Design-to-code, exploratory measures (not pre-registered): median per level, whisker = min-max, n = 6 each.
+   Source: p2-benchmark/results/results.md (harness/summarize.js, 24 runs). The harness's own chart
+   (results/figures/exploratory-coherence.svg) has the same numbers but its text is too small for this column. */
+const LEVELS = [['L0', 'Raw'], ['L0V', 'Raw + variables'], ['L1', 'Structured'], ['L2', 'Systematized']];
+const COHERENCE = [
+  {title: 'Design-system names used', values: [[28, 23, 33], [100, 100, 100], [33, 19, 50], [100, 100, 100]]},
+  {title: 'Follows a token change (4 tokens)', values: [[50, 25, 67], [100, 100, 100], [37, 25, 67], [100, 100, 100]]},
+];
+function CoherencePanel({title, values}) {
+  const W = 440, H = 310, L = 50, R = 8, T = 52, B = 58, band = (W - L - R) / LEVELS.length, bar = 46;
+  const y = p => T + (1 - p / 100) * (H - T - B);
+  return <svg viewBox={`0 0 ${W} ${H}`} className="pp-chart">
+    <text x={0} y={16} className="s-text s-text-ink s-text-strong" style={{fontSize: 15}}>{title}</text>
+    {[0, 50, 100].map(t => <g key={t}>
+      <line x1={L} x2={W - R} y1={y(t)} y2={y(t)} className={t ? 's-stroke-rule' : 's-stroke-strong'}/>
+      <text x={L - 8} y={y(t) + 4} textAnchor="end" className="s-text">{t}%</text>
     </g>)}
-    {cols.map((c, i) => {
+    {values.map(([median, min, max], i) => {
       const cx = L + band * i + band / 2;
-      return <g key={c}>
-        <rect x={cx - 70} y={y(1)} width={140} height={y(0) - y(1)} className="s-stroke-strong s-dash"/>
-        <text x={cx} y={(y(0) + y(1)) / 2} textAnchor="middle" className="s-text" style={{fontSize: 15}}>[N]%</text>
-        <text x={cx} y={H - B + 26} textAnchor="middle" className="s-text s-text-ink">{c}</text>
+      return <g key={LEVELS[i][0]}>
+        <rect x={cx - bar / 2} y={y(median)} width={bar} height={y(0) - y(median)} className={i === 1 ? 's-red' : 's-ink'}/>
+        {max > min && <line x1={cx} x2={cx} y1={y(max)} y2={y(min)} className="s-stroke-whisker"/>}
+        <text x={cx} y={y(Math.max(median, max)) - 8} textAnchor="middle" className="s-text s-text-ink s-text-strong">{median}%</text>
+        <text x={cx} y={H - B + 20} textAnchor="middle" className="s-text s-text-ink s-text-strong">{LEVELS[i][0]}</text>
+        <text x={cx} y={H - B + 38} textAnchor="middle" className="s-text" style={{fontSize: 12}}>{LEVELS[i][1]}</text>
       </g>;
     })}
   </svg>;
 }
+export const CoherenceCharts = () => <div className="pp-chart-pair">{COHERENCE.map(panel => <CoherencePanel key={panel.title} {...panel}/>)}</div>;
+
+/* Design-to-code: the same pricing screen (S2) built from L0 and from L0V, before and after one injected token change.
+   Source: p2-benchmark/runs/S2-L0-r1 and S2-L0V-r1 (render.png, render-themed.png), cropped to the top 640px. */
+const WIRING = [
+  {src: 'design-to-code-s2-before', wide: 'L0 Raw: as built', narrow: 'Before the change: the L0 and L0V builds look the same', alt: 'The pricing screen built from the L0 file: indigo buttons, grey page, dark text.'},
+  {src: 'design-to-code-s2-l0v-before', wide: 'L0V Raw + variables: as built', alt: 'The pricing screen built from the L0V file, identical to the L0 build.', wideOnly: true},
+  {src: 'design-to-code-s2-l0-themed', wide: 'L0 Raw: after a token change', alt: 'The L0 build after the change: buttons and borders turned magenta and cyan, but the text stayed dark and the page stayed grey.'},
+  {src: 'design-to-code-s2-l0v-themed', wide: 'L0V Raw + variables: after the same token change', alt: 'The L0V build after the change: magenta buttons, cyan borders, green text and a yellow page.'},
+];
+export const WiringGrid = () => <div className="pp-wiring">
+  {WIRING.map(cell => <div key={cell.src} className={`pp-wiring-cell${cell.wideOnly ? ' is-wide-only' : ''}`}>
+    <div className="pp-figure-media"><img src={`/assets/product/${cell.src}.webp`} alt={cell.alt} width={1080} height={480} loading="lazy" decoding="async"/></div>
+    <p className="pp-wiring-label">{cell.narrow ? <><span className="pp-wiring-wide">{cell.wide}</span><span className="pp-wiring-narrow">{cell.narrow}</span></> : cell.wide}</p>
+  </div>)}
+</div>;
 
 /* League: the year as a chain, with the three places the information goes missing. Redrawn in English from
    Jay's annotated diagram (public/assets/lol/c0-system-annotated.webp). */

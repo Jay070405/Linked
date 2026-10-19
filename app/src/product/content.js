@@ -21,7 +21,10 @@ export const PRODUCT_CASES = [
   {
     slug: 'design-to-code',
     title: 'Design-to-code readiness',
+    // The case page leads with the question; the index row keeps the project's name.
+    pageTitle: 'What an AI agent can’t recover from a Figma file',
     summary: 'What breaks when coding agents build from Figma files, and what Figma could do about it.',
+    dek: 'I gave coding agents clean and messy versions of the same six screens, 24 builds in all. The messy files produced code that looked just as good. Only variable bindings decided whether that code followed the design system.',
     kind: 'Benchmark and plugin',
     when: 'Oct 2026 – now',
     status: 'In progress',

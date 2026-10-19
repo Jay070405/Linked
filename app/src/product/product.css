@@ -77,7 +77,7 @@
 .pp-prose li::marker{color:var(--pp-pencil)}
 .pp-prose a{color:var(--pp-ink);text-decoration:underline;text-decoration-color:var(--pp-strong);text-underline-offset:.2em}
 .pp-prose a:hover{text-decoration-color:currentColor}
-.pp-prose code{font:500 .82em Mono,ui-monospace,monospace;padding:.1em .3em;border-radius:3px;background:var(--pp-surface)}
+.pp-prose code{white-space:nowrap;font:500 .82em Mono,ui-monospace,monospace;padding:.1em .3em;border-radius:3px;background:var(--pp-surface)}
 .pp-prose>:is(.pp-tldr,.pp-figure,.pp-table,.pp-callout,.pp-metrics){margin-top:48px}
 .pp-prose>:is(.pp-figure,.pp-table,.pp-callout,.pp-metrics)+:not(h2,h3){margin-top:48px}
 .pp-prose>:first-child{margin-top:0}
@@ -113,7 +113,8 @@
 .pp-tldr-outcome-text{margin-top:6px;max-width:40ch;font:500 clamp(19px,1.6vw,22px)/1.42 var(--pp-sans);letter-spacing:-.005em}
 .pp-tldr-role{margin-top:22px;max-width:46ch}
 .pp-tldr-role dd{font-size:15px;line-height:1.45}
-.pp-tldr-facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:14px 24px;padding-top:20px;border-top:1px solid #11111414}
+.pp-tldr-note{margin-top:18px;font:400 14px/1.45 var(--pp-sans);color:var(--pp-pencil)}
+.pp-tldr-facts{display:grid;align-content:start;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:14px 24px;padding-top:20px;border-top:1px solid #11111414}
 .pp-tldr dd{margin-top:2px;font-size:15px;line-height:1.45}
 .pp-tldr-table{overflow-x:auto;padding-top:20px;border-top:1px solid #11111414}
 .pp-tldr-table table{width:100%;min-width:560px;border-collapse:collapse;font:400 15px/1.45 var(--pp-sans)}
@@ -137,8 +138,10 @@
 .pp-table :is(th,td){text-align:left;vertical-align:top;padding:11px 18px 11px 0;border-bottom:1px solid var(--pp-rule)}
 .pp-table thead th{padding-top:12px;font-weight:600;border-bottom-color:var(--pp-ink)}
 .pp-table tbody th{font-weight:400;color:var(--pp-pencil)}
+.pp-table.is-plain-first tbody th{color:var(--pp-ink)}
 .pp-table.is-numeric td{font-variant-numeric:tabular-nums}
 .pp-chosen{display:block;margin-top:3px;font-size:13px;font-weight:550;color:var(--pp-red)}
+.pp-table[data-highlight='1'] thead th:nth-child(2),.pp-table[data-highlight='2'] thead th:nth-child(3),.pp-table[data-highlight='3'] thead th:nth-child(4),.pp-table[data-highlight='4'] thead th:nth-child(5),
 .pp-table[data-chosen='1'] thead th:nth-child(2),.pp-table[data-chosen='2'] thead th:nth-child(3),.pp-table[data-chosen='3'] thead th:nth-child(4){box-shadow:inset 0 2px 0 var(--pp-red)}
 
 .pp-metrics{display:flex;flex-wrap:wrap;gap:24px 40px}
@@ -164,8 +167,17 @@
 .pp-page .s-stroke-red{fill:none;stroke:var(--pp-red);stroke-width:1.5}
 .pp-page .s-stroke-blue{fill:none;stroke:var(--pp-pencil);stroke-width:1.5}
 .pp-page .s-dash{stroke-dasharray:4 4}
+.pp-page .s-stroke-whisker{fill:none;stroke:var(--pp-pencil);stroke-width:1.5}
 .pp-page .s-text{fill:var(--pp-pencil);font-family:var(--pp-sans);font-size:13px}
 .pp-page .s-text-ink{fill:var(--pp-ink)}.pp-page .s-text-red{fill:var(--pp-red)}.pp-page .s-text-strong{font-weight:600}
+
+/* two small charts side by side; stacked on phones so their text stays readable */
+.pp-chart-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px 40px}
+
+/* the same screen, two wirings: a 2x2 grid of builds (columns L0 and L0V, rows before and after the token change) */
+.pp-wiring{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px}
+.pp-wiring-label{margin-top:8px;font:500 14px/1.4 var(--pp-sans)}
+.pp-wiring-narrow{display:none}
 
 /* the League year as a chain */
 .pp-chain{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;list-style:none;margin:0;padding:0;font-family:var(--pp-sans)}
@@ -223,6 +235,11 @@
 @media(max-width:900px){
   .pp-chain{grid-template-columns:1fr 1fr}
   .pp-chain>li:nth-child(2)::after{display:none}
+}
+@media(max-width:700px){
+  .pp-chart-pair,.pp-wiring{grid-template-columns:1fr}
+  .pp-wiring-cell.is-wide-only,.pp-wiring-wide{display:none}
+  .pp-wiring-narrow{display:inline}
 }
 @media(max-width:720px){
   .pp-page{padding-top:128px}

@@ -52,13 +52,14 @@ export const Todo = ({children, inline = false}) => inline
   : <p className="pp-todo"><b>TODO</b> {children}</p>;
 
 /** Project summary. Outcome in the reading column; facts line up with the margin notes. */
-export function TLDR({outcome, facts = [], table}) {
+export function TLDR({outcome, facts = [], table, note}) {
   // Role reads with the outcome (what I did, what came of it); the shorter facts sit in the margin column.
   const role = facts.find(([k]) => k === 'Role')?.[1];
   const rest = facts.filter(([k, v]) => k !== 'Role' && v);
   return <section className={`pp-tldr${table ? ' pp-tldr--table' : ''}`} aria-label="Project summary" data-wide="">
     <div className="pp-tldr-outcome"><p className="pp-tldr-label">Outcome</p><div className="pp-tldr-outcome-text">{outcome}</div>
-      {role ? <dl className="pp-tldr-role"><dt className="pp-tldr-label">Role</dt><dd>{role}</dd></dl> : null}</div>
+      {role ? <dl className="pp-tldr-role"><dt className="pp-tldr-label">Role</dt><dd>{role}</dd></dl> : null}
+      {note ? <p className="pp-tldr-note">{note}</p> : null}</div>
     {table
       ? <div className="pp-tldr-table" role="region" aria-label="The three settings compared" tabIndex={0}><table>
           <thead><tr><td/>{table.cols.map(col => <th key={col} scope="col">{col}</th>)}</tr></thead>
@@ -113,9 +114,9 @@ export const Metric = ({value, label, evidence}) => <div className="pp-metric">
 </div>;
 export const Metrics = ({children}) => <div className="pp-metrics">{children}</div>;
 
-/** A table of numbers or options. `chosen` is the 1-based option column that was picked. */
-export function Table({head, rows, caption, label, chosen, numeric = false, wide = false, name}) {
-  return <figure className={`pp-table${numeric ? ' is-numeric' : ''}`} data-chosen={chosen || undefined} data-wide={wide ? '' : undefined}>
+/** A table of numbers or options. `chosen` is the 1-based option column that was picked; `highlight` marks a column without calling it chosen. */
+export function Table({head, rows, caption, label, chosen, highlight, numeric = false, plainFirst = false, wide = false, name}) {
+  return <figure className={`pp-table${numeric ? ' is-numeric' : ''}${plainFirst ? ' is-plain-first' : ''}`} data-chosen={chosen || undefined} data-highlight={highlight || undefined} data-wide={wide ? '' : undefined}>
     <div className="pp-table-scroll" tabIndex={0} role="region" aria-label={name || 'Table'}>
       <table style={{minWidth: head.length > 3 ? 600 : undefined}}>
         <thead><tr>{head.map((cell, i) => <th key={i} scope="col">{cell}{chosen && i === chosen ? <span className="pp-chosen">Chosen</span> : null}</th>)}</tr></thead>
