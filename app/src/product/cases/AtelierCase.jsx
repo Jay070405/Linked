@@ -10,6 +10,7 @@ import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
+import {L100TileArt} from '../v2/TileArt';
 import {Phone, ProtoScreen, protoUrl, shotSrc} from '../v2/Device';
 import {ArrowDown, ArrowUpRight} from '../v2/icons';
 import {PHONE, useMedia, useReveals} from '../v2/motion';
@@ -256,7 +257,7 @@ export default function AtelierCase({item, reduced}) {
       </div>
     </section>
 
-    <NextProject item={next} image={next.thumb}/>
+    <NextProject item={next} visual={next.slug === 'last-100-feet' ? <L100TileArt/> : null} image={next.thumb}/>
     <ProductFooter/>
     <CursorLabel root={root} reduced={reduced}/>
   </article>;

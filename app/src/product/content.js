@@ -49,9 +49,14 @@ export const PRODUCT_CASES = [
     slug: 'last-100-feet',
     title: 'Last 100 Feet',
     subtitle: 'A resident maps the way from the curb to their door once; every courier after them follows it without calling',
+    pageTitle: 'Last 100 Feet, door routes for apartment deliveries',
+    summary: 'A two-sided mobile concept: the resident marks the way in on a blank site plan, and couriers follow photo cards from the stop to the door, with a gate code that still opens when GPS is wrong.',
     kind: 'Service design, two-sided mobile',
-    status: 'In progress',
-    page: false,
+    when: 'Oct 2026',
+    status: 'Testing next',
+    // The prototype's site plan with the whole route (presentation frame 1).
+    thumb: {src: '/assets/product/last-100-feet/plan.webp', width: 808, height: 768},
+    page: true,
   },
   {
     slug: 'choose-not-to-lose',

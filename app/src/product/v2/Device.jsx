@@ -48,6 +48,13 @@ export const CNTL_KIT = {w: 1440, h: 900, url: cntlUrl, shot: s => `/assets/prod
   address: 'Choose Not to Lose, concept prototype: fictional plans'};
 export const CNTL_PAGE_KIT = {...CNTL_KIT, h: 2080, viewH: 900, shot: s => `/assets/product/choose-not-to-lose/pages/${s}.webp`, shotH: 2600};
 
+// ---------- Last 100 Feet (D3): a 390 x 844 phone, resident and courier, as the bare screen (?shot) ----------
+// The bare screen reads ?screen= once, at load, so the iframe reloads to change state. Screen ids match the
+// prototype's README and scripts/capture-last-100-feet-screens.mjs.
+export const l100Url = screen => `/proto/last-100-feet/index.html?shot&screen=${encodeURIComponent(screen)}`;
+export const l100Shot = screen => `/assets/product/last-100-feet/screens/${screen}.webp`;
+export const L100_KIT = {w: 390, h: 844, url: l100Url, shot: l100Shot, shotW: 780, shotH: 1688, drive: 'reload'};
+
 /** Moves an already loaded popstate-kit prototype to another screen. */
 function drive(win, screen, param) {
   try {

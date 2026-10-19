@@ -3,9 +3,6 @@
    ink, and money is set in tabular figures so columns of dollars line up. */
 
 /* ---------- hero ---------- */
-.cn-page .v2-hero-kind{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
-.cn-flag{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px 0 10px;border:1.5px solid var(--pp-ink);border-radius:15px;font:600 14px/1 var(--pp-sans);color:var(--pp-ink);white-space:nowrap}
-.cn-flag svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
 .cn-hero-shot{position:relative}
 .cn-hero-shot .v2-browser{will-change:auto}
 .cn-hero-note{margin-top:14px;font:400 14px/1.4 var(--pp-sans);color:var(--pp-pencil);text-align:right}

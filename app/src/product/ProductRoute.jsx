@@ -5,10 +5,11 @@ import DesignToCodeCase from './cases/DesignToCodeCase';
 import AtelierCase from './cases/AtelierCase';
 import ReadyForAgentsCase from './cases/ReadyForAgentsCase';
 import ChooseNotToLoseCase from './cases/ChooseNotToLoseCase';
+import LastHundredFeetCase from './cases/LastHundredFeetCase';
 import {PRODUCT_HOME} from './content';
 import './product.css';
 
-const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'choose-not-to-lose': ChooseNotToLoseCase};
+const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'last-100-feet': LastHundredFeetCase, 'choose-not-to-lose': ChooseNotToLoseCase};
 
 function NotFound() {
   return <div className="pp-page pp-missing" lang="en" data-nav-tone="light">

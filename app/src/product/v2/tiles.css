@@ -59,25 +59,13 @@ a.pt-link:focus-visible .pt-ch{transform:translateY(-1.15em)}
 .pt-atelier-phone .v2-phone{--pw:min(34cqw,40cqh)}
 .pt-atelier-phone .v2-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
-/* D3: site plan and route */
-.pt-plan{position:absolute;inset:-12px;display:block;background:#f3f4f5}
-.pt-plan svg{display:block;width:100%;height:100%}
-.pt-plan-street{fill:#e4e6e9}
-.pt-plan-lane{stroke:#fff;stroke-width:3;stroke-dasharray:18 14}
-.pt-plan-lot rect{fill:#eceef0;stroke:#c9ccd2;stroke-width:1.5}
-.pt-plan-lot path{stroke:#c9ccd2;stroke-width:1.5}
-.pt-plan-fence{stroke:#8d9098;stroke-width:2;stroke-dasharray:2 5;stroke-linecap:round}
-.pt-plan-bldg rect{fill:#fff;stroke:#c9ccd2;stroke-width:1.5}
-.pt-plan-labels text{font:600 22px var(--pp-sans);fill:#a3a6ad;text-anchor:middle}
-.pt-plan-labels text.is-small{font-size:14px;font-weight:500;fill:#6b6e75;text-anchor:end}
-.pt-plan-route{fill:none;stroke:#b8bbc2;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:.012 .018}
-.pt-plan-route.is-ink{stroke:var(--pp-ink);stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 900ms var(--v2-inout)}
-.pt-plan-stops circle{fill:#fff;stroke:var(--pp-ink);stroke-width:2}
-.pt-plan-stops circle.is-door{fill:var(--pp-ink)}
-.pt-plan-stops text{font:650 13px var(--pp-sans);fill:var(--pp-ink);text-anchor:middle}
-.pt-plan-stops g:last-child text{fill:#fff}
-.pt-plan-stops g{transform-box:fill-box;transform-origin:center;transition:transform 300ms var(--v2-out);transition-delay:calc(var(--n) * 200ms)}
-@media(hover:hover) and (pointer:fine){.pt-tile:hover .pt-plan-route.is-ink{stroke-dashoffset:0}.pt-tile:hover .pt-plan-stops g{transform:scale(1.15)}}
+/* D3: the site plan, the courier's photo card in front */
+.pt-l100{position:absolute;inset:0;display:block;container-type:size;background:#ecede8}
+.pt-l100-plan{position:absolute;left:7%;top:8%;width:62%;display:block}
+.pt-l100-plan img{display:block;width:100%;height:auto;border-radius:14px;box-shadow:0 1px 1px #11111412,0 12px 26px -16px #11111440}
+.pt-l100-phone{position:absolute;right:9%;top:16%;display:block}
+.pt-l100-phone .v2-phone{--pw:min(34cqw,44cqh)}
+.pt-l100-phone .v2-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
 /* D4: the yearly-cost chart, the cost-difference note lifted in front */
 .pt-cntl{position:absolute;inset:0;display:block;background:#f4f4f4}
@@ -90,6 +78,5 @@ a.pt-link:focus-visible .pt-ch{transform:translateY(-1.15em)}
 @media(prefers-reduced-motion:reduce){
   .pt-visual-inner,.pt-ch,.pt-go{transition-property:opacity,background-color,color,border-color}
   a.pt-link:hover .pt-visual-inner,a.pt-link:hover .pt-ch,a.pt-link:focus-visible .pt-ch{transform:none}
-  .pt-plan-route.is-ink{transition:none}
 }
 .quiet a.pt-link:hover .pt-visual-inner,.quiet a.pt-link:hover .pt-ch,.quiet a.pt-link:focus-visible .pt-ch{transform:none}

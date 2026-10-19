@@ -49,7 +49,10 @@
 .v2-back:hover{color:var(--pp-ink)}
 .v2-back span{transition:transform 200ms var(--v2-out)}
 @media(hover:hover) and (pointer:fine){.v2-back:hover span{transform:translateX(-3px)}}
-.v2-hero-kind{font:500 15px/1.4 var(--pp-sans);color:var(--pp-pencil)}
+.v2-hero-kind{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font:500 15px/1.4 var(--pp-sans);color:var(--pp-pencil)}
+/* a short, unmissable disclaimer beside the kind of project: fictional data, independent concept */
+.v2-flag{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:4px 13px 4px 10px;border:1.5px solid var(--pp-ink);border-radius:15px;font:600 14px/1.25 var(--pp-sans);color:var(--pp-ink)}
+.v2-flag svg{flex:none;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
 .v2-hero-title{margin:10px 0 0 -.045em;font:700 clamp(84px,11.2vw,184px)/.86 var(--pp-sans);letter-spacing:-.062em;perspective:900px}
 .v2-hero-title .v2-char{display:inline-block;transform-origin:50% 90%;backface-visibility:hidden}
 .v2-hero-title .v2-word{display:inline-block;white-space:nowrap}

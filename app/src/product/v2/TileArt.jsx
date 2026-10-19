@@ -1,9 +1,9 @@
-import {Phone, PROTO_H, PROTO_W, shotSrc} from './Device';
+import {l100Shot, Phone, PROTO_H, PROTO_W, shotSrc} from './Device';
 
-/* Pictures for the /product tiles. All decorative (the tile's text names the project). Layers marked [data-depth]
-   lean toward the pointer; the in-progress drawings animate on hover only, and are complete without it. */
+/* Pictures for the /product tiles, all made from each prototype's own screens. All decorative (the tile's text names the
+   project). Layers marked [data-depth] lean toward the pointer. */
 
-/** D1: the editor in its review state, with the Agent handoff row lifted off the panel in front. */
+/** D1: the editor in its review state, with the Variables row lifted off the panel in front. */
 export function RfaTileArt() {
   return <span className="pt-rfa">
     <span className="pt-rfa-editor" data-depth="8"><img src="/assets/product/ready-for-agents/tile.webp" width={1280} height={830} alt="" loading="lazy" decoding="async"/></span>
@@ -21,39 +21,13 @@ export function AtelierTileArt() {
   </span>;
 }
 
-/** D3, in progress: a garden-style complex seen from above, and the photo-step route from the curb to one door. */
-export function RouteTileArt() {
-  const path = 'M115 300 C115 262 180 246 276 240 L276 206 C276 196 286 193 298 195 L392 200 C420 201 438 198 446 188';
-  return <span className="pt-plan" data-depth="10">
-    {/* meet + scenery drawn past the viewBox: any tile shape shows the whole route with the street running on */}
-    <svg viewBox="0 0 560 420" preserveAspectRatio="xMidYMid meet" focusable="false" overflow="visible">
-      <rect className="pt-plan-street" x="-800" y="352" width="2160" height="600"/>
-      <path className="pt-plan-lane" d="M-800 392 H1360"/>
-      <g className="pt-plan-lot">
-        <rect x="40" y="232" width="150" height="96" rx="6"/>
-        {[0, 1, 2, 3].map(i => <path key={i} d={`M${64 + i * 34} 232 v30 M${64 + i * 34} 298 v30`}/>)}
-      </g>
-      <path className="pt-plan-fence" d="M-800 212 H250 M302 212 H1360"/>
-      <g className="pt-plan-bldg">
-        <rect x="48" y="60" width="130" height="110" rx="4"/>
-        <rect x="214" y="52" width="110" height="118" rx="4"/>
-        <rect x="372" y="70" width="150" height="118" rx="4"/>
-        <rect x="-190" y="64" width="200" height="104" rx="4"/>
-        <rect x="560" y="58" width="190" height="116" rx="4"/>
-      </g>
-      <g className="pt-plan-labels">
-        <text x="113" y="122">1</text><text x="269" y="118">2</text><text x="447" y="136">4</text>
-        <text x="240" y="234" className="is-small">Gate B</text>
-      </g>
-      <path className="pt-plan-route" pathLength="1" d={path}/>
-      <path className="pt-plan-route is-ink" pathLength="1" d={path}/>
-      <g className="pt-plan-stops">
-        <g style={{'--n': 0}}><circle cx="115" cy="300" r="13"/><text x="115" y="305">P</text></g>
-        <g style={{'--n': 1}}><circle cx="276" cy="226" r="13"/><text x="276" y="231">1</text></g>
-        <g style={{'--n': 2}}><circle cx="392" cy="200" r="13"/><text x="392" y="205">2</text></g>
-        <g style={{'--n': 3}}><circle cx="452" cy="182" r="13" className="is-door"/><text x="452" y="187">3</text></g>
-      </g>
-    </svg>
+/** D3: the complex's site plan with the route, the courier's photo card in front. Screenshots only. */
+export function L100TileArt() {
+  return <span className="pt-l100">
+    <span className="pt-l100-plan" data-depth="8"><img src="/assets/product/last-100-feet/plan.webp" width={808} height={768} alt="" loading="lazy" decoding="async"/></span>
+    <span className="pt-l100-phone" data-depth="20">
+      <Phone><img className="v2-shot" src={l100Shot('c-step-building')} width={780} height={1688} alt="" loading="lazy" decoding="async"/></Phone>
+    </span>
   </span>;
 }
 

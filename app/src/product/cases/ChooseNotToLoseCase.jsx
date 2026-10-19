@@ -165,7 +165,7 @@ export default function ChooseNotToLoseCase({item, reduced}) {
 
   return <article ref={root} className="pp-page v2-page cn-page" lang="en" data-nav-tone="light">
     <CaseHero stacked reduced={reduced} title="Choose Not to Lose"
-      kind={<><span>{item.kind}</span><span className="cn-flag"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.75"/><path d="M8 7v4.5M8 4.6v.1"/></svg>Fictional plans, not advice</span></>}
+      kind={<><span>{item.kind}</span><span className="v2-flag"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.75"/><path d="M8 7v4.5M8 4.6v.1"/></svg>Fictional plans, not advice</span></>}
       outcome="A health-plan picker that prices the whole year for every plan, flags the one that costs more for the same coverage, and shows the arithmetic, without telling anyone what to pick."
       chips={['Solo: research, design and prototype', 'October 2026', 'Desktop web, benefits enrollment', 'Not yet tested with people']}
       actions={<>

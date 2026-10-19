@@ -6,7 +6,7 @@ import {EVIDENCE, POSITIONING_LINES, PRODUCT_CASES, PRODUCT_HOME, SUBLINE} from 
 import {author} from '../portfolioData';
 import CursorLabel from './v2/CursorLabel';
 import {FINE, gsap, SplitText, useReveals} from './v2/motion';
-import {AtelierTileArt, CntlTileArt, RfaTileArt, RouteTileArt} from './v2/TileArt';
+import {AtelierTileArt, CntlTileArt, L100TileArt, RfaTileArt} from './v2/TileArt';
 import {ArrowRight} from './v2/icons';
 import './v2/v2.css';
 import './v2/tiles.css';
@@ -68,7 +68,7 @@ function RollTitle({text}) {
 function TileVisual({item}) {
   if (item.slug === 'ready-for-agents') return <RfaTileArt/>;
   if (item.slug === 'atelier') return <AtelierTileArt/>;
-  if (item.slug === 'last-100-feet') return <RouteTileArt/>;
+  if (item.slug === 'last-100-feet') return <L100TileArt/>;
   if (item.slug === 'choose-not-to-lose') return <CntlTileArt/>;
   return item.thumb ? <span className="pt-photo" data-depth="12"><img src={item.thumb.src} width={item.thumb.width} height={item.thumb.height} alt="" loading="lazy" decoding="async"/></span> : null;
 }
