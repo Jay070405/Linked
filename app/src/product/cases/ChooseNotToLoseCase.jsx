@@ -138,14 +138,15 @@ function SameCoverage() {
   </figure>;
 }
 
-function CnHeroShot({phone, reduced}) {
+/** The comparison as the hero. A capture, not the live page: a scrolling page under the pointer would take the wheel
+    from the case page in its first screen. The live prototype is in the try-it block. */
+function CnHeroShot() {
   return <div className="cn-hero-shot" data-enter="tilt">
     <Browser label="The Choose Not to Lose prototype" address={CNTL_KIT.address}>
-      <ProtoScreen kit={CNTL_KIT} screen="compare" load={phone ? 'never' : 'idle'} delay={1500} interactive={!phone} reduced={reduced}
-        title="Choose Not to Lose prototype: compare four fictional plans by yearly cost"
+      <ProtoScreen kit={CNTL_KIT} screen="compare" load="never"
         alt="A benefits page comparing four fictional medical plans: three bill examples, a chart of yearly totals per plan, and a panel with each plan’s maximum yearly cost"/>
     </Browser>
-    <p className="cn-hero-note" data-enter="note">{phone ? 'Built desktop-first. Open it full screen from the tasks below.' : 'Live prototype. Pick a bill example, open the proof, choose a plan.'}</p>
+    <p className="cn-hero-note" data-enter="note">The redesigned comparison, from the prototype. Try it live below.</p>
   </div>;
 }
 
@@ -171,7 +172,7 @@ export default function ChooseNotToLoseCase({item, reduced}) {
         {phone ? null : <a className="v2-cta" href="#try" onClick={jumpTo('#try')}><span>Try the prototype</span><span className="v2-cta-icon"><ArrowDown/></span></a>}
         <a className="v2-link" href="#cn-problem-section" onClick={jumpTo('#cn-problem-section')}><span className="v2-link-text">Start with the problem</span><ArrowDown/></a>
       </>}>
-      <CnHeroShot phone={phone} reduced={reduced}/>
+      <CnHeroShot/>
     </CaseHero>
 
     <NumberStrip items={NUMBERS} reduced={reduced} label="The case in numbers"/>

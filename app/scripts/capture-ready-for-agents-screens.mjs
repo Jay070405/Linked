@@ -100,7 +100,8 @@ await open(`${ORIGIN}/proto/ready-for-agents/agent/?state=after`);
 log.push(await save(path.join(assets, 'agent-terminal.webp'), await box('.term-window')));
 // the three directions, from the /explore board at its own 1920 x 1200 size
 await open(`${ORIGIN}/proto/ready-for-agents/explore/`, {width: 1920, height: 1200}, 1.8);
-await new Promise(r => setTimeout(r, 1200));
+// the board's three iframes paint one after another; the last needs a few seconds
+await new Promise(r => setTimeout(r, 4000));
 const crops = await page.$$eval('.ex-crop', els => els.map(e => { const r = e.getBoundingClientRect(); return {x: r.left, y: r.top, width: r.width, height: r.height}; }));
 if (crops.length !== 3) throw new Error(`Expected 3 direction crops, found ${crops.length}`);
 for (const [i, id] of ['a', 'b', 'c'].entries()) log.push(await save(path.join(assets, `explore-${id}.webp`), crops[i]));
