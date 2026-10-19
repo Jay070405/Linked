@@ -17,22 +17,65 @@ export const EVIDENCE_MEANING = {
   Hypothesis: 'Expected, not yet checked',
 };
 
+// The product-design portfolio, in reading order. Cases without a page yet (`page: false`) show on /product as
+// in-progress tiles and are skipped by "next case".
 export const PRODUCT_CASES = [
   {
     slug: 'design-to-code',
-    title: 'Design-to-code readiness',
-    // The case page leads with the question; the index row keeps the project's name.
+    // The research behind D1. Its handoff design case is still to come; until then the tile opens the research.
+    title: 'Ready for agents',
+    subtitle: 'What an AI agent can’t recover from a Figma file — and the handoff I designed around it',
+    // The case page leads with the question; the index tile keeps the project's name.
     pageTitle: 'What an AI agent can’t recover from a Figma file',
     summary: 'What coding agents can and can’t recover from a Figma file, tested on 24 builds.',
     dek: 'I gave coding agents clean and messy versions of the same six screens, 24 builds in all. The messy files produced code that looked just as good. Only variable bindings decided whether that code followed the design system.',
-    kind: 'Benchmark, ablation and plugin prototype',
+    kind: 'Research and plugin prototype',
     when: 'Oct 2026',
     proof: {label: 'Measured', text: 'Variable bindings alone took token-change coverage from 50% to 100% (6 of 6 builds).'},
     // Two of the six test screens (S2 pricing, S1 sign-in) in browser and phone frames.
     thumb: {src: '/assets/product/thumb-design-to-code.webp', width: 1080, height: 676},
+    page: true,
   },
   {
+    slug: 'atelier',
+    title: 'Atelier',
+    subtitle: 'A print studio for illustrators: sell prints of your work without running a store',
+    pageTitle: 'Atelier, a print studio for illustrators',
+    summary: 'A mobile app that turns a finished illustration into a print people can buy, and won’t let the artist sell a size that will print badly.',
+    kind: 'Mobile product design, coded prototype',
+    when: 'Oct 2026',
+    status: 'Testing next',
+    page: true,
+  },
+  {
+    slug: 'last-100-feet',
+    title: 'Last 100 Feet',
+    subtitle: 'A resident maps the way from the curb to their door once; every courier after them follows it without calling',
+    kind: 'Service design, two-sided mobile',
+    status: 'In progress',
+    page: false,
+  },
+  {
+    slug: 'choose-not-to-lose',
+    title: 'Choose Not to Lose',
+    subtitle: 'A health-plan picker that flags the plan costing more in every scenario, and shows the arithmetic',
+    kind: 'Decision support, desktop web',
+    status: 'In progress',
+    page: false,
+  },
+];
+export const PUBLISHED_CASES = PRODUCT_CASES.filter(c => c.page);
+
+// Research cases that moved to Systems. Their old product addresses redirect there (vercel.json, and the routers
+// for moves inside the app); /for/* notes still list them, linking to their Systems pages.
+export const MOVED = {
+  '/product/roco': '/systems/roco',
+  '/product/where-players-break': '/systems/league-of-legends',
+};
+export const SYSTEMS_CASES = [
+  {
     slug: 'roco',
+    href: '/systems/roco',
     title: 'Reverse-engineering a hidden system from 6,632 logged throws',
     summary: 'Roco Kingdom: World never shows collectors how close they are to the shiny they want. I logged my own play until the rules showed, then redesigned the loop.',
     kind: 'Personal research',
@@ -43,6 +86,7 @@ export const PRODUCT_CASES = [
   },
   {
     slug: 'where-players-break',
+    href: '/systems/league-of-legends',
     title: 'Finding where players break',
     summary: 'In three settings, players broke where information arrived late or not at all. That pattern became three League of Legends live-ops proposals, sized and put in order.',
     kind: 'Playtests and live-ops research',
@@ -71,13 +115,18 @@ export const FOR_PAGES = {
 
 const clean = pathname => (String(pathname).split(/[?#]/)[0].replace(/\/+$/, '') || '/');
 
-/** The product page a path names, or null. Shared by the homepage router and the standalone product entry. */
+/** Where an old product address lives now, or null. */
+export const movedProductPath = pathname => MOVED[clean(pathname)] || null;
+
+/** The product page a path names, or null. Shared by the homepage router and the standalone product entry.
+    A moved address resolves to {type: 'moved', to}; each router sends it on to its new home. */
 export function resolveProductPath(pathname) {
   const path = clean(pathname);
   if (path === PRODUCT_HOME) return {type: 'product'};
+  if (MOVED[path]) return {type: 'moved', to: MOVED[path]};
   const match = path.match(/^\/product\/([a-z0-9-]+)$/);
   if (match) {
-    const item = PRODUCT_CASES.find(c => c.slug === match[1]);
+    const item = PUBLISHED_CASES.find(c => c.slug === match[1]);
     return item ? {type: 'product-case', item} : null;
   }
   const unlisted = path.match(/^\/for\/([a-z0-9-]+)$/);
@@ -87,7 +136,7 @@ export function resolveProductPath(pathname) {
 
 export function productRouteFor(page) {
   if (page?.type === 'product') return PRODUCT_HOME;
-  if (page?.type === 'product-case') return PRODUCT_CASES.some(c => c.slug === page.item?.slug) ? `${PRODUCT_HOME}/${page.item.slug}` : null;
+  if (page?.type === 'product-case') return PUBLISHED_CASES.some(c => c.slug === page.item?.slug) ? `${PRODUCT_HOME}/${page.item.slug}` : null;
   if (page?.type === 'for') return FOR_PAGES[page.item?.slug] ? `/for/${page.item.slug}` : null;
   return null;
 }
@@ -98,11 +147,13 @@ export const isProductPath = pathname => /^\/(product|for)(\/|$)/.test(clean(pat
 export function productTitle(page) {
   if (page?.type === 'product-case') return page.item.pageTitle || page.item.title;
   if (page?.type === 'for') return 'For the Figma team';
-  if (page?.type === 'product') return 'Product work';
+  if (page?.type === 'product') return 'Product design';
+  if (page?.type === 'moved') return 'Moved';
   return 'Page not found';
 }
 
+/** The next case that has a page, wrapping around. */
 export const nextCase = slug => {
-  const i = PRODUCT_CASES.findIndex(c => c.slug === slug);
-  return PRODUCT_CASES[(i + 1) % PRODUCT_CASES.length];
+  const i = PUBLISHED_CASES.findIndex(c => c.slug === slug);
+  return PUBLISHED_CASES[(i + 1) % PUBLISHED_CASES.length];
 };

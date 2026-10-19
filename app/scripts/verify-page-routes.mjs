@@ -58,14 +58,25 @@ for (const system of systems.filter(s=>s.status==='coming-soon')) {
 }
 assert.equal(routing.resolvePath('/product').type,'product');
 assert.equal(routing.resolvePath('/product/').type,'product');
-for (const slug of ['design-to-code','roco','where-players-break']) {
+for (const slug of ['design-to-code','atelier']) {
   assert.equal(routing.resolvePath('/product/'+slug).item.slug,slug);
   assert.equal(routing.routeFor({type:'product-case',item:{slug}}),'/product/'+slug);
+}
+// in-progress product cases have a tile on /product but no page yet
+for (const slug of ['last-100-feet','choose-not-to-lose']) {
+  assert.equal(routing.resolvePath('/product/'+slug),null);
+  assert.equal(routing.routeFor({type:'product-case',item:{slug}}),null);
+}
+// Roco and League moved to Systems: their old product addresses open the Systems pages
+for (const [from,to,id] of [['/product/roco','/systems/roco','roco'],['/product/where-players-break','/systems/league-of-legends','league-of-legends']]) {
+  assert.equal(routing.resolvePath(from).type,'system');
+  assert.equal(routing.resolvePath(from).item.id,id);
+  assert.equal(routing.resolvePath(from+'/').item.id,id);
+  assert.equal(routing.routeFor(from),to);
 }
 assert.equal(routing.resolvePath('/product/missing'),null);
 assert.equal(routing.resolvePath('/for/figma').type,'for');
 assert.equal(routing.resolvePath('/for/elsewhere'),null);
-assert.equal(routing.routeFor('/product/roco'),'/product/roco');
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes; product index, three product cases and /for/figma.');
+console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes; product index, two product cases with pages, two in progress, Roco and League redirected to Systems, and /for/figma.');

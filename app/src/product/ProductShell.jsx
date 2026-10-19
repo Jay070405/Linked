@@ -1,9 +1,9 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {flushSync} from 'react-dom';
 import SiteNavigation from '../components/SiteNavigation';
 import CircularTransition, {useCircularTransition} from '../components/CircularTransition';
 import ProductRoute from './ProductRoute';
-import {isProductPath, productTitle, resolveProductPath} from './content';
+import {isProductPath, movedProductPath, productTitle, resolveProductPath} from './content';
 import {initialLanguage, saveLanguage} from '../language';
 
 // Where the rest of the site lives. Those pages need the full homepage app, so they are full page loads.
@@ -18,6 +18,8 @@ export default function ProductShell() {
   const [reduced, setReduced] = useState(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
   const main = useRef(null), scroll = useRef(new Map());
   const page = resolveProductPath(path);
+  // an old product address whose case moved to Systems: hand over to the full site, without a history entry
+  useLayoutEffect(() => { if (page?.type === 'moved') location.replace(page.to + location.search + location.hash); }, [page?.type, page?.to]);
 
   useEffect(() => {
     document.body.classList.add('product-shell');
@@ -47,6 +49,8 @@ export default function ProductShell() {
 
   const navigate = useCallback(to => {
     if (typeof to !== 'string' || !to.startsWith('/') || to.startsWith('//')) return;
+    const moved = movedProductPath(to);
+    if (moved) { location.assign(moved); return; }
     if (!isProductPath(to)) { location.assign(to); return; }
     if (to === location.pathname) return;
     transition(() => {

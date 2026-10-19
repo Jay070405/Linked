@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { allWorks, systems } from './portfolioData';
 import {flushSync} from 'react-dom';
 import {preloadPortfolioPage} from './pages/preloadPortfolioPage';
-import { resolveProductPath, productRouteFor } from './product/content';
+import { resolveProductPath, productRouteFor, movedProductPath } from './product/content';
 
 const HISTORY_KEY = '__jayPortfolioModal';
 const HOME = '/#home';
@@ -15,15 +15,19 @@ export function resolvePath(pathname) {
   if (path === '/other-project/field01' || path === '/vibecoding/field01') return { type: 'field01' };
   if (path === '/other-project/jay-lin') return { type: 'brand-motion' };
   if (path === '/systems/roco/model') return { type: 'model' };
+  // research cases that moved from /product to /systems open their Systems page
   const product = resolveProductPath(path);
-  if (product) return product;
+  if (product) return product.type === 'moved' ? resolvePath(product.to) : product;
   const work = allWorks.find(item => item.href === path);
   if (work) return { type: 'art', item: work };
   const system = systems.find(item => item.status === 'available' && '/systems/' + item.slug === path);
   return system ? { type: 'system', item: system } : null;
 }
 export function routeFor(page) {
-  if (typeof page === 'string') return page.startsWith('/') && !page.startsWith('//') && resolvePath(page) ? page : null;
+  if (typeof page === 'string') {
+    const path = movedProductPath(page) || page;
+    return path.startsWith('/') && !path.startsWith('//') && resolvePath(path) ? path : null;
+  }
   if (page?.type === 'desk') return '/works';
   if (page?.type === 'archive') return '/works/archive';
   if (page?.type === 'systems') return '/systems';

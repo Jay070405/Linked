@@ -8,7 +8,9 @@
     { "source": "/vibecoding", "destination": "/other-project", "permanent": true },
     { "source": "/vibecoding/:path*", "destination": "/other-project/:path*", "permanent": true },
     { "source": "/field01", "destination": "/field01/", "permanent": true },
-    { "source": "/about", "destination": "/#about", "permanent": true }
+    { "source": "/about", "destination": "/#about", "permanent": true },
+    { "source": "/product/roco", "destination": "/systems/roco", "permanent": true },
+    { "source": "/product/where-players-break", "destination": "/systems/league-of-legends", "permanent": true }
   ],
   "rewrites": [
     { "source": "/other-project", "destination": "/index.html" },

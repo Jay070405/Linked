@@ -1,6 +1,6 @@
 import {useEffect} from 'react';
 import {CaseRows, ProductFooter} from './ProductIndex';
-import {PRODUCT_CASES} from './content';
+import {PRODUCT_CASES, SYSTEMS_CASES} from './content';
 
 /** Unlisted note for one company (/for/figma). Not linked from the navigation, and asks search engines not to index it. */
 export default function ForPage({item}) {
@@ -10,7 +10,8 @@ export default function ForPage({item}) {
     document.head.appendChild(meta);
     return () => meta.remove();
   }, []);
-  const cases = item.order.map(slug => PRODUCT_CASES.find(c => c.slug === slug)).filter(Boolean);
+  // product cases open their case pages; the game research cases now live in Systems and link there
+  const cases = item.order.map(slug => PRODUCT_CASES.find(c => c.slug === slug && c.page) || SYSTEMS_CASES.find(c => c.slug === slug)).filter(Boolean);
   return <div className="pp-page pp-for" lang="en" data-nav-tone="light">
     <header className="pp-for-head">
       <h1 className="pp-for-title">{item.title}</h1>
