@@ -92,7 +92,6 @@ export default function ReadyForAgentsWorld({item, reduced}) {
         root.current?.classList.toggle('is-past-end', c.pt >= c.total - 1);
       }});
     cam.start();
-    if (import.meta.env.DEV) window.__rfawCam = cam;
     // keep the reader's place when coming back from the plain page; on a fresh visit, fly in from the canvas
     if (place.current > 0) cam.jump(place.current); else cam.intro();
     setCamera(cam);

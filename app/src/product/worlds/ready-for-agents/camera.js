@@ -269,6 +269,9 @@ export default class Camera {
     this.updateActive(false);
     if (moving) this.request(); else this.last = 0;
     this.viewport.classList.toggle('is-moving', moving);
+    // zoomed in past 100% and at rest: let the browser re-raster the world sharp instead of scaling a 100% bitmap
+    const sharp = !moving && this.cam.s > 1.01;
+    if (sharp !== this.sharp) { this.sharp = sharp; this.world.style.willChange = sharp ? 'auto' : ''; }
   }
 
   updateActive(force) {

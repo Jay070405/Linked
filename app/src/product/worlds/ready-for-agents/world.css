@@ -73,6 +73,8 @@
 .rfaw-frame{background:var(--f-bg)}
 .rfaw-frame-label{position:absolute;left:0;bottom:100%;display:flex;align-items:center;gap:4px;max-width:100%;padding:0 0 5px;font:450 11px/16px var(--ui);letter-spacing:.005em;color:#00000099;
   white-space:nowrap;cursor:default;transform-origin:0 100%;transition:color 80ms ease-out}
+/* on the canvas a section's name sits just above it, so at any zoom it never covers the section's frames */
+.rfaw.is-canvas .rfaw-section-tag{top:auto;left:0;bottom:calc(100% + 8px);transform-origin:0 100%}
 .rfaw.is-canvas .rfaw-frame-label{cursor:pointer;transition:color 80ms ease-out,opacity 160ms ease}
 .rfaw-frame-label span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .rfaw.is-canvas .rfaw-frame-label:hover{color:var(--f-brand-strong)}
@@ -359,10 +361,13 @@
 .cp-chip.is-hex{font-family:var(--mono);font-weight:500}
 .cp-chip-sw{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--c);box-shadow:inset 0 0 0 1px #0000001f}
 .cp-chip b{font-weight:inherit}
-.cp-chip-b{position:absolute;left:23px;opacity:0;font-family:var(--mono);font-weight:500}
+/* a raw chip holds both of its names in one cell, so it is as wide as the longer one while they cross-fade */
+.cp-chip.is-hex{display:inline-grid;grid-template-columns:auto auto;align-items:center;column-gap:5px}
+.cp-chip.is-hex .cp-chip-sw{grid-area:1/1}
+.cp-chip.is-hex .cp-chip-a,.cp-chip.is-hex .cp-chip-b{grid-area:1/2}
+.cp-chip-b{opacity:0;font-family:var(--mono);font-weight:500}
 .cp-chip.is-invented .cp-chip-b{text-decoration:underline dashed #dc341299;text-underline-offset:3px}
-.cp-chip.is-hex{position:relative}
-.cp-chips .cp-chip.is-hex{position:absolute}
+
 
 /* ---------- re-skin of the shared kit inside this world ---------- */
 .rfaw .v2-browser-shell{border-radius:9px;background:#e6e6e6;box-shadow:var(--e300)}
