@@ -56,10 +56,15 @@ export const PRODUCT_CASES = [
   {
     slug: 'choose-not-to-lose',
     title: 'Choose Not to Lose',
-    subtitle: 'A health-plan picker that flags the plan costing more in every scenario, and shows the arithmetic',
+    subtitle: 'A health-plan picker that prices the whole year and flags the plan costing more for the same coverage, with the arithmetic',
+    pageTitle: 'Choose Not to Lose, a health-plan picker',
+    summary: 'A benefits-enrollment concept that puts four fictional plans on one yearly axis, proves which plan costs more for the same coverage, and still lets you choose it.',
     kind: 'Decision support, desktop web',
-    status: 'In progress',
-    page: false,
+    when: 'Oct 2026',
+    status: 'Testing next',
+    // The comparison chart of the prototype (round 2); the cost-difference note is lifted in front on the tile.
+    thumb: {src: '/assets/product/choose-not-to-lose/tile.webp', width: 2176, height: 1200},
+    page: true,
   },
 ];
 export const PUBLISHED_CASES = PRODUCT_CASES.filter(c => c.page);

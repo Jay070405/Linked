@@ -58,13 +58,13 @@ for (const system of systems.filter(s=>s.status==='coming-soon')) {
 }
 assert.equal(routing.resolvePath('/product').type,'product');
 assert.equal(routing.resolvePath('/product/').type,'product');
-// the flagship case, Atelier, and the research write-up kept as the flagship's appendix
-for (const slug of ['ready-for-agents','atelier','design-to-code']) {
+// the flagship case, Atelier, Choose Not to Lose, and the research write-up kept as the flagship's appendix
+for (const slug of ['ready-for-agents','atelier','choose-not-to-lose','design-to-code']) {
   assert.equal(routing.resolvePath('/product/'+slug).item.slug,slug);
   assert.equal(routing.routeFor({type:'product-case',item:{slug}}),'/product/'+slug);
 }
-// in-progress product cases have a tile on /product but no page yet
-for (const slug of ['last-100-feet','choose-not-to-lose']) {
+// an in-progress product case has a tile on /product but no page yet
+for (const slug of ['last-100-feet']) {
   assert.equal(routing.resolvePath('/product/'+slug),null);
   assert.equal(routing.routeFor({type:'product-case',item:{slug}}),null);
 }
@@ -80,4 +80,4 @@ assert.equal(routing.resolvePath('/for/figma').type,'for');
 assert.equal(routing.resolvePath('/for/elsewhere'),null);
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes; product index, Ready for agents and Atelier with the design-to-code appendix, two cases in progress, Roco and League redirected to Systems, and /for/figma.');
+console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion routes and legacy links; no invented Coming Soon routes; product index, Ready for agents, Atelier and Choose Not to Lose with the design-to-code appendix, one case in progress, Roco and League redirected to Systems, and /for/figma.');

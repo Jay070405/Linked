@@ -398,7 +398,7 @@ export default function ReadyForAgentsCase({item, reduced}) {
     <Scrolly id="rfa-flow" kit={RFA_KIT} frame="browser" steps={STEPS} reduced={reduced} label="The handoff flow"
       title="Ready for agents prototype, following the steps" note="The live prototype, moved by your scroll"
       heading="From unbound to applied, in seven states"
-      lede="Scroll through the flow; the editor on the right is the real prototype, framed on the part each step is about."/>
+      lede="Scroll through the flow; each step frames the real prototype on the part it’s about."/>
 
     <BeforeAfter id="rfa-compare" reduced={reduced} frame="panel" ratio="1200 / 1420" size={[1200, 1420]} pairs={ROUNDS}
       label="Compare round 1 with round 2"

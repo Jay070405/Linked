@@ -57,31 +57,10 @@ export function RouteTileArt() {
   </span>;
 }
 
-// Fictional yearly totals ($k) for three plans in three kinds of year. Plan B costs more than Plan A in every one.
-const PLANS = [
-  {name: 'Plan A', costs: [3.1, 4.0, 7.4]},
-  {name: 'Plan B', costs: [3.9, 4.9, 8.6], dominated: true},
-  {name: 'Plan C', costs: [1.9, 3.6, 9.4]},
-];
-const X = v => 120 + (v - 1) * 52;
-
-/** D4, in progress: the scenario range chart. Each plan is a row, each kind of year a dot; the plan that loses in
-    every scenario sits to the right and is flagged. On hover the dots slide out from a common start. */
-export function ScenarioTileArt() {
-  return <span className="pt-chart" data-depth="10">
-    <svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet" focusable="false">
-      <g className="pt-chart-axis">
-        {[2, 4, 6, 8, 10].map(v => <g key={v}><path d={`M${X(v)} 70 V318`}/><text x={X(v)} y="344">${v}k</text></g>)}
-      </g>
-      {PLANS.map((plan, r) => {
-        const y = 118 + r * 82;
-        return <g key={plan.name} className={`pt-chart-row${plan.dominated ? ' is-dominated' : ''}`} style={{'--r': r}}>
-          <text className="pt-chart-name" x="36" y={y + 5}>{plan.name}</text>
-          <path className="pt-chart-range" d={`M${X(plan.costs[0])} ${y} H${X(plan.costs[2])}`}/>
-          {plan.costs.map((c, k) => <circle key={k} cx={X(c)} cy={y} r={k === 1 ? 9 : 7} style={{'--k': k, '--from': `${X(1.5) - X(c)}px`}}/>)}
-          {plan.dominated ? <g className="pt-chart-flag"><rect x={X(plan.costs[0]) - 8} y={y + 17} width="184" height="30" rx="15"/><text x={X(plan.costs[0]) + 84} y={y + 37}>More in every case</text></g> : null}
-        </g>;
-      })}
-    </svg>
+/** D4: the prototype's yearly-cost chart, with its cost-difference note lifted in front. Screenshots only. */
+export function CntlTileArt() {
+  return <span className="pt-cntl">
+    <span className="pt-cntl-chart" data-depth="8"><img src="/assets/product/choose-not-to-lose/tile.webp" width={2176} height={1200} alt="" loading="lazy" decoding="async"/></span>
+    <span className="pt-cntl-note" data-depth="20"><img src="/assets/product/choose-not-to-lose/tile-note.webp" width={2112} height={200} alt="" loading="lazy" decoding="async"/></span>
   </span>;
 }

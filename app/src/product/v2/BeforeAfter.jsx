@@ -11,9 +11,9 @@ function Holder({frame, ratio, children}) {
 /** Drag to compare two versions of one screen. The earlier version sits on top, clipped (clip-path) to the left of
     the handle. Pointer: press anywhere on the screen and drag sideways; a tap glides the handle there. Keyboard and
     screen readers: a real range input (arrow keys, Home/End). Vertical page scrolling still works on touch.
-    `pairs` compares several states, one at a time ({id, tab, before, after, caption, ratio?, size?}); switching keeps
+    `wide` gives a whole desktop page the full measure, with the text below it. `pairs` compares several states, one at a time ({id, tab, before, after, caption, ratio?, size?}); switching keeps
     the handle where it is, so the same split reads across states. A single `before`/`after` still works. */
-export default function BeforeAfter({id, heading, lede, pairs, before, after, children, reduced = false, label = 'Compare the two versions', frame = 'phone', ratio = '780 / 1688', size = [780, 1688]}) {
+export default function BeforeAfter({id, heading, lede, pairs, before, after, children, reduced = false, label = 'Compare the two versions', frame = 'phone', ratio = '780 / 1688', size = [780, 1688], wide = false}) {
   const list = pairs || [{id: 'only', before, after, caption: `${before.caption} ${after.caption}`}];
   const [index, setIndex] = useState(0);
   const pair = list[index];
@@ -52,7 +52,7 @@ export default function BeforeAfter({id, heading, lede, pairs, before, after, ch
       <h2 id={`${id}-title`} className="v2-h2">{heading}</h2>
       {lede ? <p className="v2-lede">{lede}</p> : null}
     </div>
-    <div className={`v2-compare-body${frame === 'phone' ? '' : ' is-panel'}`}>
+    <div className={`v2-compare-body${frame === 'phone' ? '' : ' is-panel'}${wide ? ' is-wide' : ''}`}>
       <figure className={`v2-compare-figure${frame === 'phone' ? '' : ' is-panel'}`} data-reveal="">
         {list.length > 1 ? <div className="v2-ba-tabs" role="group" aria-label="Screen to compare">
           {list.map((p, i) => <button key={p.id} type="button" aria-pressed={i === index} onClick={() => setIndex(i)}>{p.tab}</button>)}

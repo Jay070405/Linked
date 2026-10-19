@@ -1,0 +1,37 @@
+/* Choose Not to Lose: the pieces that belong to this case. Prefix: cn-.
+   The prototype brings its own Carbon look inside the browser frame; around it the page stays the site's paper and
+   ink, and money is set in tabular figures so columns of dollars line up. */
+
+/* ---------- hero ---------- */
+.cn-page .v2-hero-kind{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.cn-flag{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 13px 0 10px;border:1.5px solid var(--pp-ink);border-radius:15px;font:600 14px/1 var(--pp-sans);color:var(--pp-ink);white-space:nowrap}
+.cn-flag svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.cn-hero-shot{position:relative}
+.cn-hero-shot .v2-browser{will-change:auto}
+.cn-hero-note{margin-top:14px;font:400 14px/1.4 var(--pp-sans);color:var(--pp-pencil);text-align:right}
+
+/* ---------- problem: two plans, one difference ---------- */
+.cn-ab{margin-top:clamp(8px,2vw,24px)}
+.cn-ab-grid{display:grid;gap:28px;align-items:center;padding:clamp(20px,3vw,40px);border-radius:24px;background:var(--v2-card);box-shadow:0 0 0 1px var(--v2-hair),0 1px 2px #1111140a}
+@media(min-width:1000px){.cn-ab-grid{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(40px,5vw,88px)}}
+.cn-ab-table{width:100%;border-collapse:collapse;font:400 16px/1.35 var(--pp-sans);font-variant-numeric:tabular-nums lining-nums}
+.cn-ab-table th,.cn-ab-table td{padding:13px 0;border-bottom:1px solid var(--pp-rule);text-align:right;vertical-align:baseline}
+.cn-ab-table thead th{padding-top:0;border-bottom-color:var(--pp-ink);font-weight:600;font-size:15px}
+.cn-ab-table th[scope=row],.cn-ab-table thead th:first-child{text-align:left;font-weight:400;padding-right:16px}
+.cn-ab-table td{padding-left:16px;white-space:nowrap}
+.cn-ab-table td:last-child{width:84px}
+.cn-ab-table tr.is-diff td:nth-child(3){font-weight:650}
+.cn-ab-same{font-size:14px;color:var(--pp-pencil)}
+.cn-ab-diff{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;background:var(--pp-ink);color:var(--pp-paper);font:600 14px/1 var(--pp-sans)}
+.cn-ab-total{display:grid;gap:10px;align-content:center;max-width:22rem;font:450 clamp(18px,1.4vw,20px)/1.4 var(--pp-sans);text-wrap:pretty}
+.cn-ab-num{font:700 clamp(72px,8vw,128px)/.9 var(--pp-sans);letter-spacing:-.055em;font-variant-numeric:tabular-nums}
+@media(max-width:560px){
+  .cn-ab-table{font-size:14.5px}
+  .cn-ab-table td{padding-left:10px}
+  .cn-ab-table td:last-child{width:auto}
+}
+
+@media(max-width:760px){.cn-hero-note{text-align:left}}
+
+/* five-digit study count beside one-digit counts: a step smaller so the strip keeps its rhythm */
+.cn-page .v2-number-value{font-size:clamp(64px,7.2vw,112px)}

@@ -133,7 +133,7 @@
 /* phones: the steps as a swipe gallery */
 .v2-swipe-track{display:grid;grid-auto-flow:column;grid-auto-columns:min(84%,340px);gap:14px;margin:0 calc(-1 * var(--pp-side));padding:4px var(--pp-side) 8px;overflow-x:auto;list-style:none;scroll-snap-type:x mandatory;scroll-padding-inline:var(--pp-side);scrollbar-width:none;overscroll-behavior-x:contain}
 .v2-swipe-track::-webkit-scrollbar{display:none}
-.v2-swipe-card{scroll-snap-align:start;display:grid;gap:20px;align-content:start}
+.v2-swipe-card{scroll-snap-align:start;display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-content:start}
 .v2-swipe-card .v2-phone{--pw:min(250px,70vw);justify-self:start}
 .v2-swipe-text .v2-step-title{font-size:26px}
 .v2-swipe-rail{display:flex;gap:6px;margin-top:18px}
@@ -329,3 +329,13 @@
 }
 .quiet .v2-shot.is-new{animation:none}
 .quiet .v2-card,.quiet .v2-card-more,.quiet .v2-card-visual>img,.quiet .v2-next-media img,.quiet .v2-next-go,.quiet .v2-task-arrow,.quiet .v2-cta-icon,.quiet .v2-back span,.quiet .v2-link svg{transition-property:opacity,background-color,color,border-color,box-shadow}
+/* a whole desktop page: the slider takes the full measure, the notes sit below it */
+.v2-compare-body.is-wide{grid-template-columns:minmax(0,1fr)}
+.v2-compare-body.is-wide .v2-ba-panel{width:100%;max-width:1040px}
+.v2-compare-body.is-wide .v2-compare-figure .v2-caption{max-width:72ch}
+.v2-compare-body.is-wide .v2-compare-text{max-width:none}
+@media(min-width:1000px){
+  .v2-compare-body.is-wide .v2-compare-text{grid-template-columns:minmax(0,.75fr) minmax(0,1.6fr);gap:20px clamp(40px,5vw,88px);align-items:start}
+  .v2-compare-body.is-wide .v2-changes{margin-top:0}
+  .v2-compare-body.is-wide .v2-changes-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(28px,3vw,48px)}
+}

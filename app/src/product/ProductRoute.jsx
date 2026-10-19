@@ -4,10 +4,11 @@ import ForPage from './ForPage';
 import DesignToCodeCase from './cases/DesignToCodeCase';
 import AtelierCase from './cases/AtelierCase';
 import ReadyForAgentsCase from './cases/ReadyForAgentsCase';
+import ChooseNotToLoseCase from './cases/ChooseNotToLoseCase';
 import {PRODUCT_HOME} from './content';
 import './product.css';
 
-const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase};
+const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'choose-not-to-lose': ChooseNotToLoseCase};
 
 function NotFound() {
   return <div className="pp-page pp-missing" lang="en" data-nav-tone="light">
