@@ -47,7 +47,6 @@
 .pp-foot-lead{color:var(--pp-ink);font-weight:550;margin-bottom:4px}
 .pp-foot a{color:var(--pp-ink);text-decoration:underline;text-decoration-color:var(--pp-strong);text-underline-offset:.2em}
 .pp-foot a:hover{text-decoration-color:currentColor}
-.pp-foot .pp-todo{margin-top:10px}
 
 /* ---------- case header ---------- */
 .pp-case-head{display:grid;padding-bottom:clamp(40px,4.4vw,64px)}

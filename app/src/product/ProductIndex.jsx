@@ -1,7 +1,9 @@
 import {Go} from './Go';
-import {Annotated, Ev, Note, Noted, Todo} from './CaseKit';
+import {Annotated, Ev, Note, Noted} from './CaseKit';
 import {EVIDENCE, POSITIONING_LINES, PRODUCT_CASES, PRODUCT_HOME, SUBLINE} from './content';
 import {author} from '../portfolioData';
+
+const RESUME = '/assets/docs/jay-lin-resume-en.pdf';
 
 /** The case-study rows, divided by rules. The title link covers the row; screen readers hear only the title. */
 export function CaseRows({cases = PRODUCT_CASES, level = 2}) {
@@ -23,7 +25,7 @@ export function ProductFooter() {
     <div>
       <p className="pp-foot-lead">Write to me</p>
       <p><a href={`mailto:${author.email}`}>{author.email}</a></p>
-      <Todo inline>Add the English résumé (PDF) and a LinkedIn link.</Todo>
+      <p><a href={RESUME}>Résumé (PDF)</a></p>
     </div>
     <div>
       <p className="pp-foot-lead">More of my work</p>
