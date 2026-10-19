@@ -172,7 +172,7 @@ export default function AtelierCase({item, reduced}) {
       <Seams/>
     </section>
 
-    <Scrolly id="at-flow" reduced={reduced} steps={STEPS} art="blue-hour" label="The drop flow"
+    <Scrolly id="at-flow" reduced={reduced} steps={STEPS} art="blue-hour" label="The drop flow" title="Atelier prototype, following the steps"
       heading="One drop, six steps"
       lede="The artist side is where the product earns its keep. Scroll through a drop; the phone runs the real prototype."/>
 
