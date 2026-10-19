@@ -44,7 +44,7 @@ export const ABOUT = {
   lines: T(['我研究目标、规则与反馈，', '也通过概念设计构建世界。'], ['I study goals, rules and feedback,', 'and build worlds through concept design.']),
   aside: T(['I explore goals, rules and feedback,', 'and build worlds through concept design.'], ['我研究目标、规则与反馈，', '也通过概念设计构建世界。']),
   name: `${author.name} · ${author.nameEn}`,
-  role: T(author.role, 'Systems design · Visual worlds'),
+  role: T(author.role, author.roleEn),
   education: [
     {school: 'ArtCenter College of Design', what: T('插画本科（娱乐设计方向），辅修商科', 'BFA Illustration (Entertainment) · Business minor')},
     {school: 'Duke University, Fuqua', what: T('商业管理学硕士在读', 'Master of Management Studies · candidate')},
@@ -68,7 +68,7 @@ export const COPY = {
   headline: 'BETWEEN RULES',
   headSub: T('在规则与奇想之间', 'Somewhere between the rules and the wonder'),
   answer: '& wonder.',
-  kvMeta: {name: `${author.name} · ${author.nameEn}`, role: T(author.role, 'Systems design · Visual worlds'), line: 'SYSTEMS DESIGN × VISUAL WORLDS'},
+  kvMeta: {name: `${author.name} · ${author.nameEn}`, role: T(author.role, author.roleEn), line: 'SYSTEMS DESIGN × VISUAL WORLDS'},
   hud: 'DRAG THE MARK · TOUCH THE WATER',
   timelineHead: T('03 / TIMELINE — 一条线，走到现在', '03 / TIMELINE — one line, all the way to now'),
   worlds: T('04 / VISUAL WORLDS — 想让人走进去的世界', '04 / VISUAL WORLDS — places worth entering'),

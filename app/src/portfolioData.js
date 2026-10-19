@@ -592,8 +592,8 @@ export const systems = [
 export const author = {
   "name": "林世杰",
   "nameEn": "Jay Lin",
-  "role": "系统策划 · 视觉创作",
-  "roleEn": "Systems design · Visual storytelling",
+  "role": "产品 · 系统 · 视觉设计",
+  "roleEn": "Product · Systems · Visual design",
   "statement": "我研究目标、规则与反馈，也通过概念设计构建世界。",
   "statementEn": "I explore goals, rules and feedback, and build worlds through concept design.",
   "email": "shijielin00@gmail.com",
