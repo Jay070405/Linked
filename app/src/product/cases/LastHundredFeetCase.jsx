@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {lazy, useRef} from 'react';
 import {Ev} from '../CaseKit';
 import {ProductFooter} from '../ProductIndex';
 import {nextCase} from '../content';
@@ -11,6 +11,7 @@ import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
 import CaseChrome from '../v2/CaseChrome';
+import {Deferred} from '../v2/Try';
 import {L100_KIT, l100Shot, Phone, ProtoScreen} from '../v2/Device';
 import {ArrowDown, Info} from '../v2/icons';
 import {FINE, PHONE, useMedia, useReveals} from '../v2/motion';
@@ -25,10 +26,13 @@ import './lf.css';
 
 const A = '/assets/product/last-100-feet/';
 const AI = 'Photos are AI-generated illustrative images, not a real location.';
+// Interactive modules load when their place on the page comes near (v2/Try Deferred).
+const FindTheDoor = lazy(() => import('../v2/modules/FindTheDoor'));
 
 // The chapter rail and chip (v2/CaseChrome): every id is an element on this page.
 const CHAPTERS = [
   {id: 'lf-problem-section', label: 'The problem'},
+  {id: 'lf-door', label: 'Find the door'},
   {id: 'lf-flow', label: 'Two roles, one route'},
   {id: 'lf-decisions', label: 'Decisions'},
   {id: 'lf-compare', label: 'Round 1 → 2'},
@@ -150,25 +154,6 @@ function Stage({phone, reduced}) {
   </div>;
 }
 
-/** What a courier gets today versus with a door route, both from the prototype. */
-function PinVsRoute() {
-  return <figure className="lf-vs" data-reveal="">
-    <div className="lf-vs-row">
-      <div className="lf-vs-col">
-        <p className="lf-vs-label">A pin and a note</p>
-        <Phone><img className="v2-shot" src={l100Shot('c-empty')} width={780} height={1688} loading="lazy" decoding="async"
-          alt="No door route here yet: the map pin is on the garage gate on Cypress Ave, with the resident’s note, Call and Message"/></Phone>
-      </div>
-      <div className="lf-vs-col">
-        <p className="lf-vs-label">The same stop with a door route</p>
-        <Phone><img className="v2-shot" src={l100Shot('c-arrive')} width={780} height={1688} loading="lazy" decoding="async"
-          alt="The arrival card: stop on Elm St, walk in the front gate, five steps to door 214"/></Phone>
-      </div>
-    </div>
-    <figcaption className="v2-caption">Both from the prototype: a stop with no route, its pin on the garage gate, and the same stop after the resident mapped the way in. {AI}</figcaption>
-  </figure>;
-}
-
 export default function LastHundredFeetCase({item, reduced}) {
   const root = useRef(null);
   const phone = useMedia(PHONE), fine = useMedia(FINE);
@@ -210,7 +195,13 @@ export default function LastHundredFeetCase({item, reduced}) {
         <p className="v2-slot-badge">Placeholder</p>
         <p>Quotes from three courier conversations go here: what they do when the pin lands on the leasing office.</p>
       </aside>
-      <PinVsRoute/>
+      <div id="lf-door" className="lf-door">
+        <div className="v2-section-head" data-reveal="">
+          <h3 className="lf-h3">Find the door</h3>
+          <p className="v2-lede">You’re delivering to unit 214. The app gives you what most apps give a courier: the address, and its pin.</p>
+        </div>
+        <Deferred minHeight={900} label="A site plan to try"><FindTheDoor reduced={reduced}/></Deferred>
+      </div>
     </section>
 
     <Scrolly id="lf-flow" kit={L100_KIT} steps={STEPS} reduced={reduced} label="Resident, then courier" title="Last 100 Feet prototype, following the steps"

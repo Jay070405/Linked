@@ -1,6 +1,6 @@
 /* "Try it" modules (Try.jsx and v2/modules/*): the instruction, the takeaway, numbers that morph. */
-.v2-ask{display:flex;align-items:center;gap:8px;font:550 15.5px/1.35 var(--pp-sans);color:var(--pp-ink)}
-.v2-ask svg{flex:none;fill:var(--pp-ink);stroke:var(--pp-paper);stroke-width:1.2;stroke-linejoin:round}
+.v2-ask{display:flex;align-items:flex-start;gap:8px;font:550 15.5px/1.35 var(--pp-sans);color:var(--pp-ink)}
+.v2-ask svg{flex:none;margin-top:1px;fill:var(--pp-ink);stroke:var(--pp-paper);stroke-width:1.2;stroke-linejoin:round}
 
 .v2-takeaway{display:grid}
 .v2-takeaway>p{grid-area:1/1;margin:0;padding-left:16px;border-left:2px solid transparent;font:650 clamp(19px,1.5vw,23px)/1.3 var(--pp-sans);letter-spacing:-.015em;text-wrap:balance}
