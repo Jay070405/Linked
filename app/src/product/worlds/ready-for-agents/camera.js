@@ -39,7 +39,7 @@ export default class Camera {
     this.active = -1; this.arrived = -1;
     this.tool = 'move';
     this.raf = 0; this.last = 0; this.layoutQueued = 0;
-    this.pointers = new Map(); this.drag = null; this.pinch = null; this.space = false;
+    this.pointers = new Map(); this.drag = null; this.pinch = null;
     this.freeScroll = 0;
   }
 
@@ -53,10 +53,12 @@ export default class Camera {
     this.onMove = this.onMove.bind(this);
     this.onUp = this.onUp.bind(this);
     this.onKey = this.onKey.bind(this);
-    this.onKeyUp = e => { if (e.code === 'Space') { this.space = false; this.viewport.classList.remove('is-space'); } };
     this.onFocus = this.onFocus.bind(this);
+    this.lastInput = 0;
+    this.onInput = () => { this.lastInput = performance.now(); };
     this.onGesture = this.onGesture.bind(this);
     s.addEventListener('scroll', this.onScroll, {passive: true});
+    ['wheel', 'keydown', 'touchmove', 'pointerdown'].forEach(t => addEventListener(t, this.onInput, {passive: true, capture: true}));
     addEventListener('resize', this.onResize);
     this.viewport.addEventListener('wheel', this.onWheel, {passive: false});
     this.viewport.addEventListener('pointerdown', this.onDown);
@@ -65,8 +67,7 @@ export default class Camera {
     this.viewport.addEventListener('pointercancel', this.onUp);
     this.viewport.addEventListener('gesturestart', this.onGesture);
     this.viewport.addEventListener('gesturechange', this.onGesture);
-    this.root.addEventListener('keydown', this.onKey);
-    addEventListener('keyup', this.onKeyUp);
+    addEventListener('keydown', this.onKey);
     this.world.addEventListener('focusin', this.onFocus);
     // a focused control inside an overflow:hidden box could still scroll it; keep the viewport at its origin
     this.viewport.addEventListener('scroll', this.resetViewportScroll = () => { this.viewport.scrollTop = 0; this.viewport.scrollLeft = 0; });
@@ -77,6 +78,7 @@ export default class Camera {
   stop() {
     const s = this.scroller;
     s.removeEventListener('scroll', this.onScroll);
+    ['wheel', 'keydown', 'touchmove', 'pointerdown'].forEach(t => removeEventListener(t, this.onInput, {capture: true}));
     removeEventListener('resize', this.onResize);
     this.viewport.removeEventListener('wheel', this.onWheel);
     this.viewport.removeEventListener('pointerdown', this.onDown);
@@ -86,8 +88,7 @@ export default class Camera {
     this.viewport.removeEventListener('gesturestart', this.onGesture);
     this.viewport.removeEventListener('gesturechange', this.onGesture);
     this.viewport.removeEventListener('scroll', this.resetViewportScroll);
-    this.root.removeEventListener('keydown', this.onKey);
-    removeEventListener('keyup', this.onKeyUp);
+    removeEventListener('keydown', this.onKey);
     this.world.removeEventListener('focusin', this.onFocus);
     this.ro?.disconnect();
     cancelAnimationFrame(this.raf); cancelAnimationFrame(this.layoutQueued); clearTimeout(this.snapTimer);
@@ -286,6 +287,15 @@ export default class Camera {
   // ---------- story input ----------
   onScroll() {
     const pt = clamp(this.scrollTop() - this.trackTop, 0, this.total);
+    // Focus moving inside an embedded prototype makes the browser scroll this page to "reveal" it, which would move
+    // the camera. With focus in the iframe and no wheel, key or touch on this page just before, put the scroll back.
+    const ae = document.activeElement;
+    if (!this.programmatic && !this.free && ae?.tagName === 'IFRAME' && this.world.contains(ae) && performance.now() - this.lastInput > 400) {
+      this.programmatic = true;
+      this.setScroll(this.pt);
+      requestAnimationFrame(() => { this.programmatic = false; });
+      return;
+    }
     const delta = pt - this.pt;
     this.pt = pt;
     if (this.free) {
@@ -345,7 +355,9 @@ export default class Camera {
     if (i === this.active && r.top >= vp.top + ins.t - 8 && r.bottom <= vp.bottom - ins.b + 8 && r.left >= vp.left && r.right <= vp.right) return;
     const local = offsetWithin(target, frame).y;
     const stageH = this.vp.h - ins.t - ins.b;
-    requestAnimationFrame(() => this.jump(i, local - stageH * .3));
+    // something tall (the live editor) is shown from its top; anything else a little above the middle
+    const lead = target.offsetHeight > stageH * .6 ? 16 : stageH * .3;
+    requestAnimationFrame(() => this.jump(i, local - lead));
   }
 
   // ---------- free camera ----------
@@ -409,7 +421,8 @@ export default class Camera {
     e.preventDefault();
     const r = this.viewport.getBoundingClientRect();
     const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
-    this.zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-clamp(dy, -60, 60) * .01));
+    // a mouse wheel notch (about 100) zooms by about a third; a trackpad pinch sends small deltas and zooms smoothly
+    this.zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-clamp(dy, -100, 100) * .004));
   }
   onGesture(e) {
     // Safari trackpad pinch
@@ -420,7 +433,7 @@ export default class Camera {
     this.gestureScale = e.scale;
   }
   canDrag(e) {
-    if (this.tool === 'hand' || this.space || e.button === 1) return true;
+    if (this.tool === 'hand' || e.button === 1) return true;
     if (e.button !== 0) return false;
     // the canvas itself, a section's background, a frame's name: not a frame's content
     return !e.target.closest('[data-frame-body], .rfaw-ui, a, button, input, iframe');
@@ -479,7 +492,7 @@ export default class Camera {
     const typing = t.closest?.('input, textarea, select, [contenteditable], iframe');
     if (e.key === 'Escape' && this.free) { this.backToStory(); return; }
     if (typing) return;
-    if (e.code === 'Space' && !this.space && t === document.body) { this.space = true; this.viewport.classList.add('is-space'); }
+    if (e.defaultPrevented || e.target.closest?.('.v2-lb')) return;
     if (e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
       if (e.code === 'Digit1') { e.preventDefault(); this.zoomToFit(); }
       else if (e.code === 'Digit0') { e.preventDefault(); this.zoomTo100(); }

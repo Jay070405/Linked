@@ -49,7 +49,7 @@ function insetsFor(r, vp) {
 function Frame({f, index, children, go, className = '', current}) {
   return <div className={`rfaw-frame ${className}${current ? ' is-current' : ''}`} data-frame={f.id} data-wide={f.wide ? '' : undefined} data-hold={f.hold || undefined} id={`rfa-${f.id}`}>
     <button type="button" className="rfaw-frame-label" tabIndex={-1} aria-hidden="true" onClick={() => go(f.id)}>
-      <FigIcon name="frame" size={12}/>{f.name}
+      <FigIcon name="frame" size={12}/><span>{f.name}</span>
     </button>
     <div className="rfaw-frame-body" data-frame-body="" data-index={index}>{children}</div>
   </div>;
@@ -89,8 +89,10 @@ export default function ReadyForAgentsWorld({item, reduced}) {
       onChange: c => {
         if (zoomText.current) zoomText.current.textContent = `${Math.round(c.cam.s * 100)}%`;
         root.current?.classList.toggle('is-scrolled', c.p > 30);
+        root.current?.classList.toggle('is-past-end', c.pt >= c.total - 1);
       }});
     cam.start();
+    if (import.meta.env.DEV) window.__rfawCam = cam;
     // keep the reader's place when coming back from the plain page; on a fresh visit, fly in from the canvas
     if (place.current > 0) cam.jump(place.current); else cam.intro();
     setCamera(cam);
@@ -102,7 +104,7 @@ export default function ReadyForAgentsWorld({item, reduced}) {
   // (about thirty), never as an inherited custom property on the world.
   useEffect(() => {
     if (!camera) return undefined;
-    const labels = [...world.current.querySelectorAll('.rfaw-frame-label, .rfaw-section-tag')];
+    const labels = [...world.current.querySelectorAll('.rfaw-frame-label')], tags = [...world.current.querySelectorAll('.rfaw-section-tag')];
     const dots = viewport.current.querySelector('.rfaw-dots');
     let lastS = 0;
     return camera.subscribe(c => {
@@ -115,8 +117,10 @@ export default function ReadyForAgentsWorld({item, reduced}) {
       dots.style.opacity = s < .2 ? (s / .2).toFixed(2) : '';
       if (Math.abs(s - lastS) < .002) return;
       lastS = s;
-      const inv = s < 1 ? Math.min(1 / s, 14) : 1;
-      labels.forEach(l => { l.style.transform = inv === 1 ? '' : `scale(${inv.toFixed(3)})`; });
+      const inv = s < 1 ? Math.min(1 / s, 14) : 1, t = inv === 1 ? '' : `scale(${inv.toFixed(3)})`;
+      // a frame's name never runs past its frame; far out, only the sections keep their names
+      labels.forEach(l => { l.style.transform = t; l.style.maxWidth = `${(100 / inv).toFixed(2)}%`; l.style.opacity = s < .16 ? '0' : ''; });
+      tags.forEach(l => { l.style.transform = t; });
     });
   }, [camera]);
 
@@ -429,6 +433,15 @@ function Reflection() {
 /** The left side of the editor: the 2026 navigation bar (File, Agents) and the sidebar. In File, the Layers list is
     the table of contents: one row per frame, the current one selected; a row flies the camera there. */
 function Panel({tab, setTab, active, go, minimized}) {
+  const list = useRef(null);
+  // keep the current frame's row in view inside the list (never by scrolling the page)
+  useEffect(() => {
+    const box = list.current, row = box?.querySelector('.is-selected');
+    if (!box || !row) return;
+    const top = row.offsetTop - box.offsetTop, h = row.offsetHeight;
+    if (top < box.scrollTop + 32) box.scrollTop = Math.max(0, top - 64);
+    else if (top + h > box.scrollTop + box.clientHeight - 32) box.scrollTop = top + h - box.clientHeight + 64;
+  }, [active, tab]);
   const tabs = [{id: 'file', label: 'File', icon: 'file'}, {id: 'agents', label: 'Agents', icon: 'agent'}];
   const onKey = e => {
     const step = {ArrowDown: 1, ArrowUp: -1}[e.key];
@@ -449,7 +462,7 @@ function Panel({tab, setTab, active, go, minimized}) {
         <p className="rfaw-file-meta">Jay Lin, case study</p>
         <div className="rfaw-people" aria-label="On this file: Jay and the Agent"><span className="is-jay">J</span><span className="is-agent"><FigIcon name="agent" size={12}/></span></div>
       </header>
-      {tab === 'file' ? <nav className="rfaw-layers" aria-label="Frames">
+      {tab === 'file' ? <nav ref={list} className="rfaw-layers" aria-label="Frames">
         <p className="rfaw-side-title">Layers</p>
         <ol>
           {SECTIONS.map(s => <li key={s.id} className="rfaw-layer-section">

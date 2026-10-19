@@ -155,7 +155,15 @@ export default function Compile({reduced = false, root, title, lede}) {
   useEffect(() => {
     const node = host.current, layer = chips.current;
     if (!node || finished) return undefined;
-    const apply = P => {
+    const els = STEPS.map((s, si) => ['L0V', 'L0'].map(file => {
+      const chip = layer.querySelector(`[data-k="${si}-${file}"]`);
+      return chip && {chip, a: chip.querySelector('.cp-chip-a'), b: chip.querySelector('.cp-chip-b'), sw: chip.querySelector('.cp-chip-sw')};
+    }));
+    let lastP = null;
+    const apply = raw => {
+      const P = Math.min(1.01, Math.max(-.01, raw));
+      if (P === lastP) return;
+      lastP = P;
       const g = geo.current;
       const now = new Set();
       let read = null;
@@ -164,9 +172,9 @@ export default function Compile({reduced = false, root, title, lede}) {
         if (t >= 1) now.add(step.slot);
         if (t > 0 && t < 1) read = step.layer;
         ['L0V', 'L0'].forEach((file, k) => {
-          const chip = layer.querySelector(`[data-k="${si}-${file}"]`);
-          const path = g?.[si]?.[k];
-          if (!chip || !path) return;
+          const el = els[si][k], path = g?.[si]?.[k];
+          if (!el || !path) return;
+          const {chip} = el;
           const show = t > 0 && t < 1;
           chip.style.opacity = show ? String(Math.min(1, t * 12, (1 - t) * 14)) : '0';
           if (!show) return;
@@ -177,7 +185,7 @@ export default function Compile({reduced = false, root, title, lede}) {
           if (step.color && file === 'L0') {
             // the raw value loses its name on the way: hex out, a made-up (or guessed) name in, and the color drains
             const out = smooth(.3, .46, t), inn = smooth(.5, .66, t);
-            const a = chip.querySelector('.cp-chip-a'), b = chip.querySelector('.cp-chip-b'), sw = chip.querySelector('.cp-chip-sw');
+            const {a, b, sw} = el;
             a.style.opacity = String(1 - out); a.style.filter = `blur(${(out * 3).toFixed(2)}px)`;
             b.style.opacity = String(inn); b.style.filter = `blur(${((1 - inn) * 3).toFixed(2)}px)`;
             if (step.fate === 'invented') sw.style.setProperty('--c', `color-mix(in srgb, ${step.color} ${Math.round((1 - smooth(.4, .7, t)) * 100)}%, #b3b3b3)`);
