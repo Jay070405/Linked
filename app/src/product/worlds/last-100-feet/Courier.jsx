@@ -6,7 +6,7 @@ import {forwardRef, memo} from 'react';
    a little larger than life so a person reads at site-plan scale. */
 
 const RED = '#eb1700', RED_SIDE = '#a51000', RED_LIT = '#ff6a4c';
-const JACKET = '#39415e', JACKET_LIT = '#56628a', SKIN = '#c98f6b', CAP = '#1a1e2b';
+const JACKET = '#55618a', JACKET_LIT = '#9aa5cc', SKIN = '#c98f6b', CAP = '#1a1e2b', EDGE = '#0a0c14';
 
 // [left foot y, right foot y, left arm swing, right arm swing, torso tilt]
 const POSES = {
@@ -21,8 +21,8 @@ function Figure({pose, glow = "w3-phone-glow"}) {
   const [lf, rf, la, ra, tilt] = POSES[pose];
   return <g data-f={pose}>
     {/* shoes poke out ahead of and behind the body */}
-    <rect x={-3.6} y={lf - 1.9} width={2.6} height={3.8} rx="1.2" fill="#13151d"/>
-    <rect x={1} y={rf - 1.9} width={2.6} height={3.8} rx="1.2" fill="#13151d"/>
+    <rect x={-3.6} y={lf - 1.9} width={2.6} height={3.8} rx="1.2" fill="#e4e0d6" stroke={EDGE} strokeWidth=".45"/>
+    <rect x={1} y={rf - 1.9} width={2.6} height={3.8} rx="1.2" fill="#e4e0d6" stroke={EDGE} strokeWidth=".45"/>
     <g transform={`rotate(${tilt})`}>
       {/* left arm and the phone */}
       <path d={`M-4.6 -.2 Q-6.4 ${.6 + la * .5} -6.2 ${-2.2 + la}`} stroke={JACKET} strokeWidth="2.3" strokeLinecap="round" fill="none"/>
@@ -30,7 +30,7 @@ function Figure({pose, glow = "w3-phone-glow"}) {
       <rect x={-7.3} y={-5.4 + la} width={2.2} height={3.4} rx=".6" fill="#cfe6ff"/>
       <circle cx={-6.2} cy={-2 + la} r="1.05" fill={SKIN}/>
       {/* torso: shoulders in a jacket, lit from the west */}
-      <ellipse cx="0" cy=".4" rx="5.4" ry="3.3" fill={JACKET}/>
+      <ellipse cx="0" cy=".4" rx="5.4" ry="3.3" fill={JACKET} stroke={EDGE} strokeWidth=".5"/>
       <path d="M-5.2 .2 A5.4 3.3 0 0 1 1.6 -2.7 A5.4 3.6 0 0 0 -3.6 1.6 Z" fill={JACKET_LIT} opacity=".9"/>
       {/* right arm and the hot bag */}
       <path d={`M4.6 -.2 Q6.6 ${.8 + ra * .4} 7 ${1.6 + ra}`} stroke={JACKET} strokeWidth="2.3" strokeLinecap="round" fill="none"/>
@@ -42,7 +42,7 @@ function Figure({pose, glow = "w3-phone-glow"}) {
       </g>
       <circle cx={7.2} cy={1.4 + ra} r="1.05" fill={SKIN}/>
       {/* head: a cap with its brim forward */}
-      <circle cx="0" cy="-.4" r="2.9" fill={CAP}/>
+      <circle cx="0" cy="-.4" r="2.9" fill={CAP} stroke="#3a4160" strokeWidth=".4"/>
       <path d="M-2.2 -2.6 Q0 -5.4 2.2 -2.6 Z" fill="#2c3247"/>
       <circle cx="-.9" cy="-1.2" r=".9" fill="#ffffff" opacity=".12"/>
     </g>

@@ -85,6 +85,18 @@ export default function LastHundredFeetWorld({item, reduced}) {
     const h = target.querySelector('h2, h3') || target;
     if (!h.hasAttribute('tabindex')) h.setAttribute('tabindex', '-1');
     h.focus({preventScroll: true});
+    // modules mount on the way and push the target down: land on it once things settle, unless the reader moved on
+    let moved = false;
+    const stop = () => { moved = true; };
+    addEventListener('wheel', stop, {once: true, passive: true}); addEventListener('touchstart', stop, {once: true, passive: true}); addEventListener('keydown', stop, {once: true});
+    const settle = (left, last) => setTimeout(() => {
+      if (moved) return;
+      const top = target.getBoundingClientRect().top;
+      if (Math.abs(top) > 6 && Math.abs(scrollY - last) < 2) scrollBy(0, top);
+      if (left > 0) settle(left - 1, scrollY);
+      else { removeEventListener('wheel', stop); removeEventListener('touchstart', stop); removeEventListener('keydown', stop); }
+    }, 420);
+    settle(4, -1e9);
   };
   // jumping past the gate opens it on the way: a link is a skip, not a walk
   const jump = (id, e, pastGate) => {

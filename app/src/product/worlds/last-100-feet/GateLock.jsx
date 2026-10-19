@@ -56,7 +56,7 @@ export default function GateLock({reduced, plain, state, onOpen, onSkip}) {
     const key = e => {
       keyed = true;
       if (!['PageDown', ' ', 'ArrowDown', 'End'].includes(e.key) || e.target.closest?.('input,textarea,select,button,a,[contenteditable]')) return;
-      if (atGate()) { e.preventDefault(); engage(); }
+      if (atGate()) { e.preventDefault(); engage(); if (!node.contains(document.activeElement)) btn.current?.focus({preventScroll: true}); }
     };
     const pointer = () => { keyed = false; };
     const target = win ? window : scroller;
@@ -97,7 +97,9 @@ export default function GateLock({reduced, plain, state, onOpen, onSkip}) {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const reveal = () => {
+    const hadFocus = sec.current?.contains(document.activeElement);
     setShown(true); setSeen(true);
+    if (hadFocus) requestAnimationFrame(() => sec.current?.querySelector('h2')?.focus({preventScroll: true}));
     if (!open) {
       const s = since.current ? Math.max(1, Math.round((performance.now() - since.current) / 1000)) : null;
       bag.set({gateSeconds: s});

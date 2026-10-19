@@ -73,6 +73,8 @@ body:has(.w3) .v16-navigation[data-tone=light] .v16-language button[aria-pressed
 .w3-token-ink{fill:none;stroke:#f2ece0;stroke-width:.85;stroke-linecap:round;stroke-linejoin:round}
 .w3-token-text{fill:#f2ece0;font-family:var(--sans);font-weight:800}
 .w3-token[data-state=current] .w3-token-face{fill:var(--red);stroke:#fff}
+.w3-stage:not([data-at=hero]) .w3-token[data-state=current]{opacity:0}
+.w3-token{transition:opacity 200ms ease}
 .w3-token[data-state=done] .w3-token-face{fill:#f2ece0;stroke:#f2ece0}
 .w3-token[data-state=done] .w3-token-ink{stroke:#1b2030}
 .w3-token[data-state=done] .w3-token-text{fill:#1b2030}
