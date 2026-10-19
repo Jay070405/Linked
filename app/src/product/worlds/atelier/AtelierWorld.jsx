@@ -13,6 +13,7 @@ import {protoUrl, shotSrc} from './kit/Device';
 import {ArrowDown, ArrowRight, ArrowUpRight} from './kit/icons';
 import {PHONE, useMedia} from './kit/motion';
 import Gallery from './Gallery';
+import ThemeToggle, {useCaseTheme} from './ThemeToggle';
 import {CHANGES, DECISIONS, fullSrc, HERO, PROBLEM, REFLECTION, REVIEW_NOTE, ROUNDS, STEPS, TASKS, TESTING, thumbSrc, wallSrc, workOf} from './data';
 import {largestSharp} from './model';
 import './atelier-world.css';
@@ -55,6 +56,7 @@ function InkVisual() {
 export default function AtelierWorld({item, reduced}) {
   const root = useRef(null);
   const [plain, setPlain] = useState(false);
+  const [theme, setTheme] = useCaseTheme();
   const [artId, setArtId] = useState('blue-hour');
   const [sizeId, setSizeId] = useState(() => largestSharp(workOf('blue-hour')).id);
   const choose = id => { setArtId(id); setSizeId(largestSharp(workOf(id)).id); };
@@ -71,7 +73,8 @@ export default function AtelierWorld({item, reduced}) {
     });
   };
 
-  return <article ref={root} className={`pp-page atw-world${plain ? ' is-plain' : ''}`} lang="en" data-nav-tone={plain ? 'light' : 'dark'}>
+  return <article ref={root} className={`pp-page atw-world${plain ? ' is-plain' : ''}`} lang="en" data-theme={theme} data-nav-tone={theme === 'dark' ? 'dark' : 'light'}>
+    <ThemeToggle theme={theme} onChange={setTheme} root={root} reduced={reduced}/>
     {plain
       ? <Suspense fallback={<div className="atw-hold"/>}><Plain item={item} next={next} onBack={() => swap(false)}/></Suspense>
       : <World item={item} reduced={reduced} root={root} artId={artId} setArtId={choose} sizeId={sizeId} setSizeId={setSizeId} next={next} onPlain={() => swap(true)}/>}

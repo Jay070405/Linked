@@ -126,7 +126,7 @@ function Work({w, index, fine, tapped, lit, onTap, onOpen}) {
     const cw = c.clientWidth, ch = c.clientHeight, z = zoomFor(w, cw);
     h.style.width = `${cw * z}px`; h.style.height = `${ch * z}px`;
     h.style.transform = `translate3d(${x - x * z}px, ${y - y * z}px, 0)`;
-    l.style.setProperty('--x', `${x}px`); l.style.setProperty('--y', `${y}px`);
+    c.style.setProperty('--x', `${x}px`); c.style.setProperty('--y', `${y}px`);
   }, [w]);
   const placeAt = (cx, cy) => { const b = canvas.current.getBoundingClientRect(); place(cx - b.left, cy - b.top); };
   const placeFocus = () => { const c = canvas.current; place(c.clientWidth * w.focus[0], c.clientHeight * w.focus[1]); };
@@ -155,6 +155,7 @@ function Work({w, index, fine, tapped, lit, onTap, onOpen}) {
             <span ref={loupe} className="atw-loupe" aria-hidden="true">
               <img ref={hi} className="atw-hires" src={wantHi ? fullSrc(w.id) : wallSrc(w.id)} alt="" decoding="async" draggable="false"/>
             </span>
+            <span className="atw-lens" aria-hidden="true"/>
           </span>
         </span>
       </button>

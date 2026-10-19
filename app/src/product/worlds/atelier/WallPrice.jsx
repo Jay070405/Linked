@@ -6,7 +6,7 @@ import {fullSrc, inches, workOf} from './data';
 import {dimensions, earnings, fees, largestSharp, money, papers, printCheck, sizes} from './model';
 
 /* Hung, then priced. The print from the press goes on the prototype's wall: a 36-inch console in a fixed 48-inch view,
-   so its width is to scale, now in the evening under a picture light. Only sizes the file prints sharp at can hang
+   so its width is to scale, under a picture light (daylight in the light theme, evening in the dark one). Only sizes the file prints sharp at can hang
    (collectors are never offered the others). Beside it, the gallery's price card is the prototype's price screen:
    drag the price and the card shows the print and paper, the 8% + $0.30 fee, and what the artist keeps. */
 
@@ -59,23 +59,23 @@ export default function WallPrice({artId, sizeId, setSizeId, reduced}) {
       <figure className="atw-room">
         <svg viewBox={`0 ${ROOM.crop} ${ROOM.w} ${ROOM.h - ROOM.crop}`} role="img" aria-label={`${a.title}, ${d.w} by ${d.h} inches, framed above a 36-inch console, to scale`}>
           <defs>
-            <radialGradient id="atw-room-light" cx="50%" cy="20%" r="70%"><stop stopColor="#f2dcc0"/><stop offset=".45" stopColor="#bda78d"/><stop offset="1" stopColor="#5e4f42"/></radialGradient>
-            <linearGradient id="atw-room-floor" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#4a3a2d"/><stop offset="1" stopColor="#7a6450"/></linearGradient>
-            <radialGradient id="atw-room-pool"><stop stopColor="#fff2dc" stopOpacity=".5"/><stop offset=".55" stopColor="#fff2dc" stopOpacity=".14"/><stop offset="1" stopColor="#fff2dc" stopOpacity="0"/></radialGradient>
+            <radialGradient id="atw-room-light" cx="50%" cy="20%" r="70%"><stop style={{stopColor: 'var(--room-a)'}}/><stop offset=".45" style={{stopColor: 'var(--room-b)'}}/><stop offset="1" style={{stopColor: 'var(--room-c)'}}/></radialGradient>
+            <linearGradient id="atw-room-floor" x1="0" y1="0" x2="0" y2="1"><stop style={{stopColor: 'var(--room-floor-a)'}}/><stop offset="1" style={{stopColor: 'var(--room-floor-b)'}}/></linearGradient>
+            <radialGradient id="atw-room-pool"><stop stopColor="#fff6e8" style={{stopOpacity: 'var(--room-pool)'}}/><stop offset=".55" stopColor="#fff6e8" style={{stopOpacity: 'calc(var(--room-pool) * .3)'}}/><stop offset="1" stopColor="#fff6e8" stopOpacity="0"/></radialGradient>
             <filter id="atw-room-soft"><feGaussianBlur stdDeviation="3"/></filter>
           </defs>
-          {/* the prototype's room (d2-atelier-prototype, Room), in the evening: wall, floor, a 36-inch console, a plant and books */}
+          {/* the prototype's room (d2-atelier-prototype, Room), in daylight or in the evening (the theme's room colors): wall, floor, a 36-inch console, a plant and books */}
           <path d="M0 0h390v267H0Z" fill="url(#atw-room-light)"/><path d="M0 267h390v73H0Z" fill="url(#atw-room-floor)"/>
-          <path d="M0 263h390" stroke="#3e3128" strokeWidth="6"/>
+          <path d="M0 263h390" style={{stroke: 'var(--room-skirt)'}} strokeWidth="6"/>
           <ellipse cx={195} cy={y0 + box.h * .35} rx={Math.max(70, box.w * 1.15)} ry={Math.max(60, box.h * 1.4)} fill="url(#atw-room-pool)"/>
-          <ellipse cx="197" cy="311" rx="150" ry="9" fill="#1a130e" opacity=".35" filter="url(#atw-room-soft)"/>
-          <path d="M49 251h292v15H49Z" fill="#6e5a43"/><path d="M59 266h11v49H59Zm261 0h11v49h-11Z" fill="#4f4031"/><path d="M49 250h292" stroke="#8b7457" strokeWidth="3"/>
-          <path d="M298 243c-3-16-4-28-2-41M296 219c-18-6-15-19-15-19 15 1 16 16 15 19Zm1-9c15-3 17-16 17-16-15 0-17 12-17 16Z" fill="#4c5a44"/>
-          <path d="M282 232h28l-4 18h-20Z" fill="#9b968b"/><path d="M82 242h57v8H82Z" fill="#3f4a5c"/><path d="M88 235h48v7H88Z" fill="#b9b2a4"/>
+          <ellipse cx="197" cy="311" rx="150" ry="9" style={{fill: 'var(--room-shadow)'}} opacity=".3" filter="url(#atw-room-soft)"/>
+          <path d="M49 251h292v15H49Z" style={{fill: 'var(--console)'}}/><path d="M59 266h11v49H59Zm261 0h11v49h-11Z" style={{fill: 'var(--console-leg)'}}/><path d="M49 250h292" style={{stroke: 'var(--console-top)'}} strokeWidth="3"/>
+          <path d="M298 243c-3-16-4-28-2-41M296 219c-18-6-15-19-15-19 15 1 16 16 15 19Zm1-9c15-3 17-16 17-16-15 0-17 12-17 16Z" style={{fill: 'var(--plant)'}}/>
+          <path d="M282 232h28l-4 18h-20Z" style={{fill: 'var(--pot)'}}/><path d="M82 242h57v8H82Z" style={{fill: 'var(--book-a)'}}/><path d="M88 235h48v7H88Z" style={{fill: 'var(--book-b)'}}/>
           {/* the print: a soft shadow, a thin dark frame, the white border, the painting; a picture light above it */}
           <g className="atw-room-print">
-            <rect x={x0 - frame + 1.5} y={y0 - frame + 3} width={box.w + 2 * frame} height={box.h + 2 * frame} fill="#1a130e" opacity=".35" filter="url(#atw-room-soft)"/>
-            <rect x={x0 - frame} y={y0 - frame} width={box.w + 2 * frame} height={box.h + 2 * frame} fill="#231b16"/>
+            <rect x={x0 - frame + 1.5} y={y0 - frame + 3} width={box.w + 2 * frame} height={box.h + 2 * frame} style={{fill: 'var(--room-shadow)'}} opacity=".35" filter="url(#atw-room-soft)"/>
+            <rect x={x0 - frame} y={y0 - frame} width={box.w + 2 * frame} height={box.h + 2 * frame} style={{fill: 'var(--frame)'}}/>
             <rect x={x0} y={y0} width={box.w} height={box.h} fill="#fbf9f4"/>
             <image href={fullSrc(a.id)} x={x0 + (box.w - a.originalWidth * k) / 2} y={y0 + (box.h - a.originalHeight * k) / 2} width={a.originalWidth * k} height={a.originalHeight * k} preserveAspectRatio="none"/>
           </g>
