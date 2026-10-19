@@ -51,7 +51,7 @@ const FLAT = [
 // Camera rects are in the editor's own 1440 x 900 pixels.
 const STEPS = [
   {id: 'row', screen: 'row', label: 'Panel row', title: 'Selecting a frame says what an agent would miss',
-    camera: {x: 700, y: 20, w: 740}, phoneCamera: {x: 1010, y: 110, w: 430},
+    camera: {x: 420, y: 40, w: 1020}, phoneCamera: {x: 1010, y: 110, w: 430},
     alt: 'The properties panel with an Agent handoff row: 12 raw values, 10 match variables, and a Review button',
     body: <p>Agent handoff sits under the frame header, above Position, so it’s there the moment you select a frame. It counts distinct raw values: 12 raw values, 10 match variables. No score.</p>},
   {id: 'review', screen: 'review', label: 'Review', title: 'Review opens next to the row',
