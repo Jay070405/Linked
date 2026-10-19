@@ -244,9 +244,11 @@ function ThemeMoment({reduced}) {
     </div>
     <div className="rfa-theme-shot" data-reveal="">
       <Browser>
-        <div className="rfa-theme-stack">
-          <img src={rfaShot('review')} width="1800" height="1125" alt="The review popover in the light theme" className={dark ? '' : 'is-on'} loading="lazy" decoding="async"/>
-          <img src={rfaShot('review-dark')} width="1800" height="1125" alt="The review popover in the dark theme" className={dark ? 'is-on' : ''} loading="lazy" decoding="async"/>
+        <div className="rfa-theme-stack" data-zoom-group="">
+          <img src={rfaShot('review')} width="1800" height="1125" alt="The review popover in the light theme" className={dark ? '' : 'is-on'} loading="lazy" decoding="async"
+            {...(dark ? {'data-zoom': '', 'aria-hidden': true} : zoomable('Check designs in the light theme'))}/>
+          <img src={rfaShot('review-dark')} width="1800" height="1125" alt="The review popover in the dark theme" className={dark ? 'is-on' : ''} loading="lazy" decoding="async"
+            {...(dark ? zoomable('Check designs in the dark theme') : {'data-zoom': '', 'aria-hidden': true})}/>
         </div>
       </Browser>
     </div>

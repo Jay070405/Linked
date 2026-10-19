@@ -83,6 +83,7 @@
 .rfa-theme-stack{position:absolute;inset:0}
 .rfa-theme-stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 420ms ease}
 .rfa-theme-stack img.is-on{opacity:1}
+.rfa-theme-stack img:not(.is-on){pointer-events:none}
 
 /* ---------- design: agent side ---------- */
 .rfa-agent{display:grid;gap:clamp(28px,3.4vw,48px)}

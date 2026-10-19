@@ -10,7 +10,7 @@ import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
-import CaseChrome from '../v2/CaseChrome';
+import CaseChrome, {zoomable} from '../v2/CaseChrome';
 import {Deferred} from '../v2/Try';
 import {L100TileArt} from '../v2/TileArt';
 import {Phone, ProtoScreen, protoUrl, shotSrc} from '../v2/Device';
@@ -174,8 +174,9 @@ export default function AtelierCase({item, reduced}) {
       <div className="at-stage" data-enter="stage">
         <div className="at-stage-print" data-enter="back">
           <div data-depth="10">
-            <figure className="at-print">
-              <img src={`${ART}signal.webp`} width={1600} height={868} alt="A Distant Signal, one of my paintings: a lone traveler walking toward a beacon of light in a misty valley." fetchPriority="high"/>
+            <figure className="at-print" data-zoom-group="">
+              <img src={`${ART}signal.webp`} width={1600} height={868} alt="A Distant Signal, one of my paintings: a lone traveler walking toward a beacon of light in a misty valley." fetchPriority="high"
+                {...zoomable('A Distant Signal, one of my paintings: a lone traveler walking toward a beacon of light in a misty valley')}/>
             </figure>
           </div>
         </div>

@@ -10,7 +10,7 @@ import BeforeAfter, {RoundChanges} from '../v2/BeforeAfter';
 import LivePrototype from '../v2/LivePrototype';
 import NextProject from '../v2/NextProject';
 import CursorLabel from '../v2/CursorLabel';
-import CaseChrome from '../v2/CaseChrome';
+import CaseChrome, {zoomable} from '../v2/CaseChrome';
 import {Deferred} from '../v2/Try';
 import {L100_KIT, l100Shot, Phone, ProtoScreen} from '../v2/Device';
 import {ArrowDown, Info} from '../v2/icons';
@@ -133,9 +133,10 @@ const TASKS = [
 function Stage({phone, reduced}) {
   return <div className="lf-stage-wrap">
     <div className="lf-stage" data-enter="stage">
-      <div className="lf-plan" data-enter="back"><div data-depth="8">
+      <div className="lf-plan" data-enter="back" data-zoom-group=""><div data-depth="8">
         <img src={`${A}plan.webp`} width={808} height={768} fetchPriority="high"
-          alt="Site plan of a fictional garden-style complex: Elm St, the front gate, buildings 1 to 4, and the walk to door 214"/>
+          alt="Site plan of a fictional garden-style complex: Elm St, the front gate, buildings 1 to 4, and the walk to door 214"
+          {...zoomable('Site plan of a fictional garden-style complex: Elm St, the front gate, buildings 1 to 4, and the walk to door 214')}/>
       </div></div>
       <div className="lf-phone is-resident" data-enter="front"><div data-depth="14">
         <p className="lf-role"><span className="lf-dot" data-role="resident"/>Resident, at home</p>

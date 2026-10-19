@@ -69,7 +69,7 @@ export default function LinkedLayers({reduced = false}) {
   };
 
   return <figure ref={root} className="ll" {...mode.bind} onPointerLeave={e => { if (e.pointerType === 'mouse') set(null); }}>
-    <Ask>Point at a layer in either panel.</Ask>
+    <Ask>Pick a layer in either panel.</Ask>
     <div className="ll-stage pp-stage">
       {PANELS.map(p => <section key={p.id} className={`pp-layers-panel ll-panel is-${p.id}`} aria-label={p.label}>
         <header><span>Layers</span><span className="pp-layers-page">{p.page}</span></header>

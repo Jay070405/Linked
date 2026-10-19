@@ -55,7 +55,7 @@ export default function FindTheDoor({reduced = false}) {
 
   return <div className={`fd${pick ? ' is-picked' : ''}${instant ? ' is-instant' : ''}`} {...mode.bind}>
     <div className="fd-top">
-      <Ask>Tap where you’d walk in.</Ask>
+      <Ask>Choose where you’d walk in.</Ask>
       {pick ? <button type="button" className="fd-again" onClick={reset}>Try again</button> : null}
     </div>
     <div className="fd-map" data-zoom-group="">

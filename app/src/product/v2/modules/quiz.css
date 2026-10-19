@@ -32,8 +32,8 @@
 .cq-notice{margin-top:16px;padding:14px 16px;background:#f4f4f4;font-size:13.5px;line-height:1.45;color:#393939}
 
 /* the answer: space held before you pick, so nothing below moves */
-.cq-reveal{min-height:212px}
-.cq-wait{display:grid;place-items:center;min-height:212px;border:1px dashed var(--pp-strong);border-radius:20px;font:450 15px/1.4 var(--pp-sans);color:var(--pp-pencil);text-align:center;padding:0 20px}
+.cq-reveal{min-height:0}
+.cq-wait{font:450 14.5px/1.4 var(--pp-sans);color:var(--pp-pencil)}
 .cq-answer{display:grid;gap:22px;padding:clamp(20px,2.6vw,32px);border-radius:24px;background:var(--v2-card);box-shadow:0 0 0 1px var(--v2-hair),var(--v2-lift);animation:cq-in 260ms var(--v2-out) both}
 .cq-verdict{max-width:62ch;font:450 clamp(19px,1.5vw,22px)/1.42 var(--pp-sans);letter-spacing:-.01em;text-wrap:pretty}
 .cq-verdict b{font-weight:650}
@@ -57,4 +57,4 @@
 .cq-table.is-compact tr.is-flag th{box-shadow:inset 2px 0 var(--pp-ink),inset 0 2px var(--pp-ink),inset 0 -2px var(--pp-ink)}
 .cq-table.is-compact tr.is-flag td:last-child{box-shadow:inset -2px 0 var(--pp-ink),inset 0 2px var(--pp-ink),inset 0 -2px var(--pp-ink)}
 .cq-table.is-compact .cq-note{margin-top:3px;padding:0 5px;font-size:11px}
-@media(max-width:760px){.cq-reveal,.cq-wait{min-height:180px}.cq-portal{padding:16px 12px 18px}.cq-meta{font-size:12.5px;padding:10px 12px}}
+@media(max-width:760px){.cq-portal{padding:16px 12px 18px}.cq-meta{font-size:12.5px;padding:10px 12px}}

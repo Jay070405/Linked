@@ -43,7 +43,9 @@ function useBox(to, instant) {
 }
 
 /* ---------- 1. print check ---------- */
-const STAGE = {w: 27, h: 26, x: 1.2, floor: 25.2};   // inches; sheets stand on the floor line, left-aligned; 24 in fits either way
+const STAGE = {w: 27, x: 1.2};   // inches; sheets stand on the floor line, left-aligned
+// a landscape painting's tallest sheet is 18 in, a portrait one's 24 in: the wall is as tall as this painting needs
+const stageFor = a => { const h = a.originalWidth >= a.originalHeight ? 20.6 : 26; return {...STAGE, h, floor: h - .8}; };
 
 function PrintCheck({a, setArtId, reduced}) {
   const [si, setSi] = useState(3);
@@ -66,7 +68,7 @@ function PrintCheck({a, setArtId, reduced}) {
   // the full artwork inside a 1/4-inch white border, centered: what the app prints
   const inner = {w: box.w - .5, h: box.h - .5}, k = Math.min(inner.w / a.originalWidth, inner.h / a.originalHeight);
   const iw = a.originalWidth * k, ih = a.originalHeight * k;
-  const sx = STAGE.x, sy = STAGE.floor - box.h;
+  const S = stageFor(a), sx = S.x, sy = S.floor - box.h;
 
   return <section className="ac-module pc" aria-labelledby="pc-title" {...mode.bind}>
     <div className="ac-head">
@@ -75,10 +77,10 @@ function PrintCheck({a, setArtId, reduced}) {
     </div>
     <div className="pc-grid">
       <div className="pc-stage" aria-hidden="true">
-        <svg viewBox={`0 0 ${STAGE.w} ${STAGE.h}`}>
-          <path className="pc-floor" d={`M0 ${STAGE.floor} H${STAGE.w}`}/>
+        <svg viewBox={`0 0 ${S.w} ${S.h}`}>
+          <path className="pc-floor" d={`M0 ${S.floor} H${S.w}`}/>
           {sizes.map(z => { const q = dimensions(a, z), ok = printCheck(a, z).ok;
-            return <rect key={z.id} className={`pc-ghost${ok ? '' : ' is-no'}`} x={STAGE.x} y={STAGE.floor - q.h} width={q.w} height={q.h}/>; })}
+            return <rect key={z.id} className={`pc-ghost${ok ? '' : ' is-no'}`} x={S.x} y={S.floor - q.h} width={q.w} height={q.h}/>; })}
           <g className={`pc-sheet${r.ok ? '' : ' is-no'}`}>
             <rect className="pc-paper" x={sx} y={sy} width={box.w} height={box.h}/>
             <image href={artSrc(a.id)} x={sx + (box.w - iw) / 2} y={sy + (box.h - ih) / 2} width={iw} height={ih} preserveAspectRatio="none"/>
