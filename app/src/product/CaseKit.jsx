@@ -53,14 +53,18 @@ export const Todo = ({children, inline = false}) => inline
 
 /** Project summary. Outcome in the reading column; facts line up with the margin notes. */
 export function TLDR({outcome, facts = [], table}) {
+  // Role reads with the outcome (what I did, what came of it); the shorter facts sit in the margin column.
+  const role = facts.find(([k]) => k === 'Role')?.[1];
+  const rest = facts.filter(([k, v]) => k !== 'Role' && v);
   return <section className={`pp-tldr${table ? ' pp-tldr--table' : ''}`} aria-label="Project summary" data-wide="">
-    <div className="pp-tldr-outcome"><p className="pp-tldr-label">Outcome</p><div className="pp-tldr-outcome-text">{outcome}</div></div>
+    <div className="pp-tldr-outcome"><p className="pp-tldr-label">Outcome</p><div className="pp-tldr-outcome-text">{outcome}</div>
+      {role ? <dl className="pp-tldr-role"><dt className="pp-tldr-label">Role</dt><dd>{role}</dd></dl> : null}</div>
     {table
       ? <div className="pp-tldr-table" role="region" aria-label="The three settings compared" tabIndex={0}><table>
           <thead><tr><td/>{table.cols.map(col => <th key={col} scope="col">{col}</th>)}</tr></thead>
           <tbody>{table.rows.map(([key, ...cells]) => <tr key={key}><th scope="row">{key}</th>{cells.map((cell, i) => <td key={i}>{cell}</td>)}</tr>)}</tbody>
         </table></div>
-      : <dl className="pp-tldr-facts">{facts.filter(([, v]) => v).map(([k, v]) => <div key={k}><dt className="pp-tldr-label">{k}</dt><dd>{v}</dd></div>)}</dl>}
+      : <dl className="pp-tldr-facts">{rest.map(([k, v]) => <div key={k}><dt className="pp-tldr-label">{k}</dt><dd>{v}</dd></div>)}</dl>}
   </section>;
 }
 
