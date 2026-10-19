@@ -29,6 +29,7 @@ export default function App(){
   setReduced(v=>!v);requestAnimationFrame(()=>requestAnimationFrame(()=>(document.getElementById(id)||document.getElementById('home'))?.scrollIntoView({behavior:'instant'})));
  };
  const nav=id=>{
+  if(id==='product'){open('/product');return;}
   if(id==='art'){open('/works');return;}
   if(id==='systems'){open('/systems');return;}
   if(id==='archive'){open('/works/archive');return;}
@@ -51,7 +52,7 @@ export default function App(){
  <a className="skip-link" href={modal?'#portfolio-page':'#systems'}>{lang==='en'?'Skip to content':'跳到正文'}</a>
  <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive','systems'].includes(modal.type)?'dark':'light'):'auto'} onLanguage={setLang} onNavigate={nav} onAbout={()=>setAbout(true)}/>
  <main className="home-journey" inert={modal?true:undefined} aria-hidden={!!modal}>
-  <LegacyHero lang={lang} reduced={quiet}/>
+  <LegacyHero lang={lang} reduced={quiet} onProduct={()=>open('/product')}/>
   <OneStroke lang={lang} reduced={quiet} onOpen={open} onArchive={()=>open('/works/archive')} onAbout={()=>setAbout(true)} onNavigate={nav} onTransition={transition}/>
  </main>
  <div className="journey-indicator"><i/><span><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>SCROLL TO EXPLORE</ExpressiveTitle></span></div>

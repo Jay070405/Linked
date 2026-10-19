@@ -55,3 +55,7 @@
 .legacy-hero.legacy-static .legacy-static-caption p{font-size:16px;line-height:1.8;max-width:520px;margin:0 0 20px}
 .legacy-hero.legacy-static .legacy-static-caption a{display:inline-flex;align-items:center;min-height:44px;border-bottom:1px solid currentColor;font-size:14px;color:inherit;text-decoration:none}
 .legacy-hero.legacy-static *{animation:none!important;transition:none!important}
+
+/* The way to the product case studies sits beside the way to the work. */
+.legacy-hero .legacy-product-link{margin-left:28px}
+@media(max-width:600px){.legacy-hero .legacy-product-link{display:flex;width:fit-content;margin:6px 0 0}}
