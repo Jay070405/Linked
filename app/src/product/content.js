@@ -49,7 +49,18 @@ export const PRODUCT_CASES = [
 
 // Unlisted pages for one reader. Not in the navigation, not indexed.
 export const FOR_PAGES = {
-  figma: {slug: 'figma', title: 'Hi, Figma team.', first: 'design-to-code'},
+  figma: {
+    slug: 'figma',
+    title: 'For the Figma team',
+    order: ['design-to-code', 'where-players-break', 'roco'],
+    // Source: cases/for-figma.md (the note only).
+    note: [
+      'Hi, I’m Jay. I trained as an illustrator at ArtCenter, I’m finishing a management degree at Duke Fuqua, and most of what I build now starts as a Figma file that an AI agent turns into code.',
+      'That handoff is what I want to work on. This month I tested it: 24 agent builds from clean and messy versions of the same screens. Agents rebuilt messy layouts just fine; what they couldn’t recover was the design system’s names, unless the file carried them as variables. The case study below has the data, the ablation that isolated variables, and where I think Figma could surface that check.',
+      'The other two cases come from games, where I spent a lot of time watching where players get stuck, and measuring systems that hide their own rules.',
+    ],
+    signoff: ['Thanks for reading.', 'Jay'],
+  },
 };
 
 const clean = pathname => (String(pathname).split(/[?#]/)[0].replace(/\/+$/, '') || '/');

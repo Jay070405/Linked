@@ -200,6 +200,7 @@
 .pp-next+.pp-foot{margin-top:72px}
 .pp-for-title{font:700 clamp(40px,5.6vw,88px)/1 var(--pp-sans);letter-spacing:-.045em}
 .pp-for-note{display:grid;gap:16px;margin-top:28px;max-width:var(--pp-main);font:400 clamp(19px,1.5vw,21px)/1.5 var(--pp-sans)}
+.pp-for-signoff{margin-top:8px}
 .pp-missing{padding-bottom:120px}
 .pp-missing .pp-hero-sub{margin-top:24px;font:400 21px/1.45 var(--pp-sans);color:var(--pp-pencil)}
 .pp-missing-link{margin-top:28px;font:500 18px var(--pp-sans)}
