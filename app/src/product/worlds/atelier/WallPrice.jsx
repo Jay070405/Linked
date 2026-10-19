@@ -61,13 +61,13 @@ export default function WallPrice({artId, sizeId, setSizeId, reduced}) {
           <defs>
             <radialGradient id="atw-room-light" cx="50%" cy="20%" r="70%"><stop stopColor="#f2dcc0"/><stop offset=".45" stopColor="#bda78d"/><stop offset="1" stopColor="#5e4f42"/></radialGradient>
             <linearGradient id="atw-room-floor" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#4a3a2d"/><stop offset="1" stopColor="#7a6450"/></linearGradient>
-            <radialGradient id="atw-room-pool" cx="50%" cy="0%" r="100%"><stop stopColor="#fff2dc" stopOpacity=".55"/><stop offset="1" stopColor="#fff2dc" stopOpacity="0"/></radialGradient>
+            <radialGradient id="atw-room-pool"><stop stopColor="#fff2dc" stopOpacity=".5"/><stop offset=".55" stopColor="#fff2dc" stopOpacity=".14"/><stop offset="1" stopColor="#fff2dc" stopOpacity="0"/></radialGradient>
             <filter id="atw-room-soft"><feGaussianBlur stdDeviation="3"/></filter>
           </defs>
           {/* the prototype's room (d2-atelier-prototype, Room), in the evening: wall, floor, a 36-inch console, a plant and books */}
           <path d="M0 0h390v267H0Z" fill="url(#atw-room-light)"/><path d="M0 267h390v73H0Z" fill="url(#atw-room-floor)"/>
           <path d="M0 263h390" stroke="#3e3128" strokeWidth="6"/>
-          <ellipse cx={195} cy={y0 + box.h * .45} rx={Math.max(60, box.w * .9)} ry={Math.max(48, box.h * 1.05)} fill="url(#atw-room-pool)"/>
+          <ellipse cx={195} cy={y0 + box.h * .35} rx={Math.max(70, box.w * 1.15)} ry={Math.max(60, box.h * 1.4)} fill="url(#atw-room-pool)"/>
           <ellipse cx="197" cy="311" rx="150" ry="9" fill="#1a130e" opacity=".35" filter="url(#atw-room-soft)"/>
           <path d="M49 251h292v15H49Z" fill="#6e5a43"/><path d="M59 266h11v49H59Zm261 0h11v49h-11Z" fill="#4f4031"/><path d="M49 250h292" stroke="#8b7457" strokeWidth="3"/>
           <path d="M298 243c-3-16-4-28-2-41M296 219c-18-6-15-19-15-19 15 1 16 16 15 19Zm1-9c15-3 17-16 17-16-15 0-17 12-17 16Z" fill="#4c5a44"/>

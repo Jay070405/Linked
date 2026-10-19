@@ -19,7 +19,7 @@ const zoomFor = (w, cw) => Math.min(3.4, Math.max(1.6, w.originalWidth / Math.ma
 
 export default function Gallery({reduced}) {
   const fine = useMedia(FINE);
-  const pin = useRef(null), track = useRef(null), torch = useRef(null);
+  const pin = useRef(null), track = useRef(null), torch = useRef(null), walkST = useRef(null);
   const [zoom, setZoom] = useState(null);
   const [tapped, setTapped] = useState(null);
 
@@ -33,16 +33,31 @@ export default function Gallery({reduced}) {
         x: () => -dist(), ease: 'none',
         scrollTrigger: {trigger: node, scroller, pin: true, start: 'top top', end: () => `+=${Math.round(dist() * .8)}`, scrub: .45, invalidateOnRefresh: true, anticipatePin: 1},
       });
+      walkST.current = {st: walk.scrollTrigger, dist};
       rail.querySelectorAll('.atw-work').forEach(el => ScrollTrigger.create({
         trigger: el, containerAnimation: walk, start: 'left 68%', end: 'right 32%',
-        toggleClass: {targets: el, className: 'is-lit'},
+        // an attribute, not a class: React owns the class list and re-renders it while you look
+        onToggle: self => el.toggleAttribute('data-lit', self.isActive),
       }));
     }, node);
     // the hang depends on fonts and the images' boxes: measure again once they settle
     const refresh = () => ScrollTrigger.refresh();
     document.fonts?.ready.then(refresh).catch(() => {});
-    return () => ctx.revert();
+    return () => { ctx.revert(); walkST.current = null; };
   }, [reduced]);
+
+  // Tabbing onto a painting walks you to it: the page scrolls to where the walk puts that painting in the middle (the
+  // browser would otherwise scroll the clipped wall sideways and break the walk).
+  const onFocusIn = e => {
+    const node = pin.current, w = walkST.current, el = e.target.closest?.('.atw-work, .atw-intro, .atw-outro');
+    if (node) node.scrollLeft = 0;
+    if (!w || !el || !track.current) return;
+    const d = w.dist(); if (!d) return;
+    const x = Math.min(d, Math.max(0, el.offsetLeft + el.offsetWidth / 2 - node.clientWidth / 2));
+    const y = w.st.start + (w.st.end - w.st.start) * (x / d);
+    const scroller = scrollerOf(node);
+    if (scroller === window) scrollTo({top: y, behavior: 'auto'}); else scroller.scrollTop = y;
+  };
 
   // the light you carry: a warm pool that follows a fine pointer across the wall
   useEffect(() => {
@@ -70,7 +85,7 @@ export default function Gallery({reduced}) {
     <div ref={pin} className="atw-walk">
       <div className="atw-ceiling" aria-hidden="true"/>
       <div className="atw-floor" aria-hidden="true"/>
-      <div ref={track} className="atw-track" tabIndex={reduced ? 0 : undefined} aria-label={reduced ? 'The collection, scroll sideways' : undefined}>
+      <div ref={track} className="atw-track" onFocus={onFocusIn} tabIndex={reduced ? 0 : undefined} aria-label={reduced ? 'The collection, scroll sideways' : undefined}>
         <div className="atw-intro">
           <h2 id="at-gallery-title" className="atw-h2">The collection</h2>
           <p className="atw-walltext">Atelier’s catalog is eight of my own paintings. They hang here with the label a collector would see: the original file’s size, the largest print it makes sharp, and its price.</p>
@@ -118,7 +133,7 @@ function Work({w, index, fine, tapped, lit, onTap, onOpen}) {
 
   useEffect(() => { if (tapped) setWantHi(true); else if (lastType.current === 'touch') setLook(false); }, [tapped]);
 
-  return <article className={`atw-work${lit ? ' is-lit' : ''}${look ? ' is-looking' : ''}`} style={{'--r': r, '--hv': hangHeight(r)}} aria-labelledby={`atw-w-${w.id}`}>
+  return <article className={`atw-work${look ? ' is-looking' : ''}`} data-lit={lit ? '' : undefined} style={{'--r': r, '--hv': hangHeight(r)}} aria-labelledby={`atw-w-${w.id}`}>
     <div className="atw-hang">
       <span className="atw-cone" aria-hidden="true"/>
       <span className="atw-pool" aria-hidden="true"/>

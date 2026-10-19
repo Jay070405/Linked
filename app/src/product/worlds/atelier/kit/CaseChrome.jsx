@@ -12,12 +12,13 @@ const WIDE = '(min-width: 1200px)';
      compact sticky chapter chip on anything narrower;
    - a lightbox for any figure marked [data-zoom] inside the page.
    chapters: [{id, label, sections?: [{id, label}]}], ids of elements inside `root`. */
-export default function CaseChrome({root, chapters, reduced = false}) {
+export default function CaseChrome({root, chapters, reduced = false, hush = []}) {
   const items = chapters.flatMap(c => [{id: c.id, label: c.label, level: 0}, ...(c.sections || []).map(s => ({...s, level: 1, chapter: c.label}))]);
   const wide = useMedia(WIDE);
   const bar = useRef(null);
   const [active, setActive] = useState(-1);
   const [shown, setShown] = useState(false);
+  const [hushed, setHushed] = useState(false);   // the rail steps aside in rooms that fill the screen
   const [zoom, setZoom] = useState(null);    // {items, index, keyboard, opener}
 
   // one scroll handler: the progress bar's scale, which item is current, whether the hero is behind us
@@ -37,6 +38,7 @@ export default function CaseChrome({root, chapters, reduced = false}) {
       items.forEach((item, i) => { const t = el(item.id); if (t && t.getBoundingClientRect().top <= vh * .42) current = i; });
       setActive(current);
       setShown(top > vh * .6);
+      setHushed(hush.includes(items[current]?.id));
     };
     const on = () => { if (!frame) frame = requestAnimationFrame(measure); };
     measure();
@@ -87,7 +89,7 @@ export default function CaseChrome({root, chapters, reduced = false}) {
 
   return <>
     <div className="atw-progress" aria-hidden="true"><i ref={bar}/></div>
-    {wide ? <Rail items={items} active={active} shown={shown} jump={jump}/> : <Chip items={items} active={active} shown={shown} jump={jump} reduced={reduced}/>}
+    {wide ? <Rail items={items} active={active} shown={shown && !hushed} jump={jump}/> : <Chip items={items} active={active} shown={shown} jump={jump} reduced={reduced}/>}
     {zoom ? <Suspense fallback={null}><LightboxViewer {...zoom} reduced={reduced} onClose={() => setZoom(null)}/></Suspense> : null}
   </>;
 }

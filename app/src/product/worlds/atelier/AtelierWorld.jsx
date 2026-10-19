@@ -90,7 +90,7 @@ function World({item, reduced, root, artId, setArtId, sizeId, setSizeId, next, o
   };
   return <>
     <Hero item={item} reduced={reduced} phone={phone} onPlain={onPlain} onTry={scrollToTry}/>
-    <CaseChrome root={root} chapters={CHAPTERS} reduced={reduced}/>
+    <CaseChrome root={root} chapters={CHAPTERS} reduced={reduced} hush={['at-gallery', 'at-press']}/>
     <Gallery reduced={reduced}/>
     <Problem/>
     <Scrolly id="at-flow" reduced={reduced} steps={STEPS.map(s => ({...s, body: <p>{s.text}</p>}))} art="blue-hour" label="The drop flow" title="Atelier prototype, following the steps"
