@@ -238,6 +238,12 @@
 .pp-pipeline code{padding:1px 4px;border-radius:3px;background:var(--pp-surface);font:500 11px Mono,ui-monospace,monospace;white-space:nowrap}
 .pp-step-name code{font-size:13px}
 
+/* a place held for a case study that isn't published yet */
+.pp-slot-card{padding:22px 24px;border:1px dashed var(--pp-strong);border-radius:8px;font-family:var(--pp-sans)}
+.pp-slot-card h3{font:600 19px/1.3 var(--pp-sans);letter-spacing:-.01em}
+.pp-slot-card p{margin-top:6px;font:400 16px/1.5 var(--pp-sans);color:var(--pp-pencil)}
+.pp-prose>.pp-slot-card{margin-top:40px}
+
 /* the League year as a chain */
 .pp-chain{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;list-style:none;margin:0;padding:0;font-family:var(--pp-sans)}
 .pp-prose .pp-chain>li{margin:0}
