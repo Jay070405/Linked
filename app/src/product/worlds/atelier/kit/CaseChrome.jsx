@@ -89,7 +89,7 @@ export default function CaseChrome({root, chapters, reduced = false, hush = []})
 
   return <>
     <div className="atw-progress" aria-hidden="true"><i ref={bar}/></div>
-    {wide ? <Rail items={items} active={active} shown={shown && !hushed} jump={jump}/> : <Chip items={items} active={active} shown={shown} jump={jump} reduced={reduced}/>}
+    {wide ? <Rail items={items} active={active} shown={shown && !hushed} jump={jump}/> : <Chip items={items} active={active} shown={shown && !hushed} jump={jump} reduced={reduced}/>}
     {zoom ? <Suspense fallback={null}><LightboxViewer {...zoom} reduced={reduced} onClose={() => setZoom(null)}/></Suspense> : null}
   </>;
 }

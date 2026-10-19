@@ -655,7 +655,7 @@ body:has(.atw-world:not(.is-plain)) .v16-navigation:not(.is-menu-open) .v16-lang
   .atw-cone{top:calc((var(--hh) - var(--T)) / 2 + 20px - 130px)}
   .atw-hang::before{top:calc((var(--hh) - var(--T)) / 2 - 132px)}
   .atw-pinned{display:none}
-  .atw-press-pin{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:start;gap:16px;padding:calc(var(--nav) + 60px) 0 16px}
+  .atw-press-pin{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:start;gap:16px;padding:calc(var(--nav) + 20px) 0 16px}
   .atw-press-stage{height:auto;gap:12px}
   .atw-bed{flex:none;padding:22px 12px}
   .atw-sheet{width:100%}

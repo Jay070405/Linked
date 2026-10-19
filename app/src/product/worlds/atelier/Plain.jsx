@@ -1,3 +1,4 @@
+import {useEffect, useRef} from 'react';
 import {Ev} from '../../CaseKit';
 import {Go} from '../../Go';
 import {PRODUCT_HOME} from '../../content';
@@ -9,6 +10,14 @@ import {earnings, largestSharp, money, papers, printCheck, sizes} from './model'
    scroll-driven scenes, no lights; the interactive checks become the tables they compute. */
 export default function Plain({item, next, onBack}) {
   const blue = WORKS[0], top = largestSharp(blue), e = earnings(38, top, papers[0]);
+  const title = useRef(null);
+  // arriving here starts the page over, with focus on the title
+  useEffect(() => {
+    const node = title.current; if (!node) return;
+    const scroller = node.closest('.portfolio-page-viewport');
+    if (scroller) scroller.scrollTop = 0; else scrollTo(0, 0);
+    node.focus({preventScroll: true});
+  }, []);
   return <div className="atw-plain">
     <div className="atw-plain-bar">
       <p>You’re reading the plain version of this case: the same content, without the gallery.</p>
@@ -18,7 +27,7 @@ export default function Plain({item, next, onBack}) {
     <header className="atw-plain-head">
       <Go to={PRODUCT_HOME} className="atw-plain-up"><span aria-hidden="true">←</span> All product work</Go>
       <p className="atw-plain-kind">{item.kind}</p>
-      <h1 id="atw-plain-title" tabIndex={-1}>{HERO.title}</h1>
+      <h1 ref={title} id="atw-plain-title" tabIndex={-1}>{HERO.title}</h1>
       <p className="atw-plain-lead">{HERO.outcome}</p>
       <ul className="atw-plain-chips" aria-label="Project facts">{HERO.chips.map(c => <li key={c}>{c}</li>)}</ul>
       <p><a href={protoUrl('onboarding')} target="_blank" rel="noopener">Open the prototype<span className="atw-sr"> (opens in a new tab)</span></a></p>
