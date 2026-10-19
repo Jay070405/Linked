@@ -67,7 +67,7 @@ for (const [name, query] of Object.entries(STATES)) {
 const rect = sel => page.$eval(sel, el => { const r = el.getBoundingClientRect(); return {x: r.left, y: r.top, width: r.width, height: r.height}; });
 await open('screen=compare', PAGE_H, 2);
 // the /product tile and next-project card: the chart, with the cost-difference note lifted in front
-log.push(await save(path.join(assets, 'tile.webp'), {x: 16, y: 386, width: 1088, height: 600}));
+log.push(await save(path.join(assets, 'tile.webp'), {x: 8, y: 386, width: 1096, height: 670}));
 log.push(await save(path.join(assets, 'tile-note.webp'), await rect('.dominance')));
 // decisions
 log.push(await save(path.join(assets, 'decision-year.webp'), {x: 32, y: 392, width: 1056, height: 704}));

@@ -34,7 +34,7 @@ export function L100TileArt() {
 /** D4: the prototype's yearly-cost chart, with its cost-difference note lifted in front. Screenshots only. */
 export function CntlTileArt() {
   return <span className="pt-cntl">
-    <span className="pt-cntl-chart" data-depth="8"><img src="/assets/product/choose-not-to-lose/tile.webp" width={2176} height={1200} alt="" loading="lazy" decoding="async"/></span>
+    <span className="pt-cntl-chart" data-depth="8"><img src="/assets/product/choose-not-to-lose/tile.webp" width={2192} height={1340} alt="" loading="lazy" decoding="async"/></span>
     <span className="pt-cntl-note" data-depth="20"><img src="/assets/product/choose-not-to-lose/tile-note.webp" width={2112} height={200} alt="" loading="lazy" decoding="async"/></span>
   </span>;
 }

@@ -68,7 +68,7 @@ export const PRODUCT_CASES = [
     when: 'Oct 2026',
     status: 'Testing next',
     // The comparison chart of the prototype (round 2); the cost-difference note is lifted in front on the tile.
-    thumb: {src: '/assets/product/choose-not-to-lose/tile.webp', width: 2176, height: 1200},
+    thumb: {src: '/assets/product/choose-not-to-lose/tile.webp', width: 2192, height: 1340},
     page: true,
   },
 ];

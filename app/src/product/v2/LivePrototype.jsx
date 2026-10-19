@@ -22,7 +22,7 @@ export default function LivePrototype({id, heading, lede, phoneLede, tasks, star
       <ol className="v2-tasks" data-reveal="">
         {tasks.map((task, i) => <li key={task.id}>
           {phone
-            ? phoneLink ? <a className="v2-task" href={kit.url(task.screen, task.art)} target="_blank" rel="noopener">
+            ? phoneLink ? <a className="v2-task" href={(kit.openUrl || kit.url)(task.screen, task.art)} target="_blank" rel="noopener">
                 <span className="v2-task-text">{task.title}</span><span className="v2-task-arrow"><ArrowUpRight/></span></a>
               : <p className="v2-task is-static"><span className="v2-task-text">{task.title}</span></p>
             : <button type="button" className={`v2-task${state.task === i ? ' is-current' : ''}`} aria-pressed={state.task === i} onClick={() => run(task, i)}>
@@ -32,7 +32,7 @@ export default function LivePrototype({id, heading, lede, phoneLede, tasks, star
       </ol>
       <div className="v2-live-tools" data-reveal="">
         {phone ? null : <button type="button" className="v2-button" onClick={reset}><Reset/>Reset the prototype</button>}
-        {phone && !phoneLink ? null : <a className="v2-link" href={kit.url(current?.screen || start.screen, current?.art || start.art)} target="_blank" rel="noopener">
+        {phone && !phoneLink ? null : <a className="v2-link" href={(kit.openUrl || kit.url)(current?.screen || start.screen, current?.art || start.art)} target="_blank" rel="noopener">
           <span className="v2-link-text">{phone ? 'Open the prototype full screen' : 'Open it in a new tab'}</span><ArrowUpRight/><span className="v2-sr"> (opens in a new tab)</span></a>}
       </div>
       {phone && phoneNote ? <p className="v2-live-note" data-reveal="">{phoneNote}</p> : null}

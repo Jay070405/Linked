@@ -53,7 +53,10 @@ export const CNTL_PAGE_KIT = {...CNTL_KIT, h: 2080, viewH: 900, shot: s => `/ass
 // prototype's README and scripts/capture-last-100-feet-screens.mjs.
 export const l100Url = screen => `/proto/last-100-feet/index.html?shot&screen=${encodeURIComponent(screen)}`;
 export const l100Shot = screen => `/assets/product/last-100-feet/screens/${screen}.webp`;
-export const L100_KIT = {w: 390, h: 844, url: l100Url, shot: l100Shot, shotW: 780, shotH: 1688, drive: 'reload'};
+// Links that open the prototype on its own (phones, new tabs) use the full app: full screen on a phone, the
+// presentation shell with the screen list on a desktop.
+export const L100_KIT = {w: 390, h: 844, url: l100Url, shot: l100Shot, shotW: 780, shotH: 1688, drive: 'reload',
+  openUrl: screen => `/proto/last-100-feet/index.html?screen=${encodeURIComponent(screen)}`};
 
 /** Moves an already loaded popstate-kit prototype to another screen. */
 function drive(win, screen, param) {
