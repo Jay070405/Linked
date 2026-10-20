@@ -8,16 +8,17 @@
 import {cost, dominator, plans} from '../../v2/data/cntl-model.js';
 
 /** Three made-up mixes. parts: shares of years that are zero, log-normal around a median (spread = sigma of ln), or
-    flat between two amounts. `words` is what the page prints under the button, so the mix is never hidden. */
+    flat between two amounts. `words` is what the page prints under the button, so the mix is never hidden. Labels and
+    words are {en, zh} (the page's L() shape, written out so this file stays plain JS for the tests). */
 export const MIXES = [
-  {id: 'light', label: 'Mostly light years',
-    words: '1 year in 4 with no covered bills; the rest mostly a few hundred dollars.',
+  {id: 'light', label: {en: 'Mostly light years', zh: '多数年份花得少'},
+    words: {en: '1 year in 4 with no covered bills; the rest mostly a few hundred dollars.', zh: '每 4 年里有 1 年没有承保医疗费用，其余年份大多只有几百美元。'},
     parts: [{share: .25, kind: 'zero'}, {share: .75, kind: 'log', median: 600, spread: 1}]},
-  {id: 'mixed', label: 'A mix',
-    words: '1 year in 8 with no covered bills, most a few hundred to a few thousand dollars, and 3 in 100 between $20,000 and $90,000.',
+  {id: 'mixed', label: {en: 'A mix', zh: '有多有少'},
+    words: {en: '1 year in 8 with no covered bills, most a few hundred to a few thousand dollars, and 3 in 100 between $20,000 and $90,000.', zh: '每 8 年里有 1 年没有承保医疗费用，多数年份在几百到几千美元之间，每 100 年里有 3 年在 $20,000 到 $90,000 之间。'},
     parts: [{share: .12, kind: 'zero'}, {share: .85, kind: 'log', median: 1400, spread: 1.2}, {share: .03, kind: 'flat', min: 20000, max: 90000}]},
-  {id: 'heavy', label: 'Mostly heavy years',
-    words: 'Most years several thousand dollars, and 1 in 5 between $20,000 and $90,000.',
+  {id: 'heavy', label: {en: 'Mostly heavy years', zh: '多数年份花得多'},
+    words: {en: 'Most years several thousand dollars, and 1 in 5 between $20,000 and $90,000.', zh: '多数年份要几千美元，每 5 年里有 1 年在 $20,000 到 $90,000 之间。'},
     parts: [{share: .03, kind: 'zero'}, {share: .77, kind: 'log', median: 6000, spread: 1}, {share: .2, kind: 'flat', min: 20000, max: 90000}]},
 ];
 export const DEFAULT_MIX = 'mixed';

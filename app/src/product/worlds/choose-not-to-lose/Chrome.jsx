@@ -1,5 +1,8 @@
 import {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {L, UI, useCaseLang} from '../../i18n';
 import {scrollerOf, useMedia} from '../../v2/motion';
+
+const ON_THIS_RECEIPT = L('On this receipt', '收据目录');
 import '../../v2/chrome.css';   // the shared figure viewer's styles (only its .v2-lb rules are used here)
 
 const Lightbox = lazy(() => import('../../v2/Lightbox'));
@@ -88,16 +91,18 @@ export default function Chrome({root, chapters, still = false, plain = false}) {
 }
 
 function Index({chapters, active, shown, jump}) {
-  return <nav className={`cnr-index${shown ? ' is-shown' : ''}`} aria-label="On this receipt">
+  const {t} = useCaseLang();
+  return <nav className={`cnr-index${shown ? ' is-shown' : ''}`} aria-label={t(ON_THIS_RECEIPT)}>
     <ol>{chapters.map((c, i) => <li key={c.id}>
       <a href={`#${c.id}`} className={i === active ? 'is-active' : ''} aria-current={i === active ? 'location' : undefined} onClick={e => jump(c.id, e)}>
-        <span className="cnr-index-tick" aria-hidden="true"/><span className="cnr-index-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span className="cnr-index-label">{c.label}</span>
+        <span className="cnr-index-tick" aria-hidden="true"/><span className="cnr-index-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span className="cnr-index-label">{t(c.label)}</span>
       </a>
     </li>)}</ol>
   </nav>;
 }
 
 function Tab({chapters, active, shown, jump, still}) {
+  const {t} = useCaseLang();
   const [open, setOpen] = useState(false);
   const [keyed, setKeyed] = useState(false);
   const wrap = useRef(null), button = useRef(null), list = useRef(null);
@@ -116,14 +121,14 @@ function Tab({chapters, active, shown, jump, still}) {
   return <div ref={wrap} className={`cnr-tab${shown ? ' is-shown' : ''}${open ? ' is-open' : ''}${keyed || still ? ' is-instant' : ''}`}>
     <button ref={button} type="button" className="cnr-tab-button" aria-expanded={open} aria-controls="cnr-tab-list"
       onClick={e => { setKeyed(e.detail === 0); setOpen(o => !o); }}>
-      <span className="cnr-tab-n">{active >= 0 ? `${active + 1}/${chapters.length}` : 'Index'}</span>
-      <span className="cnr-tab-label">{current ? current.label : 'On this receipt'}</span>
+      <span className="cnr-tab-n">{active >= 0 ? `${active + 1}/${chapters.length}` : t(UI.contents)}</span>
+      <span className="cnr-tab-label">{current ? t(current.label) : t(ON_THIS_RECEIPT)}</span>
       <svg className="cnr-tab-caret" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg>
     </button>
     <div id="cnr-tab-list" className="cnr-tab-pop" hidden={!open}>
       <ol ref={list}>{chapters.map((c, i) => <li key={c.id}>
         <a href={`#${c.id}`} aria-current={i === active ? 'location' : undefined} onClick={e => { setOpen(false); jump(c.id, e); }}>
-          <span className="cnr-index-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{c.label}</a>
+          <span className="cnr-index-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t(c.label)}</a>
       </li>)}</ol>
     </div>
   </div>;

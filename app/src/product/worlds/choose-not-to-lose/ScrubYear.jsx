@@ -1,5 +1,6 @@
 import {useMemo, useRef, useState} from 'react';
 import {Ev} from '../../CaseKit';
+import {L, useCaseLang} from '../../i18n';
 import {cost, plans, premiumDifference} from '../../v2/data/cntl-model.js';
 import {Ask, Rule, Takeaway, usd} from './bits';
 import {Register, useKeyed} from './print';
@@ -17,6 +18,25 @@ const WIDE = {W: 600, H: 340, L: 52, R: 26, T: 16, B: 36};
 const NARROW = {W: 340, H: 260, L: 44, R: 20, T: 14, B: 34};
 const GAP = premiumDifference(plans[1], plans[0]);
 
+const T = {
+  ask: L('Scrub the year: drag its covered bills.', '拖动这一年的承保医疗费用。'),
+  amount: L('Covered bills this year', '今年的承保医疗费用'),
+  valuetext: v => L(`${v} in covered bills`, `承保医疗费用 ${v}`),
+  caption: v => L(`Yearly total per plan at ${v} in covered bills`, `承保医疗费用为 ${v} 时，各方案的全年总费用`),
+  plan: L('Plan', '方案'), premiums: L('Premiums', '保费'), deductible: L('Deductible', '免赔额'), coinsurance: L('Coinsurance', '共同保险'), year: L('The year', '全年'),
+  lowest: L('Lowest at this amount', '这个金额下最低'),
+  overA: d => L(`+${d} vs A, same terms`, `比 A 多 ${d}，条款相同`),
+  coinsToMax: L('Coinsurance, to the maximum', '共同保险（算到上限为止）'),
+  takeaway: L('At every amount, Plan B costs exactly $600 more than Plan A.', '无论金额多少，Plan B 都正好比 Plan A 多花 $600。'),
+  cap: L('Fictional plans, the prototype’s own cost model and its tests: covered, in-network bills only. Uncovered and out-of-network bills can add more.',
+    '虚构方案，用的是原型自己的费用模型及其测试：只算网络内的承保医疗费用。不在承保范围内或网络外的账单可能更多。'),
+  slip: L('Every plan’s year, $0 to $40,000 in covered bills', '承保医疗费用从 $0 到 $40,000 时，每个方案的全年费用'),
+  chartLabel: (v, list) => L(`Yearly total per plan for covered bills from $0 to $40,000. At ${v}: ${list}. Plan B is $600 above Plan A everywhere.`,
+    `承保医疗费用从 $0 到 $40,000 时各方案的全年总费用。在 ${v} 时：${list}。Plan B 在每个金额下都比 Plan A 高 $600。`),
+  chartCap: L('Plan A solid, Plan B dashed, C and D in gray. Drag across the chart to scrub. The red strip is the $600 B costs over A.',
+    'Plan A 是实线，Plan B 是虚线，C 和 D 是灰线。在图上左右拖动也能调整金额。红色带就是 B 比 A 多花的 $600。'),
+};
+
 export function useScrub(still = false, onBills) {
   const [bills, setBills] = useState(4000);
   const [touched, setTouched] = useState(false);
@@ -30,24 +50,25 @@ export function useScrub(still = false, onBills) {
 }
 
 export function ScrubLines({s, compact = false, chart = null}) {
+  const {t} = useCaseLang();
   const {bills, set, touched, mode, now, low, instant} = s;
   const a = now[0];
   return <div className={`cnr-s${instant ? ' is-instant' : ''}`} {...mode.bind}>
-    <Ask>Scrub the year: drag its covered bills.</Ask>
-    <p className="cnr-s-amount" data-print=""><span className="cnr-s-amount-l">Covered bills this year</span><Register text={fmt(bills)} instant={instant} className="cnr-s-amount-n"/></p>
+    <Ask>{t(T.ask)}</Ask>
+    <p className="cnr-s-amount" data-print=""><span className="cnr-s-amount-l">{t(T.amount)}</span><Register text={fmt(bills)} instant={instant} className="cnr-s-amount-n"/></p>
     <div className="cnr-s-control" data-print="">
       <input className="cnr-range" type="range" min="0" max={MAX} step={STEP} value={bills} style={{'--fill': `${bills / MAX * 100}%`}}
-        aria-label="Covered bills this year" aria-valuetext={`${fmt(bills)} in covered bills`}
+        aria-label={t(T.amount)} aria-valuetext={t(T.valuetext(fmt(bills)))}
         onChange={e => set(Number(e.target.value))}/>
       <div className="cnr-s-scale" aria-hidden="true">{[0, 10000, 20000, 30000, 40000].map(v => <span key={v}>{fmt(v)}</span>)}</div>
     </div>
     <Rule/>
     <table className={`cnr-s-table${compact ? ' is-compact' : ''}`} data-print="">
-      <caption className="cnr-sr">Yearly total per plan at {fmt(bills)} in covered bills</caption>
+      <caption className="cnr-sr">{t(T.caption(fmt(bills)))}</caption>
       <thead><tr>
-        <th scope="col">Plan</th>
-        {compact ? null : <><th scope="col">Premiums</th><th scope="col">Deductible</th><th scope="col">Coinsurance</th></>}
-        <th scope="col">The year</th>
+        <th scope="col">{t(T.plan)}</th>
+        {compact ? null : <><th scope="col">{t(T.premiums)}</th><th scope="col">{t(T.deductible)}</th><th scope="col">{t(T.coinsurance)}</th></>}
+        <th scope="col">{t(T.year)}</th>
       </tr></thead>
       {now.map(n => <tbody key={n.p.id} className={`is-${n.p.id}${n.total === low ? ' is-low' : ''}`}>
         <tr>
@@ -64,21 +85,22 @@ export function ScrubLines({s, compact = false, chart = null}) {
             </span>
             <span className="cnr-s-notes">
               {compact ? <span className="cnr-s-parts">{usd(n.premium)} + {usd(n.deductible)} + {usd(n.coinsurance)}</span> : null}
-              {n.total === low ? <span className="cnr-s-note">Lowest at this amount</span>
-                : n.p.id === 'b' ? <span className="cnr-s-note is-loss">+{usd(n.total - a.total)} vs A, same terms</span> : null}
+              {n.total === low ? <span className="cnr-s-note">{t(T.lowest)}</span>
+                : n.p.id === 'b' ? <span className="cnr-s-note is-loss">{t(T.overA(usd(n.total - a.total)))}</span> : null}
             </span>
           </td>
         </tr>
       </tbody>)}
     </table>
-    <p className="cnr-s-legend" aria-hidden="true" data-print=""><span><i className="is-prem"/>Premiums</span><span><i className="is-ded"/>Deductible</span><span><i className="is-coins"/>Coinsurance, to the maximum</span></p>
+    <p className="cnr-s-legend" aria-hidden="true" data-print=""><span><i className="is-prem"/>{t(T.premiums)}</span><span><i className="is-ded"/>{t(T.deductible)}</span><span><i className="is-coins"/>{t(T.coinsToMax)}</span></p>
     {chart}
-    <Takeaway show={touched} instant={instant}>At every amount, Plan B costs exactly $600 more than Plan A.</Takeaway>
-    <p className="cnr-cap" data-print=""><Ev label="Simulated"/><span>Fictional plans, the prototype’s own cost model and its tests: covered, in-network bills only. Uncovered and out-of-network bills can add more.</span></p>
+    <Takeaway show={touched} instant={instant}>{t(T.takeaway)}</Takeaway>
+    <p className="cnr-cap" data-print=""><Ev label="Simulated"/><span>{t(T.cap)}</span></p>
   </div>;
 }
 
 export function ScrubChart({s, compact = false, onDesk = false}) {
+  const {t} = useCaseLang();
   const {bills, set, now, mode} = s;
   const G = compact ? NARROW : WIDE;
   const plot = useRef(null), drag = useRef(null);
@@ -112,9 +134,9 @@ export function ScrubChart({s, compact = false, onDesk = false}) {
   const up = e => { const d = drag.current; drag.current = null; if (d && !d.moved && d.id === e.pointerId) set(at(e)); };
 
   return <figure className={`cnr-s-chart${onDesk ? ' is-desk' : ''}`} data-print={onDesk ? undefined : ''}>
-    {onDesk ? <p className="cnr-slip-title">Every plan’s year, $0 to $40,000 in covered bills</p> : <Rule/>}
+    {onDesk ? <p className="cnr-slip-title">{t(T.slip)}</p> : <Rule/>}
     <svg ref={plot} viewBox={`0 0 ${G.W} ${G.H}`} className="cnr-s-plot" role="img"
-      aria-label={`Yearly total per plan for covered bills from $0 to $40,000. At ${fmt(bills)}: ${now.map(n => `${n.p.name} ${usd(n.total)}`).join(', ')}. Plan B is $600 above Plan A everywhere.`}
+      aria-label={t(T.chartLabel(fmt(bills), now.map(n => `${n.p.name} ${usd(n.total)}`).join(', ')))}
       onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={() => { drag.current = null; }}>
       {[0, 2000, 4000, 6000, 8000, 10000].map(v => <g key={v} className="cnr-s-grid"><path d={`M${G.L} ${y(v)} H${G.W - G.R}`}/><text x={G.L - 8} y={y(v) + 4}>{v ? `$${v / 1000}k` : '$0'}</text></g>)}
       {[0, 10000, 20000, 30000, 40000].map(v => <text key={v} className="cnr-s-xtick" x={x(v)} y={G.H - 10}>{v ? `$${v / 1000}k` : '$0'}</text>)}
@@ -130,6 +152,6 @@ export function ScrubChart({s, compact = false, onDesk = false}) {
         </g>
       </g>
     </svg>
-    <figcaption className="cnr-s-chart-cap">Plan A solid, Plan B dashed, C and D in gray. Drag across the chart to scrub. The red strip is the $600 B costs over A.</figcaption>
+    <figcaption className="cnr-s-chart-cap">{t(T.chartCap)}</figcaption>
   </figure>;
 }

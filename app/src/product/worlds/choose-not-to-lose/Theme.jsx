@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {UI, useCaseLang} from '../../i18n';
 
 /* Light or dark, for every case page: the choice is kept under one localStorage key the case pages share. In the
    receipt world, Light is a near-white desk and dark is a dark desk; the receipt stays paper-white in both, so every
@@ -36,9 +37,10 @@ const Moon = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="
 
 /** The pill: two buttons, sun and moon, the current one sitting on the thumb. */
 export function ThemeToggle({theme, setTheme}) {
-  return <div className={`cnr-theme is-${theme}`} role="group" aria-label="Color theme">
+  const {t} = useCaseLang();
+  return <div className={`cnr-theme is-${theme}`} role="group" aria-label={t(UI.theme)}>
     <span className="cnr-theme-thumb" aria-hidden="true"/>
-    <button type="button" aria-label="Light" aria-pressed={theme === 'light'} onClick={() => setTheme('light')}><Sun/></button>
-    <button type="button" aria-label="Dark" aria-pressed={theme === 'dark'} onClick={() => setTheme('dark')}><Moon/></button>
+    <button type="button" aria-label={t(UI.light)} title={t(UI.light)} aria-pressed={theme === 'light'} onClick={() => setTheme('light')}><Sun/></button>
+    <button type="button" aria-label={t(UI.dark)} title={t(UI.dark)} aria-pressed={theme === 'dark'} onClick={() => setTheme('dark')}><Moon/></button>
   </div>;
 }

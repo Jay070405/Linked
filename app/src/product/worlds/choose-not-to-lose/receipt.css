@@ -622,3 +622,18 @@
 .pp-page.cnr-page.is-fading,.cnr-page.is-fading :is(.cnr-skip a,.cnr-desk-note,figcaption,.cnr-flow-rail button,.cnr-index-tick,.cnr-next-link,.cnr-next-label,.cnr-next-sub,.pp-foot,.pp-foot a,.pp-foot-lead,.cnr-theme,.cnr-theme-thumb,.cnr-theme button,.cnr-printer-body){transition:background-color 200ms ease,color 200ms ease,box-shadow 200ms ease,border-color 200ms ease,transform 200ms var(--ease-out)}
 .cnr-page.is-still .cnr-theme-thumb{transition:none}
 @media(prefers-reduced-motion:reduce){.cnr-page .cnr-theme-thumb,.cnr-page .cnr-theme button{transition:none}}
+
+/* ---------- Chinese (i18n.jsx): Chinese falls back to the system's Chinese face after Plex and the monospace; the
+   tight Latin tracking would crowd it, and it reads better with a little more leading ---------- */
+.pp-page.cnr-page.is-zh{
+  --sans:'CNR Plex Sans','IBM Plex Sans','PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',system-ui,sans-serif;
+  --mono:Mono,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',ui-monospace,monospace;
+}
+.cnr-page.is-zh :is(.cnr-h2,.cnr-h3,.cnr-step-title,.cnr-tally-title,.cnr-next-sub,.cnr-q-title){letter-spacing:0}
+.cnr-page.is-zh .cnr-h2{max-width:15em;line-height:1.3}
+.cnr-page.is-zh :is(.cnr-prose,.cnr-lede,.cnr-step-body,.cnr-reflect p,.cnr-bullets li,.cnr-outcome,.cnr-r-mix-words,.cnr-tally-why,.cnr-changes-what,.cnr-review){line-height:1.75}
+.cnr-page.is-zh :is(.cnr-q-verdict,.cnr-take>p,.cnr-d-verdict,.cnr-cap,.cnr-desk-note,figcaption){line-height:1.65}
+.cnr-page.is-zh .cnr-y-rows li{grid-template-columns:7ch minmax(0,1fr) 9ch 13ch}
+.cnr-page.is-zh .cnr-stamp{letter-spacing:.12em}
+.cnr-page.is-zh .cnr-void{letter-spacing:.12em}
+@media(max-width:760px){.cnr-page.is-zh .cnr-y-rows li{grid-template-columns:7ch minmax(0,1fr) 12ch}}
