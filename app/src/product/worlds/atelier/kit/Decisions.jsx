@@ -1,12 +1,14 @@
 import {useState} from 'react';
 import {FINE, PHONE, useMedia} from './motion';
 import {zoomable} from './zoom';
+import {useCaseLang} from '../../../i18n';
 
 /** "Explorations → choice" as a horizontal gallery. On desktop one card is open at a time: pointing at a card or
     focusing it opens it (a click pins it on touch screens), the others narrow to a slice of their picture. Each card
     shows the choice and a one-line verdict; opened, it adds what I tried first and what I chose. On phones the cards
     become a swipe gallery with everything visible. */
 export default function Decisions({id, heading, lede, items}) {
+  const {zh, lang} = useCaseLang();
   const phone = useMedia(PHONE), fine = useMedia(FINE);
   const [open, setOpen] = useState(0);
   // cards opened from the keyboard change instantly; pointing animates
@@ -17,14 +19,14 @@ export default function Decisions({id, heading, lede, items}) {
       {lede ? <p className="atw-lede">{lede}</p> : null}
     </div>
     <ul className={`atw-cards${phone ? ' is-swipe' : ''}${keys ? ' is-keyed' : ''}`} data-reveal=""
-      onKeyDown={() => setKeys(true)} onPointerMove={keys ? () => setKeys(false) : undefined} tabIndex={phone ? 0 : undefined} aria-label={phone ? `${heading}, swipe sideways` : undefined}>
+      onKeyDown={() => setKeys(true)} onPointerMove={keys ? () => setKeys(false) : undefined} tabIndex={phone ? 0 : undefined} aria-label={phone ? (zh ? `${heading}，左右滑动` : `${heading}, swipe sideways`) : undefined}>
       {items.map((item, i) => {
         const isOpen = phone || open === i;
         return <li key={item.id} className={`atw-card${isOpen ? ' is-open' : ''}`}
           onPointerEnter={fine && !phone ? () => setOpen(i) : undefined}>
           {item.visual?.type === 'img'
             // a screenshot opens in the figure viewer (only from an open card, so closed cards stay one tab stop)
-            ? <div className="atw-card-visual" {...zoomable(item.title, {src: item.visual.props.src})} tabIndex={isOpen ? 0 : -1}>{item.visual}</div>
+            ? <div className="atw-card-visual" {...zoomable(item.title, {src: item.visual.props.src, lang})} tabIndex={isOpen ? 0 : -1}>{item.visual}</div>
             : <div className="atw-card-visual" aria-hidden="true">{item.visual}</div>}
           <div className="atw-card-text">
             {phone ? <h3 className="atw-card-title">{item.title}</h3>
@@ -34,8 +36,8 @@ export default function Decisions({id, heading, lede, items}) {
               <div className="atw-card-more-inner">
                 <p className="atw-card-verdict">{item.verdict}</p>
                 <dl className="atw-card-dl">
-                  <div><dt>Tried</dt><dd>{item.tried}</dd></div>
-                  <div><dt>Chose</dt><dd>{item.chose}</dd></div>
+                  <div><dt>{zh ? '试过' : 'Tried'}</dt><dd>{item.tried}</dd></div>
+                  <div><dt>{zh ? '选择' : 'Chose'}</dt><dd>{item.chose}</dd></div>
                 </dl>
               </div>
             </div>

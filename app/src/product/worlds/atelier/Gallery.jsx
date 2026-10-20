@@ -1,5 +1,6 @@
 import {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {FINE, gsap, ScrollTrigger, scrollerOf, useMedia} from './kit/motion';
+import {L, useCaseLang} from '../../i18n';
 import {fullSrc, inches, NUMBERS, px, wallSrc, WORKS} from './data';
 import {money} from './model';
 
@@ -18,6 +19,7 @@ const hangHeight = r => Math.min(50, Math.sqrt(AREA / r) * 100);
 const zoomFor = (w, cw) => Math.min(3.4, Math.max(1.6, w.originalWidth / Math.max(1, cw)));
 
 export default function Gallery({reduced}) {
+  const {t, zh} = useCaseLang();
   const fine = useMedia(FINE);
   const pin = useRef(null), track = useRef(null), torch = useRef(null), walkST = useRef(null);
   const [zoom, setZoom] = useState(null);
@@ -79,40 +81,43 @@ export default function Gallery({reduced}) {
   }, [fine, reduced]);
 
   const open = useCallback((index, keyboard, opener) => setZoom({index, keyboard, opener}), []);
-  const items = WORKS.map(w => ({src: fullSrc(w.id), alt: `${w.title}. ${w.about}`, w: w.originalWidth, h: w.originalHeight}));
+  const items = WORKS.map(w => ({src: fullSrc(w.id), alt: zh ? `《${w.title}》（${w.zh}）。${t(w.about)}` : `${w.title}. ${t(w.about)}`, w: w.originalWidth, h: w.originalHeight}));
 
   return <section id="at-gallery" className={`atw-gallery${reduced ? ' is-still' : ''}`} aria-labelledby="at-gallery-title">
     <div ref={pin} className="atw-walk">
       <div className="atw-ceiling" aria-hidden="true"/>
       <div className="atw-floor" aria-hidden="true"/>
-      <div ref={track} className="atw-track" onFocus={onFocusIn} tabIndex={reduced ? 0 : undefined} aria-label={reduced ? 'The collection, scroll sideways' : undefined}>
+      <div ref={track} className="atw-track" onFocus={onFocusIn} tabIndex={reduced ? 0 : undefined} aria-label={reduced ? t(L('The collection, scroll sideways', '作品陈列，可左右滚动')) : undefined}>
         <div className="atw-intro">
-          <h2 id="at-gallery-title" className="atw-h2">The collection</h2>
-          <p className="atw-walltext">Atelier’s catalog is eight of my own paintings. They hang here with the label a collector would see: the original file’s size, the largest print it makes sharp, and its price.</p>
-          <p className="atw-hint">{fine ? 'Move the light across a painting to see the original file up close. Click to enlarge.' : 'Tap a painting to light it, and tap again to enlarge it.'}</p>
+          <h2 id="at-gallery-title" className="atw-h2">{t(L('The collection', '作品陈列'))}</h2>
+          <p className="atw-walltext">{t(L('Atelier’s catalog is eight of my own paintings. They hang here with the label a collector would see: the original file’s size, the largest print it makes sharp, and its price.', 'Atelier 的作品库是我自己的八幅画。它们挂在这里，旁边是藏家会看到的标签：原图尺寸、能印清楚的最大尺寸，以及价格。'))}</p>
+          <p className="atw-hint">{fine ? t(L('Move the light across a painting to see the original file up close. Click to enlarge.', '把光移到画上，可以近看原图。点击放大。')) : t(L('Tap a painting to light it, and tap again to enlarge it.', '轻点一幅画把它照亮，再点一次放大。'))}</p>
           <dl className="atw-facts">
-            {NUMBERS.map(n => <div key={n.label}>
-              <dt>{n.label}</dt>
+            {NUMBERS.map(n => <div key={n.label.en}>
+              <dt>{t(n.label)}</dt>
               <dd className="atw-fact-n">{n.value}{n.unit ? <small> {n.unit}</small> : null}</dd>
-              <dd className="atw-fact-note">{n.note}</dd>
+              <dd className="atw-fact-note">{t(n.note)}</dd>
             </div>)}
           </dl>
         </div>
         {WORKS.map((w, i) => <Work key={w.id} w={w} index={i} fine={fine} tapped={tapped === w.id} lit={reduced}
           onTap={() => setTapped(w.id)} onOpen={open}/>)}
         <div className="atw-outro">
-          <p className="atw-walltext">Seven of these eight files top out at a 5 × 3 inch print. Only <em>The Blue Hour</em>, at 4,096 pixels across, reaches 10 × 8.</p>
-          <p className="atw-walltext is-quiet">That limit is the check Atelier runs before a size can go on sale. The press, further down, runs it by hand.</p>
+          {zh
+            ? <p className="atw-walltext">这八个文件里，有七个最大只能印 5 × 3 英寸。只有《The Blue Hour》宽 4,096 像素，能印到 10 × 8。</p>
+            : <p className="atw-walltext">Seven of these eight files top out at a 5 × 3 inch print. Only <em>The Blue Hour</em>, at 4,096 pixels across, reaches 10 × 8.</p>}
+          <p className="atw-walltext is-quiet">{t(L('That limit is the check Atelier runs before a size can go on sale. The press, further down, runs it by hand.', '这个上限，就是 Atelier 在一个尺寸上架前做的检查。往下的印刷机会手动走一遍。'))}</p>
         </div>
       </div>
       {fine ? <div ref={torch} className="atw-torch" aria-hidden="true"/> : null}
     </div>
-    <p className="atw-caption atw-gallery-note">Labels: the prototype’s own numbers. A size is listed only if the whole painting prints at 300 dpi or more inside a quarter-inch white border; $38 is the prototype’s default price for the largest size.</p>
+    <p className="atw-caption atw-gallery-note">{t(L('Labels: the prototype’s own numbers. A size is listed only if the whole painting prints at 300 dpi or more inside a quarter-inch white border; $38 is the prototype’s default price for the largest size.', '标签上的数字都来自原型。只有整幅画在四分之一英寸白边内能达到 300 dpi 以上，这个尺寸才会列出；$38 是原型给最大尺寸的默认价格。'))}</p>
     {zoom ? <Suspense fallback={null}><Lightbox items={items} index={zoom.index} keyboard={zoom.keyboard} opener={zoom.opener} reduced={reduced} onClose={() => setZoom(null)}/></Suspense> : null}
   </section>;
 }
 
 function Work({w, index, fine, tapped, lit, onTap, onOpen}) {
+  const {t, zh} = useCaseLang();
   const canvas = useRef(null), loupe = useRef(null), hi = useRef(null), lastType = useRef('mouse');
   const [wantHi, setWantHi] = useState(false);
   const [look, setLook] = useState(false);
@@ -137,7 +142,7 @@ function Work({w, index, fine, tapped, lit, onTap, onOpen}) {
     <div className="atw-hang">
       <span className="atw-cone" aria-hidden="true"/>
       <span className="atw-pool" aria-hidden="true"/>
-      <button type="button" className="atw-frame" aria-label={`${w.title}: enlarge`}
+      <button type="button" className="atw-frame" aria-label={zh ? `放大查看《${w.title}》` : `${w.title}: enlarge`}
         onPointerDown={e => { lastType.current = e.pointerType; }}
         onPointerEnter={e => { if (e.pointerType === 'mouse' || e.pointerType === 'pen') { setWantHi(true); setLook(true); placeAt(e.clientX, e.clientY); } }}
         onPointerMove={e => { if (e.pointerType === 'mouse' || e.pointerType === 'pen') placeAt(e.clientX, e.clientY); }}
@@ -161,12 +166,12 @@ function Work({w, index, fine, tapped, lit, onTap, onOpen}) {
       </button>
     </div>
     <div className="atw-label">
-      <h3 id={`atw-w-${w.id}`} className="atw-label-title">{w.title}</h3>
+      <h3 id={`atw-w-${w.id}`} className="atw-label-title"><span lang="en">{w.title}</span>{zh ? <span className="atw-label-zh">{w.zh}</span> : null}</h3>
       <p className="atw-label-by">Jay Lin</p>
-      <p className="atw-label-about">{w.about}</p>
+      <p className="atw-label-about">{t(w.about)}</p>
       <dl className="atw-label-dl">
-        <div><dt>Original file</dt><dd>{px(w.originalWidth)} × {px(w.originalHeight)} px</dd></div>
-        <div><dt>Prints sharp up to</dt><dd>{pw} × {ph} in</dd></div>
+        <div><dt>{t(L('Original file', '原图'))}</dt><dd>{px(w.originalWidth)} × {px(w.originalHeight)} px</dd></div>
+        <div><dt>{t(L('Prints sharp up to', '能印清楚的最大尺寸'))}</dt><dd>{pw} × {ph} {t(L('in', '英寸'))}</dd></div>
       </dl>
       <p className="atw-label-price">{money(38)}</p>
     </div>

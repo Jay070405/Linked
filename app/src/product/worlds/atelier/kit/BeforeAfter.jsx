@@ -1,6 +1,7 @@
 import {useRef, useState} from 'react';
 import {gsap} from './motion';
 import {Phone} from './Device';
+import {useCaseLang} from '../../../i18n';
 
 /** The phone (round-2 screens draw their own status bar and island) or a plain panel for desktop UI. */
 function Holder({frame, ratio, children}) {
@@ -14,6 +15,7 @@ function Holder({frame, ratio, children}) {
     `wide` gives a whole desktop page the full measure, with the text below it. `pairs` compares several states, one at a time ({id, tab, before, after, caption, ratio?, size?}); switching keeps
     the handle where it is, so the same split reads across states. A single `before`/`after` still works. */
 export default function BeforeAfter({id, heading, lede, pairs, before, after, children, reduced = false, label = 'Compare the two versions', frame = 'phone', ratio = '780 / 1688', size = [780, 1688], wide = false}) {
+  const {zh} = useCaseLang();
   const list = pairs || [{id: 'only', before, after, caption: `${before.caption} ${after.caption}`}];
   const [index, setIndex] = useState(0);
   const pair = list[index];
@@ -54,7 +56,7 @@ export default function BeforeAfter({id, heading, lede, pairs, before, after, ch
     </div>
     <div className={`atw-compare-body${frame === 'phone' ? '' : ' is-panel'}${wide ? ' is-wide' : ''}`}>
       <figure className={`atw-compare-figure${frame === 'phone' ? '' : ' is-panel'}`} data-reveal="">
-        {list.length > 1 ? <div className="atw-ba-tabs" role="group" aria-label="Screen to compare">
+        {list.length > 1 ? <div className="atw-ba-tabs" role="group" aria-label={zh ? '要对比的界面' : 'Screen to compare'}>
           {list.map((p, i) => <button key={p.id} type="button" aria-pressed={i === index} onClick={() => setIndex(i)}>{p.tab}</button>)}
         </div> : null}
         <Holder frame={frame} ratio={pair.ratio || ratio}>

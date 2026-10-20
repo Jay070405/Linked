@@ -761,3 +761,23 @@ body:has(.atw-world[data-theme=dark]) .v16-navigation:not(.is-menu-open) .v16-la
   .atw-card-visual>img{transform:none}
 }
 .quiet .atw-shot.is-new,.quiet .atw-takeaway-text>span,.quiet .atw-ba-img{animation:none}
+
+/* ---------- Chinese (the page's lang is zh-CN): CJK fallbacks, line lengths in em, no synthetic italics ---------- */
+.pp-page.atw-world:lang(zh){
+  --serif:'Atelier Fraunces','Iowan Old Style',Georgia,'Songti SC','Noto Serif SC','Source Han Serif SC','PingFang SC','Microsoft YaHei',serif;
+  --sans:'Atelier Inter',system-ui,-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC','Segoe UI',sans-serif}
+.atw-world:lang(zh) em,.atw-world:lang(zh) .atw-seam span{font-style:normal}
+.atw-world:lang(zh) :is(.atw-h2,.atw-h3,.atw-step-title,.atw-next-sub,.atw-takeaway>p,.atw-card-title,.atw-pc-title,.atw-label-title){letter-spacing:0}
+.atw-world:lang(zh) .atw-h2{max-width:13em;line-height:1.15}
+.atw-world:lang(zh) .atw-outcome{max-width:19em;line-height:1.6}
+.atw-world:lang(zh) .atw-walltext{max-width:21em;line-height:1.7}
+.atw-world:lang(zh) .atw-lede{max-width:25em;line-height:1.7}
+.atw-world:lang(zh) .atw-prose{max-width:34em;line-height:1.8}
+.atw-world:lang(zh) :is(.atw-caption,.atw-hyp){max-width:40em}
+.atw-world:lang(zh) :is(.atw-sentence,.atw-check-ask){max-width:28em}
+.atw-world:lang(zh) :is(.atw-next-sub,.atw-task-hint,.atw-live-note,.atw-compare-text){max-width:28em}
+.atw-world:lang(zh) :is(.atw-step-body,.atw-passes p,.atw-reflection-grid p,.atw-list,.atw-hypotheses){line-height:1.75}
+.atw-world:lang(zh) .atw-plain{line-height:1.8}
+/* a painting's Chinese gloss, under its English title on a label */
+.atw-label-zh{display:block;margin-top:2px;font:400 13px/1.35 var(--sans);letter-spacing:0;color:var(--card-dim)}
+.atw-pc-title .atw-label-zh{font-size:14px}

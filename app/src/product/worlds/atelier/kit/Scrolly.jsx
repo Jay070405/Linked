@@ -2,6 +2,7 @@ import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {gsap, PHONE, ScrollTrigger, scrollerOf, useMedia} from './motion';
 import {ATELIER_KIT, Phone, ProtoScreen} from './Device';
 import {zoomable} from './zoom';
+import {useCaseLang} from '../../../i18n';
 
 /** Sticky scrollytelling. Desktop: the device stays pinned beside the steps; as each step crosses the middle of the
     viewport the live prototype moves to that step's state, and the rail shows where you are (its labels jump to a
@@ -22,8 +23,9 @@ export function Scrolly({id, steps, heading, lede, art, kit = ATELIER_KIT, frame
 export default Scrolly;
 
 function StepText({step, i, n}) {
+  const {zh} = useCaseLang();
   return <>
-    <p className="atw-step-n">Step {i + 1} of {n}</p>
+    <p className="atw-step-n">{zh ? `第 ${i + 1} 步，共 ${n} 步` : `Step ${i + 1} of ${n}`}</p>
     <h3 className="atw-step-title">{step.title}</h3>
     <div className="atw-step-body">{step.body}</div>
   </>;
@@ -34,6 +36,7 @@ function Device({frame, label, address, children}) {
 }
 
 function Pinned({steps, art, kit, frame, title, note, reduced, label}) {
+  const {zh} = useCaseLang();
   const root = useRef(null), list = useRef(null), fill = useRef(null);
   const [active, setActive] = useState(0);
   const wide = frame === 'browser';
@@ -76,11 +79,11 @@ function Pinned({steps, art, kit, frame, title, note, reduced, label}) {
           </li>)}</ol>
         </nav>
         <div className="atw-pin-device">
-          <Device frame={frame} address={kit.address} label={`Prototype showing step ${active + 1}: ${step.label}`}>
+          <Device frame={frame} address={kit.address} label={zh ? `原型，第 ${active + 1} 步：${step.label}` : `Prototype showing step ${active + 1}: ${step.label}`}>
             <ProtoScreen kit={kit} screen={step.screen} camera={step.camera} art={art} load="near" reduced={reduced} title={title}
-              alt={step.alt || `${step.label} screen`}/>
+              alt={step.alt || step.label}/>
           </Device>
-          {note ? <p className="atw-pin-note">{note}</p> : null}
+          {note ? <p className="atw-pin-note">{zh && note === 'The live prototype, moved by your scroll' ? '真实运行的原型，随你的滚动切换' : note}</p> : null}
         </div>
       </div>
     </div>
@@ -88,6 +91,7 @@ function Pinned({steps, art, kit, frame, title, note, reduced, label}) {
 }
 
 function Swipe({steps, art, kit, frame, reduced, label}) {
+  const {zh, lang} = useCaseLang();
   const track = useRef(null);
   const [active, setActive] = useState(0);
   useEffect(() => {
@@ -101,17 +105,17 @@ function Swipe({steps, art, kit, frame, reduced, label}) {
     if (li) track.current.scrollTo({left: li.offsetLeft - track.current.offsetLeft, behavior: reduced ? 'auto' : 'smooth'});
   };
   return <div className={`atw-swipe${frame === 'browser' ? ' is-wide' : ''}`}>
-    <ol ref={track} className="atw-swipe-track" aria-label={`${label}, swipe sideways`} tabIndex={0}>
+    <ol ref={track} className="atw-swipe-track" aria-label={zh ? `${label}，左右滑动` : `${label}, swipe sideways`} tabIndex={0}>
       {steps.map((step, i) => <li key={step.id} data-step={i} className="atw-swipe-card">
-        <div className="atw-swipe-zoom" {...zoomable(step.alt || step.label, {src: kit.shot(step.screen), w: kit.shotW, h: kit.shotH})}>
-          <Device frame={frame} address={kit.address}><ProtoScreen kit={kit} screen={step.screen} camera={step.phoneCamera || step.camera} art={art} load="never" reduced={reduced} alt={step.alt || `${step.label} screen`}/></Device>
+        <div className="atw-swipe-zoom" {...zoomable(step.alt || step.label, {src: kit.shot(step.screen), w: kit.shotW, h: kit.shotH, lang})}>
+          <Device frame={frame} address={kit.address}><ProtoScreen kit={kit} screen={step.screen} camera={step.phoneCamera || step.camera} art={art} load="never" reduced={reduced} alt={step.alt || step.label}/></Device>
         </div>
         <div className="atw-swipe-text"><StepText step={step} i={i} n={steps.length}/></div>
       </li>)}
     </ol>
-    <div className="atw-swipe-rail" role="group" aria-label={`${label}: go to a step`}>
+    <div className="atw-swipe-rail" role="group" aria-label={zh ? `${label}：跳到某一步` : `${label}: go to a step`}>
       {steps.map((step, i) => <button key={step.id} type="button" className={i === active ? 'is-active' : ''} aria-current={i === active ? 'step' : undefined}
-        aria-label={`Step ${i + 1}: ${step.label}`} onClick={() => go(i)}><i/></button>)}
+        aria-label={zh ? `第 ${i + 1} 步：${step.label}` : `Step ${i + 1}: ${step.label}`} onClick={() => go(i)}><i/></button>)}
     </div>
   </div>;
 }

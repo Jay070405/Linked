@@ -2,7 +2,8 @@ import {useEffect, useRef, useState} from 'react';
 import {Ev} from '../../CaseKit';
 import {gsap} from './kit/motion';
 import {Takeaway, Tween, useInputMode} from './kit/Try';
-import {fullSrc, inches, workOf} from './data';
+import {L, useCaseLang} from '../../i18n';
+import {fullSrc, IN, inches, named, PAPER, workOf} from './data';
 import {dimensions, earnings, fees, largestSharp, money, papers, printCheck, sizes} from './model';
 
 /* Hung, then priced. The print from the press goes on the prototype's wall: a 36-inch console in a fixed 48-inch view,
@@ -29,6 +30,7 @@ const ROOM = {w: 390, h: 340, crop: 30, inches: 48, consoleTop: 250};
 const UNIT = ROOM.w / ROOM.inches;   // 8.125 viewBox units per inch
 
 export default function WallPrice({artId, sizeId, setSizeId, reduced}) {
+  const {t, zh} = useCaseLang();
   const a = workOf(artId);
   const offered = sizes.filter(z => printCheck(a, z).ok), missing = sizes.filter(z => !printCheck(a, z).ok);
   const asked = sizes.find(z => z.id === sizeId);
@@ -52,12 +54,12 @@ export default function WallPrice({artId, sizeId, setSizeId, reduced}) {
 
   return <section id="at-wall" className="atw-wallroom" aria-labelledby="at-wall-title" {...mode.bind}>
     <div className="atw-room-head">
-      <h2 id="at-wall-title" className="atw-h2">Hung, then priced</h2>
-      <p className="atw-lede">The print from the press goes on the prototype’s wall, at its physical size beside a 36-inch console. Its label is the price screen: drag the price and see what the artist keeps.</p>
+      <h2 id="at-wall-title" className="atw-h2">{t(L("Hung, then priced", "上墙，再定价"))}</h2>
+      <p className="atw-lede">{t(L("The print from the press goes on the prototype’s wall, at its physical size beside a 36-inch console. Its label is the price screen: drag the price and see what the artist keeps.", "印好的画挂到原型里的那面墙上，按实际尺寸摆在一张 36 英寸边柜旁边。它的标签就是定价页面：拖动价格，看看画师能拿多少。"))}</p>
     </div>
     <div className="atw-wall-grid">
       <figure className="atw-room">
-        <svg viewBox={`0 ${ROOM.crop} ${ROOM.w} ${ROOM.h - ROOM.crop}`} role="img" aria-label={`${a.title}, ${d.w} by ${d.h} inches, framed above a 36-inch console, to scale`}>
+        <svg viewBox={`0 ${ROOM.crop} ${ROOM.w} ${ROOM.h - ROOM.crop}`} role="img" aria-label={zh ? `${named(a, zh)}，${d.w} × ${d.h} 英寸，装框挂在 36 英寸边柜上方，按比例绘制` : `${a.title}, ${d.w} by ${d.h} inches, framed above a 36-inch console, to scale`}>
           <defs>
             <radialGradient id="atw-room-light" cx="50%" cy="20%" r="70%"><stop style={{stopColor: 'var(--room-a)'}}/><stop offset=".45" style={{stopColor: 'var(--room-b)'}}/><stop offset="1" style={{stopColor: 'var(--room-c)'}}/></radialGradient>
             <linearGradient id="atw-room-floor" x1="0" y1="0" x2="0" y2="1"><stop style={{stopColor: 'var(--room-floor-a)'}}/><stop offset="1" style={{stopColor: 'var(--room-floor-b)'}}/></linearGradient>
@@ -84,40 +86,42 @@ export default function WallPrice({artId, sizeId, setSizeId, reduced}) {
             <rect x={195 - Math.max(16, box.w * .22)} y={lampY} width={2 * Math.max(16, box.w * .22)} height="3.4" rx="1.7" fill="#b08a52"/>
           </g>
         </svg>
-        <figcaption className="atw-caption">36 in console, to scale. {asked && !printCheck(a, asked).ok ? `${inches(a, asked)} in can’t hang here: below 300 dpi, collectors are never offered it, so the largest sharp size hangs instead.` : `${a.title} at ${d.w} × ${d.h} in.`}</figcaption>
+        <figcaption className="atw-caption">{zh
+          ? `36 英寸边柜，按比例绘制。${asked && !printCheck(a, asked).ok ? `${inches(a, asked)} 英寸挂不上来：低于 300 dpi，藏家根本看不到这个尺寸，所以挂的是能印清楚的最大尺寸。` : `${named(a, zh)}，${d.w} × ${d.h} 英寸。`}`
+          : `36 in console, to scale. ${asked && !printCheck(a, asked).ok ? `${inches(a, asked)} in can’t hang here: below 300 dpi, collectors are never offered it, so the largest sharp size hangs instead.` : `${a.title} at ${d.w} × ${d.h} in.`}`}</figcaption>
       </figure>
       <div className="atw-pricecard">
-        <p className="atw-pc-title">{a.title}</p>
+        <p className="atw-pc-title"><span lang="en">{a.title}</span>{zh ? <span className="atw-label-zh">{a.zh}</span> : null}</p>
         <p className="atw-pc-by">Jay Lin</p>
-        <div className="atw-pc-sizes" role="group" aria-label="Print size">
-          {offered.map(z => <button key={z.id} type="button" aria-pressed={z.id === s.id} onClick={() => { setSizeId(z.id); setSeen(true); }}>{inches(a, z)} in</button>)}
+        <div className="atw-pc-sizes" role="group" aria-label={t(L('Print size', '印刷尺寸'))}>
+          {offered.map(z => <button key={z.id} type="button" aria-pressed={z.id === s.id} onClick={() => { setSizeId(z.id); setSeen(true); }}>{inches(a, z)} {t(IN)}</button>)}
         </div>
-        {missing.length ? <p className="atw-pc-missing">{missing.map(z => `${inches(a, z)} in`).join(', ')}: not offered, the file needs more pixels.</p> : null}
-        <div className="atw-pc-papers" role="group" aria-label="Paper">
-          {papers.map(p => <button key={p.id} type="button" aria-pressed={p.id === paperId} onClick={() => { setPaperId(p.id); setSeen(true); }}>{p.name}{p.extra ? ` +${money(p.extra)}` : ''}</button>)}
+        {missing.length ? <p className="atw-pc-missing">{zh ? `${missing.map(z => `${inches(a, z)} 英寸`).join('、')}：不提供，文件的像素不够。` : `${missing.map(z => `${inches(a, z)} in`).join(', ')}: not offered, the file needs more pixels.`}</p> : null}
+        <div className="atw-pc-papers" role="group" aria-label={t(L('Paper', '纸张'))}>
+          {papers.map(p => <button key={p.id} type="button" aria-pressed={p.id === paperId} onClick={() => { setPaperId(p.id); setSeen(true); }}>{t(PAPER[p.id])}{p.extra ? ` +${money(p.extra)}` : ''}</button>)}
         </div>
         <div className="atw-pc-price">
           <p className="atw-pc-big"><Tween value={price} format={v => money(Math.round(v))} instant={instant}/></p>
           <div className="atw-pc-steps">
-            <button type="button" aria-label="Lower the price by $1" onClick={() => { setPrice(p => Math.max(5, p - 1)); setSeen(true); }} disabled={price <= 5}>−</button>
-            <button type="button" aria-label="Raise the price by $1" onClick={() => { setPrice(p => Math.min(120, p + 1)); setSeen(true); }} disabled={price >= 120}>+</button>
+            <button type="button" aria-label={t(L('Lower the price by $1', '降价 $1'))} onClick={() => { setPrice(p => Math.max(5, p - 1)); setSeen(true); }} disabled={price <= 5}>−</button>
+            <button type="button" aria-label={t(L('Raise the price by $1', '加价 $1'))} onClick={() => { setPrice(p => Math.min(120, p + 1)); setSeen(true); }} disabled={price >= 120}>+</button>
           </div>
         </div>
         <input className="atw-range" type="range" min="5" max="120" step="1" value={price} style={{'--fill': `${(price - 5) / 115 * 100}%`}}
-          aria-label="Price" aria-valuetext={`${money(price)}; the artist keeps ${money(e.keep)}`}
+          aria-label={t(L('Price', '价格'))} aria-valuetext={zh ? `${money(price)}，画师到手 ${money(e.keep)}` : `${money(price)}; the artist keeps ${money(e.keep)}`}
           onChange={ev => { setPrice(Number(ev.target.value)); setSeen(true); }}/>
         <div className={`atw-pc-bar${instant ? ' is-instant' : ''}`} aria-hidden="true">
           <i className="is-cost" style={{width: pct(e.printCost)}}/><i className="is-fee" style={{width: pct(e.fee)}}/><i className="is-keep" style={{width: pct(e.keep)}}/>
         </div>
         <dl className="atw-pc-lines">
-          <div><dt><i className="is-cost" aria-hidden="true"/>Print and paper</dt><dd>−<Tween value={e.printCost} format={money} instant={instant}/></dd></div>
-          <div><dt><i className="is-fee" aria-hidden="true"/>Atelier fee <small>8% + $0.30</small></dt><dd>−<Tween value={e.fee} format={money} instant={instant}/></dd></div>
-          <div className="atw-pc-keep"><dt><i className="is-keep" aria-hidden="true"/>The artist keeps</dt><dd><Tween value={e.keep} format={money} instant={instant}/></dd></div>
+          <div><dt><i className="is-cost" aria-hidden="true"/>{t(L("Print and paper", "印刷和纸张"))}</dt><dd>−<Tween value={e.printCost} format={money} instant={instant}/></dd></div>
+          <div><dt><i className="is-fee" aria-hidden="true"/>{t(L("Atelier fee", "Atelier 手续费"))} <small>8% + $0.30</small></dt><dd>−<Tween value={e.fee} format={money} instant={instant}/></dd></div>
+          <div className="atw-pc-keep"><dt><i className="is-keep" aria-hidden="true"/>{t(L("The artist keeps", "画师到手"))}</dt><dd><Tween value={e.keep} format={money} instant={instant}/></dd></div>
         </dl>
-        {e.keep <= 0 ? <p className="atw-pc-error" role="alert">Choose a price above {money(e.printCost + fees(price))} to cover making this print.</p> : null}
+        {e.keep <= 0 ? <p className="atw-pc-error" role="alert">{zh ? `价格要高于 ${money(e.printCost + fees(price))}，才够付这张印品的制作成本。` : `Choose a price above ${money(e.printCost + fees(price))} to cover making this print.`}</p> : null}
       </div>
     </div>
-    <Takeaway show={seen} instant={instant}>The artist sees what they keep before publishing, not after the first sale. Next to a 36-inch console, a size stops being a number.</Takeaway>
-    <p className="atw-caption atw-wall-note"><Ev label="Estimated"/><span>The 8% + $0.30 fee is a concept number and the print costs are assumptions, not a vendor quote. The arithmetic is the prototype’s, to the cent.</span></p>
+    <Takeaway show={seen} instant={instant}>{t(L("The artist sees what they keep before publishing, not after the first sale. Next to a 36-inch console, a size stops being a number.", "画师在发布之前就知道自己能拿多少，不用等到卖出第一张。放在 36 英寸边柜旁边，尺寸就不再只是一个数字。"))}</Takeaway>
+    <p className="atw-caption atw-wall-note"><Ev label="Estimated"/><span>{t(L("The 8% + $0.30 fee is a concept number and the print costs are assumptions, not a vendor quote. The arithmetic is the prototype’s, to the cent.", "8% + $0.30 的手续费是概念数字，印刷成本也是假设，不是供应商报价。算法和原型完全一致，精确到分。"))}</span></p>
   </section>;
 }

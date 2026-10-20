@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {L, UI, useCaseLang} from '../../i18n';
 
 /* The case pages' light switch (the same control on all four case pages, each built in its own folder).
    Light is the default; the choice is remembered across case pages in localStorage `jl-case-theme`. A switch adds
@@ -25,6 +26,7 @@ export function useCaseTheme() {
 /** A small pill under the nav bar, top right: sun and moon, the current one filled. Its accessible name is the
     current theme, "Light" or "Dark"; pressing it switches to the other. */
 export default function ThemeToggle({theme, onChange, root, reduced}) {
+  const {t} = useCaseLang();
   const timer = useRef(0);
   useEffect(() => () => clearTimeout(timer.current), []);
   const flip = () => {
@@ -38,8 +40,8 @@ export default function ThemeToggle({theme, onChange, root, reduced}) {
     onChange(next);
   };
   const dark = theme === 'dark';
-  return <button type="button" className="atw-theme" onClick={flip} aria-label={dark ? 'Dark' : 'Light'}
-    title={dark ? 'Dark gallery. Switch to light' : 'Light gallery. Switch to dark'}>
+  return <button type="button" className="atw-theme" onClick={flip} aria-label={t(dark ? UI.dark : UI.light)}
+    title={t(dark ? L('Dark gallery. Switch to light', '深色展厅，切换到浅色') : L('Light gallery. Switch to dark', '浅色展厅，切换到深色'))}>
     <i className={dark ? '' : 'is-on'} aria-hidden="true">
       <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.2v1.9M10 15.9v1.9M2.2 10h1.9M15.9 10h1.9M4.5 4.5l1.3 1.3M14.2 14.2l1.3 1.3M4.5 15.5l1.3-1.3M14.2 5.8l1.3-1.3"/></svg>
     </i>
