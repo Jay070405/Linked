@@ -37,7 +37,7 @@ export function FlatResult({reduced, id}) {
       </div>)}
     </div>
     <figcaption className="rfaw-caption"><Ev label="Measured"/><span>{t(L('Medians of 9, 9 and 10 builds. These checks hit a ceiling, so the honest reading is “no detectable difference”, not “identical”.',
-      '分别是 9、9、10 次构建的中位数。这些指标都碰到了上限，所以准确的说法是“测不出差别”，而不是“完全一样”。'))}</span></figcaption>
+      '分别是 9、9、10 次构建的中位数。这些指标都碰到了上限，所以只能说“测不出差别”，不能说“完全一样”。'))}</span></figcaption>
   </figure>;
 }
 
@@ -98,7 +98,7 @@ export function Directions({reduced}) {
       </div>
     </div>
     <p className="rfaw-caption rfaw-decision"><Ev label="Hypothesis"/><span>{zh
-      ? <><b>目前的判断：</b>以 A 为主入口。B 并进 A：悬停在某一行上，画布会描出对应的图层。section 标为 ready for dev 时，C 复用 A 的那一行。这个判断成不成立，由五场测试决定。</>
+      ? <><b>目前的判断：</b>以 A 为主入口。B 并进 A：悬停在某一行上，画布会描出对应的图层。section 标为 ready for dev 时，C 复用 A 的那一行。成不成立，五场测试说了算。</>
       : <><b>The call so far:</b> A is the home. B moves inside A, so hovering a row outlines its layers on the canvas. C reuses A’s row when a section is marked ready for dev. The five sessions decide whether it holds.</>}</span></p>
     <Takeaway show={seen} instant={instant}>{t(L('One home for the check, with the other two folded into it.', '检查只有一个入口，另外两个方向并了进去。'))}</Takeaway>
   </div>;
@@ -133,9 +133,9 @@ export function ThemeMoment({reduced, id}) {
   const lightAlt = t(L('Check designs in the light theme', '浅色主题下的 Check designs')), darkAlt = t(L('Check designs in the dark theme', '深色主题下的 Check designs'));
   return <div ref={root} className="rfaw-theme">
     <div className="rfaw-theme-copy">
-      <h3 className="rfaw-h3" data-agent="Text">{t(L('Light and dark from the same tokens', '浅色和深色，来自同一套 token'))}</h3>
+      <h3 className="rfaw-h3" data-agent="Text">{t(L('Light and dark from the same tokens', '浅色、深色，同一套 token'))}</h3>
       <p className="rfaw-body">{t(L('Every surface uses Figma’s published theme tokens, so the dark theme needed no second design. One deliberate change: blue fills that carry text use #0A78D1, for 4.6:1 contrast instead of 3.0:1.',
-        '所有界面都用 Figma 公开的主题 token，所以深色主题不需要再设计一遍。只有一处是有意改的：承载文字的蓝色填充用 #0A78D1，对比度从 3.0:1 提到 4.6:1。'))}</p>
+        '所有界面都用 Figma 公开的主题 token，所以深色主题不用再设计一遍。只有一处是特意改的：上面压着文字的蓝色填充改用 #0A78D1，对比度从 3.0:1 提到 4.6:1。'))}</p>
       <div className="rfaw-seg is-small" role="group" aria-label={t(L('Theme', '主题'))} data-jay=".9,.5">
         <button type="button" aria-pressed={!dark} onClick={() => pick(false)}>{t(UI.light)}</button>
         <button type="button" aria-pressed={dark} onClick={() => pick(true)}>{t(UI.dark)}</button>
@@ -210,15 +210,15 @@ export function LiveEditor({tasks, reduced, head}) {
           <a className="rfaw-btn is-quiet" href={kit.url(current?.screen || 'row')} target="_blank" rel="noopener"><FigIcon name="arrow-up-right"/>{t(L('Open it in a new tab', '在新标签页打开'))}<span className="v2-sr">{t(UI.opensInNewTab)}</span></a>
         </div> : null}
         <p className="rfaw-live-hint" aria-live="polite">{live
-          ? (current ? t(current.hint) : t(L('Pick a task, or click around: Check, Apply and Undo all work. Everything runs in your browser.', '选一个任务，或者随便点点：Check、Apply 和 Undo 都能用。一切都在你的浏览器里运行。')))
-          : t(L('The prototype is a desktop editor. Open this page on a screen at least 1024 px wide to try it.', '这个原型是桌面端编辑器。请在宽度至少 1024 px 的屏幕上打开本页来试用。'))}</p>
+          ? (current ? t(current.hint) : t(L('Pick a task, or click around: Check, Apply and Undo all work. Everything runs in your browser.', '选一个任务，或者随便点点：Check、Apply 和 Undo 都能用。全部在你的浏览器里运行。')))
+          : t(L('The prototype is a desktop editor. Open this page on a screen at least 1024 px wide to try it.', '这个原型是桌面编辑器，请在至少 1024 px 宽的屏幕上打开本页试用。'))}</p>
       </div>
     </div>
     <div ref={device} className={`rfaw-live-device${on || !live ? ' is-on' : ''}`} data-jay=".5,.02" onPointerLeave={e => { if (e.pointerType === 'mouse') setOn(false); }}>
-      {live && !on ? <button type="button" className="rfaw-live-cover" onClick={activate} aria-label={t(L('Use the editor', '使用编辑器'))}><span><FigIcon name="move"/>{t(L('Click to use the editor', '点击后即可操作编辑器'))}</span></button> : null}
+      {live && !on ? <button type="button" className="rfaw-live-cover" onClick={activate} aria-label={t(L('Use the editor', '使用编辑器'))}><span><FigIcon name="move"/>{t(L('Click to use the editor', '点一下，开始操作编辑器'))}</span></button> : null}
       <Browser label={name} address={t(ADDRESS)}>
         <ProtoScreen kit={kit} screen={state.screen} reload={state.reload} load={live ? 'near' : 'never'} interactive={live}
-          reduced={reduced} title={t(L('Ready for agents prototype, live and clickable', 'Ready for agents 原型，可以直接点击操作'))} alt={live ? '' : t(L('Ready for agents prototype, first screen', 'Ready for agents 原型，第一屏'))}/>
+          reduced={reduced} title={t(L('Ready for agents prototype, live and clickable', 'Ready for agents 原型，可以直接点'))} alt={live ? '' : t(L('Ready for agents prototype, first screen', 'Ready for agents 原型，第一屏'))}/>
       </Browser>
     </div>
   </div>;

@@ -36,10 +36,10 @@ const CHAPTERS = [
   {id: 'at-problem-section', label: L('The problem', '问题')},
   {id: 'at-flow', label: L('Five steps to a drop', '五步上新')},
   {id: 'at-press', label: L('The press', '印刷机')},
-  {id: 'at-wall', label: L('Hung, then priced', '上墙，定价')},
+  {id: 'at-wall', label: L('Hung, then priced', '上墙，再定价')},
   {id: 'at-decisions', label: L('Decisions', '设计决策')},
   {id: 'at-compare', label: L('Round 1 → 2', '第一轮 → 第二轮')},
-  {id: 'try', label: L('Try it', '动手试试')},
+  {id: 'try', label: L('Try it', '试一试')},
   {id: 'at-testing-section', label: L('Testing', '测试')},
   {id: 'at-reflection-section', label: L('Reflection', '复盘')},
 ];
@@ -107,7 +107,7 @@ function World({item, reduced, root, artId, setArtId, sizeId, setSizeId, next, o
     <Problem/>
     <Scrolly id="at-flow" reduced={reduced} steps={steps} art="blue-hour" label={t(L('The drop flow', '上新流程'))} title={t(L('Atelier prototype, following the steps', 'Atelier 原型，跟着步骤走'))}
       heading={t(L('Five steps to a drop, then share it', '五步完成上新，再分享出去'))}
-      lede={t(L('The artist side is where the product earns its keep. Scroll through a drop; the phone runs the real prototype.', '产品的价值主要在画师这一端。往下滚动走完一次上新；手机里运行的是真实的原型。'))}/>
+      lede={t(L('The artist side is where the product earns its keep. Scroll through a drop; the phone runs the real prototype.', '产品值不值，要看画师这一端。往下滚动，走完一次上新；手机里跑的是真实原型。'))}/>
     <Deferred minHeight={1800} label={t(L('The press, loading', '印刷机，加载中'))}>
       <Press reduced={reduced} artId={artId} setArtId={setArtId} sizeId={sizeId} setSizeId={setSizeId}/>
     </Deferred>
@@ -115,19 +115,19 @@ function World({item, reduced, root, artId, setArtId, sizeId, setSizeId, next, o
       <WallPrice artId={artId} sizeId={sizeId} setSizeId={setSizeId} reduced={reduced}/>
     </Deferred>
     <Decisions id="at-decisions" items={decisions}
-      heading={t(L('What I chose, and what I tried first', '我的选择，以及之前试过什么'))}
-      lede={t(L('Five choices from three rounds of critique. Each label shows the choice; open it to see what it replaced.', '三轮评审里的五个选择。每张标签写着最后的选择；展开能看到它替换了什么。'))}/>
+      heading={t(L('What I chose, and what I tried first', '最后选了什么，之前试过什么'))}
+      lede={t(L('Five choices from three rounds of critique. Each label shows the choice; open it to see what it replaced.', '五个选择，来自三轮评审。每张标签写着最后的选择，展开能看到它替换了什么。'))}/>
     <BeforeAfter id="at-compare" reduced={reduced} pairs={rounds} label={t(L('Compare round 1 with round 2', '对比第一轮和第二轮'))}
       heading={t(L('Round 1 → Round 2', '第一轮 → 第二轮'))}
-      lede={t(L('Round 2 came out of a design review. Pick a screen and drag across the phone to compare the two rounds.', '第二轮来自一次设计评审。选一个界面，在手机上左右拖动，对比两轮的差别。'))}>
-      <p className="atw-review-note"><span><b>{t(L('A model-assisted design review.', '一次由模型辅助的设计评审。'))}</b> {t(REVIEW_NOTE)}</span></p>
+      lede={t(L('Round 2 came out of a design review. Pick a screen and drag across the phone to compare the two rounds.', '第二轮的改动来自一次设计评审。选一个界面，在手机上左右拖动，对比两轮。'))}>
+      <p className="atw-review-note"><span><b>{t(L('A model-assisted design review.', '借模型做了一次设计评审。'))}</b> {t(REVIEW_NOTE)}</span></p>
       <RoundChanges items={CHANGES.map(c => ({what: t(c.what), why: t(c.why)}))} title={t(L('What changed and why', '改了什么，为什么改'))}/>
     </BeforeAfter>
     <LivePrototype id="try" reduced={reduced} tasks={tasks} start={{screen: 'onboarding', art: 'blue-hour'}} name={t(L('Atelier prototype', 'Atelier 原型'))}
       heading={t(L('Try it yourself', '自己试试'))}
-      lede={t(L('This is the same prototype, at full size. Pick a task; the phone opens on the right screen.', '这是同一个原型，原尺寸。选一个任务，手机会打开对应的界面。'))}
-      phoneLede={t(L('This is the same prototype. Each task opens it full screen, on the screen where the task starts.', '这是同一个原型。每个任务都会全屏打开它，停在任务开始的界面。'))}
-      note={t(L('It runs in your browser only: no account, no payment, no shipping. Drafts and test orders stay in this browser until you reset.', '它只在你的浏览器里运行：不需要账号，不付款，不发货。草稿和测试订单会留在这个浏览器里，直到你重置。'))}/>
+      lede={t(L('This is the same prototype, at full size. Pick a task; the phone opens on the right screen.', '还是这个原型，原尺寸。选一个任务，手机会直接打开对应的界面。'))}
+      phoneLede={t(L('This is the same prototype. Each task opens it full screen, on the screen where the task starts.', '还是这个原型。每个任务都会全屏打开它，停在任务开始的界面。'))}
+      note={t(L('It runs in your browser only: no account, no payment, no shipping. Drafts and test orders stay in this browser until you reset.', '它只在你的浏览器里运行：不用账号，不付款，不发货。草稿和测试订单会一直留在这个浏览器里，直到你点重置。'))}/>
     <Testing/>
     <Reflection/>
     <Next item={next}/>
@@ -150,7 +150,7 @@ function Hero({item, reduced, phone, onPlain, onTry}) {
   return <header ref={ref} className="atw-hero">
     <div className="atw-hero-top">
       <Go to={PRODUCT_HOME} className="atw-back"><span aria-hidden="true">←</span> {t(UI.allWork)}</Go>
-      <button type="button" className="atw-skip" onClick={onPlain}>{t(L('Skip the experience: read it plainly', '跳过展厅，直接阅读'))}</button>
+      <button type="button" className="atw-skip" onClick={onPlain}>{t(L('Skip the experience: read it plainly', '跳过展厅，直接读简洁版'))}</button>
     </div>
     <div className="atw-hero-grid">
       <div className="atw-hero-copy">
@@ -175,7 +175,7 @@ function Hero({item, reduced, phone, onPlain, onTry}) {
           <div className="atw-label is-hero">
             <p className="atw-label-title"><span lang="en">{w.title}</span>{zh ? <span className="atw-label-zh">{w.zh}</span> : null}</p>
             <p className="atw-label-by">Jay Lin</p>
-            <p className="atw-label-about">{zh ? `印品，${top.w} × ${top.h} 英寸，这个文件能印清楚的最大尺寸` : `Print, ${top.w} × ${top.h} in, the largest this file prints sharp`}</p>
+            <p className="atw-label-about">{zh ? `${top.w} × ${top.h} 英寸印品，这个文件能印清楚的最大尺寸` : `Print, ${top.w} × ${top.h} in, the largest this file prints sharp`}</p>
             <p className="atw-label-price">$38</p>
           </div>
         </div>
@@ -200,7 +200,7 @@ function Problem() {
       <div className="atw-prose">{PROBLEM.paragraphs.map(p => <p key={p.en.slice(0, 20)}>{t(p)}</p>)}</div>
       <p className="atw-hyp"><Ev label="Hypothesis"/><span>{t(PROBLEM.hypothesis)}</span></p>
     </div>
-    <aside className="atw-slot" aria-label={t(L('Interview quotes, not collected yet', '访谈原话，尚未收集'))}>
+    <aside className="atw-slot" aria-label={t(L('Interview quotes, not collected yet', '访谈原话（还没收集）'))}>
       <p className="atw-slot-badge">{t(L('Placeholder', '占位'))}</p>
       <p>{t(PROBLEM.quote)}</p>
     </aside>
@@ -220,20 +220,20 @@ function Testing() {
   const {t} = useCaseLang();
   return <section id="at-testing-section" className="atw-testing" aria-labelledby="at-testing">
     <div className="atw-room-head">
-      <h2 id="at-testing" className="atw-h2">{t(L('Testing comes next', '下一步是测试'))}</h2>
-      <p className="atw-lede">{t(L('Nothing here has been tested with artists yet. This is the plan, and the space the results will fill.', '这里的内容都还没有和画师测试过。下面是计划，以及之后放结果的位置。'))}</p>
+      <h2 id="at-testing" className="atw-h2">{t(L('Testing comes next', '接下来是测试'))}</h2>
+      <p className="atw-lede">{t(L('Nothing here has been tested with artists yet. This is the plan, and the space the results will fill.', '这里的内容都还没找画师测过。下面是测试计划，结果的位置也留好了。'))}</p>
     </div>
     <div className="atw-testing-grid">
       <div className="atw-testing-plan">
         <h3 className="atw-h3">{t(L('Plan for test day', '测试日计划'))}</h3>
         <ul className="atw-list">{TESTING.plan.map(p => <li key={p.en}>{t(p)}</li>)}</ul>
-        <h3 className="atw-h3">{t(L('Hypotheses to check', '要验证的假设'))}</h3>
+        <h3 className="atw-h3">{t(L('Hypotheses to check', '待验证的假设'))}</h3>
         <ul className="atw-hypotheses">{TESTING.hypotheses.map(h => <li key={h.en}><Ev label="Hypothesis"/><span>{t(h)}</span></li>)}</ul>
       </div>
-      <div className="atw-results" aria-label={t(L('Results, not collected yet', '结果，尚未收集'))}>
-        <p className="atw-slot-badge">{t(L('Placeholder: results after test day', '占位：测试日之后的结果'))}</p>
+      <div className="atw-results" aria-label={t(L('Results, not collected yet', '结果（还没收集）'))}>
+        <p className="atw-slot-badge">{t(L('Placeholder: results after test day', '占位：测试日之后再填'))}</p>
         <dl>{TESTING.results.map(([k, v]) => <div key={k.en}><dt>{t(k)}</dt><dd>{t(v)}</dd></div>)}</dl>
-        <p className="atw-results-note">{t(L('Each result will sit next to the change it caused.', '每个结果会放在它带来的改动旁边。'))}</p>
+        <p className="atw-results-note">{t(L('Each result will sit next to the change it caused.', '每条结果都会放在它带来的改动旁边。'))}</p>
       </div>
     </div>
   </section>;

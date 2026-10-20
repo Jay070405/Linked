@@ -122,7 +122,7 @@ export default function GateLock({reduced, plain, state, onOpen, onSkip}) {
       <p className="w3-lede">{t(open
         ? state === 'skipped' ? L('You skipped the gate. A courier can’t: they need the code, and the prototype gives it to them like this.', '你跳过了大门，骑手可跳不过去：他们需要门禁码，原型是这样把码交给他们的。')
           : L(`${secs ? `Through in ${secs} s. ` : ''}The code came from the order; standing at the gate only revealed it.`, `${secs ? `用了 ${secs} 秒通过。` : ''}门禁码来自订单，站在大门前只是让它显示了出来。`)
-        : L('Hot bag in one hand, phone in the other. In the door route the code is part of the order; walking up to the gate only reveals it.', '一手提着保温袋，一手拿着手机。在入户路线里，门禁码是订单的一部分，走到大门前只是让它显示出来。'))}</p>
+        : L('Hot bag in one hand, phone in the other. In the door route the code is part of the order; walking up to the gate only reveals it.', '一手提着保温袋，一手拿着手机。在入户路线里，门禁码是订单的一部分，走到大门前，只是让它显示出来。'))}</p>
 
       <div className="w3-gatebox" aria-live="polite">
         {shown ? <div className="w3-code" data-hiding={hiding || undefined}>

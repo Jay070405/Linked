@@ -261,7 +261,7 @@ function SizeCheck({a, img, sizeId, setSizeId, reduced}) {
       <figure className="atw-loupe-fig">
         <div className="atw-loupe-lens">
           <canvas ref={canvas} className="atw-loupe-canvas" role="img"
-            aria-label={zh ? `${named(a, zh)}印成 ${d.w} × ${d.h} 英寸时的一平方英寸：每英寸 ${r.dpi} 个像素，${r.ok ? '清晰' : '发虚'}` : `One square inch of ${a.title} printed at ${d.w} by ${d.h} inches: ${r.dpi} of the file’s pixels per inch${r.ok ? ', sharp' : ', soft'}`}/>
+            aria-label={zh ? `${named(a, zh)}印成 ${d.w} × ${d.h} 英寸时的一平方英寸：每英寸 ${r.dpi} 个像素，${r.ok ? '印得清楚' : '发虚'}` : `One square inch of ${a.title} printed at ${d.w} by ${d.h} inches: ${r.dpi} of the file’s pixels per inch${r.ok ? ', sharp' : ', soft'}`}/>
           {img ? null : <span className="atw-sheet-wait">{t(L("Loading the original file", "正在加载原图"))}</span>}
         </div>
         <figcaption className="atw-caption">{zh
@@ -272,7 +272,7 @@ function SizeCheck({a, img, sizeId, setSizeId, reduced}) {
         <div className="atw-sizes" role="radiogroup" aria-label={t(L('Print size', '印刷尺寸'))} onKeyDown={onKey}>
           {sizes.map(z => { const ok = printCheck(a, z).ok;
             return <button key={z.id} type="button" role="radio" data-size={z.id} aria-checked={z.id === s.id} tabIndex={z.id === s.id ? 0 : -1}
-              className={ok ? '' : 'is-no'} onClick={() => choose(z.id)}>{inches(a, z)}<span className="atw-sr">{zh ? (ok ? ' 英寸，清晰' : ' 英寸，低于 300 dpi') : (ok ? ' inches, sharp' : ' inches, below 300 dpi')}</span></button>; })}
+              className={ok ? '' : 'is-no'} onClick={() => choose(z.id)}>{inches(a, z)}<span className="atw-sr">{zh ? (ok ? ' 英寸，印得清楚' : ' 英寸，低于 300 dpi') : (ok ? ' inches, sharp' : ' inches, below 300 dpi')}</span></button>; })}
         </div>
         <p className="atw-dpi"><Tween value={r.dpi} instant={instant}/><span>dpi</span></p>
         <p className="atw-sentence" aria-live="polite">{checkLine(a, s, zh)}</p>

@@ -6,7 +6,7 @@ import {L, useCaseLang} from '../../i18n';
    split. The earlier round sits on top, clipped to the left of the handle. Pointer: press anywhere on the screen and
    drag sideways; a tap glides the handle there; a vertical swipe still scrolls the page. Keyboard and screen readers:
    a real range input. Switching screens keeps the handle where it is. */
-export default function Compare({pairs, reduced = false, label = L('Compare round 1 with round 2', '对比第 1 轮和第 2 轮')}) {
+export default function Compare({pairs, reduced = false, label = L('Compare round 1 with round 2', '对比第一轮和第二轮')}) {
   const {t, zh} = useCaseLang();
   const [index, setIndex] = useState(0);
   const pair = pairs[index];

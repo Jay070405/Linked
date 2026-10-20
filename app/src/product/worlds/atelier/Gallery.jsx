@@ -106,12 +106,12 @@ export default function Gallery({reduced}) {
           {zh
             ? <p className="atw-walltext">这八个文件里，有七个最大只能印 5 × 3 英寸。只有《The Blue Hour》宽 4,096 像素，能印到 10 × 8。</p>
             : <p className="atw-walltext">Seven of these eight files top out at a 5 × 3 inch print. Only <em>The Blue Hour</em>, at 4,096 pixels across, reaches 10 × 8.</p>}
-          <p className="atw-walltext is-quiet">{t(L('That limit is the check Atelier runs before a size can go on sale. The press, further down, runs it by hand.', '这个上限，就是 Atelier 在一个尺寸上架前做的检查。往下的印刷机会手动走一遍。'))}</p>
+          <p className="atw-walltext is-quiet">{t(L('That limit is the check Atelier runs before a size can go on sale. The press, further down, runs it by hand.', '这个上限，就是 Atelier 上架前要做的检查。再往下，印刷机会手动走一遍。'))}</p>
         </div>
       </div>
       {fine ? <div ref={torch} className="atw-torch" aria-hidden="true"/> : null}
     </div>
-    <p className="atw-caption atw-gallery-note">{t(L('Labels: the prototype’s own numbers. A size is listed only if the whole painting prints at 300 dpi or more inside a quarter-inch white border; $38 is the prototype’s default price for the largest size.', '标签上的数字都来自原型。只有整幅画在四分之一英寸白边内能达到 300 dpi 以上，这个尺寸才会列出；$38 是原型给最大尺寸的默认价格。'))}</p>
+    <p className="atw-caption atw-gallery-note">{t(L('Labels: the prototype’s own numbers. A size is listed only if the whole painting prints at 300 dpi or more inside a quarter-inch white border; $38 is the prototype’s default price for the largest size.', '标签上的数字都来自原型。一个尺寸要列出来，整幅画留出四分之一英寸白边后，还得有 300 dpi 以上；$38 是原型给最大尺寸的默认价。'))}</p>
     {zoom ? <Suspense fallback={null}><Lightbox items={items} index={zoom.index} keyboard={zoom.keyboard} opener={zoom.opener} reduced={reduced} onClose={() => setZoom(null)}/></Suspense> : null}
   </section>;
 }

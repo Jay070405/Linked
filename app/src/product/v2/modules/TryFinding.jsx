@@ -136,7 +136,7 @@ export default function TryFinding({reduced = false}) {
           <input type="color" value={customColor} aria-label={t(L('Your own brand color', '自选品牌色'))} onClick={() => setPick('custom')}
             onInput={e => { setCustomColor(e.target.value); setPick('custom'); }} onChange={e => { setCustomColor(e.target.value); setPick('custom'); }}/>
         </label>
-        <button type="button" className="rf-reset" onClick={() => setPick(null)} disabled={!pick}>{t(L('Original', '原样'))}</button>
+        <button type="button" className="rf-reset" onClick={() => setPick(null)} disabled={!pick}>{t(L('Original', '还原'))}</button>
       </div>
     </div>
 
@@ -147,7 +147,7 @@ export default function TryFinding({reduced = false}) {
           <figcaption className="rf-head">
             <span className="rf-level">{run.level}</span>
             <span className="rf-name">{t(run.name)}</span>
-            <span className="rf-score" aria-live="polite">{pick && n != null ? (zh ? <>跟上了 <b>{n}</b>/4 个颜色</> : <><b>{n}</b> of 4 colors followed</>) : t(L('Same page, as built', '构建时的原样'))}</span>
+            <span className="rf-score" aria-live="polite">{pick && n != null ? (zh ? <>跟上了 <b>{n}</b>/4 个颜色</> : <><b>{n}</b> of 4 colors followed</>) : t(L('Same page, as built', '构建出来的原样'))}</span>
           </figcaption>
           <div ref={run.level === 'L0' ? host : undefined}>
             <Browser address={t(run.address)} ratio={`${W} / ${H}`}>
@@ -162,7 +162,7 @@ export default function TryFinding({reduced = false}) {
                 <span className="rf-chip" aria-hidden="true" style={{background: colors?.[tok.css] || tok.value}}/>
                 <span className="rf-token">{tr(tok.label)}</span>
                 <span className="rf-why">{!s || !pick ? '' : s.ok ? <><span className="v2-sr">{tr(L('Followed: ', '已跟上：'))}</span>{tr(L('uses ', '用 '))}<code>{tok.css}</code></>
-                  : <><span className="v2-sr">{tr(L('Missed: ', '没跟上：'))}</span>{s.as ? <>{tr(L('calls it ', '叫它 '))}<code>{s.as}</code></> : tr(L('no variable', '没有变量'))}</>}</span>
+                  : <><span className="v2-sr">{tr(L('Missed: ', '没跟上：'))}</span>{s.as ? <>{tr(L('calls it ', '叫它 '))}<code>{s.as}</code></> : tr(L('no variable', '没用变量'))}</>}</span>
               </li>;
             })}
           </ul>
@@ -182,7 +182,7 @@ export default function TryFinding({reduced = false}) {
     </table>
 
     <Takeaway show={!!pick} instant={reduced || mode.keyed.current}>{t(L('Same screen. Only the right one was built from variables.', '同一个界面，只有右边那个是照着 variables 做的。'))}</Takeaway>
-    <p className="v2-caption"><Ev label="Measured"/><span>{t(L('Both pages are the agents’ own output, unchanged (S2-L0-r1 and S2-L0V-r1). Your color goes in the way the benchmark’s theme test did: four design-system variables overridden on :root. On its test colors the harness measured 2 of 4 colors followed for L0 and 4 of 4 for L0V.', '两个页面都是 agent 自己的输出，没有改动（S2-L0-r1 和 S2-L0V-r1）。你选的颜色按测试框架主题测试的方式注入：在 :root 上覆盖四个设计系统变量。用测试色时，框架测得 L0 跟上了 4 个颜色中的 2 个，L0V 跟上了全部 4 个。'))}</span></p>
+    <p className="v2-caption"><Ev label="Measured"/><span>{t(L('Both pages are the agents’ own output, unchanged (S2-L0-r1 and S2-L0V-r1). Your color goes in the way the benchmark’s theme test did: four design-system variables overridden on :root. On its test colors the harness measured 2 of 4 colors followed for L0 and 4 of 4 for L0V.', '两个页面都是 agent 原样的输出，没改过（S2-L0-r1 和 S2-L0V-r1）。你选的颜色，按测试框架做主题测试的方式注入：在 :root 上覆盖四个设计系统变量。用测试色时，框架测得 L0 跟上了 4 个颜色里的 2 个，L0V 4 个全跟上了。'))}</span></p>
   </div>;
 }
 

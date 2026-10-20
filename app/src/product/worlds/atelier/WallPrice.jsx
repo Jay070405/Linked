@@ -87,7 +87,7 @@ export default function WallPrice({artId, sizeId, setSizeId, reduced}) {
           </g>
         </svg>
         <figcaption className="atw-caption">{zh
-          ? `36 英寸边柜，按比例绘制。${asked && !printCheck(a, asked).ok ? `${inches(a, asked)} 英寸挂不上来：低于 300 dpi，藏家根本看不到这个尺寸，所以挂的是能印清楚的最大尺寸。` : `${named(a, zh)}，${d.w} × ${d.h} 英寸。`}`
+          ? `36 英寸边柜，按比例绘制。${asked && !printCheck(a, asked).ok ? `${inches(a, asked)} 英寸挂不上来：低于 300 dpi，藏家根本看不到这个尺寸，所以挂的是能印清楚的最大尺寸。` : `挂着的是${named(a, zh)}，${d.w} × ${d.h} 英寸。`}`
           : `36 in console, to scale. ${asked && !printCheck(a, asked).ok ? `${inches(a, asked)} in can’t hang here: below 300 dpi, collectors are never offered it, so the largest sharp size hangs instead.` : `${a.title} at ${d.w} × ${d.h} in.`}`}</figcaption>
       </figure>
       <div className="atw-pricecard">
@@ -96,7 +96,7 @@ export default function WallPrice({artId, sizeId, setSizeId, reduced}) {
         <div className="atw-pc-sizes" role="group" aria-label={t(L('Print size', '印刷尺寸'))}>
           {offered.map(z => <button key={z.id} type="button" aria-pressed={z.id === s.id} onClick={() => { setSizeId(z.id); setSeen(true); }}>{inches(a, z)} {t(IN)}</button>)}
         </div>
-        {missing.length ? <p className="atw-pc-missing">{zh ? `${missing.map(z => `${inches(a, z)} 英寸`).join('、')}：不提供，文件的像素不够。` : `${missing.map(z => `${inches(a, z)} in`).join(', ')}: not offered, the file needs more pixels.`}</p> : null}
+        {missing.length ? <p className="atw-pc-missing">{zh ? `${missing.map(z => `${inches(a, z)} 英寸`).join('、')}：像素不够，不提供。` : `${missing.map(z => `${inches(a, z)} in`).join(', ')}: not offered, the file needs more pixels.`}</p> : null}
         <div className="atw-pc-papers" role="group" aria-label={t(L('Paper', '纸张'))}>
           {papers.map(p => <button key={p.id} type="button" aria-pressed={p.id === paperId} onClick={() => { setPaperId(p.id); setSeen(true); }}>{t(PAPER[p.id])}{p.extra ? ` +${money(p.extra)}` : ''}</button>)}
         </div>

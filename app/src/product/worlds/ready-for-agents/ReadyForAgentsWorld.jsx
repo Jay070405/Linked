@@ -305,9 +305,9 @@ function World({item, reduced, forcePlain = false}) {
                 switch (f.id) {
                   case 'cover': return frame('cover', <Cover go={go} phone={phone}/>, 'is-cover');
                   case 'question': return frame('question', <>
-                    <Head level={2} id="research-title" title={L('Which file habits change what an agent builds?', '哪些文件习惯，会改变 agent 写出来的代码？')}
+                    <Head level={2} id="research-title" title={L('Which file habits change what an agent builds?', '哪些文件习惯，会传到代码里？')}
                       lede={L('Designers now hand Figma files straight to coding agents. The advice is to clean up the file first: components, variables, layer names, auto layout. Nothing says which of those reaches the code.',
-                        '设计师现在会把 Figma 文件直接交给 coding agent。常见的建议是先把文件整理干净：组件、variables、图层命名、auto layout。可没有人说过，这些里面哪些真的会传到代码里。')}/>
+                        '现在，设计师会把 Figma 文件直接交给 coding agent。常听到的建议是先把文件整理干净：组件、variables、图层命名、auto layout。可没人说过，其中哪几项真的会影响 agent 写出的代码。')}/>
                     <ul className="rfaw-habits" aria-label={t(L('The four habits', '四种习惯'))} data-jay=".97,.2">
                       {HABITS.map(h => <li key={h.icon} data-agent={t(h.name)}><FigIcon name={h.icon} size={16}/><b>{t(h.name)}</b><span>{t(h.note)}</span></li>)}
                     </ul>
@@ -315,67 +315,67 @@ function World({item, reduced, forcePlain = false}) {
                   </>);
                   case 'compile': return frame('compile', <Compile reduced={motionOff} root={root} title={L('The agent reads the layers, then writes the page', 'agent 先读图层，再写页面')}
                     lede={L('Two fresh agents built the same pricing screen. Both files have the same layers, named like Frame 26; one also binds its colors to variables. Watch what each build calls the colors.',
-                      '两个全新的 agent 构建了同一个定价页。两个文件的图层一模一样，名字都是 Frame 26 这种；其中一个还把颜色绑定到了 variables。看看两次构建分别怎么称呼这些颜色。')}/>, 'is-compile');
+                      '两个新开的 agent 做了同一个定价页。两份文件的图层一模一样，名字都是 Frame 26 这种；其中一份还把颜色绑到了 variables 上。看看两边各自怎么给这些颜色起名。')}/>, 'is-compile');
                   case 'finding': return frame('finding', <>
                     <Head title={L('Try the finding first', '先试试这个结论')} lede={L('A fresh agent built this pricing screen twice from the same picture: from the raw Figma file, and from the same file with its colors bound to variables. These are the pages it wrote.',
-                      '一个全新的 agent 照着同一张画面，把这个定价页做了两次：一次用原始的 Figma 文件，一次用颜色绑定了 variables 的同一个文件。下面就是它写出的两个页面。')}/>
+                      '一个新开的 agent 照着同一张画面，把这个定价页做了两次：一次读原始的 Figma 文件，一次读同一份文件，只是颜色绑了 variables。下面是它写出来的两个页面。')}/>
                     <div data-jay=".5,.04"><Deferred minHeight={720} label={t(L('Live demo of the two pages', '两个页面的实时演示'))}><TryFinding reduced={motionOff}/></Deferred></div>
                   </>, 'is-xl');
                   case 'method': return frame('method', <div className="rfaw-split">
                     <div><Head title={L('Six screens, four versions each', '六个界面，每个四个版本')}/>
                       <p className="rfaw-body" data-agent="Text">{t(L('Each screen exists fully systematized (L2), structured without variables (L1), raw (L0), and raw plus the same variable bindings as L2 (L0V). All four export to byte-identical images, so the agent always sees the same picture.',
-                        '每个界面都有四个版本：完全系统化（L2）、有结构但没有 variables（L1）、原始（L0），以及原始文件加上和 L2 相同的 variable 绑定（L0V）。四个版本导出的图片逐字节相同，所以 agent 看到的画面始终一样。'))}</p></div>
+                        '每个界面做了四个版本：完全系统化（L2）；有结构、没有 variables（L1）；原始（L0）；原始文件加上和 L2 一样的 variable 绑定（L0V）。四个版本导出的图片逐字节相同，所以 agent 看到的永远是同一张画面。'))}</p></div>
                     <div data-jay=".95,.05"><TestSet zoom/></div>
                   </div>, 'is-xl');
                   case 'structure': return frame('structure', <>
-                    <Head title={L('Same picture, different structure', '画面相同，结构不同')} lede={L('In L2 the sign-in screen’s layers have names, auto layout, instances and variable bindings. In L0 they’re generic frames and text with nothing bound. Both export the same PNG.',
-                      '在 L2 里，登录页的图层有命名、auto layout、组件实例和 variable 绑定。在 L0 里，它们只是通用的 frame 和文本，什么都没绑定。两者导出的 PNG 完全相同。')}/>
+                    <Head title={L('Same picture, different structure', '画面一样，结构不同')} lede={L('In L2 the sign-in screen’s layers have names, auto layout, instances and variable bindings. In L0 they’re generic frames and text with nothing bound. Both export the same PNG.',
+                      '在 L2 里，登录页的图层有名字、auto layout、组件实例和 variable 绑定。在 L0 里，只有通用的 frame 和文本，什么都没绑。两份导出的 PNG 一模一样。')}/>
                     <div data-jay=".5,.06"><Deferred minHeight={560} label={t(L('The sign-in screen’s layers in both files', '两个文件里登录页的图层'))}><LinkedLayers reduced={motionOff}/></Deferred></div>
                   </>, 'is-xl');
                   case 'pipeline': return frame('pipeline', <>
-                    <Head title={L('One build, start to finish', '一次构建的完整过程')} lede={L('A fresh Claude agent got each frame through Figma’s MCP tools with the same prompt; my harness rendered every result in headless Chrome and scored it. I wrote down five hypotheses before the first run.',
-                      '每个 frame 都交给一个全新的 Claude agent，通过 Figma 的 MCP 工具读取，提示词完全相同；我的测试框架在 headless Chrome 里渲染每个结果并打分。第一次运行之前，我先写下了五个假设。')}/>
+                    <Head title={L('One build, start to finish', '一次构建，从头到尾')} lede={L('A fresh Claude agent got each frame through Figma’s MCP tools with the same prompt; my harness rendered every result in headless Chrome and scored it. I wrote down five hypotheses before the first run.',
+                      '每个 frame 都交给一个新开的 Claude agent，用 Figma 的 MCP 工具读取，提示词每次都一样。我的测试框架在 headless Chrome 里渲染每个结果，再打分。开跑之前，我先写下了五个假设。')}/>
                     <div className="rfaw-pipeline" data-jay=".96,.1"><Pipeline/></div>
                   </>);
                   case 'result-1': return frame('result-1', <div className="rfaw-split is-result">
-                    <div><p className="rfaw-kicker">{t(L('Result 1, pre-registered', '结果 1（预先登记的假设）'))}</p>
+                    <div><p className="rfaw-kicker">{t(L('Result 1, pre-registered', '结果 1，预先登记'))}</p>
                       <Head title={L('The layout survived the mess', '文件再乱，布局也没坏')}/>
                       <p className="rfaw-body" data-agent="Text">{t(L('My main hypothesis was that raw files without auto layout would break when resized. They didn’t: agents rebuilt the layout with flex and grid from the picture.',
-                        '我的主要假设是：没有 auto layout 的原始文件，一缩放就会坏。结果并没有：agent 照着画面，用 flex 和 grid 重建了布局。'))}</p></div>
+                        '我的主要假设是：没有 auto layout 的原始文件，一缩放就会坏。结果没有坏：agent 照着画面，用 flex 和 grid 重建了布局。'))}</p></div>
                     <FlatResult reduced={motionOff} id="result-1"/>
                   </div>);
                   case 'result-2': return frame('result-2', <>
                     <div className="rfaw-split is-result is-top">
-                      <div><p className="rfaw-kicker">{t(L('Result 2, the ablation', '结果 2：消融实验'))}</p><Head title={L('Only variables carried the system’s names', '只有 variables 带上了设计系统的名字')}/></div>
+                      <div><p className="rfaw-kicker">{t(L('Result 2, the ablation', '结果 2：消融实验'))}</p><Head title={L('Only variables carried the system’s names', '只有 variables，带上了系统的名字')}/></div>
                       <p className="rfaw-body" data-agent="Text">{t(L('L0V is the raw file with variable bindings added and nothing else: no auto layout, no components, meaningless layer names. Every one of those builds followed the whole change. Without variables, agents invented their own names, and a change reached only the ones they happened to guess.',
-                        'L0V 就是原始文件加上 variable 绑定，别的什么都没有：没有 auto layout，没有组件，图层名毫无意义。这组构建每一次都完整跟上了改动。没有 variables 时，agent 会自己起名字，改动只能传到它碰巧猜对名字的那几处。'))}</p>
+                        'L0V 就是原始文件加上 variable 绑定，别的都没有：没有 auto layout，没有组件，图层名也毫无意义。这组构建每一次都完整跟上了改动。没有 variables，agent 就自己起名字，改动只能传到它碰巧猜对名字的那几处。'))}</p>
                     </div>
-                    <div data-jay=".96,.08"><Deferred minHeight={460} label={t(L('Chart of every build', '全部构建的图表'))}><AblationChart reduced={motionOff}/></Deferred></div>
+                    <div data-jay=".96,.08"><Deferred minHeight={460} label={t(L('Chart of every build', '每次构建的图表'))}><AblationChart reduced={motionOff}/></Deferred></div>
                   </>, 'is-xl');
                   case 'insight': return frame('insight', <div className="rfaw-insight">
                     <p className="rfaw-insight-text" data-agent="Text" data-jay=".98,.15">{t(L('Agents recovered the layout from the picture. They never recovered the design system’s names unless the file carried them as variables.',
-                      'agent 能从画面还原布局。可是设计系统的名字，只要文件没有用 variables 带着，它们就从来还原不出来。'))}</p>
+                      'agent 能照着画面还原布局。可设计系统里的名字，文件不用 variables 带过去，它就从来还原不出来。'))}</p>
                     <Go to="/product/design-to-code" className="rfaw-link"><span>{t(L('Full research write-up', '完整研究报告（英文）'))}</span><FigIcon name="arrow-right"/></Go>
                   </div>, 'is-short');
                   case 'brief': return frame('brief', <>
-                    <Head level={2} id="design-title" title={L('Say what the agent will miss, and fix it where it lives', '说清 agent 会漏掉什么，并在原处修好')}
+                    <Head level={2} id="design-title" title={L('Say what the agent will miss, and fix it where it lives', '先说清会漏掉什么，再在原处把它修好')}
                       lede={L('Figma already has the parts: variables, a replace-with-variable fix in Check designs, Dev Mode, an MCP server. But that check sits in a panel you have to remember to open, only on Organization and Enterprise plans, and the agent never hears that values are raw.',
-                        'Figma 已经有了这些零件：variables、Check designs 里“替换为 variable”的修复、Dev Mode、MCP server。但这个检查藏在一个得记着去打开的面板里，只有 Organization 和 Enterprise 方案才有，而 agent 也从来不会被告知哪些值是原始值。')}/>
-                    <p className="rfaw-caption"><Ev label="Sourced"/><span>{t(L('Plan availability of Check designs: Figma help center.', 'Check designs 适用的方案：见 Figma 帮助中心。'))}</span></p>
+                        'Figma 其实零件都有了：variables、Check designs 里“替换为 variable”的修复、Dev Mode、MCP server。但这项检查在一个得记着去打开的面板里，只有 Organization 和 Enterprise 方案能用；agent 也从来不知道哪些是原始值。')}/>
+                    <p className="rfaw-caption"><Ev label="Sourced"/><span>{t(L('Plan availability of Check designs: Figma help center.', '哪些方案能用 Check designs：见 Figma 帮助中心。'))}</span></p>
                   </>, 'is-short');
                   case 'principles': return frame('principles', <>
-                    <Head title={L('Five principles, each one a test the design has to pass', '五条原则，每一条都是设计必须通过的检验')}/>
+                    <Head title={L('Five principles, each one a test the design has to pass', '我定了五条原则，每条都是一道关')}/>
                     <Principles/>
                   </>, 'is-xl');
                   case 'directions': return frame('directions', <>
-                    <Head title={L('Where should the check live?', '这个检查该放在哪里？')} lede={L('Three directions on the same Home frame and the same 12 unbound values.', '三个方向，用的是同一个 Home frame 和同样的 12 个未绑定的值。')}/>
+                    <Head title={L('Where should the check live?', '这个检查该放在哪里？')} lede={L('Three directions on the same Home frame and the same 12 unbound values.', '三个方向，都用同一个 Home frame、同样 12 个未绑定的值。')}/>
                     <Directions reduced={motionOff}/>
                   </>, 'is-xl');
                   case 'rounds': return frame('rounds', <BeforeAfter id="rfaw-compare" reduced={motionOff} frame="panel" ratio="1200 / 1420" size={[1200, 1420]} pairs={rounds}
-                    label={t(L('Compare round 1 with round 2', '对比第 1 轮和第 2 轮'))} heading={t(L('Round 1 → Round 2', '第 1 轮 → 第 2 轮'))}
-                    lede={t(L('Round 2 came out of a design review. Pick a state and drag across it to compare the two rounds.', '第 2 轮来自一次设计评审。选一个状态，左右拖动来对比两轮。'))}>
+                    label={t(L('Compare round 1 with round 2', '对比第一轮和第二轮'))} heading={t(L('Round 1 → Round 2', '第一轮 → 第二轮'))}
+                    lede={t(L('Round 2 came out of a design review. Pick a state and drag across it to compare the two rounds.', '第二轮的改动来自一次设计评审。选一个状态，左右拖动，对比两轮。'))}>
                     <p className="v2-review-note"><span>{zh
-                      ? <><b>一次借助模型的设计评审。</b>我让模型以 Figma 设计负责人的眼光点评第 1 轮。它给的分数是：工艺 7、交互 5、产品思维 6，并排出了八项修改；第 2 轮把这些都做了。这是一次评审，不是和设计师一起做的测试。</>
+                      ? <><b>借模型做了一次设计评审。</b>我让模型站在 Figma 设计负责人的角度评第一轮。它打的分是：工艺 7，交互 5，产品思维 6，还按轻重排了八项修改；第二轮全做了。这只是评审，不是找设计师做的测试。</>
                       : <><b>A model-assisted design review.</b> I asked a model to critique round 1 as a Figma design lead would. It scored craft 7, interaction 5 and product thinking 6, and ranked eight fixes; round 2 builds them. It’s a critique, not a test with designers.</>}</span></p>
                     <RoundChanges items={changes} title={t(L('What changed and why', '改了什么，为什么改'))}/>
                   </BeforeAfter>, 'is-xl');
@@ -386,7 +386,7 @@ function World({item, reduced, forcePlain = false}) {
                     <AgentSide/>
                   </>, 'is-xl');
                   case 'try': return frame('try', <>
-                    <LiveEditor tasks={TASKS} reduced={motionOff} head={<Head level={2} id="try-title" title={L('Try it yourself', '亲手试试')} lede={L('The same prototype, life-size. Pick a task; the editor opens where it starts.', '同一个原型，原尺寸。选一个任务，编辑器会打开到它开始的位置。')}/>}/>
+                    <LiveEditor tasks={TASKS} reduced={motionOff} head={<Head level={2} id="try-title" title={L('Try it yourself', '自己试试')} lede={L('The same prototype, life-size. Pick a task; the editor opens where it starts.', '还是这个原型，原尺寸。选一个任务，编辑器会停在任务开始的地方。')}/>}/>
                   </>, 'is-live');
                   case 'testing': return frame('testing', <Testing/>, 'is-xl');
                   case 'reflection': return frame('reflection', <Reflection/>, 'is-xl');
@@ -417,7 +417,7 @@ function World({item, reduced, forcePlain = false}) {
             </button>
           </div> : null}
           {mode === 'canvas' ? <Panel tab={tab} setTab={setTab} active={active} go={go} minimized={minimized}/> : null}
-          {mode === 'canvas' ? <p className="rfaw-hint" aria-hidden="true">{t(L('Scroll to follow the story. Drag the canvas, or ⌘/Ctrl + scroll, to look around.', '滚动就能跟着故事走。拖动画布，或按住 ⌘/Ctrl 滚动，可以四处看看。'))}</p> : null}
+          {mode === 'canvas' ? <p className="rfaw-hint" aria-hidden="true">{t(L('Scroll to follow the story. Drag the canvas, or ⌘/Ctrl + scroll, to look around.', '滚动，跟着故事往下走。拖动画布，或按住 ⌘/Ctrl 滚动，可以随便看看。'))}</p> : null}
         </div>
       </div>
 
@@ -430,7 +430,7 @@ function World({item, reduced, forcePlain = false}) {
   </WorldCtx.Provider>;
 }
 
-const BACK = L('Back to the story', '回到故事主线');
+const BACK = L('Back to the story', '回到主线');
 
 function Cover({go, phone}) {
   const {t} = useCaseLang();
@@ -438,12 +438,12 @@ function Cover({go, phone}) {
   return <div className="rfaw-cover">
     <div className="rfaw-cover-top">
       <Go to="/product" className="rfaw-back-link"><span aria-hidden="true">←</span> {t(UI.allWork)}</Go>
-      <p className="rfaw-kind" data-agent="Text">{t(L('Research, then product design', '先做研究，再做产品设计'))}</p>
+      <p className="rfaw-kind" data-agent="Text">{t(L('Research, then product design', '先研究，再做产品设计'))}</p>
       <h1 className="rfaw-title" data-agent="Title" data-jay=".99,.25"><span lang="en">Ready for agents</span></h1>
     </div>
     <div className="rfaw-cover-copy">
       <p className="rfaw-outcome" data-agent="Text">{t(L('Coding agents rebuild a Figma frame’s layout from the picture but invent their own names for its design tokens. I measured that across 37 builds, then designed a lens on Figma’s Check designs that binds what you choose in one undo and tells the agent the rest.',
-        'Coding agent 能照着画面还原 Figma frame 的布局，却会给设计 token 自己起名字。我在 37 次构建里测了这件事，然后在 Figma 的 Check designs 里设计了一个视图：你选中的值一步绑定、一步就能撤销，其余的告诉 agent。'))}</p>
+        'Coding agent 能照着画面还原 Figma frame 的布局，设计 token 的名字却会自己编。我用 37 次构建测出了这一点，再在 Figma 的 Check designs 里设计了一个视图：你选中的值一次绑定，一步就能撤销；剩下的告诉 agent。'))}</p>
       <ul className="rfaw-chips" aria-label={t(L('Project facts', '项目信息'))}>
         {chips.map(c => <li key={c.en}>{t(c)}</li>)}
       </ul>
@@ -455,9 +455,9 @@ function Cover({go, phone}) {
     <figure className="rfaw-cover-shot">
       <img src={rfaShot('review')} width="1800" height="1125" alt={t(L('The prototype: a Figma-style editor with the Home frame of a print shop app, a Variables row in the properties panel, and Check designs listing 12 unbound values',
         '原型：一个 Figma 风格的编辑器，画布上是一个印品商店 app 的 Home frame，属性面板里有一行 Variables，Check designs 列出了 12 个未绑定的值'))} decoding="async" fetchPriority="high"/>
-      <figcaption><span className="rfaw-status">{t(L('Testing next', '即将测试'))}</span>{t(L('Round 2 of the prototype: Check designs with the Variables for agents lens.', '原型第 2 轮：Check designs 里的 Variables for agents 视图。'))}</figcaption>
+      <figcaption><span className="rfaw-status">{t(L('Testing next', '即将测试'))}</span>{t(L('Round 2 of the prototype: Check designs with the Variables for agents lens.', '原型第二轮：Check designs 里的 Variables for agents 视图。'))}</figcaption>
     </figure>
-    <dl className="rfaw-numbers" aria-label={t(L('The study in numbers', '研究数据一览'))}>
+    <dl className="rfaw-numbers" aria-label={t(L('The study in numbers', '研究里的几个数字'))}>
       {NUMBERS.map(n => <div key={n.value} data-agent={t(L('Number', '数字'))}>
         <dt>{t(n.label)}</dt>
         <dd><b>{n.value}</b>{n.unit ? <span>{t(n.unit)}</span> : null}</dd>
@@ -471,8 +471,8 @@ function FlowStep({step, i, n}) {
   const {t, zh} = useCaseLang();
   return <div className="rfaw-flow">
     {i === 0 ? <div className="rfaw-flow-intro">
-      <h2 className="rfaw-h2 is-flow" data-agent="Text">{t(L('From unbound to applied, in seven states', '从未绑定到已应用，七个状态'))}</h2>
-      <p className="rfaw-lede">{t(L('Each frame shows the real prototype, cropped to the part a step is about. Scroll on to move along the flow.', '每个 frame 里都是真实的原型，只裁出这一步相关的部分。继续滚动，沿着流程往下走。'))}</p>
+      <h2 className="rfaw-h2 is-flow" data-agent="Text">{t(L('From unbound to applied, in seven states', '从“未绑定”到“已应用”'))}</h2>
+      <p className="rfaw-lede">{t(L('Each frame shows the real prototype, cropped to the part a step is about. Scroll on to move along the flow.', '一共七个状态。每个 frame 里都是真实原型，只裁出和这一步有关的部分。继续滚动，顺着流程往下走。'))}</p>
     </div> : null}
     <div className="rfaw-flow-shot" data-jay=".96,.08"><Crop step={step} alt={t(step.alt)}/></div>
     <p className="rfaw-kicker">{zh ? `第 ${i + 1} 步，共 ${n} 步` : `Step ${i + 1} of ${n}`}</p>
@@ -483,29 +483,29 @@ function FlowStep({step, i, n}) {
 }
 
 const PLAN = [
-  L('Five designers or design students who use Figma weekly, ideally two who have handed a file to an agent.', '五位每周都用 Figma 的设计师或设计专业学生，最好有两位曾经把文件交给过 agent。'),
-  L('Twenty minutes each, thinking aloud, on this prototype.', '每人 20 分钟，在这个原型上边做边说出自己的想法。'),
+  L('Five designers or design students who use Figma weekly, ideally two who have handed a file to an agent.', '找五位每周都用 Figma 的设计师或设计学生，最好其中两位把文件交给过 agent。'),
+  L('Twenty minutes each, thinking aloud, on this prototype.', '每人 20 分钟，用这个原型，边做边把想法说出来。'),
   L('Tasks: is this frame ready, and what would the agent miss; fix what you can; make the call on #FFFFFF; what happens to values that match nothing; what do you expect the agent to do now.',
-    '任务：这个 frame 准备好了吗，agent 会漏掉什么；能修的先修；决定 #FFFFFF 怎么处理；对不上任何 variable 的值会怎样；你预计 agent 接下来会怎么做。'),
-  L('Measures: task success, time on task, a 1–7 ease rating per task, quotes, and where people hesitate.', '衡量指标：任务完成率、完成时间、每项任务 1–7 分的易用性评分、原话，以及大家在哪里犹豫。'),
-  L('Anything that blocks two of five people gets redesigned before this case is final, and the page will show the before and after.', '五个人里只要有两个人在同一处卡住，那一处就会在案例定稿前重新设计，页面也会展示改前和改后。'),
+    '任务：这个 frame 准备好了吗，agent 会漏掉什么；能修的先修好；决定 #FFFFFF 怎么处理；对不上任何 variable 的值会怎样；你觉得 agent 接下来会做什么。'),
+  L('Measures: task success, time on task, a 1–7 ease rating per task, quotes, and where people hesitate.', '记录：任务完成率、用时、每项任务的易用性打分（1–7）、原话，以及大家在哪里停下来犹豫。'),
+  L('Anything that blocks two of five people gets redesigned before this case is final, and the page will show the before and after.', '五个人里只要有两个卡在同一处，定稿前就重做那一处，页面上也会放出改前和改后。'),
 ];
 const HYPOTHESES = [
-  L('A row in the properties panel gets noticed at selection time (direction A’s weak spot).', '选中图层时，大家会注意到属性面板里的那一行（这是方向 A 的弱点）。'),
+  L('A row in the properties panel gets noticed at selection time (direction A’s weak spot).', '选中 frame 时，大家会注意到属性面板里的那一行（这正是方向 A 的弱点）。'),
   L('Designers act on counts faster than on a score.', '比起分数，设计师看到数量时会更快动手。'),
-  L('Designers expect the agent to ask about the colors left raw.', '设计师会预期 agent 主动询问那些保留为原始值的颜色。'),
+  L('Designers expect the agent to ask about the colors left raw.', '设计师会预期 agent 主动来问那些还是原始值的颜色。'),
 ];
 const RESULTS = [
   L('Said what the agent would miss', '说出了 agent 会漏掉什么'),
-  L('Bound the exact matches unaided', '没靠提示就绑定了精确匹配项'),
-  L('Made the #FFFFFF call with confidence', '有把握地决定了 #FFFFFF'),
-  L('Expected the agent to ask', '预期 agent 会主动询问'),
+  L('Bound the exact matches unaided', '没靠提示，自己绑好了精确匹配的值'),
+  L('Made the #FFFFFF call with confidence', '有把握地定下了 #FFFFFF'),
+  L('Expected the agent to ask', '预期 agent 会主动来问'),
 ];
 
 function Testing() {
   const {t, zh} = useCaseLang();
   return <div className="rfaw-testing">
-    <Head level={2} id="testing-title" title={L('Five sessions decide what stays', '五场测试决定去留')} lede={L('Nothing in the design chapter has been tested with designers yet. This is the plan, and the space the results will fill.', '设计这一章的内容还没有和设计师一起测试过。下面是测试计划，也给结果留好了位置。')}/>
+    <Head level={2} id="testing-title" title={L('Five sessions decide what stays', '五场测试决定去留')} lede={L('Nothing in the design chapter has been tested with designers yet. This is the plan, and the space the results will fill.', '设计这部分还没找设计师测过。下面是测试计划，结果的位置也留好了。')}/>
     <div className="rfaw-testing-grid">
       <div>
         <h3 className="rfaw-h4">{t(L('Plan', '计划'))}</h3>
@@ -513,10 +513,10 @@ function Testing() {
         <h3 className="rfaw-h4">{t(L('Hypotheses to check', '待验证的假设'))}</h3>
         <ul className="rfaw-hyps">{HYPOTHESES.map(h => <li key={h.en}><Ev label="Hypothesis"/><span>{t(h)}</span></li>)}</ul>
       </div>
-      <div className="rfaw-results" aria-label={t(L('Results, not collected yet', '结果，尚未收集'))} data-jay=".95,.06">
-        <p className="rfaw-slot"><FigIcon name="frame" size={12}/>{t(L('Placeholder: results after the sessions', '占位：测试之后填入结果'))}</p>
+      <div className="rfaw-results" aria-label={t(L('Results, not collected yet', '结果（还没收集）'))} data-jay=".95,.06">
+        <p className="rfaw-slot"><FigIcon name="frame" size={12}/>{t(L('Placeholder: results after the sessions', '占位：测完再填'))}</p>
         <dl>{RESULTS.map(r => <div key={r.en}><dt>{t(r)}</dt><dd>{zh ? '— / 5' : '— of 5'}</dd></div>)}</dl>
-        <p className="rfaw-results-note">{t(L('Each result will sit next to the change it caused.', '每个结果都会放在它引出的改动旁边。'))}</p>
+        <p className="rfaw-results-note">{t(L('Each result will sit next to the change it caused.', '每条结果都会放在它带来的改动旁边。'))}</p>
       </div>
     </div>
   </div>;
@@ -528,9 +528,9 @@ function Reflection() {
     <Head level={2} id="rfaw-reflection" title={L('Reflection', '复盘')}/>
     <div className="rfaw-reflection-grid">
       <div data-agent="Text"><h3 className="rfaw-h4">{t(L('What I’d keep', '我会保留的'))}</h3><p className="rfaw-body">{t(L('Counting what the agent will miss instead of grading the file. The study supports one strong finding, about variables, and the design says exactly that and nothing more.',
-        '数清 agent 会漏掉什么，而不是给文件打分。这项研究只撑得起一个明确的结论，关于 variables；设计也只说这么多，不多说。'))}</p></div>
+        '数清 agent 会漏掉什么，不给文件打分。这项研究只撑得起一个明确的结论，关于 variables；设计也只说这一点，不多说。'))}</p></div>
       <div data-agent="Text"><h3 className="rfaw-h4">{t(L('What I don’t know yet', '我还不知道的'))}</h3><p className="rfaw-body">{t(L('Whether a row in a dense panel gets noticed, and whether the finding holds beyond 37 builds from one model family and one small design system.',
-        '密集面板里的一行会不会被注意到；以及这个结论出了 37 次构建、一个模型家族、一个小型设计系统的范围，还成不成立。'))}</p></div>
+        '面板那么密，这一行会不会有人注意到。还有，这个结论只来自 37 次构建、一个模型家族、一个小设计系统；出了这个范围，还成不成立。'))}</p></div>
       <div data-agent="Text" data-jay=".96,.1"><h3 className="rfaw-h4">{t(L('What’s next', '下一步'))}</h3><p className="rfaw-body">{t(L('The five sessions, then a second model family and a Code Connect condition on the research side. I expected auto layout to matter most; pre-registering kept me honest when it didn’t.',
         '先做五场测试；研究这边再加一个模型家族和一个 Code Connect 条件。我原本以为 auto layout 最关键，结果不是；幸好假设是提前登记的，我没法事后改口。'))}</p></div>
     </div>
@@ -569,7 +569,7 @@ function Panel({tab, setTab, active, go, minimized}) {
       <header className="rfaw-side-head">
         <p className="rfaw-file-name" lang="en">Ready for agents</p>
         <p className="rfaw-file-meta">{t(L('Jay Lin, case study', 'Jay Lin 的案例'))}</p>
-        <div className="rfaw-people" aria-label={t(L('On this file: Jay and the Agent', '正在看这个文件的：Jay 和 Agent'))}><span className="is-jay">J</span><span className="is-agent"><FigIcon name="agent" size={12}/></span></div>
+        <div className="rfaw-people" aria-label={t(L('On this file: Jay and the Agent', '在这个文件里的：Jay 和 Agent'))}><span className="is-jay">J</span><span className="is-agent"><FigIcon name="agent" size={12}/></span></div>
       </header>
       {tab === 'file' ? <nav ref={list} className="rfaw-layers" aria-label={t(L('Frames', 'Frame 列表'))}>
         <p className="rfaw-side-title">{t(L('Layers', '图层'))}</p>
@@ -621,7 +621,7 @@ function ZoomMenu({camera, onClose}) {
   return <div ref={ref} className="rfaw-menu" role="menu" aria-label={t(L('Zoom', '缩放'))} onKeyDown={onKey}>
     <button type="button" role="menuitem" onClick={act(() => camera?.zoomBy(2))}><span>{t(UI.zoomIn)}</span></button>
     <button type="button" role="menuitem" onClick={act(() => camera?.zoomBy(.5))}><span>{t(UI.zoomOut)}</span></button>
-    <button type="button" role="menuitem" onClick={act(() => camera?.zoomToFit())}><span>{t(L('Zoom to fit', '缩放到全部'))}</span><kbd>⇧1</kbd></button>
+    <button type="button" role="menuitem" onClick={act(() => camera?.zoomToFit())}><span>{t(L('Zoom to fit', '缩放到合适大小'))}</span><kbd>⇧1</kbd></button>
     <button type="button" role="menuitem" onClick={act(() => camera?.zoomTo100())}><span>{t(L('Zoom to 100%', '缩放到 100%'))}</span><kbd>⇧0</kbd></button>
     <span className="rfaw-menu-sep" role="separator"/>
     <button type="button" role="menuitem" onClick={act(() => camera?.backToStory())}><span>{t(BACK)}</span><kbd>Esc</kbd></button>

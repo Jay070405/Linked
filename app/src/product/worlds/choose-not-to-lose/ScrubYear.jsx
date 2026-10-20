@@ -29,7 +29,7 @@ const T = {
   coinsToMax: L('Coinsurance, to the maximum', '共同保险（算到上限为止）'),
   takeaway: L('At every amount, Plan B costs exactly $600 more than Plan A.', '无论金额多少，Plan B 都正好比 Plan A 多花 $600。'),
   cap: L('Fictional plans, the prototype’s own cost model and its tests: covered, in-network bills only. Uncovered and out-of-network bills can add more.',
-    '虚构方案，用的是原型自己的费用模型及其测试：只算网络内的承保医疗费用。不在承保范围内或网络外的账单可能更多。'),
+    '虚构方案，用原型自己的费用模型（测试过）来算：只算网络内的承保医疗费用。不在承保范围内或网络外的账单，可能还会更多。'),
   slip: L('Every plan’s year, $0 to $40,000 in covered bills', '承保医疗费用从 $0 到 $40,000 时，每个方案的全年费用'),
   chartLabel: (v, list) => L(`Yearly total per plan for covered bills from $0 to $40,000. At ${v}: ${list}. Plan B is $600 above Plan A everywhere.`,
     `承保医疗费用从 $0 到 $40,000 时各方案的全年总费用。在 ${v} 时：${list}。Plan B 在每个金额下都比 Plan A 高 $600。`),

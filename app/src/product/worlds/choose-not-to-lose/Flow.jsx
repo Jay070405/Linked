@@ -8,9 +8,9 @@ import {Window} from './Window';
 const T = {
   step: (i, n) => L(`Step ${i} of ${n}`, `第 ${i} 步，共 ${n} 步`),
   showing: (i, label) => L(`Prototype showing step ${i}: ${label.en}`, `原型正在显示第 ${i} 步：${label.zh}`),
-  title: L('Choose Not to Lose prototype, following the steps', 'Choose Not to Lose 原型，跟随步骤移动'),
-  rail: L('Steps of the redesign', '重新设计的步骤'),
-  note: L('The live prototype, moved by your scroll.', '真实原型，随你的滚动移动。'),
+  title: L('Choose Not to Lose prototype, following the steps', 'Choose Not to Lose 原型，跟着步骤走'),
+  rail: L('Steps of the redesign', '新设计的步骤'),
+  note: L('The live prototype, moved by your scroll.', '真实原型，随你滚动切换。'),
 };
 
 /* The redesign, step by step (D4 world). On wide screens the steps print down the receipt while the live prototype

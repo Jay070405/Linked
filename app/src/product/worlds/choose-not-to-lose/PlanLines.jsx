@@ -14,7 +14,7 @@ import {Register, useKeyed} from './print';
 const ROWS = [
   {label: L('Employee premium per month', '员工每月保费（premium）'), short: L('Premium a month', '月保费'), value: p => money(p.monthlyPremium), key: 'monthlyPremium'},
   {label: L('Deductible per year', '每年免赔额（deductible）'), short: L('Deduct­ible', '免赔额'), value: p => money(p.deductible), key: 'deductible'},
-  {label: L('Member coinsurance', '会员共同保险（coinsurance）'), short: L('Coins­urance', '共同保险'), value: p => rate(p.coinsuranceBps), key: 'coinsuranceBps'},
+  {label: L('Member coinsurance', '共同保险比例（coinsurance）'), short: L('Coins­urance', '共同保险'), value: p => rate(p.coinsuranceBps), key: 'coinsuranceBps'},
   {label: L('Out-of-pocket maximum per year', '每年自付额上限（out-of-pocket maximum）'), short: L('Max out of pocket', '自付额上限'), value: p => money(p.oopMax), key: 'oopMax'},
 ];
 const A = plans[0], B = plans[1];
@@ -24,24 +24,24 @@ const T = {
   ask: L('Tick the plan you’d enroll in.', '勾选你会投保的方案。'),
   crumb: L('Benefits / Open enrollment / Medical', '福利 / 开放投保期（open enrollment）/ 医疗'),
   title: L('Medical plan selection', '医疗方案选择'),
-  coverage: L('Coverage level', '投保范围'), employeeOnly: L('Employee only', '仅员工本人'),
+  coverage: L('Coverage level', '保障对象'), employeeOnly: L('Employee only', '仅员工本人'),
   effective: L('Effective date', '生效日期'), effectiveDate: L('01/01/2027', '2027 年 1 月 1 日'),
   available: L('Available plans', '可选方案'),
   caption: L('Available medical plans. Tick one to see whether it is dominated.', '可选的医疗方案。勾选一个，看看它是不是被占优的方案。'),
-  plan: L('Plan', '方案'), benefit: L('Benefit', '福利项目'), ppo: L('PPO, in-network', 'PPO，网络内'),
+  plan: L('Plan', '方案'), benefit: L('Benefit', '保障项目'), ppo: L('PPO, in-network', 'PPO，网络内'),
   election: L('Plan election', '方案选择'), select: L('Select ', '选择 '),
   glossary: L('', '表头术语：保费（premium）、免赔额（deductible）、共同保险（coinsurance）、自付额上限（out-of-pocket maximum）。'),
-  care: L('Primary care, specialists and prescription drugs, on every plan: the deductible, then that plan’s coinsurance.', '初级保健、专科和处方药，在每个方案里都是先付免赔额，再按该方案的共同保险比例付费。'),
+  care: L('Primary care, specialists and prescription drugs, on every plan: the deductible, then that plan’s coinsurance.', '初级保健、专科和处方药，每个方案都一样：先付免赔额，再按这个方案的共同保险比例付。'),
   notice: L('Amounts shown apply to covered in-network services. Premiums do not apply toward your deductible or out-of-pocket maximum. All four plans use the same provider network and covered services.',
-    '显示的金额适用于网络内（in-network）的承保（covered）服务。保费不计入免赔额，也不计入自付额上限。四个方案使用同一个医疗服务网络，承保服务也相同。'),
+    '金额按网络内（in-network）的承保（covered）服务算。保费不算进免赔额，也不算进自付额上限。四个方案用同一个医疗网络，承保服务也一样。'),
   same: L('= A', '同 A'),
   moreThanA: d => L(`+${d} vs A`, `比 A 多 ${d}`),
-  wait: L('Your pick stays on this page. Nothing is sent or saved.', '你的选择只留在这个页面上，不会发送，也不会保存。'),
+  wait: L('Your pick stays on this page. Nothing is sent or saved.', '你的选择只留在这页上，不发送，也不保存。'),
   takeaway: L('Every number you needed was in the table. The $600 wasn’t.', '你需要的每个数字表里都有，唯独没有那 $600。'),
   gap: L(`a year more on Plan B: ${money(annualPremium(B))} in premiums against ${money(annualPremium(A))} for Plan A, whatever the year’s bills.`,
-    `Plan B 每年多花的钱：保费 ${money(annualPremium(B))}，而 Plan A 是 ${money(annualPremium(A))}，不管这一年的账单是多少。`),
+    `选 Plan B，每年就多花这么多：它的保费是 ${money(annualPremium(B))}，Plan A 是 ${money(annualPremium(A))}；这一年账单多少都一样。`),
   study: L('In a study of 23,894 employees choosing from a menu that included plans like Plan B, most picked one. Bhargava, Loewenstein and Sydnor, Quarterly Journal of Economics, 2017.',
-    '一项研究考察了 23,894 名员工，他们可选的方案里包括 Plan B 这样被占优（dominated）的方案，多数人选了这类方案。Bhargava、Loewenstein 和 Sydnor，《经济学季刊》（Quarterly Journal of Economics），2017。'),
+    '有一项研究看了 23,894 名员工，他们的方案菜单里有像 Plan B 这样被占优（dominated）的方案，多数人选了这类方案。Bhargava、Loewenstein 和 Sydnor，《经济学季刊》（Quarterly Journal of Economics），2017。'),
 };
 
 function Verdict({chosen, beatenBy}) {

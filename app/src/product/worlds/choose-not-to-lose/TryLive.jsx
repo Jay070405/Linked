@@ -8,7 +8,7 @@ const T = {
   openTab: L('Open it in a new tab', '在新标签页打开'),
   openFull: L('Open the prototype full screen', '全屏打开原型'),
   name: L('Choose Not to Lose prototype', 'Choose Not to Lose 原型'),
-  live: L('Choose Not to Lose prototype, live and clickable', 'Choose Not to Lose 原型，可以直接操作'),
+  live: L('Choose Not to Lose prototype, live and clickable', 'Choose Not to Lose 原型，可以直接点'),
   shot: L('The Choose Not to Lose prototype: the yearly comparison of four fictional plans', 'Choose Not to Lose 原型：四个虚构方案的全年比较'),
 };
 

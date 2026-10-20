@@ -37,7 +37,7 @@ export default function Decisions({id, heading, lede, items}) {
                 <p className="atw-card-verdict">{item.verdict}</p>
                 <dl className="atw-card-dl">
                   <div><dt>{zh ? '试过' : 'Tried'}</dt><dd>{item.tried}</dd></div>
-                  <div><dt>{zh ? '选择' : 'Chose'}</dt><dd>{item.chose}</dd></div>
+                  <div><dt>{zh ? '选定' : 'Chose'}</dt><dd>{item.chose}</dd></div>
                 </dl>
               </div>
             </div>

@@ -23,7 +23,7 @@ export default function Plain({item, next, onBack}) {
   const colon = zh ? '：' : ': ';
   return <div className="atw-plain">
     <div className="atw-plain-bar">
-      <p>{t(L('You’re reading the plain version of this case: the same content, without the gallery.', '你正在阅读这个案例的普通版：内容相同，只是没有展厅。'))}</p>
+      <p>{t(L('You’re reading the plain version of this case: the same content, without the gallery.', '这是简洁版：内容一样，只是没有展厅。'))}</p>
       <button type="button" className="atw-plain-back" onClick={onBack}>{t(L('Back to the gallery', '回到展厅'))}</button>
     </div>
 
@@ -37,14 +37,14 @@ export default function Plain({item, next, onBack}) {
     </header>
 
     <section aria-labelledby="pl-numbers">
-      <h2 id="pl-numbers">{t(L('In numbers', '数字'))}</h2>
+      <h2 id="pl-numbers">{t(L('In numbers', '几个数字'))}</h2>
       <ul>{NUMBERS.map(n => <li key={n.label.en}><b>{n.value}{n.unit ? ` ${n.unit}` : ''}</b>{colon}{zh ? `${t(n.label)}。${t(n.note)}。` : `${t(n.label).toLowerCase()}. ${t(n.note)}.`}</li>)}</ul>
     </section>
 
     <section aria-labelledby="pl-collection">
       <h2 id="pl-collection">{t(L('The collection', '作品陈列'))}</h2>
       <p>{t(L('Atelier’s catalog is eight of my own paintings, each with the label a collector would see. A size is listed only if the whole painting prints at 300 dpi or more inside a quarter-inch white border; $38 is the prototype’s default price for the largest size.',
-        'Atelier 的作品库是我自己的八幅画，每幅都配着藏家会看到的标签。只有整幅画在四分之一英寸白边内能达到 300 dpi 以上，这个尺寸才会列出；$38 是原型给最大尺寸的默认价格。'))}</p>
+        'Atelier 的作品库是我自己的八幅画，每幅都配着藏家会看到的标签。一个尺寸要列出来，整幅画留出四分之一英寸白边后，还得有 300 dpi 以上；最大尺寸在原型里默认卖 $38。'))}</p>
       <ul className="atw-plain-works">
         {WORKS.map(w => <li key={w.id}>
           <img src={wallSrc(w.id)} width={w.originalWidth} height={w.originalHeight} alt={zh ? `${named(w, zh)}（${w.zh}）：${t(w.about)}` : `${w.title}: ${t(w.about)}`} loading="lazy" decoding="async"/>
@@ -60,7 +60,7 @@ export default function Plain({item, next, onBack}) {
       {PROBLEM.paragraphs.map(p => <p key={p.en.slice(0, 20)}>{t(p)}</p>)}
       <p className="atw-plain-note"><Ev label="Hypothesis"/> {t(PROBLEM.hypothesis)}</p>
       {zh
-        ? <p>四个工具：{PROBLEM.tools.map(x => `${t(x.name)}（${t(x.role)}）`).join('；')}。落在它们之间的问题：{PROBLEM.seams.map(t).join('')}</p>
+        ? <p>四个工具：{PROBLEM.tools.map(x => `${t(x.name)}（${t(x.role)}）`).join('；')}。卡在它们之间的问题：{PROBLEM.seams.map(t).join('')}</p>
         : <p>The four tools: {PROBLEM.tools.map(x => `${t(x.name)} (${t(x.role)})`).join('; ')}. The questions that fall between them: {PROBLEM.seams.map(t).join(' ')}</p>}
       <p className="atw-plain-note"><Ev label="Hypothesis"/> {t(PROBLEM.seamsNote)}</p>
       <p className="atw-plain-note">{t(L('Placeholder', '占位'))}{colon}{t(PROBLEM.quote)}</p>
@@ -79,7 +79,7 @@ export default function Plain({item, next, onBack}) {
     <section aria-labelledby="pl-check">
       <h2 id="pl-check">{t(L('The print check', '印前检查'))}</h2>
       <p>{t(L('A sharp print needs about 300 of the file’s pixels for every inch of paper. Fewer, and the printer has to stretch the file to fill the paper, and the print goes soft. Atelier does this arithmetic before an artist can offer a size, for the six sizes it sells.',
-        '要印得清楚，每英寸纸面大约需要文件里的 300 个像素。少于这个数，打印机就得把文件拉伸到铺满纸面，印出来就会发虚。Atelier 在画师上架之前，会把它卖的六个尺寸都算一遍。'))}</p>
+        '要印得清楚，每英寸纸面大约需要文件里的 300 个像素。少于这个数，打印机就得把文件拉伸到铺满纸面，印出来就会发虚。所以在画师上架之前，Atelier 会把它卖的六个尺寸全都算一遍。'))}</p>
       <div className="atw-plain-table" role="region" aria-label={t(L('Print check for each painting', '每幅画的印前检查'))} tabIndex={0}>
         <table>
           <caption>{t(L('Dots per inch at each size; sizes at 300 or more can be sold.', '各尺寸的 dpi；300 及以上的尺寸可以上架。'))}</caption>
@@ -94,18 +94,18 @@ export default function Plain({item, next, onBack}) {
     </section>
 
     <section aria-labelledby="pl-decisions">
-      <h2 id="pl-decisions">{t(L('What I chose, and what I tried first', '我的选择，以及之前试过什么'))}</h2>
+      <h2 id="pl-decisions">{t(L('What I chose, and what I tried first', '选了什么，之前试过什么'))}</h2>
       {DECISIONS.map(d => <div key={d.id} className="atw-plain-decision">
         <h3>{t(d.title)}</h3>
         <p>{t(d.verdict)}</p>
         <p><b>{t(L('Tried', '试过'))}{colon}</b>{zh ? '' : ' '}{t(d.tried)}</p>
-        <p><b>{t(L('Chose', '选择'))}{colon}</b>{zh ? '' : ' '}{t(d.chose)}</p>
+        <p><b>{t(L('Chose', '选定'))}{colon}</b>{zh ? '' : ' '}{t(d.chose)}</p>
       </div>)}
     </section>
 
     <section aria-labelledby="pl-rounds">
       <h2 id="pl-rounds">{t(L('Round 1 → Round 2', '第一轮 → 第二轮'))}</h2>
-      <p><b>{t(L('A model-assisted design review.', '一次由模型辅助的设计评审。'))}</b> {t(REVIEW_NOTE)}</p>
+      <p><b>{t(L('A model-assisted design review.', '借模型做了一次设计评审。'))}</b> {t(REVIEW_NOTE)}</p>
       {ROUNDS.map(r => <figure key={r.id} className="atw-plain-pair">
         <img src={r.before.src} width={780} height={1688} alt={zh ? `${t(r.tab)}，第一轮` : `${t(r.tab)}, round 1`} loading="lazy" decoding="async"/>
         <img src={r.after.src} width={780} height={1688} alt={zh ? `${t(r.tab)}，第二轮` : `${t(r.tab)}, round 2`} loading="lazy" decoding="async"/>
@@ -117,19 +117,19 @@ export default function Plain({item, next, onBack}) {
 
     <section aria-labelledby="pl-try">
       <h2 id="pl-try">{t(L('Try it yourself', '自己试试'))}</h2>
-      <p>{t(L('The prototype runs in your browser only: no account, no payment, no shipping. Each task opens it in a new tab.', '原型只在你的浏览器里运行：不需要账号，不付款，不发货。每个任务都会在新标签页打开它。'))}</p>
+      <p>{t(L('The prototype runs in your browser only: no account, no payment, no shipping. Each task opens it in a new tab.', '原型只在你的浏览器里运行，不用账号，不付款，不发货。任务会在新标签页打开。'))}</p>
       <ol>{TASKS.map(k => <li key={k.id}><a href={protoUrl(k.screen, k.art)} target="_blank" rel="noopener">{t(k.title)}</a>{zh ? '。' : '. '}{t(k.hint)}</li>)}</ol>
     </section>
 
     <section aria-labelledby="pl-testing">
-      <h2 id="pl-testing">{t(L('Testing comes next', '下一步是测试'))}</h2>
-      <p>{t(L('Nothing here has been tested with artists yet. This is the plan, and the space the results will fill.', '这里的内容都还没有和画师测试过。下面是计划，以及之后放结果的位置。'))}</p>
+      <h2 id="pl-testing">{t(L('Testing comes next', '接下来是测试'))}</h2>
+      <p>{t(L('Nothing here has been tested with artists yet. This is the plan, and the space the results will fill.', '这里的内容都还没找画师测过。下面是测试计划，结果的位置也留好了。'))}</p>
       <h3>{t(L('Plan for test day', '测试日计划'))}</h3>
       <ul>{TESTING.plan.map(p => <li key={p.en}>{t(p)}</li>)}</ul>
-      <h3>{t(L('Hypotheses to check', '要验证的假设'))}</h3>
+      <h3>{t(L('Hypotheses to check', '待验证的假设'))}</h3>
       <ul>{TESTING.hypotheses.map(h => <li key={h.en}><Ev label="Hypothesis"/> {t(h)}</li>)}</ul>
       <p className="atw-plain-note">{zh
-        ? `占位：测试日之后的结果。${TESTING.results.map(([k, v]) => `${t(k)}：${t(v)}`).join('；')}。`
+        ? `占位：测试日之后再填。${TESTING.results.map(([k, v]) => `${t(k)}：${t(v)}`).join('；')}。`
         : `Placeholder: results after test day. ${TESTING.results.map(([k, v]) => `${t(k)}: ${t(v)}`).join('; ')}.`}</p>
     </section>
 

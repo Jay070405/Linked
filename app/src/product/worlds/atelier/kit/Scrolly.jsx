@@ -83,7 +83,7 @@ function Pinned({steps, art, kit, frame, title, note, reduced, label}) {
             <ProtoScreen kit={kit} screen={step.screen} camera={step.camera} art={art} load="near" reduced={reduced} title={title}
               alt={step.alt || step.label}/>
           </Device>
-          {note ? <p className="atw-pin-note">{zh && note === 'The live prototype, moved by your scroll' ? '真实运行的原型，随你的滚动切换' : note}</p> : null}
+          {note ? <p className="atw-pin-note">{zh && note === 'The live prototype, moved by your scroll' ? '真实原型，随你滚动切换' : note}</p> : null}
         </div>
       </div>
     </div>

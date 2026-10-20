@@ -104,7 +104,7 @@ export default function GateCode({reduced = false}) {
         <label className="w3-tap"><input type="checkbox" checked={tap} onChange={e => setTap(e.target.checked)}/>{t(L('Tap instead of hold', '用点按代替长按'))} <small>{t(L('for gloves or switch control', '适合戴手套或使用切换控制时'))}</small></label>
       </div>
     </div>
-    <Takeaway show={used} instant={instant}>{t(L('The order grants the code. Being at the gate only reveals it.', '门禁码由订单授予，到了大门口只是让它显示出来。'))}</Takeaway>
+    <Takeaway show={used} instant={instant}>{t(L('The order grants the code. Being at the gate only reveals it.', '门禁码是订单给的，走到大门口只是让它显示出来。'))}</Takeaway>
     <p className="w3-small">{t(L('The prototype’s gate step: a 160 ft circle (about 50 m), a 0.9-second hold, a code that hides after 20 seconds. The radius is a placeholder until a field test measures GPS error at a real gate.', '原型里的大门步骤：160 英尺（约 50 米）的范围，长按 0.9 秒，门禁码 20 秒后隐藏。这个半径只是占位，要等实地测试量出真实大门处的 GPS 误差。'))}</p>
   </div>;
 }

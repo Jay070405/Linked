@@ -83,8 +83,8 @@ export function Decision({d}) {
     <h3 className="w3-h3">{t(d.title)}</h3>
     {d.verdict ? <p className="w3-verdict">{t(d.verdict)}</p> : null}
     <dl className="w3-tc">
-      <div><dt>{t(L('Tried first', '先试过的'))}</dt><dd>{t(d.tried)}</dd></div>
-      <div><dt>{t(L('Chose', '最后的选择'))}</dt><dd>{t(d.chose)}</dd></div>
+      <div><dt>{t(L('Tried first', '先试过'))}</dt><dd>{t(d.tried)}</dd></div>
+      <div><dt>{t(L('Chose', '选定'))}</dt><dd>{t(d.chose)}</dd></div>
     </dl>
   </div>;
 }

@@ -143,7 +143,7 @@ export default function ProductIndex({reduced}) {
         <Noted>
           <p className="pp-hero-sub">{zh ? SUBLINE_ZH : SUBLINE}</p>
           <Note>
-            <p>{t(L('Each case labels its claims by how I know them.', '每个案例里的结论，都标明了我是怎么知道的。'))}</p>
+            <p>{t(L('Each case labels its claims by how I know them.', '每条结论，我都标明了是怎么知道的。'))}</p>
             <p className="pp-key">{EVIDENCE.map(label => <Ev key={label} label={label}/>)}</p>
           </Note>
         </Noted>

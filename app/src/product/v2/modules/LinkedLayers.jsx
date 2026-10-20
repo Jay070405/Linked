@@ -76,7 +76,7 @@ export default function LinkedLayers({reduced = false}) {
   };
 
   return <figure ref={root} className="ll" {...mode.bind} onPointerLeave={e => { if (e.pointerType === 'mouse') set(null); }}>
-    <Ask>{t(L('Pick a layer in either panel.', '在任意一个面板里选一个图层。'))}</Ask>
+    <Ask>{t(L('Pick a layer in either panel.', '在任一面板里选一个图层。'))}</Ask>
     <div className="ll-stage pp-stage">
       {PANELS.map(p => <section key={p.id} className={`pp-layers-panel ll-panel is-${p.id}`} aria-label={t(p.label)}>
         <header><span>{t(L('Layers', '图层'))}</span><span className="pp-layers-page">{t(p.page)}</span></header>
@@ -112,6 +112,6 @@ export default function LinkedLayers({reduced = false}) {
       </div>
     </div>
     <Takeaway show={seen} instant={reduced || mode.keyed.current}>{t(L('Same pixels, same box. Only one file says what the box is.', '像素一样，位置一样，只有一个文件说明了它是什么。'))}</Takeaway>
-    <figcaption className="v2-caption"><span>{t(L('Read from the benchmark file with Figma’s MCP server: names, types, variable bindings and positions; instances aren’t expanded. From the keyboard, ↑ and ↓ move through a panel and ← or → jumps to the twin.', '通过 Figma 的 MCP server 从测试文件读取：名称、类型、variable 绑定和位置；组件实例没有展开。用键盘时，↑ ↓ 在面板内移动，← 或 → 跳到对应图层。'))}</span></figcaption>
+    <figcaption className="v2-caption"><span>{t(L('Read from the benchmark file with Figma’s MCP server: names, types, variable bindings and positions; instances aren’t expanded. From the keyboard, ↑ and ↓ move through a panel and ← or → jumps to the twin.', '通过 Figma 的 MCP server 从测试文件读取：名称、类型、variable 绑定和位置；组件实例没有展开。用键盘时，↑ ↓ 在面板内移动，← 或 → 跳到另一边的对应图层。'))}</span></figcaption>
   </figure>;
 }

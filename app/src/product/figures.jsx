@@ -12,7 +12,7 @@ const DESKTOP = [
 ];
 const MOBILE = [
   {file: 's1', id: 'S1', name: L('Sign-in', '登录'), alt: L('S1, sign-in: email and password fields, a sign-in button and an SSO button.', 'S1 登录页：邮箱和密码输入框、登录按钮和 SSO 按钮。')},
-  {file: 's3', id: 'S3', name: L('Settings', '设置'), alt: L('S3, settings: grouped rows with toggles and chevrons.', 'S3 设置页：分组的设置行，带开关和箭头。')},
+  {file: 's3', id: 'S3', name: L('Settings', '设置'), alt: L('S3, settings: grouped rows with toggles and chevrons.', 'S3 设置页：分好组的设置项，带开关和箭头。')},
   {file: 's6', id: 'S6', name: L('Profile', '个人主页'), alt: L('S6, profile: an avatar, three stats, tabs and a list of projects.', 'S6 个人主页：头像、三项数据、标签页和项目列表。')},
 ];
 
@@ -128,11 +128,11 @@ export const LayersCompare = () => <div className="pp-stage pp-layers">
 const STEPS = [
   {name: 'Figma frame', detail: L('6 screens, each in 4 versions', '6 个界面，每个 4 个版本')},
   {name: 'Figma MCP', detail: <code>get_design_context</code>},
-  {name: L('Fresh agent', '全新的 agent'), detail: L('Claude Sonnet 5.5, the same prompt every time', 'Claude Sonnet 5.5，每次用同样的提示词')},
-  {name: <code>index.html</code>, detail: L('One self-contained file per build', '每次构建一个独立文件')},
-  {name: 'Headless Chrome', detail: L('Renders the build at the frame’s width and two others', '按 frame 宽度和另外两种宽度渲染')},
+  {name: L('Fresh agent', '新开的 agent'), detail: L('Claude Sonnet 5.5, the same prompt every time', 'Claude Sonnet 5.5，每次的提示词都一样')},
+  {name: <code>index.html</code>, detail: L('One self-contained file per build', '每次构建只出一个独立文件')},
+  {name: 'Headless Chrome', detail: L('Renders the build at the frame’s width and two others', '按 frame 的宽度渲染，再试另外两种宽度')},
   {name: L('Scores', '评分'), detail: L(<ul><li>Similarity to the Figma export</li><li>Resize checks</li><li>Code structure</li><li>Token-change test</li></ul>,
-    <ul><li>与 Figma 导出图的相似度</li><li>缩放检查</li><li>代码结构</li><li>token 改动测试</li></ul>)},
+    <ul><li>像不像 Figma 导出图</li><li>缩放检查</li><li>代码结构</li><li>token 改动测试</li></ul>)},
 ];
 export function Pipeline() {
   const {t} = useCaseLang();

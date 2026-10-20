@@ -241,7 +241,7 @@ export default function Compile({reduced = false, root, title, lede}) {
   const made = colorsIn.length - guessed, n = colorsIn.length;
   const waiting = t(L('Waiting for colors', '颜色还没到'));
   const tallyV = n ? (zh ? `${n} 个颜色全部沿用文件里的名字` : `${n} of ${n} colors keep the file’s names`) : waiting;
-  const tally0 = n ? (zh ? `${n} 个颜色中：${made} 个名字是自编的${guessed ? `，${guessed} 个碰巧猜中` : ''}` : `Of ${n}: ${made} name${made === 1 ? '' : 's'} made up${guessed ? `, ${guessed} guessed right` : ''}`) : waiting;
+  const tally0 = n ? (zh ? `${n} 个颜色里，${made} 个名字是自己编的${guessed ? `，${guessed} 个碰巧猜中` : ''}` : `Of ${n}: ${made} name${made === 1 ? '' : 's'} made up${guessed ? `, ${guessed} guessed right` : ''}`) : waiting;
 
   return <div ref={host} className={`cp${finished ? ' is-finished' : ''}`}>
     <header className="rfaw-head cp-head">
@@ -273,6 +273,6 @@ export default function Compile({reduced = false, root, title, lede}) {
       '用带 variables 的文件构建时，四个颜色都沿用了文件里的名字：--color-background、--color-text-primary、--color-primary 和 --color-border。用原始文件构建时，agent 自己编了 --color-bg 和 --color-text，又碰巧猜中了 --color-primary 和 --color-border。'))}</p>
     <div ref={chips} className="cp-chips" aria-hidden="true"/>
     <p className="rfaw-caption cp-caption"><Ev label="Measured"/><span>{t(L('Lines and line numbers quoted from the two agents’ files, S2-L0V-r1 and S2-L0-r1. Layer names, boxes and bindings read from the benchmark file with Figma’s MCP server.',
-      '代码行和行号摘自两个 agent 写的文件 S2-L0V-r1 和 S2-L0-r1。图层名称、位置和绑定是通过 Figma 的 MCP server 从测试文件里读出来的。'))}</span></p>
+      '代码行和行号摘自两个 agent 写的文件 S2-L0V-r1 和 S2-L0-r1。图层名称、位置和绑定，是用 Figma 的 MCP server 从测试文件里读的。'))}</span></p>
   </div>;
 }

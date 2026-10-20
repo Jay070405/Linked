@@ -152,8 +152,8 @@ export default function AblationChart({reduced = false}) {
       {tip && !compact ? <Tip key={instantTip ? 'still' : tip.id} d={tip} instant={instantTip} W={W} H={H}/> : null}
     </div>
     {compact ? <div className="ab-detail" aria-hidden="true">{tip ? <Card d={tip}/> : <p className="ab-detail-empty">{t(L('Tap a dot: its build shows here.', '点一个点，那次构建会显示在这里。'))}</p>}</div> : null}
-    <Takeaway show={seen} instant={reduced || mode.keyed.current}>{t(L('With variables, every build followed the whole change. Without them, none got past 67%.', '有 variables 时，每次构建都完整跟上了改动；没有时，没有一次超过 67%。'))}</Takeaway>
-    <figcaption className="v2-caption"><Ev label="Measured"/><span>{t(L('Each dot is one build: how much of a four-token change, injected after the build, reached its code. An exploratory measure I added after round 1’s first results.', '每个点代表一次构建：构建完成后注入四个 token 的改动，看有多少传到了它的代码里。这是我在第 1 轮初步结果出来后加的探索性指标。'))}</span></figcaption>
+    <Takeaway show={seen} instant={reduced || mode.keyed.current}>{t(L('With variables, every build followed the whole change. Without them, none got past 67%.', '有 variables，每次构建都完整跟上了改动；没有，最高也没超过 67%。'))}</Takeaway>
+    <figcaption className="v2-caption"><Ev label="Measured"/><span>{t(L('Each dot is one build: how much of a four-token change, injected after the build, reached its code. An exploratory measure I added after round 1’s first results.', '每个点是一次构建：构建完成后，再注入四个 token 的改动，看有多少传进了它的代码。这是第一轮初步结果出来后，我加的探索性指标。'))}</span></figcaption>
   </figure>;
 }
 

@@ -61,7 +61,7 @@ export const UI = {
   dark: L('Dark', '深色'),
   theme: L('Color theme', '颜色主题'),
   skipToContent: L('Skip to content', '跳到正文'),
-  readPlain: L('Read as a plain page', '换成普通页面阅读'),
+  readPlain: L('Read as a plain page', '换成简洁版阅读'),
   backToFull: L('Back to the full version', '回到完整版'),
   allWork: L('All product work', '全部产品作品'),
   nextProject: L('Next project', '下一个项目'),
@@ -70,9 +70,9 @@ export const UI = {
   view: L('View', '查看'),
   enlarge: L('Enlarge', '放大查看'),
   source: L('Source', '来源'),
-  howLabeled: L('How claims are labeled', '结论的标注方式'),
-  concept: name => L(`Concept, not affiliated with ${name}`, `概念作品，与 ${name} 无关联`),
-  independent: name => L(`Independent concept. Not affiliated with ${name}.`, `独立概念作品，与 ${name} 无关联。`),
+  howLabeled: L('How claims are labeled', '结论怎么标注'),
+  concept: name => L(`Concept, not affiliated with ${name}`, `概念作品，与 ${name} 官方无关`),
+  independent: name => L(`Independent concept. Not affiliated with ${name}.`, `独立概念作品，与 ${name} 官方无关。`),
   opensInNewTab: L(' (opens in a new tab)', '（在新标签页打开）'),
   // the figure viewer (v2/Lightbox)
   figureViewer: L('Figure viewer', '图片查看器'),
@@ -87,9 +87,9 @@ export const UI = {
 
 /** What each evidence label means (the tooltip in Chinese; the label itself stays English). */
 export const EVIDENCE_ZH = {
-  Measured: '实测：我亲自计数或记录的',
-  Sourced: '引用：来自公开资料，注明出处',
+  Measured: '实测：我自己数的或记下来的',
+  Sourced: '引用：出自公开资料，标了出处',
   Estimated: '估算：我自己算的，写明了假设',
-  Simulated: '模拟：模型输出，不是真实玩家',
-  Hypothesis: '假设：预期如此，尚未验证',
+  Simulated: '模拟：模型算出来的，不是真实玩家',
+  Hypothesis: '假设：我的预期，还没验证',
 };

@@ -141,7 +141,7 @@ export default function DoorRun({reduced = false}) {
       <Ask>{t(L('Choose where you’d walk in.', '选出你会从哪里进去。'))}</Ask>
       {pick ? <button type="button" className="w3-pill" onClick={reset}>{t(L('Try again', '再试一次'))}</button> : null}
     </div>
-    <p className="w3-fd-status" aria-live="polite">{t(verdict || L('Map apps route to the address. This is where its pin lands.', '地图 app 只导航到地址，定位点就落在这里。'))}</p>
+    <p className="w3-fd-status" aria-live="polite">{t(verdict || L('Map apps route to the address. This is where its pin lands.', '地图 app 只认地址，定位点就落在这里。'))}</p>
     <Takeaway show={phase === 'done'} instant={instant} className="w3-fd-take">{t(L('With a pin you guessed. With the route you’d have walked straight in.', '只有定位点，你只能靠猜；有了路线，你会直接走进去。'))}</Takeaway>
     <p className="w3-small w3-fd-note">{t(L('A fictional complex drawn by the prototype, about a foot per plan unit. The photos are AI-generated illustrative images, not a real location. Watch the hot bag in the corner.', '这是原型绘制的虚构小区，平面图上一个单位约等于一英尺。照片是 AI 生成的示意图，不是真实地点。留意角落里的保温袋。'))}</p>
     <div className="w3-fd-map">
