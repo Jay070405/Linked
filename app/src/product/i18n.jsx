@@ -17,7 +17,7 @@ import {createContext, useContext, useMemo} from 'react';
 
    A page switches only once its slug is in TRANSLATED: an English page never gets Chinese chrome around it. Add
    your slug when your page is translated. */
-export const TRANSLATED = new Set(['product', 'ready-for-agents']);
+export const TRANSLATED = new Set(['product', 'ready-for-agents', 'choose-not-to-lose']);
 
 const LangContext = createContext('en');
 
