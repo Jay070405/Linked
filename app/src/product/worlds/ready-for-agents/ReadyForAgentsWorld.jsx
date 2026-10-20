@@ -1,4 +1,4 @@
-import {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {Component, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {Go} from '../../Go';
 import {Ev} from '../../CaseKit';
 import {ProductFooter} from '../../ProductIndex';
@@ -50,13 +50,39 @@ function insetsFor(r, vp) {
   return r.wide ? {l: 32, r: 32, t: 128, b: 80} : {l: side, r: 36, t: 136, b: 84};
 }
 
+/** Catches what a part of the page throws while rendering, so one broken module can't take the page down with it (an
+    uncaught render error unmounts the whole tree: a blank page until reload). */
+class Guard extends Component {
+  state = {failed: false};
+  static getDerivedStateFromError() { return {failed: true}; }
+  componentDidCatch(error) { console.error(`[ready-for-agents] ${this.props.name || 'a part'} failed to render`, error); }
+  retry = () => this.setState({failed: false});
+  render() {
+    if (!this.state.failed) return this.props.children;
+    const {fallback} = this.props;
+    return typeof fallback === 'function' ? fallback(this.retry) : fallback ?? null;
+  }
+}
+
+/** What a frame shows when its content failed: the frame stays on the canvas, with a way to try again. */
+function FrameFallback({retry}) {
+  const {t} = useCaseLang();
+  return <div className="rfaw-fallback" role="status">
+    <p className="rfaw-body">{t(L('This part of the file didn’t load.', '这部分没加载出来。'))}</p>
+    <button type="button" className="rfaw-btn is-small" onClick={retry}>{t(L('Try again', '再试一次'))}</button>
+  </div>;
+}
+
 function Frame({f, index, children, go, className = '', current}) {
   const {t} = useCaseLang();
-  return <div className={`rfaw-frame ${className}${current ? ' is-current' : ''}`} data-frame={f.id} data-wide={f.wide ? '' : undefined} data-hold={f.hold || undefined} id={`rfa-${f.id}`}>
+  return <div className={`rfaw-frame ${className}${current ? ' is-current' : ''}`} data-frame={f.id} data-wide={f.wide ? '' : undefined} data-hold={f.hold || undefined}
+    data-stops={f.stops?.join(',') || undefined} id={`rfa-${f.id}`}>
     <button type="button" className="rfaw-frame-label" tabIndex={-1} aria-hidden="true" onClick={() => go(f.id)}>
       <FigIcon name="frame" size={12}/><span>{t(f.name)}</span>
     </button>
-    <div className="rfaw-frame-body" data-frame-body="" data-index={index}>{children}</div>
+    <div className="rfaw-frame-body" data-frame-body="" data-index={index}>
+      <Guard name={`frame ${f.id}`} fallback={retry => <FrameFallback retry={retry}/>}>{children}</Guard>
+    </div>
   </div>;
 }
 
@@ -70,12 +96,28 @@ function Head({title, lede, level = 3, id}) {
   </header>;
 }
 
-export default function ReadyForAgentsWorld({item, reduced}) {
+/** The world, guarded as a whole: if the canvas itself fails, the same frames come back as the plain page; if even that
+    fails, a short note with a reload link. Never a blank page. */
+export default function ReadyForAgentsWorld(props) {
+  return <Guard name="canvas" fallback={<Guard name="plain page" fallback={<WorldFailed/>}><World {...props} forcePlain/></Guard>}>
+    <World {...props}/>
+  </Guard>;
+}
+
+function WorldFailed() {
+  const {t, htmlLang} = useCaseLang();
+  return <article className="rfaw is-plain rfaw-failed" lang={htmlLang} data-theme={readTheme()} data-nav-tone="light">
+    <p className="rfaw-body">{t(L('This page didn’t load properly.', '这个页面没能正常加载。'))}</p>
+    <a className="rfaw-btn" href={typeof location === 'undefined' ? '' : location.href}>{t(L('Reload', '重新加载'))}</a>
+  </article>;
+}
+
+function World({item, reduced, forcePlain = false}) {
   const {t, zh, htmlLang} = useCaseLang();
   const root = useRef(null), track = useRef(null), viewport = useRef(null), world = useRef(null), zoomText = useRef(null);
   const roomy = useMedia(CANVAS_MIN), phone = useMedia(PHONE);
   const [plain, setPlain] = useState(readPref);
-  const mode = plain ? 'plain' : roomy && !reduced ? 'canvas' : 'stack';
+  const mode = plain || forcePlain ? 'plain' : roomy && !reduced ? 'canvas' : 'stack';
   const [camera, setCamera] = useState(null);
   const [active, setActive] = useState(0);
   const [arrived, setArrived] = useState(null);
@@ -122,6 +164,8 @@ export default function ReadyForAgentsWorld({item, reduced}) {
     // keep the reader's place when coming back from the plain page; on a fresh visit, fly in from the canvas
     if (place.current > 0) cam.jump(place.current); else cam.intro();
     setCamera(cam);
+    // for the canvas stress test (scripts/qa-canvas-paging.mjs, against the dev server)
+    if (import.meta.env.DEV) window.__rfaCamera = cam;
     return () => { cam.stop(); setCamera(null); setFree(false); };
   }, [mode]);
   useEffect(() => { camera?.setTool(tool); }, [camera, tool]);
@@ -242,9 +286,9 @@ export default function ReadyForAgentsWorld({item, reduced}) {
 
   return <WorldCtx.Provider value={ctx}>
     <article ref={root} className={`rfaw is-${mode}${minimized ? ' is-minimized' : ''}${free ? ' is-free' : ''}${active > 0 ? ' is-past-cover' : ''}${zh ? ' is-zh' : ''}`} lang={htmlLang} data-theme={theme} data-nav-tone={theme === 'dark' ? 'dark' : 'light'}>
-      <a className="rfaw-skip" href="#rfa-cover" onClick={togglePlain}>
+      {forcePlain ? null : <a className="rfaw-skip" href="#rfa-cover" onClick={togglePlain}>
         <FigIcon name={plain ? 'frame' : 'page'}/>{plain ? t(roomy && !reduced ? L('Back to the canvas', '回到画布') : UI.backToFull) : t(UI.readPlain)}
-      </a>
+      </a>}
 
       <div className="rfaw-themes" role="group" aria-label={t(UI.theme)}>
         <button type="button" aria-pressed={theme === 'light'} onClick={() => setTheme('light')} title={t(UI.light)}><FigIcon name="sun"/><span className="v2-sr">{t(UI.light)}</span></button>
@@ -357,7 +401,7 @@ export default function ReadyForAgentsWorld({item, reduced}) {
               })}
             </section>)}
           </div>
-          {mode === 'canvas' && camera ? <Cursors camera={camera} root={root.current} active={active} arrived={arrived}/> : null}
+          {mode === 'canvas' && camera ? <Guard name="cursors"><Cursors camera={camera} root={root.current} active={active} arrived={arrived}/></Guard> : null}
           {mode === 'canvas' ? <div className="rfaw-ui rfaw-toolbar" role="toolbar" aria-label={t(L('Canvas', '画布'))}>
             <button type="button" className="rfaw-tool" aria-pressed={tool === 'move'} onClick={() => setTool('move')} title={t(L('Move (V)', '移动 (V)'))}><FigIcon name="move"/><span className="v2-sr">{t(L('Move', '移动'))}</span></button>
             <button type="button" className="rfaw-tool" aria-pressed={tool === 'hand'} onClick={() => setTool('hand')} title={t(L('Hand tool (H): drag to pan', '抓手工具 (H)：拖动画布'))}><FigIcon name="hand"/><span className="v2-sr">{t(L('Hand tool', '抓手工具'))}</span></button>
@@ -381,7 +425,7 @@ export default function ReadyForAgentsWorld({item, reduced}) {
         <NextProject item={next} visual={next.slug === 'atelier' ? <AtelierTileArt/> : null} image={next.thumb}/>
         <ProductFooter/>
       </div>
-      {zoom ? <Suspense fallback={null}><LightboxViewer {...zoom} reduced={reduced} onClose={() => setZoom(null)}/></Suspense> : null}
+      {zoom ? <Guard name="figure viewer"><Suspense fallback={null}><LightboxViewer {...zoom} reduced={reduced} onClose={() => setZoom(null)}/></Suspense></Guard> : null}
     </article>
   </WorldCtx.Provider>;
 }

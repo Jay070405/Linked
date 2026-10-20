@@ -18,10 +18,11 @@ const LEVELS = [
 ];
 const TOKEN_NAMES = [['primary', L('Primary', '主色')], ['text', L('Text', '文字')], ['background', L('Background', '背景')], ['border', L('Border', '描边')]];
 const SCREEN_ZH = {'Sign-in': '登录', Pricing: '定价', Settings: '设置', 'Product grid': '商品列表', Dashboard: '仪表盘', Profile: '个人主页'};
-// the drawing in viewBox units; phones get a narrower one so its text stays readable at 360 px
+// the drawing in viewBox units; phones get a narrower one so its text stays readable at 360 px. Called G (geometry)
+// in the component: L is the i18n helper, and a local L shadowing it threw on every render of this chart.
 const WIDE = {W: 760, H: 372, TOP: 48, BOTTOM: 300, COL: 160, X0: 120, spread: 9.5, r: 5.5};
 const NARROW = {W: 400, H: 386, TOP: 48, BOTTOM: 296, COL: 82, X0: 70, spread: 8, r: 4.6};
-const yOf = (L, v) => L.BOTTOM - (L.BOTTOM - L.TOP) * v / 100;
+const yOf = (G, v) => G.BOTTOM - (G.BOTTOM - G.TOP) * v / 100;
 const median = v => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 /** "Followed: primary, border. Missed: text, background." for the dot's label. */
 const followedText = (d, t, zh) => {
@@ -42,8 +43,8 @@ export default function AblationChart({reduced = false}) {
   const [instantTip, setInstantTip] = useState(false);
   const mode = useInputMode();
   const compact = useMedia(PHONE);
-  const L = compact ? NARROW : WIDE, {W, H, TOP, BOTTOM, COL, X0} = L;
-  const y = v => yOf(L, v);
+  const G = compact ? NARROW : WIDE, {W, H, TOP, BOTTOM, COL, X0} = G;
+  const y = v => yOf(G, v);
   const colX = gi => X0 + COL * .32 + gi * COL;
 
   // the dots in drawing order, positioned as the static chart was (values rounded to whole percent, ties side by side)
@@ -52,9 +53,9 @@ export default function AblationChart({reduced = false}) {
     return runs.map(r => {
       const v = Math.round(r.share * 100), k = (counts[v] = (counts[v] || 0) + 1) - 1;
       const spread = runs.filter(o => Math.round(o.share * 100) === v).length;
-      return {...r, v, g, cx: L.X0 + L.COL * .32 + gi * L.COL + (k - (spread - 1) / 2) * L.spread, cy: yOf(L, v)};
+      return {...r, v, g, cx: G.X0 + G.COL * .32 + gi * G.COL + (k - (spread - 1) / 2) * G.spread, cy: yOf(G, v)};
     });
-  }), [L]);
+  }), [G]);
   const groups = LEVELS.map((g, gi) => ({...g, cx: colX(gi), m: median(dots.filter(d => d.level === g.id).map(d => d.v))}));
   const visible = d => level === 'all' || d.level === level;
   const shown = dots.map((d, i) => i).filter(i => visible(dots[i]));
@@ -65,7 +66,7 @@ export default function AblationChart({reduced = false}) {
     const node = root.current, plot = node?.querySelector('.ab-plot svg');
     if (!plot || reduced) return undefined;
     const dotsEl = node.querySelectorAll('.ab-dot');
-    gsap.set(dotsEl, {attr: {cy: L.BOTTOM}, opacity: 0});
+    gsap.set(dotsEl, {attr: {cy: G.BOTTOM}, opacity: 0});
     let tween = null;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
@@ -74,7 +75,7 @@ export default function AblationChart({reduced = false}) {
     }, {threshold: .35});
     io.observe(plot);
     return () => { io.disconnect(); tween?.kill(); gsap.set(dotsEl, {attr: {cy: (i, el) => el.dataset.cy}, clearProps: 'opacity'}); };
-  }, [reduced, L]);
+  }, [reduced, G]);
 
   const show = (i, viaKeys) => {
     // the first tooltip eases in; moving between dots is instant, as is anything from the keyboard
@@ -144,7 +145,7 @@ export default function AblationChart({reduced = false}) {
             onClick={e => { if (on) show(i, e.detail === 0); }}
             onFocus={() => on && show(i, mode.keyed.current)} onKeyDown={e => move(e, i)}>
             <circle className="ab-target" cx={d.cx} cy={d.cy} r={compact ? 9 : 12}/>
-            <circle className="ab-dot" cx={d.cx} cy={d.cy} data-cy={d.cy} r={L.r}/>
+            <circle className="ab-dot" cx={d.cx} cy={d.cy} data-cy={d.cy} r={G.r}/>
           </g>;
         })}
       </svg>

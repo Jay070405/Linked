@@ -83,7 +83,8 @@
 
 /* ---------- canvas mode: one sticky viewport, a world under a camera ---------- */
 .rfaw.is-canvas .rfaw-track{position:relative}
-.rfaw.is-canvas .rfaw-viewport{position:sticky;top:0;height:100vh;height:100dvh;overflow:clip;background:var(--f-canvas);touch-action:pan-y;user-select:none;-webkit-user-select:none}
+/* touch: a vertical swipe pages the story (camera.js), a sideways drag pans, two fingers pinch; the browser scrolls nothing */
+.rfaw.is-canvas .rfaw-viewport{position:sticky;top:0;height:100vh;height:100dvh;overflow:clip;background:var(--f-canvas);touch-action:none;user-select:none;-webkit-user-select:none}
 .rfaw.is-canvas .rfaw-viewport :is(.rfaw-frame-body){user-select:text;-webkit-user-select:text}
 .rfaw-dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at 1px 1px,var(--f-dot) 1px,transparent 1.3px);background-size:24px 24px}
 .rfaw.is-canvas .rfaw-world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
@@ -115,6 +116,9 @@
 .rfaw-frame-body{position:relative;display:grid;gap:32px;padding:56px}
 .rfaw-frame.is-flow .rfaw-frame-body{padding:40px;gap:16px}
 .rfaw-frame.is-live .rfaw-frame-body{padding:40px 40px 44px;gap:20px}
+/* a frame whose content failed to render (Guard in ReadyForAgentsWorld.jsx), and the page's last resort */
+.rfaw-fallback{display:grid;justify-items:start;gap:12px;padding:20px;border-radius:9px;box-shadow:inset 0 0 0 1px var(--f-border);background:var(--f-bg2)}
+.rfaw-failed{display:grid;justify-items:start;align-content:start;gap:16px;min-height:100vh;padding:140px clamp(16px,6vw,120px) 64px}
 
 /* ---------- stack and plain: the same frames in one column ---------- */
 .rfaw:not(.is-canvas) .rfaw-viewport{position:relative;padding:28px clamp(12px,3vw,40px) 0}

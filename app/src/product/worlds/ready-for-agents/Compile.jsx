@@ -49,7 +49,9 @@ const FILES = {
   ],
 };
 
-// The flights, in order, each with its window on the 0..1 progress. Structure first, then the four colors.
+// The flights, in order, each with its window on the 0..1 progress. Structure first, then the four colors. On the canvas
+// the camera rests between the acts (the frame's stops in data.js: .02, .36, .665, .985): one step lands the structure,
+// the next the two made-up names, the last the two guessed ones, and no chip is in the air at a stop.
 const STEPS = [
   {layer: 'f19', slot: 'h0', label: 'Frame 19', at: [.03, .17]},
   {layer: 'text', slot: 'h1', label: 'Text', at: [.09, .23]},
@@ -57,8 +59,8 @@ const STEPS = [
   {layer: 'f50', slot: 'h3', label: 'Frame 50', at: [.21, .35]},
   {layer: 'root', slot: 'c0', color: '#f6f7f9', variable: 'color/background', bound: '--color-background', raw: '--color-bg', fate: 'invented', at: [.37, .53]},
   {layer: 'text', slot: 'c1', color: '#101828', variable: 'color/text-primary', bound: '--color-text-primary', raw: '--color-text', fate: 'invented', at: [.49, .65]},
-  {layer: 'f50', slot: 'c2', color: '#4f46e5', variable: 'color/primary', bound: '--color-primary', raw: '--color-primary', fate: 'guessed', at: [.61, .77]},
-  {layer: 'f32', slot: 'c3', color: '#e4e7ec', variable: 'color/border', bound: '--color-border', raw: '--color-border', fate: 'guessed', at: [.73, .89]},
+  {layer: 'f50', slot: 'c2', color: '#4f46e5', variable: 'color/primary', bound: '--color-primary', raw: '--color-primary', fate: 'guessed', at: [.68, .84]},
+  {layer: 'f32', slot: 'c3', color: '#e4e7ec', variable: 'color/border', bound: '--color-border', raw: '--color-border', fate: 'guessed', at: [.80, .96]},
 ];
 const ALL = new Set(STEPS.map(s => s.slot));
 const hexOf = c => c.slice(1).toUpperCase();

@@ -10,12 +10,13 @@ import {L} from '../../i18n';
 export const A = '/assets/product/ready-for-agents/';
 
 /** The canvas: one Figma section per chapter, its frames left to right. `name` is the frame's name on the canvas and
-    in the Layers list. */
+    in the Layers list. `hold` keeps the camera on a frame for that many screens of story; `stops` are where it rests
+    there, as shares of that stretch (camera.js pages one stop per gesture). */
 export const SECTIONS = [
   {id: 'case', name: L('Ready for agents', 'Ready for agents'), frames: [{id: 'cover', name: L('Cover', '封面')}]},
   {id: 'research', name: L('Research', '研究'), frames: [
     {id: 'question', name: L('The question', '问题')},
-    {id: 'compile', name: L('What the agent reads', 'agent 读到了什么'), wide: true, hold: 1.5},
+    {id: 'compile', name: L('What the agent reads', 'agent 读到了什么'), wide: true, hold: 1.5, stops: [.02, .36, .665, .985]},
     {id: 'finding', name: L('Try the finding', '先试试结论')},
     {id: 'method', name: L('Six screens, four versions', '六个界面，四个版本')},
     {id: 'structure', name: L('Same picture, different structure', '画面相同，结构不同')},
