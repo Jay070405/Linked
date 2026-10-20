@@ -3,6 +3,7 @@ import {PHONE, useMedia} from '../../v2/motion';
 import {L100_KIT, Phone, ProtoScreen} from '../../v2/Device';
 import {ArrowRight, ArrowUpRight, Reset} from '../../v2/icons';
 import {L, UI, useCaseLang} from '../../i18n';
+import {WatchCard} from '../../v2/Walkthrough';
 
 /* The prototype at full size with a short task list (v2/LivePrototype.jsx, re-skinned): a task opens the live
    prototype on the screen where it starts. Phones get a screenshot and links that open it full screen. */
@@ -31,6 +32,7 @@ export default function LiveTry({tasks, start = 'c-arrive', reduced = false, not
           {t(phone ? L('Open the prototype full screen', '全屏打开原型') : L('Open it in a new tab', '在新标签页打开'))}<ArrowUpRight/><span className="w3-sr">{t(UI.opensInNewTab)}</span></a>
       </div>
       {note ? <p className="w3-small">{note}</p> : null}
+      <WatchCard className="w3-watch-card"/>
     </div>
     <div className="w3-live-device">
       <Phone label={t(L('Last 100 Feet prototype', 'Last 100 Feet 原型'))}>

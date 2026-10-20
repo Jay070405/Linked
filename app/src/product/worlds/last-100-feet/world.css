@@ -559,3 +559,16 @@ body:has(.w3[data-theme=dark]) .v16-navigation[data-tone=light] .v16-language bu
 .w3:lang(zh-CN) .w3-h2{max-width:16em;line-height:1.18}
 .w3:lang(zh-CN) .w3-outcome{max-width:26em;line-height:1.6}
 .w3:lang(zh-CN) .w3-lede{max-width:30em;line-height:1.6}
+
+/* ---------- the walkthrough (v2/Walkthrough): the player is a panel like the photo viewer, by day or at dusk ---------- */
+.w3{--wt-font:var(--sans);--wt-head-font:var(--sans);--wt-title-weight:750;--wt-panel:var(--chip-solid);--wt-ink:var(--paper);--wt-dim:var(--dim);--wt-line:var(--line-2);
+  --wt-scrim:#191919a6;--wt-seg:var(--chip-2);--wt-hover:var(--line);--wt-sel:var(--paper);--wt-on-sel:var(--on-paper);--wt-radius:20px;--wt-ctl-radius:21px;--wt-video-radius:12px;
+  --wt-shadow:0 0 0 1px var(--line-2),0 40px 100px -30px var(--shadow);--wt-focus:var(--lamp);--wt-card-bg:var(--chip-solid);--wt-card-radius:16px;--wt-shot-radius:9px}
+.w3[data-theme=dark]{--wt-scrim:#05070dcc}
+.w3 .wt .wt-title{letter-spacing:-.015em}
+.w3 .wt .wt-close{width:auto;margin:0;padding:0 18px;border-radius:21px;background:var(--paper);color:var(--on-paper);font:650 15px/1 var(--sans)}
+.w3 .wt .wt-close:hover{background:var(--paper);opacity:.9}
+.w3 .wt .wt-close svg{display:none}
+.w3 .wt .wt-close-label{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
+.w3 .w3-watch{min-height:48px;padding:0 20px 0 16px;background:var(--chip)}
+.w3 .w3-watch-card{justify-self:start;margin-top:4px}

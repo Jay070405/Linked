@@ -15,6 +15,7 @@ import GateLock from './GateLock';
 import {Beat, Decision, Deferred, PhoneShot, PhotoCard, PhotoViewer, Step} from './parts';
 import {AI, BEATS, CHANGES, DECISIONS, LEG_CARDS, NUMBERS, ROUNDS, STOPS, TASKS} from './content';
 import {NOTE_WORDS, TOTAL_FEET, bag, useBag, warmthWord} from './walk';
+import {WalkthroughProvider, WatchButton} from '../../v2/Walkthrough';
 import './world.css';
 
 /* D3, Last 100 Feet: "The delivery run" (site-spec/WORLDS.md, D3). The page is the complex at dusk, seen from above,
@@ -150,6 +151,7 @@ export default function LastHundredFeetWorld({item, reduced}) {
   };
 
   return <ThemeContext.Provider value={theme}><article ref={root} id="w3-top" className={`w3${plain ? ' is-plain' : ''}${reduced ? ' is-reduced' : ''}${fading ? ' is-theming' : ''}`} lang={htmlLang} data-theme={theme} data-nav-tone={theme === 'dark' ? 'dark' : 'light'} tabIndex={-1}>
+    <WalkthroughProvider slug={item.slug} title="Last 100 Feet" reduced={reduced}>
     <ThemeToggle theme={theme} onToggle={toggleTheme}/>
     <a className="w3-skipwalk" href="#w3-curb" onClick={togglePlain}>{t(plain ? L('Take the walk instead', '还是跟着路线走') : L('Skip the walk: read the case plainly', '跳过这段路，直接读简洁版'))}</a>
     <PhotoViewer>
@@ -167,6 +169,7 @@ export default function LastHundredFeetWorld({item, reduced}) {
             <p className="w3-outcome">{t(OUTCOME)}</p>
             <div className="w3-hero-actions">
               <a className="w3-cta" href="#w3-curb" onClick={e => scrollToId('w3-curb', e)}><span>{t(plain ? L('Start reading', '开始阅读') : L('Start the walk', '出发'))}</span><ArrowDown width={18} height={18}/></a>
+              <WatchButton className="w3-pill w3-watch"/>
               <a className="w3-textlink" href="#w3-try" onClick={e => jump('w3-try', e, true)}>{t(L('Try the prototype', '试用原型'))}</a>
             </div>
             <ul className="w3-chips" aria-label={t(L('About this project', '项目概况'))}>{CHIPS.map(c => <li key={c.en}>{t(c)}</li>)}</ul>
@@ -365,5 +368,6 @@ export default function LastHundredFeetWorld({item, reduced}) {
       </Go>
     </nav>
     <div className="w3-foot"><ProductFooter/></div>
+    </WalkthroughProvider>
   </article></ThemeContext.Provider>;
 }

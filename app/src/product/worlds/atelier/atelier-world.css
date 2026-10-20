@@ -781,3 +781,21 @@ body:has(.atw-world[data-theme=dark]) .v16-navigation:not(.is-menu-open) .v16-la
 /* a painting's Chinese gloss, under its English title on a label */
 .atw-label-zh{display:block;margin-top:2px;font:400 13px/1.35 var(--sans);letter-spacing:0;color:var(--card-dim)}
 .atw-pc-title .atw-label-zh{font-size:14px}
+
+/* ---------- the walkthrough (v2/Walkthrough): the player hangs in this room's light, the card is a wall label ---------- */
+.pp-page.atw-world{
+  --wt-font:var(--sans);--wt-head-font:var(--serif);--wt-title-weight:450;--wt-panel:var(--wall-up);--wt-ink:var(--bone);--wt-dim:var(--dust);--wt-line:var(--hair-2);
+  --wt-scrim:rgb(28 27 25 / .6);--wt-seg:transparent;--wt-seg-line:var(--hair-2);--wt-seg-line-w:1px;--wt-hover:var(--hair);--wt-sel:var(--bone);--wt-on-sel:var(--on-bone);
+  --wt-radius:6px;--wt-ctl-radius:999px;--wt-video-radius:2px;--wt-shadow:0 0 0 1px var(--hair),var(--shadow-big);--wt-focus:var(--focus);
+}
+.pp-page.atw-world[data-theme=dark]{--wt-scrim:rgb(12 9 7 / .78)}
+.atw-world .atw-watch{padding:0 20px 0 16px;font:500 15px/1 var(--sans);color:var(--bone)}
+.atw-hero-side{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.atw-world .atw-hero-side .atw-watch{min-height:44px;padding:0 18px 0 14px;font-size:14.5px;background:var(--chrome)}
+.pp-page.atw-world .atw-watch-card{align-self:flex-start;--wt-ink:var(--card-ink);--wt-dim:var(--card-dim);--wt-card-bg:var(--card);--wt-card-radius:2px;--wt-shot-radius:1px;
+  box-shadow:var(--shadow-label);padding-right:22px}
+@media(hover:hover) and (pointer:fine){.pp-page.atw-world .atw-watch-card:hover{box-shadow:0 0 0 1px var(--card-ink),var(--shadow-label)}}
+.atw-plain-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:20px}
+.atw-world .atw-plain-watch{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px 0 14px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--hair-2);
+  font:550 15px/1.2 var(--sans);color:var(--bone);text-align:left;transition:box-shadow 160ms ease}
+.atw-world .atw-plain-watch:hover{box-shadow:inset 0 0 0 1px var(--bone)}

@@ -6,6 +6,7 @@ import {L, UI, useCaseLang} from '../../i18n';
 import {protoUrl, shotSrc} from './kit/Device';
 import {CHANGES, DECISIONS, HERO, inches, named, NUMBERS, PROBLEM, px, REFLECTION, REVIEW_NOTE, ROUNDS, STEPS, TASKS, TESTING, wallSrc, WORKS} from './data';
 import {earnings, largestSharp, money, papers, printCheck, sizes} from './model';
+import {WatchButton} from '../../v2/Walkthrough';
 
 /* "Skip the experience": the whole case as a plain page, in English or Chinese. Same words and numbers as the gallery,
    no pinning, no scroll-driven scenes, no lights; the interactive checks become the tables they compute. */
@@ -33,7 +34,10 @@ export default function Plain({item, next, onBack}) {
       <h1 ref={title} id="atw-plain-title" tabIndex={-1} lang="en">{HERO.title}</h1>
       <p className="atw-plain-lead">{t(HERO.outcome)}</p>
       <ul className="atw-plain-chips" aria-label={t(L('Project facts', '项目信息'))}>{HERO.chips.map(c => <li key={c.en}>{t(c)}</li>)}</ul>
-      <p><a href={protoUrl('onboarding')} target="_blank" rel="noopener">{t(L('Open the prototype', '打开原型'))}<span className="atw-sr">{t(UI.opensInNewTab)}</span></a></p>
+      <p className="atw-plain-actions">
+        <WatchButton className="atw-plain-watch"/>
+        <a href={protoUrl('onboarding')} target="_blank" rel="noopener">{t(L('Open the prototype', '打开原型'))}<span className="atw-sr">{t(UI.opensInNewTab)}</span></a>
+      </p>
     </header>
 
     <section aria-labelledby="pl-numbers">
@@ -119,6 +123,7 @@ export default function Plain({item, next, onBack}) {
       <h2 id="pl-try">{t(L('Try it yourself', '自己试试'))}</h2>
       <p>{t(L('The prototype runs in your browser only: no account, no payment, no shipping. Each task opens it in a new tab.', '原型只在你的浏览器里运行，不用账号，不付款，不发货。任务会在新标签页打开。'))}</p>
       <ol>{TASKS.map(k => <li key={k.id}><a href={protoUrl(k.screen, k.art)} target="_blank" rel="noopener">{t(k.title)}</a>{zh ? '。' : '. '}{t(k.hint)}</li>)}</ol>
+      <p><WatchButton className="atw-plain-watch" which="app">{t(UI.watchApp)}{zh ? `（${t(UI.oneAndHalfMin)}）` : ` (${t(UI.oneAndHalfMin)})`}</WatchButton></p>
     </section>
 
     <section aria-labelledby="pl-testing">

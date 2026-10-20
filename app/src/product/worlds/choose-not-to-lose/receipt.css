@@ -637,3 +637,34 @@
 .cnr-page.is-zh .cnr-stamp{letter-spacing:.12em}
 .cnr-page.is-zh .cnr-void{letter-spacing:.12em}
 @media(max-width:760px){.cnr-page.is-zh .cnr-y-rows li{grid-template-columns:7ch minmax(0,1fr) 12ch}}
+
+/* ---------- the walkthrough (v2/Walkthrough): the player is a paper slip, square, in Plex and the tape's mono; the paper
+   stays white on a dark desk, like the receipt ---------- */
+.pp-page.cnr-page{
+  --wt-font:var(--sans);--wt-head-font:var(--mono);--wt-title-weight:500;--wt-panel:var(--paper);--wt-ink:var(--ink);--wt-dim:var(--faded);--wt-line:var(--ink);
+  --wt-scrim:rgb(22 22 22 / .55);--wt-seg:transparent;--wt-seg-line:var(--ink);--wt-seg-line-w:1.5px;--wt-seg-pad:0px;--wt-hover:var(--layer);--wt-sel:var(--ink);--wt-on-sel:var(--paper);
+  --wt-radius:0px;--wt-ctl-radius:0px;--wt-video-radius:0px;--wt-shadow:var(--lift);--wt-focus:var(--focus);--wt-card-bg:var(--paper);--wt-card-radius:0px;--wt-shot-radius:0px;
+}
+.pp-page.cnr-page[data-theme=dark]{--wt-scrim:rgb(0 0 0 / .72)}
+.cnr-page .wt .wt-head{padding-bottom:12px;border-bottom:1.5px dashed var(--rule-c)}
+.cnr-page .wt .wt-title{letter-spacing:0}
+.cnr-page .wt .wt-kicker{font-family:var(--mono)}
+.cnr-page .wt .wt-switch{gap:0}
+.cnr-page .wt .wt-opt{font-family:var(--mono);font-weight:500}
+.cnr-page .wt .wt-opt+.wt-opt{box-shadow:inset 1.5px 0 0 var(--ink)}
+.cnr-page .wt .wt-close{width:auto;margin:0;padding:0 16px;box-shadow:inset 0 0 0 1.5px var(--ink);font:500 14px/1 var(--mono)}
+.cnr-page .wt .wt-close:hover{background:var(--layer)}
+.cnr-page .wt .wt-close svg{display:none}
+.cnr-page .wt .wt-close-label{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
+.cnr-page .wt .wt-alt{font-family:var(--mono);font-weight:500}
+.cnr-watch-line{display:flex;justify-content:center;margin:-8px 0 26px}
+.is-plain .cnr-watch-line{justify-content:flex-start}
+.cnr-page .cnr-watch{gap:10px;padding:0 20px 0 16px}
+/* on the desk, above the prototype: desk colors, so it reads on a light or a dark desk */
+.cnr-band.is-head.has-desk .cnr-side:has(.cnr-watch){padding-top:50px}
+.cnr-page .cnr-watch.is-desk{margin-bottom:20px;border-color:var(--desk-ink);background:transparent;color:var(--desk-ink)}
+@media(hover:hover) and (pointer:fine){.cnr-page .cnr-watch.is-desk:hover:not(:disabled){background:color-mix(in srgb,var(--desk-ink) 10%,transparent)}}
+.cnr-watch-slot{margin-top:22px}
+.pp-page.cnr-page .cnr-watch-card{box-shadow:inset 0 0 0 1.5px var(--ink);padding-right:22px}
+.pp-page.cnr-page .cnr-watch-card .wt-card-title{font:500 15px/1.3 var(--mono)}
+@media(hover:hover) and (pointer:fine){.pp-page.cnr-page .cnr-watch-card:hover{background:var(--layer);box-shadow:inset 0 0 0 1.5px var(--ink)}}

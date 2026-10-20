@@ -18,6 +18,7 @@ import {AgentSide, Crop, Directions, FlatResult, LiveEditor, Principles, ThemeMo
 import {AGENT_NOTE, CHANGES, FLOW, FRAMES, HABITS, indexOf, NUMBERS, ROUNDS, SECTIONS, TASKS} from './data';
 import {L, UI, useCaseLang} from '../../i18n';
 import {FigIcon} from './icons';
+import {WalkthroughProvider, WatchButton} from '../../v2/Walkthrough';
 import '../../v2/v2.css';
 import '../../v2/chrome.css';
 import './world.css';
@@ -286,6 +287,7 @@ function World({item, reduced, forcePlain = false}) {
 
   return <WorldCtx.Provider value={ctx}>
     <article ref={root} className={`rfaw is-${mode}${minimized ? ' is-minimized' : ''}${free ? ' is-free' : ''}${active > 0 ? ' is-past-cover' : ''}${zh ? ' is-zh' : ''}`} lang={htmlLang} data-theme={theme} data-nav-tone={theme === 'dark' ? 'dark' : 'light'}>
+      <WalkthroughProvider slug={item.slug} title="Ready for agents" reduced={reduced}>
       {forcePlain ? null : <a className="rfaw-skip" href="#rfa-cover" onClick={togglePlain}>
         <FigIcon name={plain ? 'frame' : 'page'}/>{plain ? t(roomy && !reduced ? L('Back to the canvas', '回到画布') : UI.backToFull) : t(UI.readPlain)}
       </a>}
@@ -426,6 +428,7 @@ function World({item, reduced, forcePlain = false}) {
         <ProductFooter/>
       </div>
       {zoom ? <Guard name="figure viewer"><Suspense fallback={null}><LightboxViewer {...zoom} reduced={reduced} onClose={() => setZoom(null)}/></Suspense></Guard> : null}
+      </WalkthroughProvider>
     </article>
   </WorldCtx.Provider>;
 }
@@ -449,6 +452,7 @@ function Cover({go, phone}) {
       </ul>
       <div className="rfaw-actions">
         {phone ? null : <a className="rfaw-btn is-primary" href="#rfa-try" onClick={e => go('try', e)}><FigIcon name="play"/>{t(L('Try the prototype', '试用原型'))}</a>}
+        <WatchButton className={`rfaw-btn${phone ? ' is-primary' : ''}`} icon={<FigIcon name="video"/>}/>
         <a className="rfaw-btn" href="#rfa-question" onClick={e => go('question', e)}><FigIcon name="arrow-down"/>{t(L('Start with the research', '从研究开始看'))}</a>
       </div>
     </div>

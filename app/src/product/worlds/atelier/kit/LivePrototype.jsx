@@ -8,7 +8,7 @@ import {UI, useCaseLang} from '../../../i18n';
     the prototype's saved drafts and orders and starts it from onboarding. Phones get a screenshot and links that
     open the prototype full screen instead. */
 export default function LivePrototype({id, heading, lede, phoneLede, tasks, start = {screen: 'onboarding'}, reduced = false, note, kit = ATELIER_KIT, frame = 'phone',
-  name = 'Atelier prototype', resetState = resetProtoState, phoneLink = true, phoneNote}) {
+  name = 'Atelier prototype', resetState = resetProtoState, phoneLink = true, phoneNote, after = null}) {
   const {t, zh} = useCaseLang();
   const phone = useMedia(PHONE);
   const [state, setState] = useState({task: null, screen: start.screen, art: start.art, reload: 0});
@@ -39,6 +39,7 @@ export default function LivePrototype({id, heading, lede, phoneLede, tasks, star
       </div>
       {phone && phoneNote ? <p className="atw-live-note" data-reveal="">{phoneNote}</p> : null}
       {note && !(phone && phoneNote) ? <p className="atw-live-note" data-reveal="">{note}</p> : null}
+      {after}
     </div>
     <div className="atw-live-device" data-reveal="">
       {(() => { const Frame = Phone; return <Frame label={name}>

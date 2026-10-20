@@ -83,6 +83,19 @@ export const UI = {
   close: L('Close', '关闭'),
   previousFigure: L('Previous figure', '上一张'),
   nextFigure: L('Next figure', '下一张'),
+  // the walkthrough videos (v2/Walkthrough)
+  watch: L('Watch the walkthrough', '看演示视频'),
+  walkthrough: L('Walkthrough', '演示视频'),
+  whichVideo: L('Which video', '看哪一段'),
+  caseVideo: L('The case', '案例讲解'),
+  appVideo: L('The app', '原型演示'),
+  oneMin: L('1 min', '1 分钟'),
+  oneAndHalfMin: L('1.5 min', '1.5 分钟'),
+  watchApp: L('Watch the app in use', '看看原型怎么用'),
+  appVideoMeta: L('Video, 1.5 min', '视频，1.5 分钟'),
+  captionsBurnedIn: L('Captions are burned into the video.', '字幕已经做进视频画面里了。'),
+  videoMissing: L('This video isn’t up yet.', '这段视频还没放上来。'),
+  watchAppInstead: L('Watch the app instead', '先看原型演示'),
 };
 
 /** What each evidence label means (the tooltip in Chinese; the label itself stays English). */

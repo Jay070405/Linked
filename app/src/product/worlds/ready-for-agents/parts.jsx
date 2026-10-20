@@ -8,6 +8,7 @@ import {L, UI, useCaseLang} from '../../i18n';
 import {A, AGENT_NOTE, DIRECTIONS, FLAT, PRINCIPLES} from './data';
 import {useArrive, useWorld} from './context';
 import {FigIcon} from './icons';
+import {WatchCard} from '../../v2/Walkthrough';
 
 /* The frames' own modules, re-made for the canvas. Where the v4 page waited for a ScrollTrigger, these wait for the
    camera to come to rest on their frame (useArrive); in stack and plain modes, for the frame to be on screen. */
@@ -212,6 +213,7 @@ export function LiveEditor({tasks, reduced, head}) {
         <p className="rfaw-live-hint" aria-live="polite">{live
           ? (current ? t(current.hint) : t(L('Pick a task, or click around: Check, Apply and Undo all work. Everything runs in your browser.', '选一个任务，或者随便点点：Check、Apply 和 Undo 都能用。全部在你的浏览器里运行。')))
           : t(L('The prototype is a desktop editor. Open this page on a screen at least 1024 px wide to try it.', '这个原型是桌面编辑器，请在至少 1024 px 宽的屏幕上打开本页试用。'))}</p>
+        <WatchCard className="rfaw-watch-card"/>
       </div>
     </div>
     <div ref={device} className={`rfaw-live-device${on || !live ? ' is-on' : ''}`} data-jay=".5,.02" onPointerLeave={e => { if (e.pointerType === 'mouse') setOn(false); }}>

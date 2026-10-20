@@ -19,6 +19,7 @@ import TearOff from './TearOff';
 import {ThemeToggle, useCaseTheme} from './Theme';
 import {TryTasks, TryWindow, useTry} from './TryLive';
 import {Window} from './Window';
+import {WalkthroughProvider, WatchButton, WatchCard} from '../../v2/Walkthrough';
 import {CHANGES, CHAPTERS, DECISIONS, FIELDS, HYPOTHESES, NUMBERS, PAIRS, REFLECTION, RESULTS, STEPS, TASKS, TEST_PLAN} from './content';
 import './receipt.css';
 
@@ -181,6 +182,7 @@ export default function ChooseNotToLoseWorld({item: rawItem, reduced}) {
   };
 
   return <article ref={root} className={`pp-page cnr-page${plain ? ' is-plain' : ''}${flat ? ' is-flat' : ''}${still ? ' is-still' : ''}${fading ? ' is-fading' : ''}${zh ? ' is-zh' : ''}`} data-theme={theme} lang={htmlLang} data-nav-tone="light">
+    <WalkthroughProvider slug={rawItem.slug} title="Choose Not to Lose" reduced={reduced}>
     <div className="cnr-top">
       <p className="cnr-skip">
         {plain
@@ -202,6 +204,7 @@ export default function ChooseNotToLoseWorld({item: rawItem, reduced}) {
             <p className="cnr-kind" data-print=""><span>{item.kind}</span><span className="cnr-flag"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.75"/><path d="M8 7v4.5M8 4.6v.1"/></svg>{t(T.flag)}</span></p>
             <h1 id="cnr-title" className="cnr-title" tabIndex={-1} data-print="" lang="en">Choose Not to&nbsp;Lose</h1>
             <p className="cnr-outcome" data-print="">{t(T.outcome)}</p>
+            {flat ? <p className="cnr-watch-line" data-print=""><WatchButton className="cnr-key cnr-watch"/></p> : null}
             <Rule/>
             <dl className="cnr-fields">{FIELDS.map(([k, v]) => <div key={k.en} data-print=""><dt>{t(k)}</dt><dd>{t(v)}</dd></div>)}</dl>
             <Rule/>
@@ -210,7 +213,7 @@ export default function ChooseNotToLoseWorld({item: rawItem, reduced}) {
               <a className="cnr-key" href="#cn-problem-section" onClick={jumpTo('#cn-problem-section')}>{t(T.startProblem)}</a>
             </p>
           </div>
-          <div className="cnr-side"><HeroShot flat={flat}/></div>
+          <div className="cnr-side">{flat ? null : <WatchButton className="cnr-key cnr-watch is-desk"/>}<HeroShot flat={flat}/></div>
         </section>
 
         {/* ---------- the case in numbers: subtotals that roll in ---------- */}
@@ -308,6 +311,7 @@ export default function ChooseNotToLoseWorld({item: rawItem, reduced}) {
         <Band id="try" label="try-title" head={<Perf n={8}/>}>
           <Head id="try-title" title={T.tryTitle} lede={flat ? T.tryLedeFlat : T.tryLede}/>
           <TryTasks tasks={TASKS} t={tryIt} linkOut={flat}/>
+          <div className="cnr-watch-slot" data-print=""><WatchCard className="cnr-watch-card"/></div>
           {flat ? <div className="cnr-try-shot"><TryWindow t={tryIt} still shot/></div> : null}
           <p className="cnr-cap" data-print="">{t(T.tryNote)}</p>
         </Band>
@@ -352,5 +356,6 @@ export default function ChooseNotToLoseWorld({item: rawItem, reduced}) {
       </nav>
       <ProductFooter/>
     </div>
+    </WalkthroughProvider>
   </article>;
 }

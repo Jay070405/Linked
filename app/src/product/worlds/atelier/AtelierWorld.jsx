@@ -13,6 +13,7 @@ import {Deferred} from './kit/Try';
 import {protoUrl, shotSrc} from './kit/Device';
 import {ArrowDown, ArrowRight, ArrowUpRight} from './kit/icons';
 import {PHONE, useMedia} from './kit/motion';
+import {WalkthroughProvider, WatchButton, WatchCard} from '../../v2/Walkthrough';
 import Gallery from './Gallery';
 import ThemeToggle, {useCaseTheme} from './ThemeToggle';
 import {CHANGES, DECISIONS, fullSrc, HERO, IN, PROBLEM, REFLECTION, REVIEW_NOTE, ROUNDS, STEPS, TASKS, TESTING, thumbSrc, wallSrc, workOf} from './data';
@@ -76,11 +77,13 @@ export default function AtelierWorld({item: base, reduced}) {
   };
 
   return <article ref={root} className={`pp-page atw-world${plain ? ' is-plain' : ''}`} lang={htmlLang} data-theme={theme} data-nav-tone={theme === 'dark' ? 'dark' : 'light'}>
-    <ThemeToggle theme={theme} onChange={setTheme} root={root} reduced={reduced}/>
-    {plain
-      ? <Suspense fallback={<div className="atw-hold"/>}><Plain item={item} next={next} onBack={() => swap(false)}/></Suspense>
-      : <World item={item} reduced={reduced} root={root} artId={artId} setArtId={choose} sizeId={sizeId} setSizeId={setSizeId} next={next} onPlain={() => swap(true)}/>}
-    <ProductFooter/>
+    <WalkthroughProvider slug={base.slug} title={HERO.title} reduced={reduced}>
+      <ThemeToggle theme={theme} onChange={setTheme} root={root} reduced={reduced}/>
+      {plain
+        ? <Suspense fallback={<div className="atw-hold"/>}><Plain item={item} next={next} onBack={() => swap(false)}/></Suspense>
+        : <World item={item} reduced={reduced} root={root} artId={artId} setArtId={choose} sizeId={sizeId} setSizeId={setSizeId} next={next} onPlain={() => swap(true)}/>}
+      <ProductFooter/>
+    </WalkthroughProvider>
   </article>;
 }
 
@@ -127,7 +130,8 @@ function World({item, reduced, root, artId, setArtId, sizeId, setSizeId, next, o
       heading={t(L('Try it yourself', '自己试试'))}
       lede={t(L('This is the same prototype, at full size. Pick a task; the phone opens on the right screen.', '还是这个原型，原尺寸。选一个任务，手机会直接打开对应的界面。'))}
       phoneLede={t(L('This is the same prototype. Each task opens it full screen, on the screen where the task starts.', '还是这个原型。每个任务都会全屏打开它，停在任务开始的界面。'))}
-      note={t(L('It runs in your browser only: no account, no payment, no shipping. Drafts and test orders stay in this browser until you reset.', '它只在你的浏览器里运行：不用账号，不付款，不发货。草稿和测试订单会一直留在这个浏览器里，直到你点重置。'))}/>
+      note={t(L('It runs in your browser only: no account, no payment, no shipping. Drafts and test orders stay in this browser until you reset.', '它只在你的浏览器里运行：不用账号，不付款，不发货。草稿和测试订单会一直留在这个浏览器里，直到你点重置。'))}
+      after={<WatchCard className="atw-watch-card"/>}/>
     <Testing/>
     <Reflection/>
     <Next item={next}/>
@@ -172,11 +176,15 @@ function Hero({item, reduced, phone, onPlain, onTry}) {
           <div className="atw-mat is-hero" {...zoomable(alt, {src: fullSrc(w.id), w: w.originalWidth, h: w.originalHeight, lang})}>
             <img src={wallSrc(w.id)} width={1600} height={844} alt="" fetchPriority="high" decoding="async"/>
           </div>
-          <div className="atw-label is-hero">
-            <p className="atw-label-title"><span lang="en">{w.title}</span>{zh ? <span className="atw-label-zh">{w.zh}</span> : null}</p>
-            <p className="atw-label-by">Jay Lin</p>
-            <p className="atw-label-about">{zh ? `${top.w} × ${top.h} 英寸印品，这个文件能印清楚的最大尺寸` : `Print, ${top.w} × ${top.h} in, the largest this file prints sharp`}</p>
-            <p className="atw-label-price">$38</p>
+          <div className="atw-hero-side">
+            <div className="atw-label is-hero">
+              <p className="atw-label-title"><span lang="en">{w.title}</span>{zh ? <span className="atw-label-zh">{w.zh}</span> : null}</p>
+              <p className="atw-label-by">Jay Lin</p>
+              <p className="atw-label-about">{zh ? `${top.w} × ${top.h} 英寸印品，这个文件能印清楚的最大尺寸` : `Print, ${top.w} × ${top.h} in, the largest this file prints sharp`}</p>
+              <p className="atw-label-price">$38</p>
+            </div>
+            {/* beside the wall label, like a gallery's guide: in view on a phone too, where the actions are far below */}
+            <WatchButton className="atw-button atw-watch" data-in="3"/>
           </div>
         </div>
       </div>

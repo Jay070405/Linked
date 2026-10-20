@@ -611,3 +611,22 @@ body.product-shell:has(.rfaw[data-theme=dark]) .v16-navigation:not(.is-menu-open
 .rfaw.is-zh{--ui:'RFA Inter',Inter,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .rfaw.is-zh :is(.rfaw-h2,.rfaw-h3,.rfaw-insight-text,.rfaw-quote p,.rfaw .v2-h2,.rfaw .v2-takeaway>p){letter-spacing:0}
 .rfaw.is-zh :is(.rfaw-body,.rfaw-lede,.rfaw-outcome,.rfaw-list li,.rfaw-hyps li,.rfaw-principle-test,.rfaw-dir-idea){line-height:1.75}
+
+/* ---------- the walkthrough (v2/Walkthrough): the player is a UI3 modal (13 px corners, e400, a 5 px segmented control);
+   the card beside the live editor is a file card ---------- */
+.rfaw{--wt-font:var(--ui);--wt-head-font:var(--ui);--wt-title-weight:600;--wt-panel:var(--f-bg);--wt-ink:var(--f-text);--wt-dim:var(--f-text2);--wt-line:var(--f-border);
+  --wt-scrim:#00000066;--wt-seg:var(--f-bg2);--wt-hover:var(--f-bg2);--wt-sel:var(--f-raised);--wt-on-sel:var(--f-text);--wt-sel-shadow:var(--e100);
+  --wt-radius:13px;--wt-ctl-radius:5px;--wt-seg-pad:2px;--wt-video-radius:5px;--wt-shadow:var(--e400);--wt-focus:var(--f-brand-strong);
+  --wt-card-bg:var(--f-bg);--wt-card-radius:8px;--wt-shot-radius:4px}
+.rfaw[data-theme=dark]{--wt-scrim:#000000a6}
+.rfaw .wt .wt-title{font-size:16px;letter-spacing:-.011em}
+.rfaw .wt .wt-kicker{font-size:12px}
+.rfaw .wt .wt-close{width:36px;height:36px;margin:0 -6px 0 0}
+.rfaw .wt .wt-opt{min-height:36px;font-size:13px}
+.rfaw .wt .wt-opt:hover:not([aria-pressed=true]){background:transparent;color:var(--f-text)}
+.rfaw .wt .wt-opt:not([aria-pressed=true]){color:var(--f-text2)}
+.rfaw .rfaw-watch-card.wt-card{justify-self:start;min-height:64px;margin-top:6px}
+.rfaw .rfaw-watch-card .wt-card-shot.wt-card-shot{width:96px}
+.rfaw .rfaw-watch-card .wt-card-title{font:550 13px/1.35 var(--ui)}
+.rfaw .rfaw-watch-card .wt-card-meta{font:450 12px/1.35 var(--ui)}
+@media(max-width:760px){.rfaw .wt .wt-opt{min-height:44px;font-size:14px}.rfaw .wt .wt-close{width:44px;height:44px}}
