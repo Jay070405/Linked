@@ -1,5 +1,7 @@
 import {ADDRESS, WAYPOINTS} from '../../v2/data/l100-route';
-import {useBag, warmthWord} from './walk';
+import {L, useCaseLang} from '../../i18n';
+import {WAYPOINT_NAMES, stepOf} from './content';
+import {NOTE_WORDS, useBag, warmthWord} from './walk';
 
 /* The courier's screen, top right: the order chip the prototype keeps on every card (Dana, unit 214, order 1 of 2
    in a stacked delivery), the hot bag, and the five stops as the route's own tokens. The tokens jump to their stop.
@@ -23,24 +25,26 @@ export const BagIcon = () => <svg viewBox="0 0 20 20" width="18" height="18" ari
 
 export default function Hud({reached, onJump, plainLink}) {
   const b = useBag();
-  const word = b.delivered ? `Delivered ${warmthWord(b.warmth).toLowerCase()}` : warmthWord(b.warmth);
+  const {t, zh} = useCaseLang();
+  const w = t(warmthWord(b.warmth)), note = b.note ? t(NOTE_WORDS[b.note] || b.note) : null;
+  const word = b.delivered ? (zh ? `已送达，${w}` : `Delivered ${w.toLowerCase()}`) : w;
   const temp = Math.round(b.warmth * 100);
-  return <aside className="w3-hud" aria-label="Your delivery" data-warmth={b.warmth >= .62 ? 'hot' : b.warmth >= .42 ? 'cooling' : 'cold'}>
+  return <aside className="w3-hud" aria-label={t(L('Your delivery', '你的配送'))} data-warmth={b.warmth >= .62 ? 'hot' : b.warmth >= .42 ? 'cooling' : 'cold'}>
     <div className="w3-hud-pill">
-    <p className="w3-order"><span className="w3-order-dot" aria-hidden="true"/><span className="w3-order-text">{ADDRESS.resident} · Apt {ADDRESS.unit} · 1 of 2</span></p>
+    <p className="w3-order"><span className="w3-order-dot" aria-hidden="true"/><span className="w3-order-text">{zh ? `${ADDRESS.resident} · ${ADDRESS.unit} 室 · 第 1/2 单` : `${ADDRESS.resident} · Apt ${ADDRESS.unit} · 1 of 2`}</span></p>
     <div className="w3-bag">
       <span className="w3-bag-icon"><BagIcon/></span>
       <span className="w3-bag-meter" aria-hidden="true"><span style={{transform: `scaleX(${b.warmth})`}}/></span>
-      <span className="w3-bag-word" aria-live="polite"><span className="w3-sr">Hot bag: </span>{word}</span>
-      <span className="w3-sr">{temp >= 85 ? '' : b.note ? ` (${b.note})` : ''}</span>
+      <span className="w3-bag-word" aria-live="polite"><span className="w3-sr">{t(L('Hot bag: ', '保温袋：'))}</span>{word}</span>
+      <span className="w3-sr">{temp >= 85 || !note ? '' : zh ? `（${note}）` : ` (${note})`}</span>
     </div>
     </div>
-    {b.note ? <p className="w3-bag-note" aria-hidden="true">{b.note}</p> : null}
-    <nav className="w3-rail" aria-label="Stops on the route">
+    {note ? <p className="w3-bag-note" aria-hidden="true">{note}</p> : null}
+    <nav className="w3-rail" aria-label={t(L('Stops on the route', '路线上的站点'))}>
       <ol>
         {WAYPOINTS.map((w, i) => <li key={w.key}>
           <button type="button" onClick={e => onJump(i, e)} aria-current={reached === i ? 'step' : undefined}
-            aria-label={`Step ${i + 1} of 5, ${w.name}`} data-state={i < reached ? 'done' : i === reached ? 'current' : 'upcoming'}>
+            aria-label={t(stepOf(i, WAYPOINT_NAMES[i]))} data-state={i < reached ? 'done' : i === reached ? 'current' : 'upcoming'}>
             <Glyph g={GLYPH[i]}/>
           </button>
         </li>)}

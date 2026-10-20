@@ -107,7 +107,7 @@ function Agave({x, y, r = 3.6, c}) {
   return <polygon points={pts.join(' ')} fill={c.agave}/>;
 }
 
-function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3", palette = "day"}) {
+function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3", palette = "day", zh = false}) {
   const R = REGION, C = PALETTES[palette];
   const id = n => `${ids}-${palette}-${n}`;
   return <svg className={`w3-plan is-${palette}`} viewBox={`${R.x} ${R.y} ${R.w} ${R.h}`} x={x} y={y} width={width} height={height} aria-hidden="true" focusable="false">
@@ -221,7 +221,7 @@ function DuskPlanSvg({width, height, x, y, labels = true, ids = "w3", palette = 
     {labels ? <g className="w3-plan-text" fill={C.label} fontWeight="650">
       <text x={104} y={516} fontSize="11">Elm St</text>
       <text x={0} y={0} fontSize="11" transform="translate(-6 300) rotate(-90)">Cypress Ave</text>
-      <text x={86} y={124} fontSize="10">Garage</text>
+      <text x={86} y={124} fontSize="10">{zh ? '车库' : 'Garage'}</text>
       {BUILDINGS.map(b => <text key={b.id} x={b.id === '5' ? b.x + b.w * .62 : b.x + b.w / 2} y={b.y + b.h / 2} fontSize="15" fontWeight="750" textAnchor="middle" dominantBaseline="central" fill={C.number}>{b.id}</text>)}
     </g> : null}
   </svg>;

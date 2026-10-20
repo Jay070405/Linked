@@ -1,4 +1,5 @@
 import {createContext, useCallback, useEffect, useRef, useState} from 'react';
+import {L, UI, useCaseLang} from '../../i18n';
 
 /* The case pages' shared light/dark choice: light by default, remembered in localStorage under "jl-case-theme" (every
    case page reads and writes the same key). Switching crossfades colors for 200ms (the page carries .is-theming for
@@ -42,7 +43,8 @@ const Moon = () => <svg viewBox="0 0 20 20" width="18" height="18" fill="none" s
 /** A small pill with a sun and a moon; the lit one is the current theme. Screen readers hear "Light" or "Dark". */
 export function ThemeToggle({theme, onToggle}) {
   const dark = theme === 'dark';
-  return <button type="button" className="w3-theme" onClick={onToggle} aria-label={dark ? 'Dark' : 'Light'} title={dark ? 'Switch to light' : 'Switch to dark'}>
+  const {t} = useCaseLang();
+  return <button type="button" className="w3-theme" onClick={onToggle} aria-label={t(dark ? UI.dark : UI.light)} title={t(dark ? L('Switch to light', '切换到浅色') : L('Switch to dark', '切换到深色'))}>
     <span className="w3-theme-cell is-light"><Sun/></span>
     <span className="w3-theme-cell is-dark"><Moon/></span>
   </button>;

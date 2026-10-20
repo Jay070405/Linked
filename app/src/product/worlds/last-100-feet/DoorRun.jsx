@@ -5,10 +5,11 @@ import {GARAGE_GATE, GATE, STEPS, WAYPOINTS, feetBetween} from '../../v2/data/l1
 import {DuskPlan, REGION} from './DuskPlan';
 import {CourierMark, MarkGlow} from './Courier';
 import {useViewer} from './parts';
-import {photoLarge, photoSmall} from './content';
+import {STEP_ZH, photoLarge, photoSmall} from './content';
+import {L, useCaseLang} from '../../i18n';
 import {AT_WAYPOINT, ROUTE_D, ROUTE_LEN, TOTAL_FEET, bag, walkAt} from './walk';
 
-/* "Find the door", the before run. The complex at dusk with only what a delivery app gives a courier: the address
+/* "Find the door", the before run. The complex with only what a delivery app gives a courier: the address
    pin, which lands on the residents-only garage gate on Cypress Ave. Choose where you'd walk in and the courier
    goes there first: to the garage and back along the sidewalks if that's where you sent them (the hot bag cools
    in the HUD), straight to the Elm St gate if you found it. From the gate the resident's photo route takes over,
@@ -55,6 +56,7 @@ export default function DoorRun({reduced = false}) {
   const svg = useRef(null), mark = useRef(null), trail = useRef(null), route = useRef(null), tl = useRef(null);
   const view = useViewer();
   const phone = useMedia(PHONE);
+  const {t, zh} = useCaseLang();
   const instant = reduced || mode.keyed.current;
 
   const atGarage = pick && feetBetween(pick, GARAGE_GATE) < 45;
@@ -126,29 +128,30 @@ export default function DoorRun({reduced = false}) {
   };
   const reset = () => { tl.current?.kill(); setPick(null); setCross(null); setHover(null); setPhase('idle'); setReached(-1); setArrived(false); setRound(r => r + 1); };
 
+  const more = extra.toLocaleString('en-US');
   const verdict = !pick ? null
-    : !arrived ? (kind === 'garage' ? 'Your courier follows the pin around the block to Cypress Ave…' : 'Your courier walks to the spot you chose…')
-    : found ? `You found the walk-in gate on Elm St. The pin sits on the garage, ${pinToGate} ft away.`
-    : atGarage ? `That’s the garage gate: residents only, with a card reader. The walk-in gate is around the corner on Elm St, ${pinToGate} ft from the pin. Your courier walked about ${extra.toLocaleString('en-US')} ft more to find out.`
-    : `The walk-in gate is on Elm St, about ${off} ft from where you chose.`;
+    : !arrived ? (kind === 'garage' ? L('Your courier follows the pin around the block to Cypress Ave…', '骑手跟着定位点，绕过街区走向 Cypress Ave……') : L('Your courier walks to the spot you chose…', '骑手正走向你选的地方……'))
+    : found ? L(`You found the walk-in gate on Elm St. The pin sits on the garage, ${pinToGate} ft away.`, `你找到了 Elm St 上的步行入口。定位点落在车库，离这里 ${pinToGate} 英尺。`)
+    : atGarage ? L(`That’s the garage gate: residents only, with a card reader. The walk-in gate is around the corner on Elm St, ${pinToGate} ft from the pin. Your courier walked about ${more} ft more to find out.`, `那是车库门：仅限住户，要刷卡才能进。步行入口在拐角另一边的 Elm St 上，离定位点 ${pinToGate} 英尺。为了弄清这一点，骑手多走了大约 ${more} 英尺。`)
+    : L(`The walk-in gate is on Elm St, about ${off} ft from where you chose.`, `步行入口在 Elm St 上，离你选的地方大约 ${off} 英尺。`);
   const start = walkAt(0);
 
   return <div className={`w3-fd${pick ? ' is-picked' : ''}${instant ? ' is-instant' : ''}`} data-phase={phase} {...mode.bind}>
     <div className="w3-fd-top">
-      <Ask>Choose where you’d walk in.</Ask>
-      {pick ? <button type="button" className="w3-pill" onClick={reset}>Try again</button> : null}
+      <Ask>{t(L('Choose where you’d walk in.', '选出你会从哪里进去。'))}</Ask>
+      {pick ? <button type="button" className="w3-pill" onClick={reset}>{t(L('Try again', '再试一次'))}</button> : null}
     </div>
-    <p className="w3-fd-status" aria-live="polite">{verdict || 'Map apps route to the address. This is where its pin lands.'}</p>
-    <Takeaway show={phase === 'done'} instant={instant} className="w3-fd-take">With a pin you guessed. With the route you’d have walked straight in.</Takeaway>
-    <p className="w3-small w3-fd-note">A fictional complex drawn by the prototype, about a foot per plan unit. The photos are AI-generated illustrative images, not a real location. Watch the hot bag in the corner.</p>
+    <p className="w3-fd-status" aria-live="polite">{t(verdict || L('Map apps route to the address. This is where its pin lands.', '地图 app 只导航到地址，定位点就落在这里。'))}</p>
+    <Takeaway show={phase === 'done'} instant={instant} className="w3-fd-take">{t(L('With a pin you guessed. With the route you’d have walked straight in.', '只有定位点，你只能靠猜；有了路线，你会直接走进去。'))}</Takeaway>
+    <p className="w3-small w3-fd-note">{t(L('A fictional complex drawn by the prototype, about a foot per plan unit. The photos are AI-generated illustrative images, not a real location. Watch the hot bag in the corner.', '这是原型绘制的虚构小区，平面图上一个单位约等于一英尺。照片是 AI 生成的示意图，不是真实地点。留意角落里的保温袋。'))}</p>
     <div className="w3-fd-map">
       <svg key={round} ref={svg} viewBox={`${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}`} className="w3-fd-plan"
-        role="application" aria-label="Site plan of a fictional garden-style complex, 1450 Elm St, at dusk. A map pin marks the address on the garage gate, on Cypress Ave. Choose where you would walk in: arrow keys move a crosshair, Enter chooses."
+        role="application" aria-label={t(L('Site plan of a fictional garden-style complex, 1450 Elm St. A map pin marks the address on the garage gate, on Cypress Ave. Choose where you would walk in: arrow keys move a crosshair, Enter chooses.', '虚构的花园式公寓小区平面图，地址 1450 Elm St。地图定位点标在 Cypress Ave 的车库门上。选出你会从哪里进去：方向键移动十字准星，回车键确认。'))}
         tabIndex={pick ? -1 : 0} onKeyDown={onKey} onFocus={() => !pick && !cross && setCross({x: GARAGE_GATE.x + 30, y: GARAGE_GATE.y + 40})}
         onClick={e => { if (e.detail) choose(toPlan(e)); }}>
         <defs><MarkGlow/></defs>
-        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone} palette="day"/>
-        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone} palette="dusk"/>
+        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone} palette="day" zh={zh}/>
+        <DuskPlan x={REGION.x} y={REGION.y} width={REGION.w} height={REGION.h} ids="w3fd" labels={!phone} palette="dusk" zh={zh}/>
         {pick ? <>
           <polyline ref={trail} className={`w3-fd-trail is-${kind}`} points={run.map(p => `${p.x},${p.y}`).join(' ')}
             style={{strokeDasharray: length(run), strokeDashoffset: length(run)}}/>
@@ -163,19 +166,20 @@ export default function DoorRun({reduced = false}) {
         <g ref={mark} transform={`translate(${start.x} ${start.y})`}><CourierMark x={0} y={0} scale={1.15}/></g>
       </svg>
       <span className="w3-fd-label is-pin" style={{left: `${pct(GARAGE_GATE, 'x')}%`, top: `${pct(GARAGE_GATE, 'y')}%`}} aria-hidden="true">1450 Elm St</span>
-      {pick ? <span className="w3-fd-label is-you" style={{left: `${pct(pick, 'x')}%`, top: `${pct(pick, 'y')}%`}} aria-hidden="true">You</span> : null}
-      {pick && phase !== 'run' ? <span className="w3-fd-label is-gate" style={{left: `${pct(GATE, 'x')}%`, top: `${pct(GATE, 'y')}%`}} aria-hidden="true">Walk-in gate</span> : null}
-      {kind === 'garage' && arrived ? <span className="w3-fd-label is-garage" style={{left: `${pct(GARAGE_GATE, 'x')}%`, top: `${pct(GARAGE_GATE, 'y')}%`}} aria-hidden="true">Residents only</span> : null}
+      {pick ? <span className="w3-fd-label is-you" style={{left: `${pct(pick, 'x')}%`, top: `${pct(pick, 'y')}%`}} aria-hidden="true">{t(L('You', '你'))}</span> : null}
+      {pick && phase !== 'run' ? <span className="w3-fd-label is-gate" style={{left: `${pct(GATE, 'x')}%`, top: `${pct(GATE, 'y')}%`}} aria-hidden="true">{t(L('Walk-in gate', '步行入口'))}</span> : null}
+      {kind === 'garage' && arrived ? <span className="w3-fd-label is-garage" style={{left: `${pct(GARAGE_GATE, 'x')}%`, top: `${pct(GARAGE_GATE, 'y')}%`}} aria-hidden="true">{t(L('Residents only', '仅限住户'))}</span> : null}
       {pick ? STEPS.map((s, i) => {
         if (i > reached) return null;
         const w = WAYPOINTS[i].at, [dx, dy] = THUMB[s.key], name = s.photo.split('/').pop().replace('.webp', '');
+        const z = STEP_ZH[s.key], title = L(s.title, z.title), instr = L(s.instr, z.instr), alt = L(s.alt, z.alt);
         return <button key={s.key} type="button" className={`w3-fd-photo${hover === i ? ' is-open' : ''}`} style={{left: `${pct(w, 'x')}%`, top: `${pct(w, 'y')}%`, '--dx': `${dx}px`, '--dy': `${dy}px`}}
-          aria-label={`Photo ${i + 1}, ${s.title}: ${s.instr}`}
-          onClick={e => view({src: photoLarge(name), alt: s.alt, title: `Step ${i + 1}, ${s.title}`, text: s.instr}, e.currentTarget)}
+          aria-label={t(L(`Photo ${i + 1}, ${s.title}: ${s.instr}`, `照片 ${i + 1}，${z.title}：${z.instr}`))}
+          onClick={e => view({src: photoLarge(name), alt, title: L(`Step ${i + 1}, ${s.title}`, `第 ${i + 1} 步，${z.title}`), text: instr}, e.currentTarget)}
           onPointerEnter={e => e.pointerType === 'mouse' && setHover(i)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)}>
           <img src={photoSmall(name)} alt="" style={{objectPosition: s.focus}} decoding="async"/>
           <span className="w3-fd-n" aria-hidden="true">{i + 1}</span>
-          <span className="w3-fd-card" aria-hidden="true"><img src={photoSmall(name)} alt="" decoding="async"/><b>{i + 1}. {s.title}</b><span>{s.instr}</span></span>
+          <span className="w3-fd-card" aria-hidden="true"><img src={photoSmall(name)} alt="" decoding="async"/><b>{i + 1}. {t(title)}</b><span>{t(instr)}</span></span>
         </button>;
       }) : null}
     </div>

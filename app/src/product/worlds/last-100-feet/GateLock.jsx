@@ -3,6 +3,8 @@ import {scrollerOf} from '../../v2/motion';
 import {ADDRESS, GEOFENCE_FT, HOLD_MS, REVEAL_SECONDS} from '../../v2/data/l100-route';
 import {StopGlyph} from './Hud';
 import {bag} from './walk';
+import {L, useCaseLang} from '../../i18n';
+import {WAYPOINT_NAMES, stepOf} from './content';
 
 /* Signature moment 1: the walk stops at the Elm St gate. The page holds its scroll at the gate until the visitor
    shows the code the way the prototype's courier does (hold the red button 0.9 s, or tap with "Tap instead of
@@ -21,6 +23,7 @@ export default function GateLock({reduced, plain, state, onOpen, onSkip}) {
   const [left, setLeft] = useState(REVEAL_SECONDS);
   const [hiding, setHiding] = useState(false);
   const [engaged, setEngaged] = useState(false);
+  const {t} = useCaseLang();
   const enforce = state === 'closed' && !reduced && !plain;
   const open = state !== 'closed';
 
@@ -109,30 +112,30 @@ export default function GateLock({reduced, plain, state, onOpen, onSkip}) {
   const start = () => { if (holding) return; setHolding(true); timer.current = setTimeout(() => { setHolding(false); reveal(); }, HOLD_MS); };
   const cancel = () => { clearTimeout(timer.current); setHolding(false); };
   const quick = tap || seen;
-  const label = seen ? 'Show code again' : tap ? 'Show gate code' : 'Hold to show gate code';
+  const label = t(seen ? L('Show code again', '再次显示门禁码') : tap ? L('Show gate code', '显示门禁码') : L('Hold to show gate code', '按住显示门禁码'));
   const secs = bag.get().gateSeconds;
 
   return <section ref={sec} id="w3-gate" className={`w3-lock${open ? ' is-open' : ''}${engaged ? ' is-engaged' : ''}`} data-stop="1" data-zoom=".74" data-fy=".2" aria-labelledby="w3-gate-title">
     <div className="w3-col w3-lock-col">
-      <p className="w3-step"><StopGlyph i={1}/><span>Step 2 of 5, Elm St gate</span></p>
-      <h2 id="w3-gate-title" className="w3-h2" tabIndex={-1}>{open ? 'The gate is open' : 'The gate is locked'}</h2>
-      <p className="w3-lede">{open
-        ? state === 'skipped' ? 'You skipped the gate. A courier can’t: they need the code, and the prototype gives it to them like this.'
-          : `${secs ? `Through in ${secs} s. ` : ''}The code came from the order; standing at the gate only revealed it.`
-        : 'Hot bag in one hand, phone in the other. In the door route the code is part of the order; walking up to the gate only reveals it.'}</p>
+      <p className="w3-step"><StopGlyph i={1}/><span>{t(stepOf(1, WAYPOINT_NAMES[1]))}</span></p>
+      <h2 id="w3-gate-title" className="w3-h2" tabIndex={-1}>{t(open ? L('The gate is open', '大门开了') : L('The gate is locked', '大门锁着'))}</h2>
+      <p className="w3-lede">{t(open
+        ? state === 'skipped' ? L('You skipped the gate. A courier can’t: they need the code, and the prototype gives it to them like this.', '你跳过了大门，骑手可跳不过去：他们需要门禁码，原型是这样把码交给他们的。')
+          : L(`${secs ? `Through in ${secs} s. ` : ''}The code came from the order; standing at the gate only revealed it.`, `${secs ? `用了 ${secs} 秒通过。` : ''}门禁码来自订单，站在大门前只是让它显示了出来。`)
+        : L('Hot bag in one hand, phone in the other. In the door route the code is part of the order; walking up to the gate only reveals it.', '一手提着保温袋，一手拿着手机。在入户路线里，门禁码是订单的一部分，走到大门前只是让它显示出来。'))}</p>
 
       <div className="w3-gatebox" aria-live="polite">
         {shown ? <div className="w3-code" data-hiding={hiding || undefined}>
-          <p className="w3-code-label">Enter on the call box</p>
-          <div className="w3-keys" role="img" aria-label={`Gate code ${ADDRESS.code.split('').join(' ')}, then pound`}>
+          <p className="w3-code-label">{t(L('Enter on the call box', '在门禁对讲机上输入'))}</p>
+          <div className="w3-keys" role="img" aria-label={t(L(`Gate code ${ADDRESS.code.split('').join(' ')}, then pound`, `门禁码 ${ADDRESS.code.split('').join(' ')}，最后按井号`))}>
             {[...ADDRESS.code, '#'].map((d, i) => <span key={i} className="w3-key" data-pound={d === '#' || undefined} style={{'--i': i}} aria-hidden="true">{d}</span>)}
           </div>
           <div className="w3-timer">
             <span className="w3-bar" aria-hidden="true"><span style={{animationDuration: `${REVEAL_SECONDS}s`}}/></span>
-            <span className="w3-left">Hides in {left} s</span>
+            <span className="w3-left">{t(L(`Hides in ${left} s`, `${left} 秒后隐藏`))}</span>
           </div>
         </div> : <button ref={btn} type="button" className={`w3-hold${holding ? ' is-holding' : ''}`} style={{'--hold': `${HOLD_MS}ms`}}
-          aria-label={quick ? label : `${label}. Press and hold.`}
+          aria-label={quick ? label : `${label}${t(L('. Press and hold.', '。请按住。'))}`}
           onClick={quick ? reveal : undefined}
           onPointerDown={quick ? undefined : e => { try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* released */ } start(); }}
           onPointerUp={quick ? undefined : cancel} onPointerCancel={quick ? undefined : cancel} onContextMenu={e => e.preventDefault()}
@@ -144,10 +147,10 @@ export default function GateLock({reduced, plain, state, onOpen, onSkip}) {
       </div>
 
       <div className="w3-lock-tools">
-        <label className="w3-tap"><input type="checkbox" checked={tap} onChange={e => setTap(e.target.checked)}/>Tap instead of hold <small>for gloves or switch control</small></label>
-        {state === 'closed' && enforce ? <button type="button" className="w3-textbtn" onClick={() => onSkip('button')}>Skip the gate</button> : null}
+        <label className="w3-tap"><input type="checkbox" checked={tap} onChange={e => setTap(e.target.checked)}/>{t(L('Tap instead of hold', '用点按代替长按'))} <small>{t(L('for gloves or switch control', '适合戴手套或使用切换控制时'))}</small></label>
+        {state === 'closed' && enforce ? <button type="button" className="w3-textbtn" onClick={() => onSkip('button')}>{t(L('Skip the gate', '跳过大门'))}</button> : null}
       </div>
-      <p className="w3-small">The prototype’s gate step: a {GEOFENCE_FT} ft circle (about 50 m) around the gate, a 0.9-second hold, a code that hides after 20 seconds.{open ? ' Keep scrolling: the walk goes on through the courtyard.' : enforce ? ' The walk continues once the gate opens.' : ''}</p>
+      <p className="w3-small">{t(L(`The prototype’s gate step: a ${GEOFENCE_FT} ft circle (about 50 m) around the gate, a 0.9-second hold, a code that hides after 20 seconds.`, `原型里的大门步骤：以大门为圆心、半径 ${GEOFENCE_FT} 英尺（约 50 米）的范围，长按 0.9 秒，门禁码 20 秒后隐藏。`))}{t(open ? L(' Keep scrolling: the walk goes on through the courtyard.', '继续往下滚动，路线会穿过庭院。') : enforce ? L(' The walk continues once the gate opens.', '大门打开后，才能继续往前走。') : '')}</p>
     </div>
   </section>;
 }

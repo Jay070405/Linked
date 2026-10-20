@@ -21,7 +21,7 @@
   --hero-scrim:linear-gradient(180deg,#f6f6f4f5 0%,#f6f6f4e8 56%,#f6f6f480 80%,#f6f6f400 100%);
   --out:cubic-bezier(.23,1,.32,1);--inout:cubic-bezier(.77,0,.175,1);
   --side:clamp(16px,4.6vw,76px);--col:min(560px,44vw);--nav:96px;
-  --sans:'Figtree W3','Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --sans:'Figtree W3','Figtree',system-ui,-apple-system,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif;
   /* the shared v2 widgets (Ask, Takeaway, the phone) read these */
   --pp-ink:var(--paper);--pp-paper:var(--deep);--pp-pencil:var(--pencil);--pp-sans:var(--sans);--pp-red:var(--red-hi);--pp-rule:var(--line-2);
   --pp-strong:var(--line-3);--v2-out:var(--out);--v2-inout:var(--inout);--v2-bezel:#0a0c13;--v2-hair:var(--line);
@@ -552,3 +552,10 @@ body:has(.w3[data-theme=dark]) .v16-navigation[data-tone=light] .v16-language bu
 .w3-theme:focus-visible{outline:2px solid var(--lamp);outline-offset:3px}
 @media(max-width:760px){.w3-theme{top:calc(var(--nav) + 4px);height:40px}.w3-theme-cell{width:34px;height:34px}}
 .w3.is-reduced .w3-theme-cell,.w3.is-reduced .w3-plan{transition:none}
+
+/* ---------- Chinese: a CJK face from the system (Figtree has no Han glyphs), looser tracking and leading ---------- */
+.w3:lang(zh-CN) :is(.w3-h2,.w3-h3,.w3-next-title,.w3-leg-to){letter-spacing:0}
+.w3:lang(zh-CN) :is(.w3-prose,.w3-beat-text,.w3-reflect>div,.w3-list,.w3-hyps li){line-height:1.75}
+.w3:lang(zh-CN) .w3-h2{max-width:16em;line-height:1.18}
+.w3:lang(zh-CN) .w3-outcome{max-width:26em;line-height:1.6}
+.w3:lang(zh-CN) .w3-lede{max-width:30em;line-height:1.6}

@@ -1,5 +1,6 @@
 import {useSyncExternalStore} from 'react';
 import {LEGS, WAYPOINTS, TOTAL_FEET} from '../../v2/data/l100-route';
+import {L} from '../../i18n';
 
 /* The delivery run's geometry: where the courier is after walking `feet` of the route, which way they face, and
    whether they are upstairs. Positions come from the prototype's own route (v2/data/l100-route.js, copied from
@@ -56,4 +57,8 @@ export const bag = {
   subscribe(fn) { subs.add(fn); return () => subs.delete(fn); },
 };
 export const useBag = () => useSyncExternalStore(bag.subscribe, bag.get, bag.get);
-export const warmthWord = w => (w >= .85 ? 'Hot' : w >= .62 ? 'Warm' : w >= .42 ? 'Cooling' : 'Lukewarm');
+const WARMTH = {hot: L('Hot', '热乎'), warm: L('Warm', '温热'), cooling: L('Cooling', '在变凉'), cold: L('Lukewarm', '快凉了')};
+/** How warm the bag is, in both languages. */
+export const warmthWord = w => WARMTH[w >= .85 ? 'hot' : w >= .62 ? 'warm' : w >= .42 ? 'cooling' : 'cold'];
+/** Why the bag cooled: the notes the store keeps (in English), in both languages. */
+export const NOTE_WORDS = {'Waited at the gate': L('Waited at the gate', '在大门口等了一会儿'), 'Garage detour': L('Garage detour', '绕去了车库'), 'Wrong turn': L('Wrong turn', '走错了路')};

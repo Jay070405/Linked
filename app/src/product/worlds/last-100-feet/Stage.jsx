@@ -4,6 +4,7 @@ import {GARAGE_GATE, GATE, GEOFENCE_FT, LEGS, WAYPOINTS} from '../../v2/data/l10
 import {DuskPlan, REGION} from './DuskPlan';
 import Courier from './Courier';
 import {AT_WAYPOINT, ROUTE_D, ROUTE_LEN, TOTAL_FEET, bag, walkAt, waypointFor} from './walk';
+import {L, useCaseLang} from '../../i18n';
 
 /* The world behind the page: the dusk site plan, the route, and the courier, in one sticky viewport-sized stage.
    Scrolling through a [data-leg] block walks that leg; the camera follows the courier (a top-down game camera),
@@ -89,7 +90,8 @@ function RouteLayer({width, height, gateOpen}) {
  */
 export default function Stage({root, size, reduced, gateOpen, onReach, children}) {
   const stage = useRef(null), cam = useRef(null), courier = useRef(null), labels = useRef(null);
-  const L = layoutFor(size.w || 1440, size.h || 900);
+  const lay0 = layoutFor(size.w || 1440, size.h || 900);
+  const {t, zh} = useCaseLang();
   const reach = useRef(onReach); reach.current = onReach;
 
   useLayoutEffect(() => {
@@ -203,20 +205,20 @@ export default function Stage({root, size, reduced, gateOpen, onReach, children}
     return () => { gsap.ticker.remove(tick); ro.disconnect(); clearTimeout(t); ctx.revert(); };
   }, [root, reduced]);
 
-  const pw = R.w * L.S, ph = R.h * L.S;
+  const pw = R.w * lay0.S, ph = R.h * lay0.S;
   return <div ref={stage} className="w3-stage" data-at="hero">
     <div className="w3-world" aria-hidden="true">
       <div ref={cam} className="w3-cam" style={{width: pw, height: ph}}>
-        <DuskPlan width={pw} height={ph} palette="day"/>
-        <DuskPlan width={pw} height={ph} palette="dusk"/>
+        <DuskPlan width={pw} height={ph} palette="day" zh={zh}/>
+        <DuskPlan width={pw} height={ph} palette="dusk" zh={zh}/>
         <RouteLayer width={pw} height={ph} gateOpen={gateOpen}/>
       </div>
-      <Courier ref={courier} px={L.S}/>
+      <Courier ref={courier} px={lay0.S}/>
       <div ref={labels} className="w3-labels">
-        <span className="w3-label is-pin" data-x={GARAGE_GATE.x} data-y={GARAGE_GATE.y - 15}><span>1450 Elm St, where map apps drop the pin</span></span>
-        <span className="w3-label is-fence" data-x={GATE.x} data-y={GATE.y - GEOFENCE_FT - 4}><span>{GEOFENCE_FT} ft: the code can show</span></span>
-        <span className="w3-label is-car" data-x={206} data-y={480}><span>You, at a verified stop</span></span>
-        <span className="w3-label is-done" data-x={262} data-y={192}><span>Delivered</span></span>
+        <span className="w3-label is-pin" data-x={GARAGE_GATE.x} data-y={GARAGE_GATE.y - 15}><span>{t(L('1450 Elm St, where map apps drop the pin', '1450 Elm St：地图 app 的定位点落在这里'))}</span></span>
+        <span className="w3-label is-fence" data-x={GATE.x} data-y={GATE.y - GEOFENCE_FT - 4}><span>{t(L(`${GEOFENCE_FT} ft: the code can show`, `${GEOFENCE_FT} 英尺内可显示门禁码`))}</span></span>
+        <span className="w3-label is-car" data-x={206} data-y={480}><span>{t(L('You, at a verified stop', '你，停在核实过的停车点'))}</span></span>
+        <span className="w3-label is-done" data-x={262} data-y={192}><span>{t(L('Delivered', '已送达'))}</span></span>
       </div>
       <div className="w3-vignette"/>
     </div>
