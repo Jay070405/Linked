@@ -83,7 +83,7 @@ function Leg({i}) {
   return <div className="w3-leg" data-leg={i}>
     <div className="w3-leg-card">
       <p className="w3-leg-count"><span data-count={i}>{LEGS[i].feet}</span><span className="w3-leg-unit">{t(FT)}</span></p>
-      <p className="w3-leg-to">{t(L('to ', '到'))}{t(LEG_CARDS[i].to)}</p>
+      <p className="w3-leg-to">{t(L('to ', '到 '))}{t(LEG_CARDS[i].to)}</p>
       <p className="w3-leg-say">{t(LEG_CARDS[i].say)}</p>
     </div>
   </div>;
