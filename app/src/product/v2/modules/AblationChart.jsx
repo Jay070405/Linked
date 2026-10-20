@@ -3,6 +3,7 @@ import {Ev} from '../../CaseKit';
 import {gsap, PHONE, useMedia} from '../motion';
 import {Ask, Takeaway, useInputMode} from '../Try';
 import {RUNS} from '../data/benchmark-runs';
+import {L, useCaseLang} from '../../i18n';
 import './ablation.css';
 
 /* D1, Result 2: the ablation as every build at once. Each dot is one scored build: how much of a four-token change,
@@ -10,26 +11,30 @@ import './ablation.css';
    its render and which of the four colors followed; the chips pick out one level. Data: data/benchmark-runs.js. */
 
 const LEVELS = [
-  {id: 'L0', name: 'L0 Raw', short: 'Raw', bound: false},
-  {id: 'L1', name: 'L1 Structured', short: 'Structured', bound: false},
-  {id: 'L0V', name: 'L0V Raw + variables', short: '+ variables', bound: true},
-  {id: 'L2', name: 'L2 Systematized', short: 'Systematized', bound: true},
+  {id: 'L0', name: L('L0 Raw', 'L0 原始'), short: L('Raw', '原始'), bound: false},
+  {id: 'L1', name: L('L1 Structured', 'L1 结构化'), short: L('Structured', '结构化'), bound: false},
+  {id: 'L0V', name: L('L0V Raw + variables', 'L0V 原始 + variables'), short: L('+ variables', '+ variables'), bound: true},
+  {id: 'L2', name: L('L2 Systematized', 'L2 系统化'), short: L('Systematized', '系统化'), bound: true},
 ];
-const TOKEN_NAMES = [['primary', 'Primary'], ['text', 'Text'], ['background', 'Background'], ['border', 'Border']];
+const TOKEN_NAMES = [['primary', L('Primary', '主色')], ['text', L('Text', '文字')], ['background', L('Background', '背景')], ['border', L('Border', '描边')]];
+const SCREEN_ZH = {'Sign-in': '登录', Pricing: '定价', Settings: '设置', 'Product grid': '商品列表', Dashboard: '仪表盘', Profile: '个人主页'};
 // the drawing in viewBox units; phones get a narrower one so its text stays readable at 360 px
 const WIDE = {W: 760, H: 372, TOP: 48, BOTTOM: 300, COL: 160, X0: 120, spread: 9.5, r: 5.5};
 const NARROW = {W: 400, H: 386, TOP: 48, BOTTOM: 296, COL: 82, X0: 70, spread: 8, r: 4.6};
 const yOf = (L, v) => L.BOTTOM - (L.BOTTOM - L.TOP) * v / 100;
 const median = v => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 /** "Followed: primary, border. Missed: text, background." for the dot's label. */
-const followedText = d => {
-  const pick = test => TOKEN_NAMES.filter(([k]) => d.tokens[k] != null && test(d.tokens[k])).map(([, l]) => l.toLowerCase()).join(', ');
+const followedText = (d, t, zh) => {
+  const pick = test => TOKEN_NAMES.filter(([k]) => d.tokens[k] != null && test(d.tokens[k])).map(([, l]) => (zh ? t(l) : t(l).toLowerCase())).join(zh ? '、' : ', ');
   const ok = pick(v => v >= .5), miss = pick(v => v < .5);
-  return [ok && `Followed: ${ok}.`, miss && `Missed: ${miss}.`].filter(Boolean).join(' ');
+  return zh ? [ok && `已跟上：${ok}。`, miss && `没跟上：${miss}。`].filter(Boolean).join('')
+    : [ok && `Followed: ${ok}.`, miss && `Missed: ${miss}.`].filter(Boolean).join(' ');
 };
 const pct = share => `${Math.round(share * 1000) / 10}%`.replace('.0%', '%');
 
 export default function AblationChart({reduced = false}) {
+  const {t, zh} = useCaseLang();
+  const screen = d => (zh ? SCREEN_ZH[d.name] || d.name : d.name);
   const root = useRef(null);
   const [level, setLevel] = useState('all');
   const [at, setAt] = useState(null);           // index into dots, or null
@@ -97,9 +102,9 @@ export default function AblationChart({reduced = false}) {
 
   return <figure ref={root} className="ab" data-reveal="" {...mode.bind} onPointerLeave={e => { if (e.pointerType === 'mouse') setAt(null); }}>
     <div className="ab-controls">
-      <Ask>Point at a dot, or tap it, to see that build.</Ask>
-      <div className="v2-seg ab-chips" role="group" aria-label="Show one level">
-        <button type="button" aria-pressed={level === 'all'} onClick={() => filter('all')}>All</button>
+      <Ask>{t(L('Point at a dot, or tap it, to see that build.', '指向或点按一个点，查看那次构建。'))}</Ask>
+      <div className="v2-seg ab-chips" role="group" aria-label={t(L('Show one level', '只看一个层级'))}>
+        <button type="button" aria-pressed={level === 'all'} onClick={() => filter('all')}>{t(L('All', '全部'))}</button>
         {LEVELS.map(g => <button key={g.id} type="button" aria-pressed={level === g.id} onClick={() => filter(g.id)}>{g.id}</button>)}
       </div>
     </div>
@@ -115,26 +120,26 @@ export default function AblationChart({reduced = false}) {
       setAt(null);
     }}>
       <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-labelledby="ab-title" className={compact ? 'is-narrow' : ''}>
-        <title id="ab-title">Share of a four-token change that reached the code, per build. Without variables, L0 median 50% and L1 median 50%, no build above 67%. With variables bound, all 9 L0V builds and all 10 L2 builds at 100%.</title>
+        <title id="ab-title">{t(L('Share of a four-token change that reached the code, per build. Without variables, L0 median 50% and L1 median 50%, no build above 67%. With variables bound, all 9 L0V builds and all 10 L2 builds at 100%.', '每次构建中，四个 token 的改动有多少传到了代码里。没有 variables 时，L0 和 L1 的中位数都是 50%，没有一次超过 67%。绑定 variables 后，9 次 L0V 构建和 10 次 L2 构建全部是 100%。'))}</title>
         {[0, 25, 50, 75, 100].map(v => <g key={v} className="ab-grid"><path d={`M${X0 - 20} ${y(v)} H${W - 6}`}/><text x={X0 - 26} y={y(v) + 4}>{v}%</text></g>)}
         <path className="ab-split" d={`M${colX(2) - COL * .5} ${TOP - 34} V${BOTTOM + 8}`}/>
-        <text className="ab-tag" x={colX(2) - COL * .5 + 10} y={TOP - 22}>Variables bound</text>
+        <text className="ab-tag" x={colX(2) - COL * .5 + 10} y={TOP - 22}>{t(L('Variables bound', '绑定了 variables'))}</text>
         {groups.map(g => <g key={g.id} className={`ab-group${g.bound ? ' is-bound' : ''}${level !== 'all' && level !== g.id ? ' is-dim' : ''}`}>
           <path className="ab-median" d={`M${g.cx - COL * .28} ${y(g.m)} H${g.cx + COL * .28}`}/>
           {compact ? <>
             <text className="ab-name" x={g.cx} y={BOTTOM + 28}>{g.id}</text>
-            <text className="ab-med" x={g.cx} y={BOTTOM + 47}>{g.short}</text>
-            <text className="ab-med" x={g.cx} y={BOTTOM + 66}>median {g.m}%</text>
+            <text className="ab-med" x={g.cx} y={BOTTOM + 47}>{t(g.short)}</text>
+            <text className="ab-med" x={g.cx} y={BOTTOM + 66}>{zh ? `中位数 ${g.m}%` : `median ${g.m}%`}</text>
           </> : <>
-            <text className="ab-name" x={g.cx} y={BOTTOM + 30}>{g.name}</text>
-            <text className="ab-med" x={g.cx} y={BOTTOM + 50}>median {g.m}%</text>
+            <text className="ab-name" x={g.cx} y={BOTTOM + 30}>{t(g.name)}</text>
+            <text className="ab-med" x={g.cx} y={BOTTOM + 50}>{zh ? `中位数 ${g.m}%` : `median ${g.m}%`}</text>
           </>}
         </g>)}
         {dots.map((d, i) => {
           const on = visible(d);
           return <g key={d.id} data-dot={i} className={`ab-hit${d.g.bound ? ' is-bound' : ''}${on ? '' : ' is-dim'}${at === i ? ' is-on' : ''}`}
             tabIndex={on ? (i === focusable ? 0 : -1) : undefined} role="img"
-            aria-label={`${d.id}, ${d.name}, ${d.g.name}: ${pct(d.share)} of the change reached the code. ${followedText(d)}`}
+            aria-label={zh ? `${d.id}，${screen(d)}，${t(d.g.name)}：改动有 ${pct(d.share)} 传到了代码。${followedText(d, t, zh)}` : `${d.id}, ${d.name}, ${t(d.g.name)}: ${pct(d.share)} of the change reached the code. ${followedText(d, t, zh)}`}
             onPointerEnter={e => { if (on && e.pointerType === 'mouse') show(i, false); }}
             onClick={e => { if (on) show(i, e.detail === 0); }}
             onFocus={() => on && show(i, mode.keyed.current)} onKeyDown={e => move(e, i)}>
@@ -145,9 +150,9 @@ export default function AblationChart({reduced = false}) {
       </svg>
       {tip && !compact ? <Tip key={instantTip ? 'still' : tip.id} d={tip} instant={instantTip} W={W} H={H}/> : null}
     </div>
-    {compact ? <div className="ab-detail" aria-hidden="true">{tip ? <Card d={tip}/> : <p className="ab-detail-empty">Tap a dot: its build shows here.</p>}</div> : null}
-    <Takeaway show={seen} instant={reduced || mode.keyed.current}>With variables, every build followed the whole change. Without them, none got past 67%.</Takeaway>
-    <figcaption className="v2-caption"><Ev label="Measured"/><span>Each dot is one build: how much of a four-token change, injected after the build, reached its code. An exploratory measure I added after round 1’s first results.</span></figcaption>
+    {compact ? <div className="ab-detail" aria-hidden="true">{tip ? <Card d={tip}/> : <p className="ab-detail-empty">{t(L('Tap a dot: its build shows here.', '点一个点，那次构建会显示在这里。'))}</p>}</div> : null}
+    <Takeaway show={seen} instant={reduced || mode.keyed.current}>{t(L('With variables, every build followed the whole change. Without them, none got past 67%.', '有 variables 时，每次构建都完整跟上了改动；没有时，没有一次超过 67%。'))}</Takeaway>
+    <figcaption className="v2-caption"><Ev label="Measured"/><span>{t(L('Each dot is one build: how much of a four-token change, injected after the build, reached its code. An exploratory measure I added after round 1’s first results.', '每个点代表一次构建：构建完成后注入四个 token 的改动，看有多少传到了它的代码里。这是我在第 1 轮初步结果出来后加的探索性指标。'))}</span></figcaption>
   </figure>;
 }
 
@@ -162,16 +167,17 @@ function Tip({d, instant, W, H}) {
 }
 /** Id, render, how much of the change followed, and which colors. */
 function Card({d}) {
+  const {t, zh} = useCaseLang();
   return <div className="ab-tip-card">
     <img src={`/assets/product/ready-for-agents/runs/${d.id}.webp`} width={d.w} height={d.h} alt="" decoding="async"/>
     <div className="ab-tip-text">
       <p className="ab-tip-id">{d.id}</p>
-      <p className="ab-tip-sub">{d.name}, {d.g.name}</p>
-      <p className="ab-tip-share"><b>{pct(d.share)}</b> of the change reached the code</p>
+      <p className="ab-tip-sub">{zh ? `${SCREEN_ZH[d.name] || d.name}，${t(d.g.name)}` : `${d.name}, ${t(d.g.name)}`}</p>
+      <p className="ab-tip-share">{zh ? <>改动有 <b>{pct(d.share)}</b> 传到了代码</> : <><b>{pct(d.share)}</b> of the change reached the code</>}</p>
       <ul>{TOKEN_NAMES.map(([k, label]) => {
         const v = d.tokens[k];
         return <li key={k} className={v == null ? 'is-na' : v >= .5 ? 'is-ok' : 'is-miss'}>
-          {v == null ? <span className="ab-na">–</span> : v >= .5 ? <Check/> : <Miss/>}{label}
+          {v == null ? <span className="ab-na">–</span> : v >= .5 ? <Check/> : <Miss/>}{t(label)}
         </li>;
       })}</ul>
     </div>

@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
+import {UI, useCaseLang} from '../i18n';
 
 const MIN = 1, MAX = 5;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -10,6 +11,7 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
     a sideways swipe does too while the image isn't zoomed. Esc closes and focus returns to the figure that opened it.
     Opening from the keyboard, and reduced motion, skip the entrance. */
 export default function Lightbox({items, index: start, keyboard, opener, reduced, onClose}) {
+  const {t, htmlLang} = useCaseLang();
   const dialog = useRef(null), stage = useRef(null), img = useRef(null);
   const [index, setIndex] = useState(start);
   const [scale, setScale] = useState(1);
@@ -144,23 +146,23 @@ export default function Lightbox({items, index: start, keyboard, opener, reduced
     };
   }, [apply, bound, go, zoomTo]);
 
-  return createPortal(<dialog ref={dialog} className={`v2-lb${instant ? ' is-instant' : ''}`} aria-label="Figure viewer" onKeyDown={onKey}
+  return createPortal(<dialog ref={dialog} className={`v2-lb${instant ? ' is-instant' : ''}`} aria-label={t(UI.figureViewer)} lang={htmlLang} onKeyDown={onKey}
     onCancel={e => { e.preventDefault(); close(); }}>
     <div className="v2-lb-top">
       <p className="v2-lb-count" aria-live="polite">{many ? `${index + 1} of ${items.length}` : ''}</p>
       <div className="v2-lb-tools">
-        <button type="button" onClick={() => zoomTo(view.current.s / 1.5, 0, 0, true)} disabled={scale <= MIN} aria-label="Zoom out"><Minus/></button>
-        <button type="button" className="v2-lb-pct" onClick={() => (view.current.s > 1 ? zoomTo(1, 0, 0, true) : zoomTo(2, 0, 0, true))} aria-label={scale > 1 ? 'Fit to screen' : 'Zoom to 200%'}>{Math.round(scale * 100)}%</button>
-        <button type="button" onClick={() => zoomTo(view.current.s * 1.5, 0, 0, true)} disabled={scale >= MAX} aria-label="Zoom in"><Plus/></button>
-        <button type="button" className="v2-lb-close" onClick={close} aria-label="Close"><Cross/></button>
+        <button type="button" onClick={() => zoomTo(view.current.s / 1.5, 0, 0, true)} disabled={scale <= MIN} aria-label={t(UI.zoomOut)}><Minus/></button>
+        <button type="button" className="v2-lb-pct" onClick={() => (view.current.s > 1 ? zoomTo(1, 0, 0, true) : zoomTo(2, 0, 0, true))} aria-label={t(scale > 1 ? UI.fitToScreen : UI.zoomTo200)}>{Math.round(scale * 100)}%</button>
+        <button type="button" onClick={() => zoomTo(view.current.s * 1.5, 0, 0, true)} disabled={scale >= MAX} aria-label={t(UI.zoomIn)}><Plus/></button>
+        <button type="button" className="v2-lb-close" onClick={close} aria-label={t(UI.close)}><Cross/></button>
       </div>
     </div>
     <div ref={stage} className="v2-lb-stage">
       <img key={item.src} ref={img} className="v2-lb-img" src={item.src} alt={item.alt} width={item.w || undefined} height={item.h || undefined} draggable="false"/>
     </div>
     {many ? <>
-      <button type="button" className="v2-lb-nav is-prev" onClick={e => go(-1, e.detail === 0)} aria-label="Previous figure"><Chevron/></button>
-      <button type="button" className="v2-lb-nav is-next" onClick={e => go(1, e.detail === 0)} aria-label="Next figure"><Chevron/></button>
+      <button type="button" className="v2-lb-nav is-prev" onClick={e => go(-1, e.detail === 0)} aria-label={t(UI.previousFigure)}><Chevron/></button>
+      <button type="button" className="v2-lb-nav is-next" onClick={e => go(1, e.detail === 0)} aria-label={t(UI.nextFigure)}><Chevron/></button>
     </> : null}
     <p className="v2-lb-caption">{item.alt}</p>
   </dialog>, document.body);

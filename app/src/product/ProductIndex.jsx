@@ -2,7 +2,8 @@ import {Fragment, useLayoutEffect, useRef} from 'react';
 import {Go} from './Go';
 import {Annotated, Ev, Note, Noted} from './CaseKit';
 import {GapThumb} from './charts';
-import {EVIDENCE, POSITIONING_LINES, PRODUCT_CASES, PRODUCT_HOME, SUBLINE} from './content';
+import {EVIDENCE, POSITIONING_LINES, POSITIONING_LINES_ZH, PRODUCT_CASES, PRODUCT_HOME, SUBLINE, SUBLINE_ZH} from './content';
+import {L, localize, UI, useCaseLang} from './i18n';
 import {author} from '../portfolioData';
 import CursorLabel from './v2/CursorLabel';
 import {FINE, gsap, SplitText, useReveals} from './v2/motion';
@@ -37,16 +38,17 @@ export function CaseRows({cases, level = 2}) {
 }
 
 export function ProductFooter() {
+  const {t} = useCaseLang();
   return <footer className="pp-foot">
     <div>
-      <p className="pp-foot-lead">Write to me</p>
+      <p className="pp-foot-lead">{t(L('Write to me', '联系我'))}</p>
       <p><a href={`mailto:${author.email}`}>{author.email}</a></p>
-      <p><a href={RESUME}>Résumé (PDF)</a></p>
+      <p><a href={RESUME}>{t(L('Résumé (PDF)', '简历（英文 PDF）'))}</a></p>
     </div>
     <div>
-      <p className="pp-foot-lead">More of my work</p>
-      <p><Go to="/systems">Systems design</Go></p>
-      <p><Go to="/works">Illustration and visual worlds</Go></p>
+      <p className="pp-foot-lead">{t(L('More of my work', '更多作品'))}</p>
+      <p><Go to="/systems">{t(L('Systems design', '系统策划'))}</Go></p>
+      <p><Go to="/works">{t(L('Illustration and visual worlds', '插画与视觉世界'))}</Go></p>
     </div>
   </footer>;
 }
@@ -76,7 +78,9 @@ function TileVisual({item}) {
 /** One project on /product: a large picture that leans toward the pointer and scales a touch inside its frame,
     the title rolling through its mask, then the one-line subtitle. Cases with a page are links (the site's circular
     transition carries you in); in-progress cases are not, and say so. */
-function Tile({item}) {
+function Tile({item: source}) {
+  const {lang, t} = useCaseLang();
+  const item = localize(source, lang);
   const inner = <>
     <div className="pt-visual" aria-hidden="true"><div className="pt-visual-inner"><TileVisual item={item}/></div></div>
     <div className="pt-text">
@@ -88,7 +92,7 @@ function Tile({item}) {
   </>;
   return <li className={`pt-tile pt-tile--${item.slug}${item.page ? '' : ' is-soon'}`} data-reveal="">
     {item.page
-      ? <Go to={`${PRODUCT_HOME}/${item.slug}`} className="pt-link" data-cursor="View" aria-label={`${item.title}: ${item.subtitle}`}>{inner}</Go>
+      ? <Go to={`${PRODUCT_HOME}/${item.slug}`} className="pt-link" data-cursor={t(UI.view)} aria-label={`${item.title}${lang === 'zh' ? '：' : ': '}${item.subtitle}`}>{inner}</Go>
       : <div className="pt-link">{inner}</div>}
   </li>;
 }
@@ -96,6 +100,8 @@ function Tile({item}) {
 /** /product: who, what for, and the four product-design projects as large tiles. */
 export default function ProductIndex({reduced}) {
   const root = useRef(null), heading = useRef(null);
+  const {zh, t, htmlLang} = useCaseLang();
+  const lines = zh ? POSITIONING_LINES_ZH : POSITIONING_LINES;
   useReveals(root, reduced);
 
   // the headline rises word by word through its line masks, once
@@ -110,7 +116,7 @@ export default function ProductIndex({reduced}) {
       } catch { /* the headline simply shows */ }
     }, root.current);
     return () => { ctx.revert(); split?.revert(); };
-  }, [reduced]);
+  }, [reduced, zh]);
 
   // tiles: picture layers lean toward the pointer, each by its depth
   useLayoutEffect(() => {
@@ -130,21 +136,21 @@ export default function ProductIndex({reduced}) {
     return () => offs.forEach(off => off());
   }, [reduced]);
 
-  return <div ref={root} className="pp-page v2-page pp-index" lang="en" data-nav-tone="light">
+  return <div ref={root} className={`pp-page v2-page pp-index${zh ? ' is-zh' : ''}`} lang={htmlLang} data-nav-tone="light">
     <header className="pp-hero">
-      <h1 className="pp-hero-title" aria-label={POSITIONING_LINES.join(' ')}><span ref={heading} aria-hidden="true">{POSITIONING_LINES.map(line => <span key={line} className="pt-hl">{line} </span>)}</span></h1>
+      <h1 className="pp-hero-title" aria-label={lines.join(zh ? '' : ' ')}><span key={htmlLang} ref={heading} aria-hidden="true">{lines.map(line => <span key={line} className="pt-hl">{line}{zh ? '' : ' '}</span>)}</span></h1>
       <Annotated reduced={reduced} sans>
         <Noted>
-          <p className="pp-hero-sub">{SUBLINE}</p>
+          <p className="pp-hero-sub">{zh ? SUBLINE_ZH : SUBLINE}</p>
           <Note>
-            <p>Each case labels its claims by how I know them.</p>
+            <p>{t(L('Each case labels its claims by how I know them.', '每个案例里的结论，都标明了我是怎么知道的。'))}</p>
             <p className="pp-key">{EVIDENCE.map(label => <Ev key={label} label={label}/>)}</p>
           </Note>
         </Noted>
       </Annotated>
     </header>
     <section className="pt-section" aria-labelledby="pp-cases-title">
-      <h2 id="pp-cases-title" className="pp-section-label">Product design</h2>
+      <h2 id="pp-cases-title" className="pp-section-label">{t(L('Product design', '产品设计'))}</h2>
       <ul className="pt-grid">{PRODUCT_CASES.map(item => <Tile key={item.slug} item={item}/>)}</ul>
     </section>
     <ProductFooter/>

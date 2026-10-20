@@ -1,11 +1,14 @@
 // Product case studies: the list, the routes and the words shared by the index, the case pages and /for/*.
-// The pages are English only for now; the Chinese site keeps its own systems and art pages.
+// Chinese: each case may carry a `zh` block (localize() in i18n.jsx lays it over the English); pages switch language once
+// they are listed in i18n.jsx TRANSLATED.
 
 export const PRODUCT_HOME = '/product';
 
 export const POSITIONING = 'I build products for people who make things.';
 export const POSITIONING_LINES = ['I build products for', 'people who make things.'];
 export const SUBLINE = 'I’m an illustrator and a business student at Duke Fuqua, and I ship software with AI agents. I’m looking for product roles starting mid-2027.';
+export const POSITIONING_LINES_ZH = ['我为创作者', '做产品。'];
+export const SUBLINE_ZH = '我是插画师，在杜克大学富卡商学院读商科，平时和 AI agent 一起写软件、把产品做上线。正在找 2027 年年中入职的产品岗位。';
 
 // What each evidence label means across the case studies. A case can narrow a meaning in its own legend.
 export const EVIDENCE = ['Measured', 'Sourced', 'Estimated', 'Simulated', 'Hypothesis'];
@@ -30,6 +33,14 @@ export const PRODUCT_CASES = [
     when: 'Oct 2026',
     status: 'Testing next',
     proof: {label: 'Measured', text: 'With only variables bound, 9 of 9 builds followed every token change; without them, the median was 50%.'},
+    zh: {
+      subtitle: 'AI agent 从 Figma 文件里还原不出什么，以及我围绕这一点设计的交付方式',
+      summary: '我测了 coding agent 照着 Figma 文件写代码时会丢掉什么（37 次构建），然后在 Figma 的 Check designs 里设计了一个视图：你选中的值一步绑定、一步撤销，剩下的告诉 agent。',
+      kind: '先做研究，再做产品设计',
+      when: '2026 年 10 月',
+      status: '即将测试',
+      proof: {text: '只绑定 variables 时，9 次构建全部跟上了每一次 token 改动；不绑定时，中位数只有 50%。'},
+    },
     // The review state of the prototype (round 2), cropped to the canvas, Check designs and the properties panel.
     thumb: {src: '/assets/product/ready-for-agents/tile.webp', width: 1280, height: 830},
     page: true,
@@ -43,6 +54,14 @@ export const PRODUCT_CASES = [
     kind: 'Mobile product design, coded prototype',
     when: 'Oct 2026',
     status: 'Testing next',
+    zh: {
+      pageTitle: 'Atelier，给插画师的印品工作室',
+      subtitle: '给插画师的印品工作室：不用自己开店，也能卖自己作品的印刷品',
+      summary: '一个手机 app：把完成的插画变成别人能买的印刷品，并且不让画师上架印出来会糊的尺寸。',
+      kind: '移动端产品设计，代码原型',
+      when: '2026 年 10 月',
+      status: '即将测试',
+    },
     page: true,
   },
   {
@@ -54,6 +73,14 @@ export const PRODUCT_CASES = [
     kind: 'Service design, two-sided mobile',
     when: 'Oct 2026',
     status: 'Testing next',
+    zh: {
+      pageTitle: 'Last 100 Feet：公寓配送的入户路线',
+      subtitle: '住户把从路边到家门口的路标一次，之后每位配送员都能照着走，不用再打电话',
+      summary: '一个双边移动端概念：住户在空白的小区平面图上标出进门路线，配送员从停车点跟着照片卡片走到门口；GPS 定位出错时，门禁码照样能用。',
+      kind: '服务设计，双边移动端',
+      when: '2026 年 10 月',
+      status: '即将测试',
+    },
     // The prototype's site plan with the whole route (presentation frame 1).
     thumb: {src: '/assets/product/last-100-feet/plan.webp', width: 808, height: 768},
     page: true,
@@ -67,6 +94,14 @@ export const PRODUCT_CASES = [
     kind: 'Decision support, desktop web',
     when: 'Oct 2026',
     status: 'Testing next',
+    zh: {
+      pageTitle: 'Choose Not to Lose：医保方案选择器',
+      subtitle: '一个医保方案选择器：按全年算总账，把保障相同却更贵的方案标出来，并附上算式',
+      summary: '一个员工福利选保概念：把四个虚构方案放在同一条全年费用轴上，证明哪个方案保障相同却更贵，同时仍然允许你选它。',
+      kind: '决策辅助，桌面网页',
+      when: '2026 年 10 月',
+      status: '即将测试',
+    },
     // The comparison chart of the prototype (round 2); the cost-difference note is lifted in front on the tile.
     thumb: {src: '/assets/product/choose-not-to-lose/tile.webp', width: 2192, height: 1340},
     page: true,
@@ -173,12 +208,14 @@ export function productRouteFor(page) {
 /** True for every path the standalone product entry should own (including unknown /product/* paths, which get a 404 view). */
 export const isProductPath = pathname => /^\/(product|for)(\/|$)/.test(clean(pathname) + '/');
 
-export function productTitle(page) {
-  if (page?.type === 'product-case') return page.item.pageTitle || page.item.title;
+/** The page's title for the browser tab, in the site language (lang 'zh' or 'en'). */
+export function productTitle(page, lang = 'en') {
+  const zh = lang === 'zh';
+  if (page?.type === 'product-case') return (zh && page.item.zh?.pageTitle) || page.item.pageTitle || page.item.title;
   if (page?.type === 'for') return 'For the Figma team';
-  if (page?.type === 'product') return 'Product design';
-  if (page?.type === 'moved') return 'Moved';
-  return 'Page not found';
+  if (page?.type === 'product') return zh ? '产品设计' : 'Product design';
+  if (page?.type === 'moved') return zh ? '已迁移' : 'Moved';
+  return zh ? '页面不存在' : 'Page not found';
 }
 
 /** The next case that has a page, wrapping around. */

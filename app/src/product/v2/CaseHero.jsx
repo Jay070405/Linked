@@ -2,6 +2,7 @@ import {useLayoutEffect, useRef} from 'react';
 import {Go} from '../Go';
 import {PRODUCT_HOME} from '../content';
 import {FINE, gsap, SplitText, TITLE_FROM, TITLE_TO} from './motion';
+import {UI, useCaseLang} from '../i18n';
 
 /** Case hero: title in large display type, a one-line outcome, role and time chips, and a visual that moves.
     The entrance plays once on load: the title's characters rise the way the homepage's titles do, the copy
@@ -9,6 +10,7 @@ import {FINE, gsap, SplitText, TITLE_FROM, TITLE_TO} from './motion';
     visual leans a little toward the pointer. Reduced motion gets one short fade and no movement. */
 export default function CaseHero({title, kind, outcome, chips = [], actions, children, reduced = false, stacked = false}) {
   const root = useRef(null), heading = useRef(null);
+  const {t} = useCaseLang();
 
   useLayoutEffect(() => {
     const node = root.current;
@@ -60,7 +62,7 @@ export default function CaseHero({title, kind, outcome, chips = [], actions, chi
   }, [reduced]);
 
   const head = <>
-    <Go to={PRODUCT_HOME} className="v2-back" data-hero-item=""><span aria-hidden="true">←</span> All product work</Go>
+    <Go to={PRODUCT_HOME} className="v2-back" data-hero-item=""><span aria-hidden="true">←</span> {t(UI.allWork)}</Go>
     <p className="v2-hero-kind" data-hero-item="">{kind}</p>
     <h1 className="v2-hero-title" aria-label={title}><span ref={heading} aria-hidden="true">{title}</span></h1>
   </>;

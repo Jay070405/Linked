@@ -31,7 +31,7 @@ export default function ProductShell() {
   useEffect(() => { document.body.classList.toggle('quiet', reduced); }, [reduced]);
   useEffect(() => { document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN'; }, [lang]);
   const chooseLang = value => { setLang(value); saveLanguage(value); };
-  useEffect(() => { document.title = `Jay Lin — ${productTitle(resolveProductPath(path))}`; }, [path]);
+  useEffect(() => { document.title = `Jay Lin — ${productTitle(resolveProductPath(path), lang)}`; }, [path, lang]);
 
   const {run: transition, layer} = useCircularTransition(reduced);
   // Commit the page synchronously inside the transition, so the circle reveals the real destination: at the top
@@ -66,7 +66,7 @@ export default function ProductShell() {
     <a className="skip-link" href="#product-main">{lang === 'en' ? 'Skip to content' : '跳到正文'}</a>
     <SiteNavigation lang={lang} reducedMotion={reduced} tone="light" onLanguage={chooseLang} onNavigate={onNavigate} onAbout={() => location.assign(SITE.about)}/>
     <main id="product-main" ref={main} tabIndex={-1} className="product-shell-main">
-      <ProductRoute page={page} reduced={reduced} onNavigate={navigate}/>
+      <ProductRoute page={page} reduced={reduced} onNavigate={navigate} lang={lang}/>
     </main>
     <CircularTransition layer={layer} lang={lang}/>
   </>;

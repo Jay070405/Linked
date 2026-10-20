@@ -3,6 +3,7 @@ import {Ev} from '../../CaseKit';
 import {scrollerOf} from '../../v2/motion';
 import {offsetWithin} from './camera';
 import {useWorld} from './context';
+import {L, useCaseLang} from '../../i18n';
 import {indexOf} from './data';
 import {FigIcon} from './icons';
 
@@ -80,6 +81,7 @@ function Value({step, file}) {
 }
 
 function Pane({file, title, landed, tally}) {
+  const {t} = useCaseLang();
   return <figure className={`cp-pane is-${file}`} aria-label={title}>
     <figcaption className="cp-pane-head">
       <span className="cp-file"><FigIcon name="code"/>index.html</span>
@@ -95,7 +97,7 @@ function Pane({file, title, landed, tally}) {
         return <span key={i} className={`cp-line${on ? ' is-on' : ''}`} data-slot={line.slot && !line.group ? `${file}-${line.slot}` : undefined}>
           <span className="cp-n">{line.n}</span>
           <span className="cp-text"><Code parts={line.code}/>{isValue ? (on ? <Value step={step} file={file}/> : <span className="cp-hole"/>) : null}{line.end && on ? <span className="cp-p">{line.end}</span> : null}
-            {isValue && on && file === 'L0' ? <span className={`cp-fate is-${step.fate}`}>{step.fate === 'invented' ? 'made up' : 'guessed'}</span> : null}</span>
+            {isValue && on && file === 'L0' ? <span className={`cp-fate is-${step.fate}`}>{t(step.fate === 'invented' ? L('made up', '自编') : L('guessed', '猜中'))}</span> : null}</span>
         </span>;
       })}
     </code></pre>
@@ -105,6 +107,7 @@ function Pane({file, title, landed, tally}) {
 
 export default function Compile({reduced = false, root, title, lede}) {
   const {mode, camera} = useWorld();
+  const {t, zh} = useCaseLang();
   const finished = reduced || mode === 'plain';
   const host = useRef(null), chips = useRef(null), geo = useRef(null);
   const [landed, setLanded] = useState(() => (finished ? ALL : new Set()));
@@ -233,38 +236,41 @@ export default function Compile({reduced = false, root, title, lede}) {
   const box = reading ? LAYERS.find(l => l.id === reading)?.box : null;
   const colorsIn = STEPS.filter(s => s.color && landed.has(s.slot));
   const guessed = colorsIn.filter(s => s.fate === 'guessed').length;
-  const tallyV = colorsIn.length ? `${colorsIn.length} of ${colorsIn.length} colors keep the file’s names` : 'Waiting for colors';
-  const made = colorsIn.length - guessed;
-  const tally0 = colorsIn.length ? `Of ${colorsIn.length}: ${made} name${made === 1 ? '' : 's'} made up${guessed ? `, ${guessed} guessed right` : ''}` : 'Waiting for colors';
+  const made = colorsIn.length - guessed, n = colorsIn.length;
+  const waiting = t(L('Waiting for colors', '颜色还没到'));
+  const tallyV = n ? (zh ? `${n} 个颜色全部沿用文件里的名字` : `${n} of ${n} colors keep the file’s names`) : waiting;
+  const tally0 = n ? (zh ? `${n} 个颜色中：${made} 个名字是自编的${guessed ? `，${guessed} 个碰巧猜中` : ''}` : `Of ${n}: ${made} name${made === 1 ? '' : 's'} made up${guessed ? `, ${guessed} guessed right` : ''}`) : waiting;
 
   return <div ref={host} className={`cp${finished ? ' is-finished' : ''}`}>
     <header className="rfaw-head cp-head">
-      <h3 className="rfaw-h3" data-agent="Text">{title}</h3>
-      <p className="rfaw-lede" data-agent="Text">{lede}</p>
+      <h3 className="rfaw-h3" data-agent="Text">{t(title)}</h3>
+      <p className="rfaw-lede" data-agent="Text">{t(lede)}</p>
     </header>
     <div className="cp-shot" data-jay=".96,.1">
-      <img src="/assets/product/test-set-s2.webp" width="800" height="433" alt="The pricing screen both agents saw, identical for both files" loading="lazy" decoding="async"/>
+      <img src="/assets/product/test-set-s2.webp" width="800" height="433" alt={t(L('The pricing screen both agents saw, identical for both files', '两个 agent 看到的定价页画面，两个文件完全相同'))} loading="lazy" decoding="async"/>
       <svg viewBox="0 0 1440 779" aria-hidden="true">{box ? <rect key={reading} x={box[0] + 3} y={box[1] + 3} width={box[2] - 6} height={Math.min(box[3], 776 - box[1]) - 3}/> : null}</svg>
-      <p className="cp-shot-note">The picture both agents saw</p>
+      <p className="cp-shot-note">{t(L('The picture both agents saw', '两个 agent 看到的画面'))}</p>
     </div>
-    <section className="cp-layers" aria-label="The pricing screen's layers, the same in both files">
-      <header><span>Layers</span><span className="cp-page">S2, pricing</span></header>
+    <section className="cp-layers" aria-label={t(L('The pricing screen’s layers, the same in both files', '定价页的图层，两个文件相同'))}>
+      <header><span>{t(L('Layers', '图层'))}</span><span className="cp-page">{t(L('S2, pricing', 'S2，定价页'))}</span></header>
       <ol>
         {LAYERS.map(l => <li key={l.id} data-layer={l.id} data-agent={l.name} style={{'--depth': l.depth}} className={reading === l.id ? 'is-read' : ''}>
           <FigIcon name={l.icon}/><span>{l.name}</span>
         </li>)}
       </ol>
-      <p className="cp-same">Same 142 layers and names in both files. Only L0V binds its colors.</p>
+      <p className="cp-same">{t(L('Same 142 layers and names in both files. Only L0V binds its colors.', '两个文件的 142 个图层和命名完全相同，只有 L0V 绑定了颜色。'))}</p>
     </section>
-    <Pane file="L0V" title="from the file with variables (L0V)" landed={landed} tally={tallyV}/>
-    <Pane file="L0" title="from the raw file (L0)" landed={landed} tally={tally0}/>
+    <Pane file="L0V" title={t(L('from the file with variables (L0V)', '来自带 variables 的文件（L0V）'))} landed={landed} tally={tallyV}/>
+    <Pane file="L0" title={t(L('from the raw file (L0)', '来自原始文件（L0）'))} landed={landed} tally={tally0}/>
     <p className="cp-legend" aria-hidden="true">
-      <span className="cp-chip is-var is-static"><i className="cp-chip-sw" style={{'--c': '#4f46e5'}}/><b className="cp-chip-a">color/primary</b></span><span>a bound variable</span>
-      <span className="cp-chip is-hex is-static"><i className="cp-chip-sw" style={{'--c': '#4f46e5'}}/><b className="cp-chip-a">4F46E5</b></span><span>a raw value</span>
-      {finished ? null : <span className="cp-scroll">Scroll to compile; scroll back to undo it.</span>}
+      <span className="cp-chip is-var is-static"><i className="cp-chip-sw" style={{'--c': '#4f46e5'}}/><b className="cp-chip-a">color/primary</b></span><span>{t(L('a bound variable', '绑定的 variable'))}</span>
+      <span className="cp-chip is-hex is-static"><i className="cp-chip-sw" style={{'--c': '#4f46e5'}}/><b className="cp-chip-a">4F46E5</b></span><span>{t(L('a raw value', '原始值'))}</span>
+      {finished ? null : <span className="cp-scroll">{t(L('Scroll to compile; scroll back to undo it.', '向下滚动开始生成，往回滚动就撤销。'))}</span>}
     </p>
-    <p className="v2-sr">In the build from the file with variables, all four colors use the file’s names: --color-background, --color-text-primary, --color-primary and --color-border. In the build from the raw file, the agent made up --color-bg and --color-text, and happened to guess --color-primary and --color-border.</p>
+    <p className="v2-sr">{t(L('In the build from the file with variables, all four colors use the file’s names: --color-background, --color-text-primary, --color-primary and --color-border. In the build from the raw file, the agent made up --color-bg and --color-text, and happened to guess --color-primary and --color-border.',
+      '用带 variables 的文件构建时，四个颜色都沿用了文件里的名字：--color-background、--color-text-primary、--color-primary 和 --color-border。用原始文件构建时，agent 自己编了 --color-bg 和 --color-text，又碰巧猜中了 --color-primary 和 --color-border。'))}</p>
     <div ref={chips} className="cp-chips" aria-hidden="true"/>
-    <p className="rfaw-caption cp-caption"><Ev label="Measured"/><span>Lines and line numbers quoted from the two agents’ files, S2-L0V-r1 and S2-L0-r1. Layer names, boxes and bindings read from the benchmark file with Figma’s MCP server.</span></p>
+    <p className="rfaw-caption cp-caption"><Ev label="Measured"/><span>{t(L('Lines and line numbers quoted from the two agents’ files, S2-L0V-r1 and S2-L0-r1. Layer names, boxes and bindings read from the benchmark file with Figma’s MCP server.',
+      '代码行和行号摘自两个 agent 写的文件 S2-L0V-r1 和 S2-L0-r1。图层名称、位置和绑定是通过 Figma 的 MCP server 从测试文件里读出来的。'))}</span></p>
   </div>;
 }

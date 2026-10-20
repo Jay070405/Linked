@@ -1,5 +1,8 @@
 import {Children, useEffect, useRef} from 'react';
 import {EVIDENCE, EVIDENCE_MEANING} from './content';
+import {EVIDENCE_ZH, UI, useCaseLang} from './i18n';
+
+const SR = {position: 'absolute', width: 1, height: 1, overflow: 'hidden', clipPath: 'inset(50%)', whiteSpace: 'nowrap'};
 
 /* The case-study kit. The body text makes the argument; the right margin carries the evidence.
    Every component renders real text in reading order, so the page reads correctly without the layout script,
@@ -7,23 +10,29 @@ import {EVIDENCE, EVIDENCE_MEANING} from './content';
 
 const known = label => EVIDENCE.find(e => e.toLowerCase() === String(label).trim().toLowerCase());
 
-/** Small pill naming how a claim is known. Sentence case. */
+/** Small pill naming how a claim is known. Sentence case. In Chinese the label stays English (it is a fixed key
+    across the cases) and its meaning comes as a tooltip, and is read out after the label. */
 export function Ev({label}) {
+  const {zh} = useCaseLang();
   const ev = known(label);
   if (!ev) {
     if (import.meta.env.DEV) throw new Error(`Unknown evidence label "${label}". Use one of: ${EVIDENCE.join(', ')}`);
     return <span className="pp-ev">{label}</span>;
   }
+  if (zh) return <span className={`pp-ev pp-ev--${ev.toLowerCase()}`} title={EVIDENCE_ZH[ev]}><span lang="en">{ev}</span><span style={SR}>（{EVIDENCE_ZH[ev]}）</span></span>;
   return <span className={`pp-ev pp-ev--${ev.toLowerCase()}`}>{ev}</span>;
 }
 
 /** Key to the labels a case uses, with the meaning narrowed to that case where it helps. */
 export function Legend({labels = EVIDENCE, meanings = {}}) {
+  const {t, zh} = useCaseLang();
   return <aside className="pp-legend" aria-labelledby="pp-legend-title">
-    <p id="pp-legend-title" className="pp-legend-title">How claims are labeled</p>
-    <dl>{labels.map(label => <div key={label}><dt><Ev label={label}/></dt><dd>{meanings[label] || EVIDENCE_MEANING[label]}</dd></div>)}</dl>
+    <p id="pp-legend-title" className="pp-legend-title">{t(UI.howLabeled)}</p>
+    <dl>{labels.map(label => <div key={label}><dt><Ev label={label}/></dt><dd>{t(meanings[label]) || (zh ? EVIDENCE_ZH[label]?.split('：')[1] : EVIDENCE_MEANING[label])}</dd></div>)}</dl>
   </aside>;
 }
+
+function NoteSource() { const {t, zh} = useCaseLang(); return <>{t(UI.source)}{zh ? '：' : ': '}</>; }
 
 /** Marks the sentence a note supports, so hovering the note highlights exactly that sentence. */
 export const C = ({id, children}) => <span className="pp-claim" data-claim={id}>{children}</span>;
@@ -33,7 +42,7 @@ export function Note({label, source, claim, children}) {
   return <div className="pp-note" role="note" tabIndex={0} data-note="" data-claim-for={claim || undefined}>
     {label ? <Ev label={label}/> : null}
     <div className="pp-note-text">{children}</div>
-    {source ? <p className="pp-note-source">Source: {source}</p> : null}
+    {source ? <p className="pp-note-source"><NoteSource/>{source}</p> : null}
   </div>;
 }
 

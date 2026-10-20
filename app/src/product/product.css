@@ -345,3 +345,7 @@
 .product-shell .v16-navigation:not(.is-menu-open)[data-tone=light]{background:linear-gradient(#fafbfcec,#fafbfcf5);border-bottom:1px solid #1111140b;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .product-shell .v16-navigation:not(.is-menu-open) .staggered-menu-panel{box-shadow:none}
 .product-shell-main{outline:none;scroll-margin-top:0}
+
+/* Chinese (i18n.jsx): Chinese text falls back to the system's Chinese face, which the tight Latin tracking would crowd */
+.pp-index.is-zh .pp-hero-title{letter-spacing:-.01em;line-height:1.1}
+.pp-page:lang(zh-CN) :is(.pt-sub,.pp-hero-sub,.pt-meta,.pp-foot){letter-spacing:0}

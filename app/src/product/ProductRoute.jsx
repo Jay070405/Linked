@@ -7,28 +7,31 @@ import ReadyForAgentsCase from './worlds/ready-for-agents/ReadyForAgentsWorld';
 import ChooseNotToLoseCase from './worlds/choose-not-to-lose/ChooseNotToLoseWorld';
 import LastHundredFeetCase from './worlds/last-100-feet/LastHundredFeetWorld';
 import {PRODUCT_HOME} from './content';
+import {L, LangProvider, pageLanguage, useCaseLang} from './i18n';
 import './product.css';
 
 const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'last-100-feet': LastHundredFeetCase, 'choose-not-to-lose': ChooseNotToLoseCase};
 
 function NotFound() {
-  return <div className="pp-page pp-missing" lang="en" data-nav-tone="light">
-    <h1 className="pp-for-title">This page doesn’t exist.</h1>
-    <p className="pp-hero-sub">The address may be mistyped, or the case may have moved.</p>
-    <p className="pp-missing-link"><Go to={PRODUCT_HOME}>See all product work</Go></p>
+  const {t, htmlLang} = useCaseLang();
+  return <div className="pp-page pp-missing" lang={htmlLang} data-nav-tone="light">
+    <h1 className="pp-for-title">{t(L('This page doesn’t exist.', '这个页面不存在。'))}</h1>
+    <p className="pp-hero-sub">{t(L('The address may be mistyped, or the case may have moved.', '可能是地址输错了，也可能是案例换了位置。'))}</p>
+    <p className="pp-missing-link"><Go to={PRODUCT_HOME}>{t(L('See all product work', '查看全部产品作品'))}</Go></p>
   </div>;
 }
 
 /** Product pages, the same in the full site (inside its page viewport) and in the standalone product entry.
-    English only for now: the root carries lang="en" whatever the site language is. */
-export default function ProductRoute({page, reduced = false, onNavigate}) {
+    `lang` is the site's language; a page follows it once it is translated (i18n.jsx, TRANSLATED), and stays English
+    (its root carries lang="en") until then. */
+export default function ProductRoute({page, reduced = false, onNavigate, lang = 'en'}) {
   const Case = page?.type === 'product-case' ? CASES[page.item.slug] : null;
   // a moved address is on its way to Systems (ProductShell replaces the location); show nothing meanwhile
   if (page?.type === 'moved') return null;
-  return <NavigateContext.Provider value={onNavigate}>
+  return <LangProvider lang={pageLanguage(page, lang)}><NavigateContext.Provider value={onNavigate}>
     {page?.type === 'product' ? <ProductIndex reduced={reduced}/>
       : Case ? <Case key={page.item.slug} item={page.item} reduced={reduced}/>
       : page?.type === 'for' ? <ForPage item={page.item}/>
       : <NotFound/>}
-  </NavigateContext.Provider>;
+  </NavigateContext.Provider></LangProvider>;
 }

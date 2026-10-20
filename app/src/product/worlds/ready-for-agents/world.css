@@ -601,3 +601,9 @@ body.product-shell:has(.rfaw[data-theme=dark]) .v16-navigation[data-tone=light] 
 body.product-shell:has(.rfaw[data-theme=dark]) .v16-navigation[data-tone=light] .v16-language button{color:#b3b3b3}
 body.product-shell:has(.rfaw[data-theme=dark]) .v16-navigation[data-tone=light] .v16-language button[aria-pressed=true]{color:#111114}
 body.product-shell:has(.rfaw[data-theme=dark]) .v16-navigation:not(.is-menu-open) .sm-toggle{color:#fff!important}
+
+/* Chinese (i18n.jsx): Chinese text falls back to a system Chinese face after Inter; tight Latin tracking would crowd it,
+   and it reads better with a little more leading */
+.rfaw.is-zh{--ui:'RFA Inter',Inter,'PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.rfaw.is-zh :is(.rfaw-h2,.rfaw-h3,.rfaw-insight-text,.rfaw-quote p,.rfaw .v2-h2,.rfaw .v2-takeaway>p){letter-spacing:0}
+.rfaw.is-zh :is(.rfaw-body,.rfaw-lede,.rfaw-outcome,.rfaw-list li,.rfaw-hyps li,.rfaw-principle-test,.rfaw-dir-idea){line-height:1.75}

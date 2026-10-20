@@ -1,6 +1,7 @@
 import {useRef, useState} from 'react';
 import {kindsOf, L0, L2, LayerIcon, SHOWN} from '../../figures';
 import {Ask, Takeaway, useInputMode} from '../Try';
+import {L, useCaseLang} from '../../i18n';
 import './layers.css';
 
 /* D1, "Same picture, different structure": the sign-in screen's first 14 layers in the L2 and the L0 file, linked.
@@ -22,13 +23,17 @@ const PAIR = {
   L0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 11],
 };
 const PANELS = [
-  {id: 'L2', tree: L2, page: 'L2 Systematized', label: 'The first 14 layers of the sign-in screen in the L2 file'},
-  {id: 'L0', tree: L0, page: 'L0 Raw', label: 'The first 14 layers of the sign-in screen in the L0 file'},
+  {id: 'L2', tree: L2, page: L('L2 Systematized', 'L2 系统化'), label: L('The first 14 layers of the sign-in screen in the L2 file', 'L2 文件中登录页的前 14 个图层')},
+  {id: 'L0', tree: L0, page: L('L0 Raw', 'L0 原始'), label: L('The first 14 layers of the sign-in screen in the L0 file', 'L0 文件中登录页的前 14 个图层')},
 ];
 const other = id => (id === 'L2' ? 'L0' : 'L2');
-const TYPE = {FRAME: 'frame', TEXT: 'text layer', INSTANCE: 'component instance'};
+const TYPE = {FRAME: L('frame', 'frame'), TEXT: L('text layer', '文本图层'), INSTANCE: L('component instance', '组件实例')};
+const KIND = {color: L('color', '颜色'), spacing: L('spacing', '间距'), radius: L('radius', '圆角')};
 
 export default function LinkedLayers({reduced = false}) {
+  const {t, zh} = useCaseLang();
+  const typeOf = type => t(TYPE[type]) || type.toLowerCase();
+  const kinds = fields => kindsOf(fields).map(k => t(KIND[k])).join(zh ? '和' : ' and ');
   const [hot, setHot] = useState(null);     // {panel, i}
   const [seen, setSeen] = useState(false);
   const mode = useInputMode();
@@ -59,20 +64,22 @@ export default function LinkedLayers({reduced = false}) {
 
   // one sentence for what's lit: the pair, and what each file says about it
   const describe = () => {
-    if (!hot) return 'Point at a layer to compare it with its twin.';
+    if (!hot) return t(L('Point at a layer to compare it with its twin.', '指向一个图层，和另一个文件里的对应图层比较。'));
     const [, n, type, , fields] = row(hot.panel, hot.i);
-    const mine = `${hot.panel} “${n}”, a ${TYPE[type] || type.toLowerCase()}${fields.length ? `, ${kindsOf(fields).join(' and ')} bound` : ', nothing bound'}`;
-    if (!twin) return `${mine}. Its L0 twin, ${pair.below}, sits below these 14 rows.`;
+    const one = (panel, name, ty, f) => zh
+      ? `${panel}“${name}”，${typeOf(ty)}，${f.length ? `${kinds(f)}已绑定` : '什么都没绑定'}`
+      : `${panel} “${name}”, a ${typeOf(ty)}${f.length ? `, ${kinds(f)} bound` : ', nothing bound'}`;
+    const mine = one(hot.panel, n, type, fields);
+    if (!twin) return zh ? `${mine}。它在 L0 里的对应图层 ${pair.below} 在这 14 行下面。` : `${mine}. Its L0 twin, ${pair.below}, sits below these 14 rows.`;
     const [, tn, ttype, , tf] = row(twin.panel, twin.i);
-    const theirs = `${twin.panel} “${tn}”, a ${TYPE[ttype] || ttype.toLowerCase()}${tf.length ? `, ${kindsOf(tf).join(' and ')} bound` : ', nothing bound'}`;
-    return `${mine}. ${theirs}.`;
+    return zh ? `${mine}。${one(twin.panel, tn, ttype, tf)}。` : `${mine}. ${one(twin.panel, tn, ttype, tf)}.`;
   };
 
   return <figure ref={root} className="ll" {...mode.bind} onPointerLeave={e => { if (e.pointerType === 'mouse') set(null); }}>
-    <Ask>Pick a layer in either panel.</Ask>
+    <Ask>{t(L('Pick a layer in either panel.', '在任意一个面板里选一个图层。'))}</Ask>
     <div className="ll-stage pp-stage">
-      {PANELS.map(p => <section key={p.id} className={`pp-layers-panel ll-panel is-${p.id}`} aria-label={p.label}>
-        <header><span>Layers</span><span className="pp-layers-page">{p.page}</span></header>
+      {PANELS.map(p => <section key={p.id} className={`pp-layers-panel ll-panel is-${p.id}`} aria-label={t(p.label)}>
+        <header><span>{t(L('Layers', '图层'))}</span><span className="pp-layers-page">{t(p.page)}</span></header>
         <ol>
           {p.tree.slice(0, SHOWN).map(([depth, n, type, layout, fields], i) => {
             const open = (p.tree[i + 1]?.[0] ?? -1) > depth;
@@ -80,20 +87,20 @@ export default function LinkedLayers({reduced = false}) {
             const focusIndex = hot?.panel === p.id ? hot.i : 0;
             return <li key={i} data-row={`${p.id}-${i}`} style={{'--depth': depth}}
               className={`${type === 'INSTANCE' ? 'is-instance' : ''}${isHot ? ' is-hot' : ''}${isTwin ? ' is-twin' : ''}`}
-              tabIndex={i === focusIndex ? 0 : -1} aria-label={`${n}, ${TYPE[type] || type}${fields.length ? `, ${kindsOf(fields).join(' and ')} bound to variables` : ''}`}
+              tabIndex={i === focusIndex ? 0 : -1} aria-label={zh ? `${n}，${typeOf(type)}${fields.length ? `，${kinds(fields)}绑定了 variables` : ''}` : `${n}, ${typeOf(type)}${fields.length ? `, ${kinds(fields)} bound to variables` : ''}`}
               onPointerEnter={e => { if (e.pointerType === 'mouse') set({panel: p.id, i}); }}
               onClick={() => set({panel: p.id, i})} onFocus={() => set({panel: p.id, i})} onKeyDown={e => key(e, p.id, i)}>
               <span className="pp-layer-caret" aria-hidden="true">{open ? <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.5 2.5 4 5.2l2.5-2.7"/></svg> : null}</span>
               <LayerIcon type={type} layout={layout}/>
               <span className="pp-layer-name">{n}</span>
-              <span className="pp-layer-vars">{kindsOf(fields).map(k => <span key={k} className="pp-var-chip"><svg width="9" height="10" viewBox="0 0 9 10" aria-hidden="true"><path d="M4.5.8 8.2 2.9v4.2L4.5 9.2.8 7.1V2.9Z"/></svg>{k}</span>)}</span>
+              <span className="pp-layer-vars">{kindsOf(fields).map(k => <span key={k} className="pp-var-chip" data-kind={k}><svg width="9" height="10" viewBox="0 0 9 10" aria-hidden="true"><path d="M4.5.8 8.2 2.9v4.2L4.5 9.2.8 7.1V2.9Z"/></svg>{t(KIND[k])}</span>)}</span>
             </li>;
           })}
         </ol>
       </section>)}
       <div className="ll-shot">
         <div className="ll-screen">
-          <img src="/assets/product/ready-for-agents/s1-reference.webp" width="390" height="844" alt="The sign-in screen as Figma exports it, identical for L2 and L0" decoding="async"/>
+          <img src="/assets/product/ready-for-agents/s1-reference.webp" width="390" height="844" alt={t(L('The sign-in screen as Figma exports it, identical for L2 and L0', 'Figma 导出的登录页，L2 和 L0 完全相同'))} decoding="async"/>
           <svg viewBox="0 0 390 844" aria-hidden="true">
             {box ? <g key={reduced || mode.keyed.current ? 'still' : `${hot.panel}-${hot.i}`} className="ll-box" data-still={reduced || mode.keyed.current ? '' : undefined}>
               <rect x={box.x} y={box.y} width={box.w} height={box.h}/>
@@ -104,7 +111,7 @@ export default function LinkedLayers({reduced = false}) {
         <p className="ll-status" aria-live="polite">{describe()}</p>
       </div>
     </div>
-    <Takeaway show={seen} instant={reduced || mode.keyed.current}>Same pixels, same box. Only one file says what the box is.</Takeaway>
-    <figcaption className="v2-caption"><span>Read from the benchmark file with Figma’s MCP server: names, types, variable bindings and positions; instances aren’t expanded. From the keyboard, ↑ and ↓ move through a panel and ← or → jumps to the twin.</span></figcaption>
+    <Takeaway show={seen} instant={reduced || mode.keyed.current}>{t(L('Same pixels, same box. Only one file says what the box is.', '像素一样，位置一样，只有一个文件说明了它是什么。'))}</Takeaway>
+    <figcaption className="v2-caption"><span>{t(L('Read from the benchmark file with Figma’s MCP server: names, types, variable bindings and positions; instances aren’t expanded. From the keyboard, ↑ and ↓ move through a panel and ← or → jumps to the twin.', '通过 Figma 的 MCP server 从测试文件读取：名称、类型、variable 绑定和位置；组件实例没有展开。用键盘时，↑ ↓ 在面板内移动，← 或 → 跳到对应图层。'))}</span></figcaption>
   </figure>;
 }

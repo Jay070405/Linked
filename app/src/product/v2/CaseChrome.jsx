@@ -1,5 +1,6 @@
 import {lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {scrollerOf, useMedia} from './motion';
+import {UI, useCaseLang} from '../i18n';
 import './chrome.css';
 
 export {zoomable} from './zoom';
@@ -106,7 +107,8 @@ function toItem(t) {
 
 /** Wide screens: ticks in the left margin, one per chapter and section. Labels slide in on hover or focus. */
 function Rail({items, active, shown, jump}) {
-  return <nav className={`v2-toc${shown ? ' is-shown' : ''}`} aria-label="On this page">
+  const {t} = useCaseLang();
+  return <nav className={`v2-toc${shown ? ' is-shown' : ''}`} aria-label={t(UI.onThisPage)}>
     <ol>
       {items.map((item, i) => <li key={item.id} className={item.level ? 'is-section' : 'is-chapter'}>
         <a href={`#${item.id}`} className={i === active ? 'is-active' : ''} aria-current={i === active ? 'location' : undefined}
@@ -120,6 +122,7 @@ function Rail({items, active, shown, jump}) {
 
 /** Narrower screens: one chip under the nav bar names where you are; it opens the same list. */
 function Chip({items, active, shown, jump, reduced}) {
+  const {t} = useCaseLang();
   const [open, setOpen] = useState(false);
   const [keyed, setKeyed] = useState(false);
   const wrap = useRef(null), button = useRef(null), list = useRef(null);
@@ -139,8 +142,8 @@ function Chip({items, active, shown, jump, reduced}) {
   return <div ref={wrap} className={`v2-chip${shown ? ' is-shown' : ''}${open ? ' is-open' : ''}${keyed || reduced ? ' is-instant' : ''}`}>
     <button ref={button} type="button" className="v2-chip-button" aria-expanded={open} aria-controls="v2-chip-list"
       onClick={e => { setKeyed(e.detail === 0); setOpen(o => !o); }}>
-      <span className="v2-chip-n">{active >= 0 ? `${items.slice(0, active + 1).filter(i => !i.level).length}/${items.filter(i => !i.level).length}` : 'Contents'}</span>
-      <span className="v2-chip-label">{chapter || 'On this page'}{current?.level ? <span className="v2-chip-sub">{current.label}</span> : null}</span>
+      <span className="v2-chip-n">{active >= 0 ? `${items.slice(0, active + 1).filter(i => !i.level).length}/${items.filter(i => !i.level).length}` : t(UI.contents)}</span>
+      <span className="v2-chip-label">{chapter || t(UI.onThisPage)}{current?.level ? <span className="v2-chip-sub">{current.label}</span> : null}</span>
       <svg className="v2-chip-caret" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg>
     </button>
     <div id="v2-chip-list" className="v2-chip-pop" hidden={!open}>
