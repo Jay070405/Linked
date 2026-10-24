@@ -16,6 +16,8 @@ const STEMS = {
   atelier: 'd2-atelier',
   'last-100-feet': 'd3-last-100-feet',
   'choose-not-to-lose': 'd4-choose-not-to-lose',
+  // recorded later: the page shows its openers only once the files exist (worlds/arden/video.js)
+  arden: 'd5-arden',
 };
 const OPTIONS = [
   {id: 'page', label: UI.caseVideo, length: UI.oneMin},

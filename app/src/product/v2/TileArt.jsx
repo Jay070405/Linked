@@ -31,6 +31,14 @@ export function L100TileArt() {
   </span>;
 }
 
+/** D5: Arden in black titanium on black, the camera end-piece's close-up lifted in front. Renders only. */
+export function ArdenTileArt() {
+  return <span className="pt-arden">
+    <span className="pt-arden-hero" data-depth="8"><img src="/assets/product/arden/still/hero-black-dark-1600.webp" width={1600} height={1067} alt="" loading="lazy" decoding="async"/></span>
+    <span className="pt-arden-detail" data-depth="20"><img src="/assets/product/arden/still/detail-camera-off-800.webp" width={800} height={533} alt="" loading="lazy" decoding="async"/></span>
+  </span>;
+}
+
 /** D4: the prototype's yearly-cost chart, with its cost-difference note lifted in front. Screenshots only. */
 export function CntlTileArt() {
   return <span className="pt-cntl">

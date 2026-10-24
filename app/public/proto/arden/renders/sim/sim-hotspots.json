@@ -1,0 +1,417 @@
+{
+ "units": "pixels from the top-left of the image; *_pct = percent of width/height",
+ "views": {
+  "3q": {
+   "image": "sim-3q.png",
+   "width": 1600,
+   "height": 992,
+   "camera": {
+    "lens_mm": 85.0,
+    "location_m": [
+     -0.045,
+     -0.48635,
+     0.22012
+    ]
+   },
+   "hotspots": {
+    "capture_control": {
+     "x": 555.8,
+     "y": 446.4,
+     "x_pct": 34.736,
+     "y_pct": 45.004,
+     "visible": true,
+     "bbox": {
+      "x0": 539.7,
+      "y0": 441.8,
+      "x1": 572.4,
+      "y1": 455.1,
+      "x0_pct": 33.733,
+      "y0_pct": 44.539,
+      "x1_pct": 35.773,
+      "y1_pct": 45.881
+     }
+    },
+    "squeeze_zone": {
+     "x": 440.9,
+     "y": 461.4,
+     "x_pct": 27.557,
+     "y_pct": 46.51,
+     "visible": true,
+     "bbox": {
+      "x0": 398.5,
+      "y0": 431.8,
+      "x1": 485.8,
+      "y1": 494.7,
+      "x0_pct": 24.906,
+      "y0_pct": 43.533,
+      "x1_pct": 30.36,
+      "y1_pct": 49.866
+     }
+    },
+    "camera": {
+     "x": 1424.5,
+     "y": 318.8,
+     "x_pct": 89.028,
+     "y_pct": 32.132,
+     "visible": true
+    },
+    "indicator": {
+     "x": 1410.2,
+     "y": 322.5,
+     "x_pct": 88.135,
+     "y_pct": 32.512,
+     "visible": true
+    },
+    "light_sensor": {
+     "x": 701.8,
+     "y": 516.4,
+     "x_pct": 43.862,
+     "y_pct": 52.053,
+     "visible": true
+    },
+    "right_speaker_grille": {
+     "x": 285.9,
+     "y": 434.1,
+     "x_pct": 17.867,
+     "y_pct": 43.76,
+     "visible": false,
+     "bbox": {
+      "x0": 255.5,
+      "y0": 418.9,
+      "x1": 316.1,
+      "y1": 448.9,
+      "x0_pct": 15.969,
+      "y0_pct": 42.227,
+      "x1_pct": 19.753,
+      "y1_pct": 45.248
+     }
+    },
+    "mic_ports": [
+     {
+      "x": 1284.1,
+      "y": 328.3,
+      "x_pct": 80.258,
+      "y_pct": 33.099,
+      "visible": false,
+      "id": "mic_front_left"
+     },
+     {
+      "x": 1053.2,
+      "y": 279.3,
+      "x_pct": 65.824,
+      "y_pct": 28.156,
+      "visible": false,
+      "id": "mic_rear_left"
+     },
+     {
+      "x": 561.2,
+      "y": 521.9,
+      "x_pct": 35.074,
+      "y_pct": 52.611,
+      "visible": false,
+      "id": "mic_front_right"
+     },
+     {
+      "x": 309.1,
+      "y": 452.9,
+      "x_pct": 19.317,
+      "y_pct": 45.651,
+      "visible": false,
+      "id": "mic_rear_right"
+     },
+     {
+      "x": 1094.3,
+      "y": 386.9,
+      "x_pct": 68.395,
+      "y_pct": 38.999,
+      "visible": true,
+      "id": "mic_bridge"
+     }
+    ],
+    "pogo_pins": [
+     {
+      "x": 1093.8,
+      "y": 406.1,
+      "x_pct": 68.362,
+      "y_pct": 40.943,
+      "visible": false,
+      "bbox": {
+       "x0": 1080.1,
+       "y0": 401.0,
+       "x1": 1107.3,
+       "y1": 410.2,
+       "x0_pct": 67.506,
+       "y0_pct": 40.419,
+       "x1_pct": 69.209,
+       "y1_pct": 41.352
+      },
+      "id": "bridge_contacts",
+      "pads": [
+       {
+        "x": 1085.5,
+        "y": 408.4,
+        "x_pct": 67.844,
+        "y_pct": 41.171,
+        "visible": false
+       },
+       {
+        "x": 1102.1,
+        "y": 403.9,
+        "x_pct": 68.879,
+        "y_pct": 40.715,
+        "visible": false
+       }
+      ]
+     }
+    ],
+    "hinge_right": {
+     "x": 629.6,
+     "y": 502.1,
+     "x_pct": 39.35,
+     "y_pct": 50.615,
+     "visible": true,
+     "bbox": {
+      "x0": 626.9,
+      "y0": 474.1,
+      "x1": 633.4,
+      "y1": 541.0,
+      "x0_pct": 39.179,
+      "y0_pct": 47.796,
+      "x1_pct": 39.586,
+      "y1_pct": 54.535
+     }
+    },
+    "display_region": {
+     "x": 915.3,
+     "y": 567.5,
+     "x_pct": 57.204,
+     "y_pct": 57.205,
+     "visible": true,
+     "bbox": {
+      "x0": 839.1,
+      "y0": 495.3,
+      "x1": 990.5,
+      "y1": 640.5,
+      "x0_pct": 52.444,
+      "y0_pct": 49.926,
+      "x1_pct": 61.907,
+      "y1_pct": 64.57
+     }
+    },
+    "nose_pad_accelerometer": {
+     "x": 1028.3,
+     "y": 523.6,
+     "x_pct": 64.267,
+     "y_pct": 52.782,
+     "visible": true
+    }
+   }
+  },
+  "front": {
+   "image": "sim-front.png",
+   "width": 1600,
+   "height": 672,
+   "camera": {
+    "lens_mm": 85.0,
+    "location_m": [
+     0.0,
+     -0.38212,
+     0.00169
+    ]
+   },
+   "hotspots": {
+    "capture_control": {
+     "x": 185.8,
+     "y": 170.1,
+     "x_pct": 11.613,
+     "y_pct": 25.313,
+     "visible": false,
+     "bbox": {
+      "x0": 174.1,
+      "y0": 168.1,
+      "x1": 197.4,
+      "y1": 177.1,
+      "x0_pct": 10.882,
+      "y0_pct": 25.01,
+      "x1_pct": 12.336,
+      "y1_pct": 26.347
+     }
+    },
+    "squeeze_zone": {
+     "x": 178.4,
+     "y": 221.3,
+     "x_pct": 11.15,
+     "y_pct": 32.925,
+     "visible": false,
+     "bbox": {
+      "x0": 167.6,
+      "y0": 191.9,
+      "x1": 189.4,
+      "y1": 249.2,
+      "x0_pct": 10.475,
+      "y0_pct": 28.552,
+      "x1_pct": 11.838,
+      "y1_pct": 37.078
+     }
+    },
+    "camera": {
+     "x": 1442.3,
+     "y": 204.7,
+     "x_pct": 90.145,
+     "y_pct": 30.46,
+     "visible": true
+    },
+    "indicator": {
+     "x": 1413.3,
+     "y": 204.5,
+     "x_pct": 88.33,
+     "y_pct": 30.43,
+     "visible": true
+    },
+    "light_sensor": {
+     "x": 157.7,
+     "y": 204.7,
+     "x_pct": 9.854,
+     "y_pct": 30.46,
+     "visible": true
+    },
+    "right_speaker_grille": {
+     "x": 266.8,
+     "y": 271.1,
+     "x_pct": 16.676,
+     "y_pct": 40.34,
+     "visible": false,
+     "bbox": {
+      "x0": 257.0,
+      "y0": 262.6,
+      "x1": 274.4,
+      "y1": 278.4,
+      "x0_pct": 16.065,
+      "y0_pct": 39.084,
+      "x1_pct": 17.149,
+      "y1_pct": 41.433
+     }
+    },
+    "mic_ports": [
+     {
+      "x": 1407.2,
+      "y": 270.5,
+      "x_pct": 87.952,
+      "y_pct": 40.258,
+      "visible": true,
+      "id": "mic_front_left"
+     },
+     {
+      "x": 1355.7,
+      "y": 279.8,
+      "x_pct": 84.734,
+      "y_pct": 41.63,
+      "visible": true,
+      "id": "mic_rear_left"
+     },
+     {
+      "x": 192.8,
+      "y": 270.5,
+      "x_pct": 12.047,
+      "y_pct": 40.258,
+      "visible": true,
+      "id": "mic_front_right"
+     },
+     {
+      "x": 247.9,
+      "y": 279.5,
+      "x_pct": 15.494,
+      "y_pct": 41.592,
+      "visible": false,
+      "id": "mic_rear_right"
+     },
+     {
+      "x": 800.0,
+      "y": 167.8,
+      "x_pct": 50.0,
+      "y_pct": 24.966,
+      "visible": false,
+      "id": "mic_bridge"
+     }
+    ],
+    "pogo_pins": [
+     {
+      "x": 800.0,
+      "y": 195.7,
+      "x_pct": 50.0,
+      "y_pct": 29.125,
+      "visible": false,
+      "bbox": {
+       "x0": 777.2,
+       "y0": 193.1,
+       "x1": 822.8,
+       "y1": 196.6,
+       "x0_pct": 48.578,
+       "y0_pct": 28.743,
+       "x1_pct": 51.423,
+       "y1_pct": 29.253
+      },
+      "id": "bridge_contacts",
+      "pads": [
+       {
+        "x": 785.2,
+        "y": 195.7,
+        "x_pct": 49.073,
+        "y_pct": 29.125,
+        "visible": false
+       },
+       {
+        "x": 814.8,
+        "y": 195.7,
+        "x_pct": 50.926,
+        "y_pct": 29.125,
+        "visible": false
+       }
+      ]
+     }
+    ],
+    "hinge_right": {
+     "x": 134.3,
+     "y": 209.6,
+     "x_pct": 8.396,
+     "y_pct": 31.189,
+     "visible": false,
+     "bbox": {
+      "x0": 132.6,
+      "y0": 164.1,
+      "x1": 139.7,
+      "y1": 254.2,
+      "x0_pct": 8.286,
+      "y0_pct": 24.418,
+      "x1_pct": 8.734,
+      "y1_pct": 37.83
+     }
+    },
+    "display_region": {
+     "x": 485.5,
+     "y": 351.6,
+     "x_pct": 30.346,
+     "y_pct": 52.326,
+     "visible": true,
+     "bbox": {
+      "x0": 368.0,
+      "y0": 272.0,
+      "x1": 603.1,
+      "y1": 431.3,
+      "x0_pct": 22.998,
+      "y0_pct": 40.478,
+      "x1_pct": 37.696,
+      "y1_pct": 64.178
+     }
+    },
+    "nose_pad_accelerometer": {
+     "x": 734.7,
+     "y": 360.6,
+     "x_pct": 45.92,
+     "y_pct": 53.668,
+     "visible": true
+    }
+   }
+  }
+ }
+}

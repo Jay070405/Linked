@@ -106,6 +106,27 @@ export const PRODUCT_CASES = [
     thumb: {src: '/assets/product/choose-not-to-lose/tile.webp', width: 2192, height: 1340},
     page: true,
   },
+  {
+    slug: 'arden',
+    title: 'Arden',
+    subtitle: 'AI glasses designed as a whole product: glasses first, for the wearer and for the people around them',
+    pageTitle: 'Arden, AI glasses that are glasses first',
+    summary: 'A titanium pair of AI glasses with a camera, open-ear audio and a small display, designed as glasses first: a capture light that is visible but not loud, an app for the glasses rather than the camera, and Hearing Check-in.',
+    kind: 'Hardware and iOS concept',
+    when: 'Oct 2026',
+    status: 'Testing next',
+    zh: {
+      pageTitle: 'Arden：先是一副眼镜的 AI 眼镜',
+      subtitle: '当成一个完整产品来设计的 AI 眼镜：对佩戴者和身边的人来说，它首先是一副眼镜',
+      summary: '一副钛金属 AI 眼镜，有摄像头、开放式音频和一块小显示屏，先按眼镜来设计：拍摄指示灯看得见但不刺眼，app 为眼镜服务而不是为摄像头服务，还有 Hearing Check-in。',
+      kind: '硬件与 iOS 概念设计',
+      when: '2026 年 10 月',
+      status: '即将测试',
+    },
+    // The CMF still in natural titanium (cases/d5-glasses/renders/cmf-natural.png).
+    thumb: {src: '/assets/product/arden/still/cmf-natural-800.webp', width: 800, height: 533},
+    page: true,
+  },
 ];
 export const PUBLISHED_CASES = PRODUCT_CASES.filter(c => c.page);
 

@@ -12,6 +12,8 @@
 @media(min-width:900px){
   .pt-tile:nth-child(4n+1),.pt-tile:nth-child(4n){grid-column:span 7}
   .pt-tile:nth-child(4n+2),.pt-tile:nth-child(4n+3){grid-column:span 5}
+  /* an odd one out at the end of the list (the fifth case) takes the whole row instead of leaving a gap */
+  .pt-tile:last-child:nth-child(4n+1){grid-column:span 12}
 }
 .pt-h{margin:0;font:inherit}
 .pt-link{display:flex;flex-direction:column;height:100%;color:inherit;outline:none}
@@ -82,3 +84,11 @@ a.pt-link:focus-visible .pt-ch{transform:translateY(-1.15em)}
   a.pt-link:hover .pt-visual-inner,a.pt-link:hover .pt-ch,a.pt-link:focus-visible .pt-ch{transform:none}
 }
 .quiet a.pt-link:hover .pt-visual-inner,.quiet a.pt-link:hover .pt-ch,.quiet a.pt-link:focus-visible .pt-ch{transform:none}
+
+/* D5: Arden in black titanium on black, the camera end-piece lifted in front */
+.pt-arden{position:absolute;inset:0;display:block;background:#000}
+.pt-arden-hero{position:absolute;inset:-14px;display:block}
+.pt-arden-hero img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 55%}
+.pt-arden-detail{position:absolute;right:6%;bottom:9%;display:block;width:min(28%,320px);overflow:hidden;border-radius:16px;box-shadow:0 0 0 1px #ffffff1f,0 22px 40px -18px #000c}
+.pt-arden-detail img{display:block;width:100%;height:auto}
+@media(max-width:899px){.pt-arden-detail{width:38%;right:5%;bottom:7%}}
