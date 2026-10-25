@@ -180,6 +180,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   function makeFloor() {
     const u = {uPaper: {value: 0}, uCam: {value: new THREE.Vector3()}, uWipe: {value: new THREE.Vector3()}, uPool: {value: Array.from({length: POOLS}, () => new THREE.Vector4(0, 0, 1, 0))}, uPoolC: {value: Array.from({length: POOLS}, () => new THREE.Color())}};
     const m = new THREE.Mesh(new THREE.PlaneGeometry(90000, 90000), new THREE.ShaderMaterial({uniforms: u, vertexShader: `varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`, fragmentShader: floorFrag}));
+    // the floor sits a little behind in depth: the pen's tube rests on it and dips under it, and without the offset the two
+    // fight for the same depth as the camera moves, and the written outlines flicker
+    Object.assign(m.material, {polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8});
     m.rotation.x = -Math.PI / 2; m.position.y = FLOOR; m.renderOrder = -900; m.frustumCulled = false; scene.add(m); return m;
   }
   const floorA = makeFloor(), floorB = makeFloor(); floorB.visible = false;
