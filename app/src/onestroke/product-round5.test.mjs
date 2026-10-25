@@ -32,10 +32,10 @@ test('images leave on schedule and the four product images return assembled befo
       f.product.update(s,f.frame);f.scene.updateMatrixWorld(true);
       for(let i=0;i<4;i++) {
         const image=f.scene.children[i].children[0];
-        assert.ok(Math.abs(image.material.uniforms.opacity.value-stationImageOpacity(i,s))<1e-9);
+        assert.ok(Math.abs((i===3?image.userData.opacity:image.material.uniforms.opacity.value)-stationImageOpacity(i,s))<1e-9);
         assert.equal(f.scene.children[i].scale.x,Math.max(.001,1-productFold(s)));
       }
-      assert.equal(f.draws.at(-1),'/assets/product/arden/film/hero/120.webp');
+      assert.ok(Math.abs(f.scene.children[3].children[0].rotation.y+35*Math.PI/180)<1e-9);
       for(const selector of ['[data-product-tag]','[data-product-chip]'])f.root.querySelectorAll(selector).forEach(el=>assert.equal(+el.style.opacity,0));
       assert.equal(+f.root.querySelector('.os-product-code').style.opacity,0);
     }

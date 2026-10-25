@@ -1,6 +1,7 @@
 import {useEffect, useId, useRef, useState} from 'react';
 import {author, otherProjects} from '../portfolioData';
 import {ContactRows} from '../components/Contact';
+import AboutBadge from './AboutBadge';
 import {L, useCaseLang} from './i18n';
 import {ThemeToggle, useCaseTheme} from './worlds/arden/theme';
 import './worlds/arden/arden.css';
@@ -38,11 +39,13 @@ export default function AboutPage({reduced=false}) {
   return <article className={`pp-page ar about-page${zh?' is-zh':''}${fading?' is-theming':''}`} data-theme={theme} data-nav-tone={theme} lang={htmlLang}>
     <div className="about-toolbar"><a href="/product">{t(L('Product ↗','产品 ↗'))}</a><ThemeToggle theme={theme} onToggle={toggle}/></div>
     <section className="about-intro" aria-labelledby="about-name">
+      <AboutBadge lang={lang} reducedMotion={reduced}/>
       <header className="about-bio">
         <p className="ar-eyebrow">About · 关于我</p><h1 id="about-name">Jay Lin</h1><p className="about-pronouns">they/them · 林世杰</p>
         <div className="about-roles"><p className={mode==='product'?'is-active':''}>{t(L('Product manager','产品经理'))}</p><p className={mode==='game'?'is-active':''}>{t(L('Game systems designer','游戏系统策划'))}</p></div>
         <p className="about-statement">{t(L('Game design taught me to work in goals, rules and feedback. I use the same loop on products.','做游戏让我习惯用目标、规则和反馈来想问题。做产品，我用的是同一个循环。'))}</p>
       </header>
+    </section>
       <div className="about-loop">
         <div className="about-switch" role="group" aria-label={t(L('Explore the loop','看看这个循环'))}>
           {['game','product'].map(m=><button key={m} type="button" aria-pressed={mode===m} onClick={()=>switchMode(m)}>{t(m==='game'?L('Game systems','游戏系统'):L('Product','产品'))}</button>)}
@@ -64,7 +67,6 @@ export default function AboutPage({reduced=false}) {
           {card.measured&&<span className="about-measured" title={t(L('Measured: each build was recorded','实测：每次构建都有记录'))}>Measured</span>}<p>{t(card.meta)}</p>
         </a>)}</div>
       </div>
-    </section>
     <section className="about-facts" aria-label={t(L('Facts','基本信息'))}>
       <div className="about-fact"><h2>{t(L('Education','教育'))}</h2><div>{[...author.education].reverse().map(e=><p key={e.institution}><strong>{e.institution}</strong><span>{zh?e.qualification:e.qualificationEn}</span><small>{e.period}</small></p>)}</div></div>
       <div className="about-fact"><h2>{t(L('Experience','经历'))}</h2><div>{otherProjects.map(p=><details key={p.id}><summary><span>{zh?p.title:p.titleEn}<small>{zh?p.classification:p.classificationEn}</small></span><span className="about-expand" aria-hidden="true">+</span></summary><p>{zh?p.contribution:p.contributionEn}</p></details>)}</div></div>

@@ -544,7 +544,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   }
 
   /* ---------------- poses of the one line ---------------- */
-  const product = createProductScene({scene, root, center: ENDC, scale: JL_S, alive: () => alive});
+  const product = createProductScene({scene, root, center: ENDC, scale: JL_S, environment: env, alive: () => alive});
   let JL_CORE, FLAT_JL, AXIS, RING;
   function buildPoses() {
     JL_CORE = jlPose(JLC, JL_S, V(1, 0, 0), V(0, 1, 0), 2.6);
@@ -620,6 +620,8 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   let splash = false;
   on(window, 'pointerdown', e => { move(e); if (!pointer.inside) return; pointer.down = true; spin.lx = pointer.x; splash = true; }, {passive: true});
   on(window, 'pointerup', () => { pointer.down = false; }, {passive: true});
+  on(window, 'pointercancel', () => { pointer.down = false; }, {passive: true});
+  on(window, 'blur', () => { pointer.down = false; pointer.inside = false; });
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
   function hitTest(meshes) { ndc.set(pointer.x / W * 2 - 1, -(pointer.y / H * 2 - 1)); ray.setFromCamera(ndc, cam); const h = ray.intersectObjects(meshes.filter(m => m && m.visible), false); return h[0] || null; }
   const q$ = sel => root.querySelector(sel);
@@ -706,7 +708,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   on(window, 'click', e => {
     if (!activeNow || OFFLINE || !within(e.target) || e.target.closest('a,button,[data-os-action]')) return;
     if (hoverScreen >= 0 && PROJECTS[hoverScreen].ready) actions.openProject?.(PROJECTS[hoverScreen]);
-    else if (hoverProduct >= 0) location.href = '/product/' + PRODUCT_STATIONS[hoverProduct].slug;
+    else if (hoverProduct >= 0) { if(hoverProduct!==3||!product.suppressClick)location.href = '/product/' + PRODUCT_STATIONS[hoverProduct].slug; }
     else if (hoverNode >= 0) actions.node?.(TIMELINE[hoverNode].go);
     else if (hov.ring > 0.5) goChapter(4);
     else if (hov.end > 0.5) actions.mail?.();

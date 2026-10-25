@@ -12,26 +12,23 @@ export const PRODUCT_STATIONS = [
   {slug: 'ready-for-agents', hold: [20.65, 22.55], image: '/assets/product/ready-for-agents/tile.webp'},
   {slug: 'arden', hold: [23, 24.65], thumb: '/assets/product/arden/film/hero-m/120.webp'},
   {slug: 'choose-not-to-lose', hold: [25.1, 26.85], thumb: '/assets/product/choose-not-to-lose/tile.webp'},
-// `image` is what the 3D scene shows; `thumb` is the static page's card (Arden's film and the chart have no single image there)
+// `image` is what the 3D scene shows; `thumb` is the static page's card (Arden's model and the chart have no single image there)
 ].map(s => ({...s, thumb: s.thumb || s.image, case: PRODUCT_CASES.find(p => p.slug === s.slug)}));
 export const productCopy = (station, lang) => lang === 'en' ? station.case : {...station.case, ...station.case.zh};
 export const ROUTE_PIXELS = [[428,745], [428,706], [465,706], [465,540], [503,502], [505,428], [507,290]];
 export const TOKEN_LINES = ['--background: #F7F7F5;', '--text-primary: #1C1D21;', '--text-secondary: #6E6F78;', '--border: #E4E3DF;', '--space-20: 20px;', '--space-16: 16px;'];
 export const TOKEN_CHIPS = ['#F7F7F5', '#1C1D21', '#6E6F78', '#E4E3DF', '20', '16'];
-export const ARDEN_SIZE = [160, 90];
-// Front view plus its floor reflection, excluding the black film margins.
-export const ARDEN_CONTENT_BOUNDS = [190/1440,270/810,1227/1440,795/810];
 export const CHART_ROWS = [309,321,333,345];
 export const costX = cents => 308 + cents / 900000 * 101;
 
 // Hold compositions use viewport fractions, keeping the same hierarchy on all
-// three desktop widths. A front-on camera also keeps DOM and film in register.
+// three desktop widths. Arden rotates inside this fixed composition.
 export function productHoldCamera(layout, i, w=1440, h=900, scale=1) {
   let at, x, y, pixelsPerUnit;
   if(i===3) {
-    pixelsPerUnit=.58*w/(ARDEN_SIZE[0]*scale);
+    pixelsPerUnit=.4*w/(106*scale);
     at=layout.centers[3].clone();
-    x=.71*w+12; y=.43*h;
+    x=.73*w; y=.45*h;
   } else {
     pixelsPerUnit=(.46*w-64)/(101*scale);
     at=layout.world([409,359]); x=w-100; y=h*652/900;

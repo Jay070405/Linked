@@ -1,12 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,existsSync} from 'node:fs';
-import {Vector3,Vector2,PerspectiveCamera,AdditiveBlending} from 'three';
-import {fixture,loaded,cameraAt,objectArea,screen} from './product-test-fixture.mjs';
+import {Vector3,PerspectiveCamera} from 'three';
+import {fixture,loaded,cameraAt,objectArea} from './product-test-fixture.mjs';
 import {motionProxy,HANDOVERS} from './product-motion-proxy.mjs';
 import baseline from './product-motion-baseline.json' with {type:'json'};
-import {ardenFrameAt,ARDEN_INDICATOR} from './arden-film.js';
-import {ARDEN_SIZE,PRODUCT_STATIONS,DRAW_BEATS,captionPose,productSignOpacity,portalDiscCoversHalf} from './product-layout.js';
+import {PRODUCT_STATIONS,DRAW_BEATS,captionPose,productSignOpacity,portalDiscCoversHalf} from './product-layout.js';
 
 test('100px wheel motion p90 drops at least 40% in every handover against HEAD 1807436',async()=>{
   const after=await motionProxy();
@@ -65,28 +63,4 @@ test('navigation changes tone at majority disc coverage, before crossing the por
     const t=(15.75-15.15)/(15.8-15.15),distance=2900-3320*t*t*t;
     assert.ok(distance>0);assert.ok(portalDiscCoversHalf(297*900/(2*Math.tan(Math.PI/15)*distance),w,900));
   }
-});
-
-test('Arden hero beats, additive film, final-frame capture light and pointer leave',async()=>{
-  assert.deepEqual([22.55,23,23.6,24.2,24.65,27.5].map(ardenFrameAt),[1,8,64,120,120,120]);
-  for(let n=1;n<=120;n++)assert.ok(existsSync(new URL(`../../public/assets/product/arden/film/hero/${String(n).padStart(3,'0')}.webp`,import.meta.url)));
-  assert.equal(PRODUCT_STATIONS[3].thumb,'/assets/product/arden/film/hero-m/120.webp');
-  const f=fixture();try {
-    await loaded(f);f.hold(3);const arden=f.scene.children[3].children[0],tag=f.root.querySelector('[data-arden-capture]');
-    assert.equal(f.scene.children[3].children.length,1,'old LED sphere removed');
-    assert.equal(arden.material.blending,AdditiveBlending);assert.equal(arden.material.uniforms.filmEdges.value,1);
-    assert.equal(arden.material.uniforms.map.value.image.width,1440);assert.equal(arden.material.uniforms.map.value.image.height,810);
-    const pointer={inside:true,x:1000,y:450},hitTest=()=>({object:arden,uv:new Vector2(.81,1-.406)});
-    for(const s of [22.65,23,24,24.2]) {
-      f.product.update(s,{...f.frame,pointer,hitTest});
-      assert.equal(+tag.style.opacity,ardenFrameAt(s)>=116?1:0);
-    }
-    const point=new Vector3((ARDEN_INDICATOR[0]/1440-.5)*ARDEN_SIZE[0],(.5-ARDEN_INDICATOR[1]/810)*ARDEN_SIZE[1],.15).applyMatrix4(arden.matrixWorld);
-    const [x,y]=screen(point,f.frame.cam,1440);assert.ok(Math.abs(parseFloat(tag.style.left)-x)<1e-6);assert.ok(Math.abs(parseFloat(tag.style.top)-y)<1e-6);
-    f.product.update(24.3,f.frame);assert.equal(+tag.style.opacity,0);
-    f.product.update(24.3,{...f.frame,pointer,hitTest:()=>({object:arden,uv:new Vector2(.05,.95)})});assert.equal(+tag.style.opacity,0);
-    f.product.update(27.1,f.frame);assert.ok(f.draws.at(-1).endsWith('/hero/120.webp'));
-  } finally {f.dispose();}
-  const markup=readFileSync(new URL('./ProductChapter.jsx',import.meta.url),'utf8');
-  assert.ok(markup.includes('Capture light')&&markup.includes('拍摄指示灯'));
 });

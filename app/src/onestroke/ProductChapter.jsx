@@ -13,7 +13,7 @@ export function ProductChapter({lang}) {
     {TOKEN_CHIPS.map((chip,i)=><span className="os-l os-product-chip" data-product-chip={i} key={chip} style={chip.startsWith('#')?{background:chip,color:i===1?'#fff':'#1c1d21'}:undefined}>{chip.startsWith('#')?'':chip}</span>)}
     <span className="os-l os-product-tag" data-product-tag="parking">P</span>
     <span className="os-l os-product-tag" data-product-tag="door">{en?'Door 214':'214 号门'}</span>
-    <div className="os-l os-arden-capture" data-arden-capture><i/><span>{en?'Capture light':'拍摄指示灯'}</span></div>
+    <div className="os-l os-arden-capture" data-arden-capture><span>{en?'Capture light':'拍摄指示灯'}</span></div>
     {plans.map((p,i)=><a href="/product/choose-not-to-lose" className="os-l os-cost-row" data-cost-row={i} key={p.id}>{p.name.toUpperCase()}</a>)}
     {plans.map((p,i)=><span className="os-l os-cost-value" data-cost-value={i} key={p.id}/>)}
     {[0,300000,600000,900000].map((cost,i)=><span className="os-l os-cost-tick" data-cost-tick={i} key={cost}>{cost?money(cost/1000)+'k':money(cost)}</span>)}

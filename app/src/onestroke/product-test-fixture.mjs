@@ -1,7 +1,8 @@
 import {createProductCameraTrack} from './product-camera.js';
-import {Scene,Vector4,Vector3,Quaternion,PerspectiveCamera} from 'three';
+import {Scene,Vector4,Vector3,Quaternion,PerspectiveCamera,Group,Mesh,BoxGeometry,MeshStandardMaterial} from 'three';
 import {createProductScene} from './product-scene.js';
-import {PRODUCT_STATIONS,ARDEN_CONTENT_BOUNDS} from './product-layout.js';
+import {PRODUCT_STATIONS} from './product-layout.js';
+import {ARDEN_DIMENSIONS} from './arden-model.js';
 import {scenarios} from '../product/v2/data/cntl-model.js';
 const center=new Vector3(13750,2404.3,-15340);
 function element(dataset={}) {
@@ -21,12 +22,20 @@ function fixture() {
       multi.set(k,data.map(element));
     }return multi.get(k);
   }};
-  const originals={Image:globalThis.Image,document:globalThis.document,fetch:globalThis.fetch};
-  const requests=[],draws=[];
-  globalThis.document={createElement(){return {getContext(){return {clearRect(){},drawImage(im){draws.push(im.src);}};}};}};
+  const originals={Image:globalThis.Image,fetch:globalThis.fetch};
+  const requests=[];
   globalThis.Image=class {set src(v){this.url=v;if(v)requests.push(this);}get src(){return this.url;}};
   globalThis.fetch=async()=>{throw new Error("Unexpected metadata request");};
-  const scene=new Scene(),product=createProductScene({scene,root,center,scale:1,alive:()=>true});
+  const modelLoads=[];
+  const loadArden=async()=>{
+    modelLoads.push('/assets/home/product/arden.glb');
+    const model=new Group(), material=new MeshStandardMaterial();material.name='Ti_Brushed';
+    const box=new Mesh(new BoxGeometry(...ARDEN_DIMENSIONS),material);box.name='Arden_TestExterior';model.add(box);
+    const ledMaterial=new MeshStandardMaterial();ledMaterial.name='Indicator_Emitter';
+    const led=new Mesh(new BoxGeometry(.001,.001,.001),ledMaterial);led.name='Indicator_LightGuide';led.position.set(.065,.01,.07);model.add(led);
+    return model;
+  };
+  const scene=new Scene(),product=createProductScene({scene,root,center,scale:1,alive:()=>true,loadArden});
   const cam=new PerspectiveCamera(24,1.6,5,120000);
   const frame={cam,w:1440,h:900,px:0,py:0,time:1,dt:1,pointer:{inside:false},hitTest:()=>null,stone:{position:center,quaternion:new Quaternion()}};
   function hold(i,w=1440) {
@@ -35,7 +44,7 @@ function fixture() {
     cam.aspect=w/900;cam.updateProjectionMatrix();cam.position.copy(key.pos);cam.lookAt(key.look);cam.updateMatrixWorld();frame.w=w;
     return keys;
   }
-  return {root,scene,product,frame,requests,draws,hold,dispose(){product.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});Object.assign(globalThis,originals);}};
+  return {root,scene,product,frame,requests,modelLoads,hold,dispose(){product.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});Object.assign(globalThis,originals);}};
 }
 const screen=(at,cam,w,h=900)=>{const p=at.clone().project(cam);return [(p.x+1)*w/2,(1-p.y)*h/2];};
 const bounds=points=>[Math.min(...points.map(p=>p[0])),Math.min(...points.map(p=>p[1])),Math.max(...points.map(p=>p[0])),Math.max(...points.map(p=>p[1]))];
@@ -74,9 +83,19 @@ function objectArea(f,i) {
     if(+f.root.querySelector('[data-cost-axis]').style.opacity<=.3)return 0;
     return clippedArea([[308,309],[409,309],[409,359],[308,359]].map(f.product.layout.world),f.frame.cam);
   }
+  if(i===3) {
+    const object=f.scene.children[3].children[0];
+    if(!object.visible||object.userData.opacity<=.3)return 0;
+    const p=objectCorners(f,3);
+    // Sum the visible box faces, which tile its projected silhouette without overlap.
+    return [[0,1,3,2],[4,6,7,5],[0,4,5,1],[2,3,7,6],[0,2,6,4],[1,5,7,3]].reduce((area,face)=>{
+      const v=face.map(j=>p[j]), normal=v[1].clone().sub(v[0]).cross(v[2].clone().sub(v[0]));
+      return area+(normal.dot(f.frame.cam.position.clone().sub(v[0]))>0?clippedArea(v,f.frame.cam):0);
+    },0);
+  }
   const mesh=f.scene.children[i].children[0],u=mesh.material.uniforms;
   if(!mesh.visible||u.opacity.value<=.3)return 0;
-  let box=i===3?ARDEN_CONTENT_BOUNDS:[0,0,1,1];
+  let box=[0,0,1,1];
   const [x0,y0,x1,y1]=box, bottom=Math.min(y1,u.reveal.value);
   if(bottom<=y0)return 0;
   return clippedArea([[x0,y0],[x1,y0],[x1,bottom],[x0,bottom]].map(([x,y])=>new Vector3((x-.5)*u.size.value.x,(.5-y)*u.size.value.y,0).applyMatrix4(mesh.matrixWorld)),f.frame.cam);
@@ -84,3 +103,13 @@ function objectArea(f,i) {
 
 
 export {clippedArea,cameraAt,loaded,objectArea};
+
+export function objectCorners(f,i) {
+  if(i===4)return [[308,309],[409,309],[409,359],[308,359]].map(f.product.layout.world);
+  if(i===3) {
+    const mesh=f.scene.children[3].getObjectByName('Arden_TestExterior');
+    return [-1,1].flatMap(x=>[-1,1].flatMap(y=>[-1,1].map(z=>new Vector3(x*ARDEN_DIMENSIONS[0]/2,y*ARDEN_DIMENSIONS[1]/2,z*ARDEN_DIMENSIONS[2]/2).applyMatrix4(mesh.matrixWorld))));
+  }
+  const mesh=f.scene.children[i].children[0],u=mesh.material.uniforms;
+  return [[0,0],[1,0],[1,Math.min(1,u.reveal.value)],[0,Math.min(1,u.reveal.value)]].map(([x,y])=>new Vector3((x-.5)*u.size.value.x,(.5-y)*u.size.value.y,0).applyMatrix4(mesh.matrixWorld));
+}

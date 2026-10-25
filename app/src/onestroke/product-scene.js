@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 import {poseFromStrokes, jlPose, flow, copyPose, LOGO_R} from './line.js';
-import {PRODUCT_STATIONS, productLayout, TOKEN_LINES, strokeReveal, alignProductMark, MARK_FACE_Z, retractProductOutlines, captionPose, ARDEN_SIZE, productHoldCamera, productFold, stationImageOpacity, productTubeOpacity, productDetours} from './product-layout.js';
+import {PRODUCT_STATIONS, productLayout, TOKEN_LINES, strokeReveal, alignProductMark, MARK_FACE_Z, retractProductOutlines, captionPose, productHoldCamera, productFold, stationImageOpacity, productTubeOpacity, productDetours} from './product-layout.js';
 
-import {createArdenFilm, ardenFrameAt, ARDEN_INDICATOR} from './arden-film.js';
+import {createArdenModel} from './arden-model.js';
 import {createProductChart} from './product-chart.js';
 
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const seg = (s, a, b) => Math.max(0, Math.min(1, (s - a) / (b - a)));
 const ease = t => t * t * (3 - 2 * t);
 const vertexShader = `varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
-const fragmentShader = `uniform sampler2D map; uniform float opacity, reveal, wipe, dim, roundness, filmEdges; uniform vec2 size; uniform vec4 crop; varying vec2 vUv;
+const fragmentShader = `uniform sampler2D map; uniform float opacity, reveal, wipe, dim, roundness; uniform vec2 size; uniform vec4 crop; varying vec2 vUv;
   void main(){
     vec4 c=texture2D(map,crop.xy+vUv*crop.zw);
     vec2 q=abs(vUv-.5)*size-size*.5+roundness;
@@ -17,8 +17,6 @@ const fragmentShader = `uniform sampler2D map; uniform float opacity, reveal, wi
     float a=1.-smoothstep(-.07,.07,edge);
     a*=1.-smoothstep(reveal-.025,reveal,1.-vUv.y);
     a*=1.-smoothstep(wipe-.045,wipe,vUv.x);
-    // Fade macro highlights before they reach the film plane edge.
-    a*=mix(1.,smoothstep(0.,.14,vUv.x)*smoothstep(0.,.14,1.-vUv.x)*smoothstep(0.,.18,vUv.y)*smoothstep(0.,.18,1.-vUv.y),filmEdges);
     gl_FragColor=vec4(c.rgb*dim,c.a*a*opacity);
     #include <colorspace_fragment>
   }`;
@@ -33,14 +31,14 @@ function outline(c, w, h, r) {
   return shape.getPoints(16).map(p => c.clone().add(V(p.x,p.y,0)));
 }
 
-export function createProductScene({scene, root, center, scale, alive}) {
+export function createProductScene({scene, root, center, scale, alive, environment, loadArden}) {
   const layout = productLayout(center, scale), {anchors, centers, strokes, route, bowlSplit} = layout;
   const groups = anchors.map(a => { const g = new THREE.Group(); g.position.copy(a); scene.add(g); return g; });
   const images = [], ownedTextures = [], pending = [];
   let started = false, disposed = false, hover = -1;
   const blank = new THREE.DataTexture(new Uint8Array([255,255,255,255]),1,1); blank.needsUpdate = true; ownedTextures.push(blank);
-  function plane(i, w, h, c, {dim = .78, crop = [0,0,1,1], paper = false, radius = .8, filmEdges = 0} = {}) {
-    const uniforms = {filmEdges:{value:filmEdges}, map:{value:blank}, opacity:{value:0}, reveal:{value:1.04}, wipe:{value:1.05}, dim:{value:dim}, size:{value:new THREE.Vector2(w,h)}, roundness:{value:radius}, crop:{value:new THREE.Vector4(...crop)}};
+  function plane(i, w, h, c, {dim = .78, crop = [0,0,1,1], paper = false, radius = .8} = {}) {
+    const uniforms = {map:{value:blank}, opacity:{value:0}, reveal:{value:1.04}, wipe:{value:1.05}, dim:{value:dim}, size:{value:new THREE.Vector2(w,h)}, roundness:{value:radius}, crop:{value:new THREE.Vector4(...crop)}};
     const m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), new THREE.ShaderMaterial({uniforms, vertexShader, fragmentShader, transparent:true, depthWrite:false, side:THREE.DoubleSide}));
     m.position.copy(c).sub(anchors[i]); groups[i].add(m); m.userData.station = i;
     images.push(m);
@@ -52,9 +50,7 @@ export function createProductScene({scene, root, center, scale, alive}) {
   const print = plane(0,24,12.7,centers[0],{crop:[40/780,1-864/1688,700/780,370/1688],radius:0});
   const plan = plane(1,75,71,centers[1],{dim:.36,radius:2}); plan.rotation.x = -Math.PI/2;
   const rfa = plane(2,85.3,55.5,centers[2]);
-  const arden = plane(3,...ARDEN_SIZE,centers[3],{dim:1,radius:0,filmEdges:1});
-  const film=createArdenFilm(alive);arden.material.uniforms.map.value=film.texture;
-  arden.material.blending=THREE.AdditiveBlending;
+  const arden=createArdenModel({group:groups[3],position:centers[3].clone().sub(anchors[3]),scale,environment:scene.environment?null:environment,alive,loadModel:loadArden});
   const phoneOutline = outline(centers[0],28.6,60,4.8), rfaOutline = outline(centers[2],664/7.5,432/7.5,1.6);
   const drawn = poseFromStrokes([phoneOutline, strokes[0].slice(0,bowlSplit+1),route,strokes[0].slice(bowlSplit),strokes[1],rfaOutline,strokes[2].slice(0,21),strokes[2].slice(20)],.18,{gapWeight:.02});
   const clean = jlPose(center,scale,V(1,0,0),V(0,1,0),.5);
@@ -122,7 +118,9 @@ export function createProductScene({scene, root, center, scale, alive}) {
         const midpoint=previous.look.clone().lerp(look,.5);
         const distance=(i===3?1.33:1.4)*Math.max(outgoing.distanceTo(previous.look),pos.distanceTo(look));
         // Elevated bridges keep the plan readable as a surface.
-        const direction=[null,V(0,Math.sin(75*Math.PI/180),Math.cos(75*Math.PI/180)),V(.2,Math.sin(80*Math.PI/180),Math.cos(80*Math.PI/180)),V(-.2,.24,.97),V(0,0,1)][i].normalize();
+        // Arden's shallow frame needs a view of its temples during departure,
+        // so the final bridge rises before settling onto the chart.
+        const direction=[null,V(0,Math.sin(75*Math.PI/180),Math.cos(75*Math.PI/180)),V(.2,Math.sin(80*Math.PI/180),Math.cos(80*Math.PI/180)),V(-.2,.24,.97),V(0,Math.sin(.85),Math.cos(.85))][i].normalize();
         // Keep the outgoing surface readable until the elevated bridge can
         // contain both stations; only then complete the radial pullback.
         if(i===1)k(18.24,center.clone().add(V(-142.88228,146.81559,118.45363)),center.clone().add(V(-143.19848,-84.44792,13.57824)));
@@ -140,7 +138,7 @@ export function createProductScene({scene, root, center, scale, alive}) {
     k(29.45,center.clone().add(V(0,0,1335)),center.clone());
   }
   function update(s,{cam,w,h,px,py,time,dt,pointer,hitTest,stone}) {
-    if (s >= 10.9) {load();film.load();}
+    if (s >= 10.9) {load();arden.load();}
     const inChapter = s>16.2 && s<29.3, fold=productFold(s), keep=1-fold;
     dust.visible=inChapter;dust.material.uniforms.alpha.value=.24*seg(s,15.8,16.2)*(1-seg(s,28.8,29.3));
     const swell=ease(seg(s,28.8,29.3));
@@ -172,20 +170,11 @@ export function createProductScene({scene, root, center, scale, alive}) {
     paper.position.copy(print.position).add(V(0,0,-.15)); paper.scale.copy(print.scale);paper.rotation.copy(print.rotation); paper.material.uniforms.opacity.value=lift*stationImageOpacity(0,s);
     plan.material.uniforms.opacity.value*=ease(seg(s,18.1,18.3));
     rfa.material.uniforms.reveal.value=1.04*ease(seg(s,20.15,20.35));
-    const arrival=ease(seg(s,22.65,22.95)), filmState=film.draw(ardenFrameAt(s));
-    arden.userData.loaded=filmState.frame>0;
-    arden.position.copy(centers[3]).sub(anchors[3]);
-    arden.material.uniforms.opacity.value=filmState.frame?arrival*stationImageOpacity(3,s):0;
-    arden.updateMatrixWorld(true);
-    // Only the front-frame silhouette claims the link, never the black floor.
-    if(hover===3) {
-      const hit=hitTest([arden]), uv=hit?.uv;
-      if(!uv || uv.x<.13 || uv.x>.855 || 1-uv.y<.33 || 1-uv.y>.715 || s<23 || s>24.65)hover=-1;
-    }
-    const lit=hover===3&&filmState.frame>=116;
-    const indicator=arden.localToWorld(V((ARDEN_INDICATOR[0]/1440-.5)*ARDEN_SIZE[0],(.5-ARDEN_INDICATOR[1]/810)*ARDEN_SIZE[1],.15));
-    project(capture,indicator,cam,w,h,lit?1:0);
-    capture.style.setProperty('--capture-pulse',(1+.1*Math.sin(time*2)).toFixed(3));
+    groups[3].updateMatrixWorld(true);
+    const ardenState=arden.update(s,{pointer,hitTest,dt,time,w,h});
+    if(ardenState.hovered)hover=3;
+    if(ardenState.indicator)project(capture,ardenState.indicator,cam,w,h,ardenState.hovered?ardenState.light:0);
+    else show(capture,0);
     const pointAlpha=seg(s,27.55,28.05)*(1-seg(s,28.8,29));
     points.forEach((el,i)=>project(el,anchors[i],cam,w,h,pointAlpha));
     show(ending,seg(s,28,28.2)*(1-seg(s,28.8,29)));
@@ -207,5 +196,5 @@ export function createProductScene({scene, root, center, scale, alive}) {
   }
   // Tube's reveal has a 1.02 head allowance; compensate so a held endpoint
   // cannot start the next stroke before its scheduled beat.
-  return {layout, drawn, clean, keys, pose, update, reveal:s=>s<16.25||s>=27?1:strokeReveal(s,drawn.ends)/1.02, get hover(){return hover;}, dispose(){disposed=true;film.dispose();chart.dispose();ownedTextures.forEach(t=>t.dispose());}};
+  return {layout, drawn, clean, keys, pose, update, reveal:s=>s<16.25||s>=27?1:strokeReveal(s,drawn.ends)/1.02, get hover(){return hover;}, get suppressClick(){return arden.suppressClick;}, dispose(){disposed=true;arden.dispose();chart.dispose();ownedTextures.forEach(t=>t.dispose());}};
 }
