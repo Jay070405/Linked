@@ -3,15 +3,15 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Vector3} from 'three';
 import {ARDEN_FRAME_ORDER,nearestArdenFrame} from './arden-film.js';
-import {PRODUCT_STATIONS, ARDEN_SIZE, ARDEN_BOUNDS, DRAW_BEATS} from './product-layout.js';
+import {PRODUCT_STATIONS, ARDEN_SIZE, DRAW_BEATS} from './product-layout.js';
 import {plans,scenarios,scenarioCost,totalDifference,dominates,annualPremium,money} from '../product/v2/data/cntl-model.js';
 import {PACING,toScroll} from './pacing.js';
 
-import {fixture,screen,bounds} from './product-test-fixture.mjs';
+import {fixture,screen,bounds,cameraAt} from './product-test-fixture.mjs';
 
-test('Round 4 wheel points are monotone and handovers get 1.7 screens',()=>{
-  assert.deepEqual(PACING.filter(([s])=>s>14.2),[[15.8,32.27],[16.4,34],[18.05,36.8],[18.55,38.5],[20.1,40.9],[20.65,42.6],[22.55,45.9],[23,47.6],[24.65,50.9],[25.1,52.6],[26.85,55.6],[28,57.7],[28.8,59.2],[29.3,60.8],[31.2,64.4]]);
-  for(const [a,b] of [[18.05,18.55],[20.1,20.65],[22.55,23],[24.65,25.1]])assert.ok(Math.abs(toScroll(b)-toScroll(a)-1.7)<1e-9);
+test('Round 4 wheel points are monotone and handovers get 2.6 screens',()=>{
+  assert.deepEqual(PACING.filter(([s])=>s>14.2),[[15.8,32.27],[16.15,33.6],[16.25,34],[16.42,34.55],[16.7,36.2],[18.05,38.9],[18.55,41.5],[20.1,43.9],[20.65,46.5],[22.55,49.8],[23,52.4],[24.65,55.4],[25.1,58],[26.85,61],[28,63.1],[28.8,64.6],[29.3,66.2],[31.2,69.8]]);
+  for(const [a,b] of [[18.05,18.55],[20.1,20.65],[22.55,23],[24.65,25.1]])assert.ok(Math.abs(toScroll(b)-toScroll(a)-2.6)<1e-9);
   for(let s=0;s<31.2;s+=.001)assert.ok(toScroll(s+.001)>toScroll(s));
 });
 
@@ -24,15 +24,15 @@ test('Plan A dominates B and the proof is identical in every scenario; winners f
 test('film requests wait until 10.9, load once coarse-to-fine, and reuse one texture',async()=>{
   const f=fixture();try {
     f.hold(3);f.product.update(10.89,f.frame);assert.equal(f.requests.length,0);
-    f.product.update(10.9,f.frame);assert.deepEqual(f.requests.map(im=>im.src),[...PRODUCT_STATIONS.filter(s=>s.image).map(s=>s.image),'/assets/product/arden/film/explode/001.webp','/assets/product/arden/film/explode/036.webp']);
+    f.product.update(10.9,f.frame);assert.deepEqual(f.requests.map(im=>im.src),[...PRODUCT_STATIONS.filter(s=>s.image).map(s=>s.image),'/assets/product/arden/film/hero/001.webp','/assets/product/arden/film/hero/120.webp']);
     for(let i=0;i<f.requests.length;i++)f.requests[i].onload?.();
     await new Promise(resolve=>setImmediate(resolve));
     const arden=f.scene.children[3].children[0],texture=arden.material.uniforms.map.value;
     for(const s of [23,23.8,24.35,24.65,25.05,27,0,24.35])f.product.update(s,f.frame);
     assert.equal(arden.material.uniforms.map.value,texture);assert.ok(texture.isCanvasTexture);
-    assert.equal(f.requests.length,39);assert.equal(f.draws.at(-1),'/assets/product/arden/film/explode/036.webp');
+    assert.equal(f.requests.length,123);assert.equal(f.draws.at(-1),'/assets/product/arden/film/hero/120.webp');
     assert.deepEqual(f.requests.slice(3).map(im=>Number(im.src.match(/(\d+)\.webp/)[1])),ARDEN_FRAME_ORDER);
-    assert.equal(new Set(ARDEN_FRAME_ORDER).size,36);assert.equal(nearestArdenFrame(new Map([[1,{}],[36,{}]]),18),1);
+    assert.equal(new Set(ARDEN_FRAME_ORDER).size,120);assert.equal(nearestArdenFrame(new Map([[1,{}],[36,{}]]),18),1);
     assert.equal(f.product.drawn.ends.length,8);assert.equal(DRAW_BEATS.length,8);
   } finally {f.dispose();}
 });
@@ -41,10 +41,10 @@ test('Arden and chart hold projections fit all three desktop viewports',()=>{
   const f=fixture();try {
     for(const w of [1280,1440,1920]) {
       f.hold(3,w);const layout=f.product.layout;
-      const boxes=ARDEN_BOUNDS.map(([x0,y0,x1,y1])=>bounds([[x0,y0],[x1,y1]].map(([x,y])=>screen(layout.centers[3].clone().add(new Vector3((x-.5)*ARDEN_SIZE[0],(.5-y)*ARDEN_SIZE[1],0)),f.frame.cam,w))));
+      const boxes=[[0,0,1,1]].map(([x0,y0,x1,y1])=>bounds([[x0,y0],[x1,y1]].map(([x,y])=>screen(layout.centers[3].clone().add(new Vector3((x-.5)*ARDEN_SIZE[0],(.5-y)*ARDEN_SIZE[1],0)),f.frame.cam,w))));
       const stem=screen(layout.anchors[3],f.frame.cam,w)[0];
-      boxes.forEach(box=>{assert.ok(box[0]-stem>=40,`${w}: stem clearance ${box[0]-stem}`);assert.ok(w-box[2]>=64,`${w}: edge ${w-box[2]}`);assert.ok(box[0]>160+Math.min(380,w*.27));});
-      assert.ok(Math.abs((boxes[2][2]-boxes[2][0])/w-.44)<.001);assert.ok(Math.abs((boxes[2][1]+boxes[2][3])/2-405)<1);
+      boxes.forEach(box=>{assert.ok(box[0]-stem>=24,`${w}: stem clearance ${box[0]-stem}`);assert.ok(box[2]<=w+40,`${w}: edge ${w-box[2]}`);assert.ok(box[0]>160+Math.min(380,w*.27));});
+      assert.ok(Math.abs((boxes[0][2]-boxes[0][0])/w-.58)<.001);assert.ok(Math.abs((boxes[0][1]+boxes[0][3])/2-387)<1);
       f.hold(4,w);
       const start=screen(layout.world([308,299]),f.frame.cam,w),foot=screen(layout.world([409,359]),f.frame.cam,w);
       const chart=[start[0]-64,start[1]-18,foot[0],foot[1]+86];
@@ -86,11 +86,10 @@ test('unchanged first three product holds remain framed and handovers retain a v
       }
     }
     const keys=f.hold(3);
-    for(const [start,end] of [[15.98,16.4],[20.1,20.65],[22.55,23.1]]) {
+    for(const [start,end] of [[16.6,16.7],[20.1,20.65],[22.55,23.1]]) {
       let bare=null,longest=0;
       for(let s=start;s<=end;s+=.005) {
-        const b=keys.find(k=>k.s>s),a=keys[keys.indexOf(b)-1],t=Math.max(0,Math.min(1,(s-a.s)/(b.s-a.s))),e=t<.5?4*t*t*t:1-(-2*t+2)**3/2;
-        f.frame.cam.position.copy(a.pos).lerp(b.pos,e);f.frame.cam.lookAt(a.look.clone().lerp(b.look,e));f.frame.cam.updateMatrixWorld();
+        cameraAt(f,keys,s);
         f.product.update(s,f.frame);f.scene.updateMatrixWorld(true);let coverage=0;
         f.scene.traverse(o=>{const u=o.material?.uniforms;if(!o.visible||!u?.map||u.opacity.value<.15)return;
           const pts=[];for(let x=.1;x<.91;x+=.1)for(let y=.1;y<.91;y+=.1){

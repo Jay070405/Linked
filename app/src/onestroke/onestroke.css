@@ -191,18 +191,9 @@
 .os-product-end{right:6%;top:22%;width:230px;opacity:0;visibility:hidden}
 .os-product-end a{font-size:28px;letter-spacing:-.03em;font-weight:600}
 .os-product-end p{font-size:14px;line-height:1.6;color:#ffffff90;max-width:220px}
-.os-arden-part{opacity:0;visibility:hidden;font:400 12px/1.45 Mono,monospace;pointer-events:none}
-.os-arden-part i{position:absolute;width:5px;height:5px;left:-2.5px;top:-2.5px;border-radius:50%;background:#fff}
-.os-arden-part b{position:absolute;width:24px;height:1px;background:#ffffff99;transform-origin:left center}
-.os-arden-part span{position:absolute;width:max-content;max-width:210px;text-wrap:balance}
-.os-arden-part[data-arden-part] span{max-width:none;white-space:nowrap;background:#050506d9;padding:3px 7px;border-radius:3px}
-.os-arden-part svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible}
-.os-arden-part svg path{fill:none;stroke:#ffffff8c;stroke-width:1}
-.os-arden-hover i{width:10px;height:10px;left:-5px;top:-5px;border:1px solid #fff;background:none}
-.os-arden-hover b{transform:rotate(-45deg)}
-.os-arden-hover span{left:22px;bottom:20px;padding:4px 6px;background:#050506df;max-width:290px}
-.os-arden-hover.is-left b{transform:rotate(-135deg)}
-.os-arden-hover.is-left span{left:auto;right:22px;text-align:right}
+.os-arden-capture{opacity:0;visibility:hidden;pointer-events:none;font:400 12px/1.45 Mono,monospace}
+.os-arden-capture i{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff 0 1.5px,#ffffff88 2px,#ffffff30 4px,#fff0 9px);mix-blend-mode:plus-lighter;opacity:var(--capture-pulse,1);transform:scale(var(--capture-pulse,1))}
+.os-arden-capture span{position:absolute;left:16px;bottom:16px;width:max-content;white-space:nowrap;background:#050506d9;padding:3px 7px;border-radius:3px}
 .os-cost-row,.os-cost-value,.os-cost-tick,.os-cost-axis,.os-cost-controls,.os-cost-flag,.os-cost-difference,.os-cost-proof{opacity:0;visibility:hidden}
 .os-cost-row{font:400 12px/1 Mono,monospace;transform:translate(calc(-100% - 16px),-50%);white-space:nowrap;padding:8px 0}
 .os-cost-value{font:400 14px/1.3 'TikTok Sans',sans-serif;transform:translate(-50%,-100%);margin-top:-13px;white-space:nowrap}

@@ -1,17 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {Vector3} from 'three';
-import {fixture,screen,bounds,cameraAt,loaded,objectArea} from './product-test-fixture.mjs';
-import {ARDEN_SIZE,ARDEN_BOUNDS,stationImageOpacity,productFold,productNavScrim,productTubeOpacity,productWhite} from './product-layout.js';
-import {ARDEN_PARTS} from './arden-parts.js';
+import {fixture,cameraAt,loaded,objectArea} from './product-test-fixture.mjs';
+import {stationImageOpacity,productFold,productNavScrim,productTubeOpacity,productWhite} from './product-layout.js';
 
 test('every handover sample has a visible product covering at least 6% of 1440 × 900',async()=>{
   const f=fixture();try {
     await loaded(f);const keys=f.hold(3),results=[];
     for(const [i,[start,end]] of [[18.05,18.55],[20.1,20.65],[22.55,23],[24.65,25.1]].entries()) {
       let min=Infinity,at=0,failures=0;
-      for(let step=0;step<=Math.round((end-start)*100);step++) {
-        const s=+(start+step*.01).toFixed(2);cameraAt(f,keys,s);f.product.update(s,f.frame);f.scene.updateMatrixWorld(true);
+      for(let step=0;step<=Math.round((end-start)*1000);step++) {
+        const s=+(start+step*.001).toFixed(3);cameraAt(f,keys,s);f.product.update(s,f.frame);f.scene.updateMatrixWorld(true);
         const area=Math.max(objectArea(f,i),objectArea(f,i+1));
         if(area<min){min=area;at=s;}if(area<.06)failures++;
       }
@@ -37,46 +35,9 @@ test('images leave on schedule and the four product images return assembled befo
         assert.ok(Math.abs(image.material.uniforms.opacity.value-stationImageOpacity(i,s))<1e-9);
         assert.equal(f.scene.children[i].scale.x,Math.max(.001,1-productFold(s)));
       }
-      assert.equal(f.draws.at(-1),'/assets/product/arden/film/explode/001.webp');
+      assert.equal(f.draws.at(-1),'/assets/product/arden/film/hero/120.webp');
       for(const selector of ['[data-product-tag]','[data-product-chip]'])f.root.querySelectorAll(selector).forEach(el=>assert.equal(+el.style.opacity,0));
       assert.equal(+f.root.querySelector('.os-product-code').style.opacity,0);
-    }
-  } finally {f.dispose();}
-});
-
-test('Arden fixed labels stay single-line and clear each other, stem, caption and viewport in EN/ZH',async()=>{
-  const f=fixture();try {
-    await loaded(f);
-    const overlap=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
-    for(const w of [1280,1440,1920])for(const lang of ['en','zh']) {
-      const keys=f.hold(3,w),els=f.root.querySelectorAll('[data-arden-part]');
-      for(const el of els) {
-        const text=ARDEN_PARTS.find(p=>p.id===el.dataset.ardenPart)[lang],span=el.querySelector('span');
-        // 12px mono Latin + full-em CJK, rounded up, including 7px padding.
-        span.offsetWidth=Math.ceil([...text].reduce((n,c)=>n+(c.codePointAt(0)>255?12:7.3),14));span.offsetHeight=24;
-      }
-      for(let step=0;step<60;step++) {
-        const s=24.2+step*.01;cameraAt(f,keys,s);f.product.update(s,f.frame);
-        const stem=screen(f.product.layout.anchors[3],f.frame.cam,w)[0];
-        const film=f.scene.children[3].children[0];film.updateMatrixWorld(true);
-        const [x0,y0,x1,y1]=ARDEN_BOUNDS[2];
-        const content=bounds([[x0,y0],[x1,y1]].map(([x,y])=>screen(new Vector3((x-.5)*ARDEN_SIZE[0],(.5-y)*ARDEN_SIZE[1],.15).applyMatrix4(film.matrixWorld),f.frame.cam,w)));
-        const rectangles=els.map(el=>{const span=el.querySelector('span'),x=parseFloat(el.style.left)+parseFloat(span.style.left),y=parseFloat(el.style.top)+parseFloat(span.style.top);return [x,y,x+span.offsetWidth,y+span.offsetHeight];});
-        rectangles.forEach((a,i)=>{
-          assert.ok(a[0]>=stem+16-1e-6&&a[2]<=w-24+1e-6&&a[1]>=24&&a[3]<=876,`${w} ${lang}: ${a}`);
-          assert.ok(!overlap(a,[160,610,160+Math.min(380,w*.27),838]),`${w} ${lang}: caption`);
-          assert.ok(!overlap(a,content),`${w} ${lang}: film content`);
-          const dot=[parseFloat(els[i].style.left),parseFloat(els[i].style.top)];
-          assert.ok(!overlap(a,[dot[0]-2.5,dot[1]-2.5,dot[0]+2.5,dot[1]+2.5]),`${w} ${lang}: part dot`);
-          const points=els[i].querySelector('path').getAttribute('d').match(/[-\d.]+/g).map(Number);
-          assert.ok(points.length===4||points.length===6);assert.deepEqual(points.slice(0,2),[0,0]);
-          if(points.length===6)assert.ok((points[2]===0&&points[5]===points[3])||(points[3]===0&&points[4]===points[2]),'one right-angle bend');
-          rectangles.slice(i+1).forEach(b=>assert.ok(!overlap(a,b),`${w} ${lang} ${s}: ${a} / ${b}`));
-        });
-      }
-      f.product.update(24.5,f.frame);
-      const el=els[0],pointer={inside:true,x:parseFloat(el.style.left),y:parseFloat(el.style.top)};
-      assert.equal(f.product.update(24.5,{...f.frame,pointer}),3);assert.equal(+el.style.opacity,.35);
     }
   } finally {f.dispose();}
 });
@@ -94,7 +55,7 @@ test('chart flag has its own line and clears navigation in EN/ZH at every hold w
 });
 
 test('navigation scrim and outgoing tube use the requested boundaries',()=>{
-  for(const [s,a] of [[15.8,0],[15.95,1],[28.65,1],[28.8,0]])assert.ok(Math.abs(productNavScrim(s)-a)<1e-9);
+  for(const [s,a] of [[16.15,0],[16.3,1],[28.65,1],[28.8,0]])assert.ok(Math.abs(productNavScrim(s)-a)<1e-9);
   assert.equal(productTubeOpacity(29.29),1);assert.equal(productTubeOpacity(29.3),0);assert.ok(productWhite(29.29)>.99);
   for(const s of [29.4,29.5])assert.equal(productTubeOpacity(s),0);
 });

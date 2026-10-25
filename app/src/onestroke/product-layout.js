@@ -7,10 +7,10 @@ export const DAWN_START = 29.3;
 export const DAWN_SHIFT = DAWN_START - 21.3;
 export const MARK_FACE_Z = 29; // half of the existing stone's 58-unit extrusion
 export const PRODUCT_STATIONS = [
-  {slug: 'atelier', hold: [16.4, 18.05], image: '/assets/product/atelier/screens/check.webp'},
+  {slug: 'atelier', hold: [16.7, 18.05], image: '/assets/product/atelier/screens/check.webp'},
   {slug: 'last-100-feet', hold: [18.55, 20.1], image: '/assets/product/last-100-feet/plan-base.webp'},
   {slug: 'ready-for-agents', hold: [20.65, 22.55], image: '/assets/product/ready-for-agents/tile.webp'},
-  {slug: 'arden', hold: [23, 24.65], thumb: '/assets/product/arden/film/explode-m/036.webp'},
+  {slug: 'arden', hold: [23, 24.65], thumb: '/assets/product/arden/film/hero-m/120.webp'},
   {slug: 'choose-not-to-lose', hold: [25.1, 26.85], thumb: '/assets/product/choose-not-to-lose/tile.webp'},
 // `image` is what the 3D scene shows; `thumb` is the static page's card (Arden's film and the chart have no single image there)
 ].map(s => ({...s, thumb: s.thumb || s.image, case: PRODUCT_CASES.find(p => p.slug === s.slug)}));
@@ -18,8 +18,9 @@ export const productCopy = (station, lang) => lang === 'en' ? station.case : {..
 export const ROUTE_PIXELS = [[428,745], [428,706], [465,706], [465,540], [503,502], [505,428], [507,290]];
 export const TOKEN_LINES = ['--background: #F7F7F5;', '--text-primary: #1C1D21;', '--text-secondary: #6E6F78;', '--border: #E4E3DF;', '--space-20: 20px;', '--space-16: 16px;'];
 export const TOKEN_CHIPS = ['#F7F7F5', '#1C1D21', '#6E6F78', '#E4E3DF', '20', '16'];
-export const ARDEN_SIZE = [160, 160 * 1165 / 1200];
-export const ARDEN_BOUNDS = [[.149,.414,.999,.769],[.048,.205,.952,.754],[.072,.182,.894,.715]];
+export const ARDEN_SIZE = [160, 90];
+// Front view plus its floor reflection, excluding the black film margins.
+export const ARDEN_CONTENT_BOUNDS = [190/1440,270/810,1227/1440,795/810];
 export const CHART_ROWS = [309,321,333,345];
 export const costX = cents => 308 + cents / 900000 * 101;
 
@@ -28,9 +29,9 @@ export const costX = cents => 308 + cents / 900000 * 101;
 export function productHoldCamera(layout, i, w=1440, h=900, scale=1) {
   let at, x, y, pixelsPerUnit;
   if(i===3) {
-    pixelsPerUnit=.44*w/(ARDEN_SIZE[0]*(.894-.072)*scale);
-    at=layout.centers[3].clone().add(new Vector3((.483-.5)*ARDEN_SIZE[0]*scale,(.5-.4485)*ARDEN_SIZE[1]*scale,0));
-    x=.67*w; y=.45*h;
+    pixelsPerUnit=.58*w/(ARDEN_SIZE[0]*scale);
+    at=layout.centers[3].clone();
+    x=.71*w+12; y=.43*h;
   } else {
     pixelsPerUnit=(.46*w-64)/(101*scale);
     at=layout.world([409,359]); x=w-100; y=h*652/900;
@@ -48,7 +49,16 @@ export function stationImageOpacity(i,s) {
   const exit=exits[i];
   return (1-productFold(s))*Math.max(exit?1-unit((s-exit[0])/(exit[1]-exit[0])):0,productFoldReturn(s));
 }
-export const productNavScrim = s => unit((s-15.8)/.15)*(1-unit((s-28.65)/.15));
+export const productNavScrim = s => unit((s-16.15)/.15)*(1-unit((s-28.65)/.15));
+export const productSignOpacity = s => 1-unit((s-16.15)/.2);
+// Area of a centred circle clipped by the viewport. During the final portal
+// approach the camera faces the ring head-on, so its projection is a circle.
+export function portalDiscCoversHalf(radius,w,h) {
+  if(radius<=0)return false;
+  const right=Math.min(w/2,radius), flat=Math.min(right,Math.sqrt(Math.max(0,radius*radius-h*h/4)));
+  const integral=x=>.5*(x*Math.sqrt(Math.max(0,radius*radius-x*x))+radius*radius*Math.asin(Math.min(1,x/radius)));
+  return 4*(flat*h/2+integral(right)-integral(flat))>w*h/2;
+}
 // The glowing tube and its caps are HDR white: any partial alpha still burns to white over the grey stone. They go at the
 // white peak, where the whole frame is white, so the swap to the stone is never seen.
 export const productTubeOpacity = s => s < DAWN_START ? 1 : 0;
@@ -56,7 +66,7 @@ export const productTubeOpacity = s => s < DAWN_START ? 1 : 0;
 export function captionPose(i, s) {
   const joins = [[18.1,18.55],[20.1,20.5],[22.55,22.85],[24.65,24.95]];
   const incoming = i ? joins[i-1] : null, outgoing = joins[i];
-  const enter = incoming ? unit(((s-incoming[0])/(incoming[1]-incoming[0])-.55)/.45) : unit((s-15.8)/.2);
+  const enter = incoming ? unit(((s-incoming[0])/(incoming[1]-incoming[0])-.55)/.45) : unit((s-16.35)/.2);
   const exit = outgoing ? unit((s-outgoing[0])/((outgoing[1]-outgoing[0])*.45)) : unit((s-27)/.4);
   return {opacity:enter*(1-exit), y:12*(1-enter)-12*exit};
 }
@@ -96,14 +106,14 @@ export function productLayout(center, scale = 1) {
   const world = ([x, y]) => new Vector3(center.x + (x - LOGO_C[0]) * scale, center.y - (y - LOGO_C[1]) * scale, center.z);
   const strokes = jlStrokes2D().map(s => s.map(world)), anchors = productAnchors2D().map(world);
   const offset = (i, x, y, z) => anchors[i].clone().add(new Vector3(x, y, z).multiplyScalar(scale));
-  const centers = [offset(0, 0, 30, 0), offset(1, 0, -5, 42), offset(2, 0, 28.8, 0), offset(3, 87, 0, 5), offset(4, 0, 18, 0)];
+  const centers = [offset(0, 0, 30, 0), offset(1, 0, -5, 42), offset(2, 0, 28.8, 0), offset(3, 88, 0, 5), offset(4, 0, 18, 0)];
   const route = ROUTE_PIXELS.map(([x, y]) => centers[1].clone().add(new Vector3((x / 808 - .5) * 75, .35, (y / 768 - .5) * 71).multiplyScalar(scale)));
   return {world, strokes, anchors, centers, route, bowlSplit: jlStrokes2D()[0].findIndex(p => p[1] === productAnchors2D()[1][1])};
 }
 
 // Each detour is a separate lifted stroke. At the fold only its visibility
 // retracts; the source geometry and the JL strokes stay fixed.
-export const DRAW_BEATS = [[15.92,16.18], [18.05,18.5], [18.85,19.65], [19.9,20.05], [20.05,20.3], [20.3,20.65], [22.55,23], [24.65,25.15]];
+export const DRAW_BEATS = [[16.25,16.5], [18.05,18.5], [18.85,19.65], [19.9,20.05], [20.05,20.3], [20.3,20.65], [22.55,23], [24.65,25.15]];
 export function strokeReveal(s, ends) {
   let previous = 0;
   for (let i = 0; i < DRAW_BEATS.length; i++) {

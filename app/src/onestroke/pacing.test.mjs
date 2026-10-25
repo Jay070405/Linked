@@ -34,7 +34,8 @@ test('mark sinking has a full screen of travel and every later chapter slows dow
     assert.ok(toScroll(b) - toScroll(a) >= 1.2);
   for (const [a, b] of [[2.95, 7.3], [7.3, 9.9], [9.9, 14.2], [14.2, 16.9], [16.9, 21.3]])
     assert.ok((toScroll(b) - toScroll(a)) / (b - a) >= 1.5);
-  // No short interval should turn into a fast burst between the control points.
+  // The prescribed Round 6 handover/hold contrast gives the plan hold a
+  // minimum rate of 1.143; retain the original lower bound before products.
   for (let s = 1; s < TOTAL; s += .01)
-    assert.ok((toScroll(s + .001) - toScroll(s)) / .001 > 1.25);
+    assert.ok((toScroll(s + .001) - toScroll(s)) / .001 > (s<15.8?1.25:1.1));
 });

@@ -1,3 +1,4 @@
+import {createProductCameraTrack} from './product-camera.js';
 import * as THREE from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {Font} from 'three/addons/loaders/FontLoader.js';
@@ -14,7 +15,7 @@ import {N, Tube, jlPose, poseFromStrokes, curve, flow, copyPose, makePose, LOGO_
 import {CINEMATIC_PROJECTS as PROJECTS, ABOUT, TIMELINE, COPY, pick} from './content.js';
 import {toJourney, toScroll} from './pacing.js';
 import {createProductScene} from './product-scene.js';
-import {PRODUCT_STATIONS, productWhite, productNavScrim, productTubeOpacity} from './product-layout.js';
+import {PRODUCT_STATIONS, productWhite, productNavScrim, productTubeOpacity, productSignOpacity, portalDiscCoversHalf} from './product-layout.js';
 import {createScrollCameraTrack, projectOpacity} from './camera-track.js';
 export {TOTAL, SCROLL_TOTAL, toJourney, toScroll} from './pacing.js';
 
@@ -503,7 +504,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   disc.rotation.y = Math.PI / 2; disc.position.set(RX, RY, AZ); disc.renderOrder = -2000; disc.visible = false; scene.add(disc);
   const productSignTex = canvasTex(1300, 560, 2);
   const productSign = new THREE.Mesh(new THREE.PlaneGeometry(1300,560), new THREE.MeshBasicMaterial({map:productSignTex.t,transparent:true,depthWrite:false}));
-  productSign.rotation.y=-Math.PI/2; productSign.position.set(RX+2900,FLOOR+420,AZ); productSign.visible=false; scene.add(productSign);
+  productSign.rotation.y=-Math.PI/2; productSign.position.set(RX+2900,RY,AZ); productSign.visible=false; scene.add(productSign);
   function drawProductSign() {
     productSignTex.clear(); const g=productSignTex.g;
     txt(g,'PRODUCT',650,300,{size:250,weight:680,ls:-.06,color:'#ffffff',align:'center'});
@@ -565,7 +566,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
 
   /* ---------------- camera choreography ---------------- */
   const KEYS = [];
-  let systemsCamera;
+  let systemsCamera, productCamera;
   function k(s, pos, look, up = V(0, 1, 0), e = 'io') { KEYS.push({s, pos, look, up, e}); }
   function buildKeys() {
     KEYS.length = 0;
@@ -583,7 +584,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     k(14.75, V(RX - 1900, FLOOR + 1050, AZ + 1500), V(RX, RY - 40, AZ), V(0, 1, 0));
     k(15.15, V(RX - 2900, RY, AZ), V(RX, RY, AZ), V(0, 1, 0));
     k(15.8, V(RX + 420, RY, AZ), V(RX + 3000, RY, AZ), V(0, 1, 0), 'in');
+    k(16.15, V(RX + 650, RY, AZ), V(RX + 3000, RY, AZ), V(0, 1, 0), 'lin');
     product.keys(k, W, H);
+    productCamera = createProductCameraTrack(KEYS.filter(q => q.s >= 16.6 && q.s <= 26.85));
     k(30.6, V(OX, OY, OZ), V(OX, OY, OZ - 1500));
   }
   const EASE = {io: eio, lin: t => t, in: t => t * t * t, out: eo3};
@@ -591,6 +594,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   function camAt(S) {
     if (S >= 1.75 && S <= 7.25) {
       systemsCamera(S, camPos, camLook); camUp.set(0, 1, 0); return;
+    }
+    if (S >= 16.6 && S <= 26.85) {
+      productCamera(S, camPos, camLook); camUp.set(0, 1, 0); return;
     }
     let i = KEYS.findIndex(q => q.s > S);
     if (i === -1) i = KEYS.length - 1; if (i === 0) i = 1;
@@ -732,7 +738,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
       if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else {bodyTone(null);document.body.classList.remove('os-nav-burn');document.body.style.removeProperty('--os-nav-scrim');}
     }
     if (!active || paused) { if (!OFFLINE) raf = requestAnimationFrame(frame); return; }
-    S += (St - S) * (1 - Math.exp(-dt / (S > 15.6 || St > 15.6 ? 0.2 : 0.12))); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
+    S += (St - S) * (1 - Math.exp(-dt / (S > 15.6 || St > 15.6 ? 0.3 : 0.12))); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
     if (window.__tourPointer) { const was = pointer.down; Object.assign(pointer, window.__tourPointer); if (pointer.down && !was) spin.lx = pointer.x; }
     // layout is read before this frame writes any style, so reading it never forces a second layout
     const mailBox = S > 29.3 ? mail.getBoundingClientRect() : null, domHit = domHover();
@@ -883,8 +889,8 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     setStencil(floorA, portal ? 'outside' : 'none'); setStencil(skyA, portal ? 'outside' : 'none');
     paperObjs.forEach(o => setStencil(o, portal ? 'outside' : 'none'));
     setStencil(floorB, 'inside'); setStencil(skyB, 'inside');
-    productSign.visible=S>14.3&&S<16.2;
-    productSign.material.opacity=1-seg(S,15.9,16.2);
+    productSign.visible=S>14.3&&S<16.35;
+    productSign.material.opacity=productSignOpacity(S);
     setStencil(productSign,portal?'inside':'none');
     hov.ring += ((portal && S > 15.0 && pointer.inside && hitTest([disc]) ? 1 : 0) - hov.ring) * (1 - Math.exp(-dt / 0.2));
 
@@ -919,7 +925,11 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     }
 
     /* chrome: the site's navigation takes its tone from the page; the index, the headers */
-    const light = (S > 7.25 && S < 16.5 && !beyond) || S > 29.32;   // dark ink as soon as the page is paper
+    // From 15.15 the camera faces the disc head-on. Measure its clipped
+    // projected circle instead of waiting for the camera to cross the ring.
+    const discRadius=(RING_R-3)*disc.scale.x*H/(2*Math.tan(12*Math.PI/180)*Math.max(1,RX-cam.position.x));
+    const discMajority=beyond||(S>=15.15&&portal&&portalDiscCoversHalf(discRadius,W,H));
+    const light = (S > 7.25 && S < 16.5 && !discMajority) || S > 29.32;   // dark ink as soon as the page is paper
     document.body.style.setProperty('--os-nav-scrim', productNavScrim(S).toFixed(3));
     document.body.classList.toggle('os-nav-burn', S >= 29.05 && S <= 29.55);
     bodyTone(light ? 'light' : 'dark');

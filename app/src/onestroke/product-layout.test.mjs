@@ -77,7 +77,7 @@ test('caption handovers are sequential inside the original windows',()=>{
     assert.ok(Math.abs(captionPose(i+1,at(.775)).y-6)<1e-10);
     for(let s=start;s<=end;s+=.001)assert.ok(Math.min(captionOpacity(i,s),captionOpacity(i+1,s))<=.15);
   }
-  for(let s=16.05;s<27;s+=.01)if(!windows.some(([a,b])=>s>=a&&s<=b))assert.ok(PRODUCT_STATIONS.reduce((a,_,i)=>a+captionOpacity(i,s),0)>.99);
+  for(let s=16.65;s<27;s+=.01)if(!windows.some(([a,b])=>s>=a&&s<=b))assert.ok(PRODUCT_STATIONS.reduce((a,_,i)=>a+captionOpacity(i,s),0)>.99);
 });
 
 test('white peak lasts less than .3 wheel screens',()=>{
