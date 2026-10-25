@@ -256,6 +256,17 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{release();stop();}});
     const sizeObserver=new ResizeObserver(resize),routeObserver=new MutationObserver(visibility);
     observer.observe(host);sizeObserver.observe(host);routeObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
+    // Opened straight onto a page that covers the home (/systems, /works, /other-project): fetch the office (about 8 MB)
+    // only once the home is showing. Closing a page removes the class and dispatches visibilitychange.
+    let stopWaiting=()=>{};
+    const homeShown=new Promise(resolve=>{
+      const covered=()=>/^\/(works|systems|other-project)(\/|$)/.test(location.pathname)||document.body.classList.contains('portfolio-route-open');
+      const check=()=>{if(covered())return;stopWaiting();resolve();};
+      const watch=new MutationObserver(check);watch.observe(document.body,{attributes:true,attributeFilter:['class']});
+      document.addEventListener('visibilitychange',check);addEventListener('popstate',check);
+      stopWaiting=()=>{watch.disconnect();document.removeEventListener('visibilitychange',check);removeEventListener('popstate',check);};
+      check();
+    });
     root.addEventListener('office:progress',wake);document.addEventListener('visibilitychange',visibility);
     canvas.addEventListener('pointermove',pointerMove);canvas.addEventListener('pointerdown',pointerDown);
     canvas.addEventListener('pointerup',pointerUp);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
@@ -271,7 +282,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       composer.addPass(ao);
       outline=new OutlinePass(new THREE.Vector2(1,1),scene,camera);outline.visibleEdgeColor.set('#eee5d5');outline.hiddenEdgeColor.set('#000000');outline.edgeStrength=2;outline.edgeThickness=1;outline.edgeGlow=0;outline.enabled=false;
       composer.addPass(outline);composer.addPass(new OutputPass());resize();
-      Promise.all([preloadOffice(),import('./physics').then(async module=>{await module.initPhysics();return module;}),document.fonts.load(STUDIO_TITLE_FONT).catch(()=>[]),new HDRLoader().loadAsync('/assets/office3d/studio-light.hdr').catch(()=>null),new HDRLoader().loadAsync('/assets/office3d/city-dusk.hdr').catch(()=>null)]).then(async([buffer,physicsModule,,hdr,city])=>{
+      homeShown.then(()=>Promise.all([preloadOffice(),import('./physics').then(async module=>{await module.initPhysics();return module;}),document.fonts.load(STUDIO_TITLE_FONT).catch(()=>[]),new HDRLoader().loadAsync('/assets/office3d/studio-light.hdr').catch(()=>null),new HDRLoader().loadAsync('/assets/office3d/city-dusk.hdr').catch(()=>null)])).then(async([buffer,physicsModule,,hdr,city])=>{
         if(disposed){hdr?.dispose();city?.dispose();return;}
         if(city){city.mapping=THREE.EquirectangularReflectionMapping;exterior=city;scene.background=city;scene.backgroundBlurriness=.02;scene.backgroundIntensity=.32;scene.backgroundRotation.set(.08,1.2,0);}
         if(hdr){hdr.mapping=THREE.EquirectangularReflectionMapping;environment=hdr;scene.environment=hdr;scene.environmentRotation.y=.8;}
@@ -345,7 +356,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
       }).catch(fail);
     }catch(error){fail(error);}
     return()=>{
-      release();disposed=true;stop();observer.disconnect();sizeObserver.disconnect();routeObserver.disconnect();apiRef.current={};
+      release();disposed=true;stop();stopWaiting();observer.disconnect();sizeObserver.disconnect();routeObserver.disconnect();apiRef.current={};
       root.removeEventListener('office:progress',wake);document.removeEventListener('visibilitychange',visibility);
       canvas.removeEventListener('pointermove',pointerMove);canvas.removeEventListener('pointerdown',pointerDown);
       canvas.removeEventListener('pointerup',pointerUp);canvas.removeEventListener('pointercancel',release);canvas.removeEventListener('lostpointercapture',release);

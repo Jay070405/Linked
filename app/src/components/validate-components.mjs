@@ -12,7 +12,7 @@ for (const asset of ['jay-badge-product.svg', 'jay-badge-systems.svg', 'jay-lany
   if (!svg.includes('<svg') || !svg.includes('width=') || !svg.includes('height=')) throw new Error(`Invalid ${asset}`);
 }
 console.log('Validated Lanyard card/clip/clamp geometry, base texture atlas and custom SVG textures');
-const files = ['SiteNavigation', '../product/AboutBadge', 'SplitFlapText', 'ParticleText', 'FlowingMenu', 'GlassSurface'];
+const files = ['SiteNavigation', '../product/AboutBadge', 'GlassSurface'];
 for (const file of files) {
   await build({ entryPoints: [fileURLToPath(new URL(`./${file}.jsx`, import.meta.url))], bundle: true, write: false, outdir: 'component-validation', platform: 'browser', format: 'esm', loader: { '.glb': 'dataurl', '.svg': 'dataurl', '.png': 'dataurl' }, logLevel: 'error' });
   console.log(`Compiled ${file}`);

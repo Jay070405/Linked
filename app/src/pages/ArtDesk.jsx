@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { featuredWorks } from '../portfolioData';
+import { artPreview } from './art-preview';
 import ExpressiveTitle from '../components/ExpressiveTitle';
 import './art-desk.css';
 
@@ -166,7 +167,7 @@ export default function ArtDesk({ lang = 'zh', reduced = false, onNavigate }) {
 
   return <section ref={root} className={`art-desk${reduced ? ' art-desk--quiet' : ''}${lamp ? '' : ' art-desk--lamp-off'}${photoFailed ? ' art-desk--no-photo' : ''}`} style={{ '--front-aspect': ASPECTS[selected] }} lang={english ? 'en' : 'zh'} aria-labelledby="art-desk-heading" data-nav-tone="light">
     <div className="art-desk__scene" aria-hidden="true">
-      <img className="art-desk__environment" src="/assets/art-desk/desk-environment.png" alt="" onError={() => setPhotoFailed(true)} fetchPriority="high" />
+      <img className="art-desk__environment" src="/assets/art-desk/desk-environment.webp" alt="" onError={() => setPhotoFailed(true)} fetchPriority="high" />
       <div className="art-desk__room-shade" />
     </div>
 
@@ -183,7 +184,7 @@ export default function ArtDesk({ lang = 'zh', reduced = false, onNavigate }) {
                 else selectPrint(index);
               }} tabIndex={front ? 0 : -1} aria-label={front ? (english ? `Open the complete original: ${name}` : `查看完整原作：${name}`) : (english ? `Bring ${name} to the front` : `将${name}置顶`)}>
                 <span className="art-desk__picture" style={{ aspectRatio: ASPECTS[index] }}>
-                  <img src={work.image} alt={name} decoding="async" draggable="false" loading="eager" onError={() => setFailedImages(previous => ({ ...previous, [work.id]: true }))} />
+                  <img src={artPreview(work.image)} alt={name} decoding="async" draggable="false" loading="eager" onError={() => setFailedImages(previous => ({ ...previous, [work.id]: true }))} />
                   {failedImages[work.id] && <span className="art-desk__image-fallback">{name}<small>{english ? 'Open original artwork ↗' : '查看原作 ↗'}</small></span>}
                   <span className="art-desk__paper-light" />
                 </span>

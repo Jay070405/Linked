@@ -24,10 +24,12 @@ export default function LoadingScreen({lang='zh',reduced=false,onDone}) {
    disposers.push(()=>{img.onload=img.onerror=null;});
   });
   // The film still owns its original independent readiness and seek timeline.
-  const sources=location.pathname.startsWith('/works')?['/assets/logo.png']:['/assets/logo.png','/assets/studio-clean.png'];
+  // a page that opens over the home (/works, /systems, /other-project) doesn't wait for the office it covers
+  const covered=/^\/(works|systems|other-project)(\/|$)/.test(location.pathname);
+  const sources=covered?['/assets/logo.png']:['/assets/logo.png','/assets/studio-clean.webp'];
   const ready=()=>{if(alive)setResources(true);};
   const timeout=setTimeout(ready,5500);
-  Promise.allSettled([document.fonts.ready,...sources.map(picture),...(!reduced&&!location.pathname.startsWith('/works')?[preloadOffice()]:[])]).then(ready);
+  Promise.allSettled([document.fonts.ready,...sources.map(picture),...(!reduced&&!covered?[preloadOffice()]:[])]).then(ready);
   return()=>{alive=false;clearTimeout(timeout);disposers.forEach(dispose=>dispose());};
  },[]);
  useEffect(()=>{if(resources&&constructed)leave();},[resources,constructed,leave]);

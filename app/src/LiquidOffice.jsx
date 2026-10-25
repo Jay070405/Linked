@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { composeStudioTitle, STUDIO_TITLE_FONT } from './studio-title-composite';
 
-const CLEAN = '/assets/studio-clean.png';
-const FANTASY = '/assets/studio-fantasy-anime.png';
+const CLEAN = '/assets/studio-clean.webp';
+const FANTASY = '/assets/studio-fantasy-anime.webp';
 const TRAIL_COUNT = 24;
 const TRAIL_LIFE = 2.15;
 

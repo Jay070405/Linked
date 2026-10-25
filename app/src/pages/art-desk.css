@@ -19,7 +19,7 @@
 .art-desk__print-caption{position:relative;display:flex;justify-content:space-between;align-items:center;gap:20px;height:56px;font:17px/1.3 Gelasio,'Times New Roman',serif;letter-spacing:.095em;color:#242221;padding:1px 7px 0;white-space:nowrap}
 .art-desk__print-caption b{font-weight:400;padding:0 6px}.art-desk__print-caption>span:last-child{font-size:15px}
 .art-desk__sheet-corner{position:absolute;right:29px;bottom:9px;display:none;font-size:20px}
-.art-desk__lamp-front,.art-desk__foreground{inset:auto;left:50%;top:50%;width:1587px;height:991px;transform:translate(-50%,-50%) scale(var(--desk-scale));background:url('/assets/art-desk/desk-environment.png') center / 100% 100% no-repeat;z-index:3;filter:brightness(.87);transition:filter .9s}
+.art-desk__lamp-front,.art-desk__foreground{inset:auto;left:50%;top:50%;width:1587px;height:991px;transform:translate(-50%,-50%) scale(var(--desk-scale));background:url('/assets/art-desk/desk-environment.webp') center / 100% 100% no-repeat;z-index:3;filter:brightness(.87);transition:filter .9s}
 .art-desk__lamp-front{clip-path:polygon(0 0,548px 0,550px 56px,539px 88px,518px 121px,482px 153px,434px 183px,382px 208px,326px 225px,284px 230px,258px 224px,229px 204px,205px 177px,168px 143px,100px 134px,0 193px)}
 /* The photograph contains blank sheets behind the plant. A broad polygon would
    paste those sheets over the live prints. Keep only the defocused foliage,

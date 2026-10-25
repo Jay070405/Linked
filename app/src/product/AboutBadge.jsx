@@ -51,7 +51,7 @@ export default function AboutBadge({lang, t, side, onSideChange, onCenter, reduc
   return <div ref={root} className="about-badge" style={{'--badge-height': `${height}px`, '--anchor': phone ? '24px' : '150px'}}>
     <div ref={shadow} className="about-badge-shadow" aria-hidden="true"/>
     <figure ref={egg} className={`about-badge-egg${visible ? ' is-revealed' : ''}`} aria-hidden={!visible}>
-      <img src="/assets/easter-egg-life.png" alt={t(COPY.eggAlt)} onLoad={() => setImageReady(true)} onError={() => setImageReady(false)}/>
+      <img src="/assets/about/easter-egg-life.webp" alt={t(COPY.eggAlt)} onLoad={() => setImageReady(true)} onError={() => setImageReady(false)}/>
       <figcaption>{t(COPY.egg.title)}<small>{t(COPY.egg.note)}</small></figcaption>
     </figure>
     {reducedMotion ? fallback : <BadgeBoundary fallback={fallback}><Suspense fallback={fallback}>
