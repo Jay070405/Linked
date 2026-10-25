@@ -598,8 +598,6 @@ export const author = {
   "statementEn": "I explore goals, rules and feedback, and build worlds through concept design.",
   "email": "shijielin00@gmail.com",
   "linkedin": "",
-  "phone": "+1 626-727-0409",
-  "phoneHref": "tel:+16267270409",
   "resume": "/assets/docs/jay-lin-systems-resume-zh.pdf",
   "education": [
     {
