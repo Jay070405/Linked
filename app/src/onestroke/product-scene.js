@@ -125,10 +125,10 @@ export function createProductScene({scene, root, center, scale, alive}) {
       // Then tilt toward the arriving tile before settling into its original hold.
       if(i===2) {
         const high=c.clone().add(V(-42,130,45));
-        k(20.3,high,centers[1].clone().add(V(-20,184,-42)));
-        k(20.38,high.clone().add(V(0,0,55)),look.clone());
+        k(20.25,high,centers[1].clone().add(V(-20,184,-42)));
+        k(20.43,high.clone().add(V(0,0,55)),look.clone());
       }
-      k([15.98,18.55,20.5,22.85,24.95][i],look.clone().add(offset),look);
+      k([15.98,18.55,20.6,22.85,24.95][i],look.clone().add(offset),look);
       k(s.hold[1],look.clone().add(offset).add(V(2,0,-5)),look);
     });
     // 340.49 units / (2 * 1335 * tan(12°)) = 60% of viewport height.
