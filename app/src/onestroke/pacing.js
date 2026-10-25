@@ -1,6 +1,6 @@
 // Authored scene position → physical wheel travel, both in viewport heights.
 // Slow the whole journey after the mark starts sinking. The sinking and first
-// camera turn get extra travel; later projects, paper, timeline and worlds
+// camera turn get extra travel; later projects, paper, timeline and products
 // keep a comparable wheel pace instead of rushing after the opening.
 export const PACING = Object.freeze([
   [0, 0], [1, 2.4], [1.25, 3.45], [1.75, 5.2], [2.45, 6.65],
@@ -8,7 +8,8 @@ export const PACING = Object.freeze([
   [2.95, 8.65], [3.5, 9.65], [3.95, 10.95], [4.55, 12.05],
   [5, 13.35], [5.6, 14.45], [6.05, 15.75], [6.6, 16.75],
   [7.3, 18.15], [9.9, 22.3], [14.2, 29.2], [16.9, 34.35],
-  [21.3, 41.4], [23.2, 44.05],
+  [21.3, 41.4], [22.55, 43.6], [23, 44.4], [24.65, 47.2],
+  [25.1, 48], [26.85, 51], [28, 53], [28.8, 54.4], [29.3, 55.25], [31.2, 57.9],
 ].map(point => Object.freeze(point)));
 export const TOTAL = PACING.at(-1)[0];
 export const SCROLL_TOTAL = PACING.at(-1)[1];

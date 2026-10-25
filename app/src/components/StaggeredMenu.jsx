@@ -456,7 +456,7 @@ export const StaggeredMenu = ({
             data-numbering={displayItemNumbering || undefined}>
             {items && items.length ? (
               items.map((it, idx) => (
-                <li className="sm-panel-itemWrap" key={it.label + idx}>
+                <li className={`sm-panel-itemWrap${it.id==='art'?' sm-art-item':''}`} key={it.label + idx}>
                   <a
                     className="sm-panel-item"
                     href={it.link}
@@ -465,6 +465,7 @@ export const StaggeredMenu = ({
                     data-index={idx + 1}>
                     <span className="sm-panel-itemLabel">{it.label}</span>
                   </a>
+                  {it.id==='art'&&<span className="sm-art-preview" aria-hidden="true">{['world-tree','sakura-village','cathedral-painting','sword-immortal'].map(name=><img key={name} src={open?`/assets/home/${name}.jpg`:undefined} alt="" loading="lazy"/>)}</span>}
                 </li>
               ))
             ) : (

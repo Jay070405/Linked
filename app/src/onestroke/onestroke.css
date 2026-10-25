@@ -44,7 +44,7 @@
 
 /* the projects, beside their screens */
 .os-proj{top:50%;width:430px;transform:translateY(-50%);opacity:0;visibility:hidden}
-.os-proj .no{font:500 10px Mono,monospace;letter-spacing:.18em;color:#ffffff8a;display:flex;gap:16px}
+.os-proj .no{font:500 12px Mono,monospace;letter-spacing:.18em;color:#ffffff8a;display:flex;gap:16px}
 .os-proj .no b{color:#fff;font-weight:600}
 .os-proj h3{font-size:62px;line-height:1.02;font-weight:640;letter-spacing:-.045em;margin:26px 0 14px}
 .os-proj h3.is-serif{font-family:Editorial,serif;font-style:italic;font-weight:400;letter-spacing:-.01em;font-size:76px}
@@ -72,14 +72,6 @@
 .os-tracer{left:0;top:0;opacity:0;will-change:transform}
 .os-tracer i{position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:50%;border:1.5px solid #111114;background:var(--os-paper)}
 .os-tracer span{position:absolute;left:14px;top:-22px;font:500 9px Mono,monospace;letter-spacing:.14em;color:#111114;white-space:nowrap}
-
-/* the art worlds */
-.os-art-head{left:96px;top:128px;font:500 10px Mono,monospace;letter-spacing:.18em;color:#ffffff90;opacity:0}
-.os-art-count{right:44px;bottom:44px;text-align:right;opacity:0;visibility:hidden}
-.os-art-count b{display:block;font-size:84px;line-height:.9;font-weight:640;letter-spacing:-.06em}
-.os-art-count span{font-family:Editorial,serif;font-style:italic;font-size:30px;color:#b4b4ba}
-.os-art-count button{display:inline-block;margin-top:12px;font:500 9px Mono,monospace;letter-spacing:.16em;color:#ffffff90;padding:8px 12px;border:1px solid #ffffff30;border-radius:30px;transition:all .4s var(--os-ease)}
-.os-art-count button:is(.hov,:hover,:focus-visible){background:#fff;color:#111;border-color:#fff}
 
 /* the letter, over the lake at dawn */
 .os-outro{inset:0;color:#111114;opacity:0;visibility:hidden}
@@ -164,14 +156,65 @@
 .oss-timeline button{width:100%;text-align:left;background:#fbfaf6;border:0;border-bottom:3px solid transparent;padding:22px 20px;box-shadow:0 8px 22px #14141e14;cursor:pointer;display:grid;gap:.5em;color:#141418;font:inherit;transition:border-color .35s,transform .45s}
 .oss-timeline button:hover,.oss-timeline button:focus-visible{border-bottom-color:#141418;transform:translateY(-3px)}
 .oss-timeline b{font-size:20px;letter-spacing:-.02em}.oss-timeline small{color:#6d6d76;font-size:13px;line-height:1.5}
-.oss-art{list-style:none;padding:0;margin:0 0 4vh;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px}
-.oss-art :is(button,figure){display:block;width:100%;margin:0;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:pointer;font:inherit}
-.oss-art img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;transition:transform .6s,filter .6s}
-.oss-art button:hover img{transform:scale(1.02);filter:brightness(1.08)}
-.oss-art :is(span,figcaption){display:block;margin-top:.8em;font-size:18px;font-weight:600}.oss-art small{display:block;margin-top:.4em}
 .oss-contact{padding:0;overflow:hidden}
 .oss-contact-img{display:block;width:100%;height:min(72svh,56vw);object-fit:cover;object-position:50% 45%}
 .oss-contact-copy{position:relative;padding:8vh 6vw 10vh}
 .oss-contact h2{font-size:clamp(30px,5vw,64px)}.oss-contact h2 em{display:block;color:#6d6d76}
 .oss-foot{display:flex;flex-wrap:wrap;gap:22px;margin-top:5vh!important}.oss-foot a{color:inherit}
 @media(max-width:760px){.oss-projects li{grid-template-columns:1fr}.oss-dark,.oss-paper{padding:11vh 7vw}}
+
+/* 04 · PRODUCT. Captions own the lower-left; every camera hold keeps the object right. */
+.os-product-caption{left:160px;bottom:62px;width:min(380px,28vw);opacity:0;visibility:hidden}
+.os-product-caption .os-mono{font-size:10px;line-height:1.6;letter-spacing:.1em;color:#ffffff85}
+.os-product-caption h3{font-size:36px;line-height:1.08;font-weight:620;letter-spacing:-.035em;margin:12px 0}
+.os-product-caption p{font-size:15px;line-height:1.55;color:#ffffffb8;margin:0;text-wrap:pretty}
+.os-product-caption a{display:inline-block;font-size:13px;margin-top:18px;padding-bottom:6px;border-bottom:1px solid #ffffff60}
+.os-product-caption a:is(:hover,:focus-visible){border-color:#fff}
+.os-product-code{left:160px;top:160px;width:330px;opacity:0;visibility:hidden}
+.os-product-code code{font:500 12px/2 Mono,monospace;white-space:pre;color:#ffffffb8}
+.os-product-proof{margin-top:22px;opacity:0;visibility:hidden}
+.os-product-proof b{font-size:9px;letter-spacing:.1em;padding:4px 6px;border:1px solid #ffffff50}
+.os-product-proof p{font-size:13px;line-height:1.6;max-width:300px;color:#ffffffa8}
+.os-product-chip,.os-product-tag,.os-product-bar,.os-product-flag{opacity:0;visibility:hidden;transform:translate(-50%,-50%)}
+.os-product-chip{width:24px;height:24px;border:1px solid #ffffff60;border-radius:5px;display:grid;place-items:center;background:#f7f7f5;color:#1c1d21;font:500 11px Mono,monospace}
+.os-product-tag{font:500 12px Mono,monospace;white-space:nowrap;background:#1c1d21e8;border:1px solid #ffffff70;border-radius:4px;padding:8px 10px}
+.os-product-bar{font:500 11px Mono,monospace;text-align:center;white-space:nowrap;transform:translate(-50%,0)}
+.os-product-bar small{display:block;opacity:0;font-size:10px;line-height:1.6;margin-top:9px;transition:opacity .2s;color:#ffffffb0}
+.os-product-bar.is-hover small{opacity:1}
+.os-product-flag{text-align:center;white-space:nowrap}
+.os-product-flag b{font-size:13px;font-weight:500;border-bottom:1px solid #ffffff70;padding-bottom:7px;display:block}
+.os-product-flag span{display:block;font:500 9px Mono,monospace;letter-spacing:.03em;color:#ffffff90;margin-top:12px}
+.os-product-point{opacity:0;visibility:hidden;width:24px;height:24px;margin:-12px 0 0 -12px;pointer-events:auto!important}
+.os-product-point i{position:absolute;left:9px;top:9px;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 9px #ffffff45;transition:transform .25s}
+.os-product-point span{position:absolute;left:27px;top:6px;white-space:nowrap;font:500 12px Mono,monospace;letter-spacing:.08em;text-transform:uppercase;color:#ffffffb0;transform-origin:left center;transition:transform .25s,color .25s}
+.os-product-point[data-os-point="0"] span,.os-product-point[data-os-point="2"] span{left:auto;right:27px;transform-origin:right center}
+.os-product-point[data-os-point="1"] span{top:35px;left:12px;transform:translateX(-50%);transform-origin:center}
+.os-product-point[data-os-point="4"] span{top:35px;left:12px;transform:translateX(-30%)}
+.os-product-point:is(:hover,:focus-visible) i{transform:scale(1.7)}
+.os-product-point:is(:hover,:focus-visible) span{color:#fff;font-size:12px}
+.os-product-end{right:6%;top:22%;width:230px;opacity:0;visibility:hidden}
+.os-product-end a{font-size:28px;letter-spacing:-.03em;font-weight:600}
+.os-product-end p{font-size:14px;line-height:1.6;color:#ffffff90;max-width:220px}
+.oss-worlds-alias{position:absolute;left:0;top:0;scroll-margin-top:0}
+.oss-product-image{display:block;height:clamp(260px,36vw,520px)}
+.oss-product-image img{display:block;width:100%;height:100%;object-fit:contain}
+.oss-product-atelier img{max-width:260px;margin:auto}
+.oss-product-arden img{mask-image:radial-gradient(ellipse,black 35%,transparent 71%)}
+.oss-product-mark{display:block;max-width:800px;margin:10vh auto 0;color:#fff;text-align:center;text-decoration:none}
+.oss-product-mark svg{width:100%;height:auto;display:block}
+.oss-product-mark text{font:500 10px Mono,monospace;letter-spacing:.04em;text-transform:uppercase;fill:currentColor}
+.oss-product-mark>span{font-size:28px;font-weight:600}.oss-product-mark p{font-size:14px;color:#ffffff90}
+.oss-products a:focus-visible{outline:1px solid currentColor;outline-offset:8px}
+@media(prefers-reduced-motion:reduce){.os-product-point *{transition:none}}
+
+.os-outro .o-grid{grid-template-columns:360px minmax(0,1fr) auto}.os-outro .o-contact{width:100%;max-width:460px;justify-self:center;pointer-events:auto}.oss-contact .contact-rows{max-width:480px;margin:24px 0}
+.os-outro .contact-row-email a{flex:0 1 auto}
+.os-layer .contact-row button{min-width:58px;min-height:32px;border-radius:18px;padding:5px 12px;background:#1d1d1f;color:#fff;font:500 12px/1.3 'TikTok Sans',sans-serif;text-align:center}
+.oss-product-diagram{position:relative;width:100%}
+.oss-product-mobile-label{display:none}
+@media(max-width:600px){
+  .oss-product-mark{width:100%;max-width:none}
+  .oss-product-mark svg text{display:none}
+  .oss-product-mobile-label{display:block;position:absolute;font:500 11px/1.35 Mono,monospace;max-width:42%;transform:translate(-50%,0);color:inherit}
+  .oss-product-mobile-label:first-of-type{transform:translate(-100%,0)}
+}

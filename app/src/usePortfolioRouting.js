@@ -35,7 +35,7 @@ export function routeFor(page) {
   if (page?.type === 'field01') return '/other-project/field01';
   if (page?.type === 'brand-motion') return '/other-project/jay-lin';
   if (page?.type === 'model') return '/systems/roco/model';
-  if (['product', 'product-case', 'for'].includes(page?.type)) return productRouteFor(page);
+  if (['product', 'product-case', 'for', 'about'].includes(page?.type)) return productRouteFor(page);
   if (page?.type === 'art') return allWorks.find(w => w.id === page.item?.id || w.slug === page.item?.slug)?.href || null;
   if (page?.type === 'system') {
     const item = systems.find(s => s.status === 'available' && (s.id === page.item?.id || s.slug === page.item?.slug));

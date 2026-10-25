@@ -7,7 +7,7 @@ import {isProductPath, movedProductPath, productTitle, resolveProductPath} from 
 import {initialLanguage, saveLanguage} from '../language';
 
 // Where the rest of the site lives. Those pages need the full homepage app, so they are full page loads.
-const SITE = {home: '/#home', systems: '/systems', art: '/works', vibecoding: '/other-project', contact: '/#contact', about: '/#about'};
+const SITE = {home: '/#home', systems: '/systems', art: '/works', vibecoding: '/other-project', contact: '/#contact', about: '/about'};
 
 /** The standalone entry for /product/* and /for/* (product.html). It loads no 3D, no physics and no loading screen,
     so a cold deep link shows the page as soon as this script runs. Moves between product pages use pushState and the
@@ -64,7 +64,7 @@ export default function ProductShell() {
 
   return <>
     <a className="skip-link" href="#product-main">{lang === 'en' ? 'Skip to content' : '跳到正文'}</a>
-    <SiteNavigation lang={lang} reducedMotion={reduced} tone="light" onLanguage={chooseLang} onNavigate={onNavigate} onAbout={() => location.assign(SITE.about)}/>
+    <SiteNavigation lang={lang} reducedMotion={reduced} tone={page?.type==='about'?'auto':'light'} onLanguage={chooseLang} onNavigate={onNavigate} onAbout={() => navigate(SITE.about)}/>
     <main id="product-main" ref={main} tabIndex={-1} className="product-shell-main">
       <ProductRoute page={page} reduced={reduced} onNavigate={navigate} lang={lang}/>
     </main>

@@ -4,7 +4,7 @@ import path from 'node:path';
 
 // /product/* and /for/* are served by product.html, a second entry without the 3D homepage.
 // vercel.json rewrites them in production; this does the same for `vite` and `vite preview`.
-const productPaths = /^\/(product|for)(\/[^.]*)?$/;
+const productPaths = /^(?:\/about\/?|\/(product|for)(\/[^.]*)?)$/;
 function productEntry() {
   const rewrite = (req, _res, next) => {
     const [pathname, query] = req.url.split('?');

@@ -10,6 +10,7 @@ import ArdenCase from './worlds/arden/ArdenWorld';
 import {PRODUCT_HOME} from './content';
 import {L, LangProvider, pageLanguage, useCaseLang} from './i18n';
 import './product.css';
+import AboutPage from './AboutPage';
 
 const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'last-100-feet': LastHundredFeetCase, 'choose-not-to-lose': ChooseNotToLoseCase, arden: ArdenCase};
 
@@ -30,7 +31,7 @@ export default function ProductRoute({page, reduced = false, onNavigate, lang = 
   // a moved address is on its way to Systems (ProductShell replaces the location); show nothing meanwhile
   if (page?.type === 'moved') return null;
   return <LangProvider lang={pageLanguage(page, lang)}><NavigateContext.Provider value={onNavigate}>
-    {page?.type === 'product' ? <ProductIndex reduced={reduced}/>
+    {page?.type === 'about' ? <AboutPage reduced={reduced}/> : page?.type === 'product' ? <ProductIndex reduced={reduced}/>
       : Case ? <Case key={page.item.slug} item={page.item} reduced={reduced}/>
       : page?.type === 'for' ? <ForPage item={page.item}/>
       : <NotFound/>}

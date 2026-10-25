@@ -1,8 +1,7 @@
 // Words and pictures for the One Stroke homepage, in both languages. Projects, works and the author come from the
 // site's own data, so the homepage always names things the way their pages do.
-import {systems, allWorks, author, stats} from '../portfolioData';
+import {systems, author, stats} from '../portfolioData';
 
-const work = slug => allWorks.find(w => w.slug === slug);
 const T = (zh, en) => ({zh, en});
 export const pick = (value, lang) => (value && typeof value === 'object' && 'zh' in value ? value[lang === 'en' ? 'en' : 'zh'] : value);
 
@@ -28,15 +27,6 @@ export const PROJECTS = systems.map(s => {
 // scene opens the complete list, including projects added after this sequence.
 export const CINEMATIC_PROJECTS = ['roco', 'nexus', 'league-of-legends', 'genshin-impact']
   .map(id => PROJECTS.find(project => project.id === id));
-
-// seven pictures in the art worlds; the Garden Cathedral is shown as painting against its Blender rebuild
-const ART_SLUGS = ['world-tree', 'sword-immortal', 'background-painting', 'enchanted-forest', 'character-vis-dev', 'cathedral', 'sakura-village'];
-export const ART = ART_SLUGS.map(slug => {
-  if (slug === 'cathedral') return {slug, cmp: true, item: null, title: T('蓝紫花园教堂', 'Garden Cathedral'), en: 'PAINTING → BLENDER', year: '2026',
-    tex: '/assets/home/cathedral-painting.jpg', tex2: '/assets/home/cathedral-3d.jpg'};
-  const w = work(slug);
-  return {slug, item: w, title: T(w.title, w.titleEn), en: (w.titleEn || '').toUpperCase(), year: w.year, tex: `/assets/home/${slug}.jpg`};
-});
 
 // the drafting sheet: who, what, where from
 export const ABOUT = {
@@ -71,9 +61,6 @@ export const COPY = {
   kvMeta: {name: `${author.name} · ${author.nameEn}`, role: T(author.role, author.roleEn), line: 'SYSTEMS DESIGN × VISUAL WORLDS'},
   hud: 'DRAG THE MARK · TOUCH THE WATER',
   timelineHead: T('03 / TIMELINE — 一条线，走到现在', '03 / TIMELINE — one line, all the way to now'),
-  worlds: T('04 / VISUAL WORLDS — 想让人走进去的世界', '04 / VISUAL WORLDS — places worth entering'),
-  count: stats.archiveWorks,
-  browse: T('浏览全部作品 ↗', 'Browse all works ↗'),
   soon: T(['原神', 'COMING SOON · 抽卡系统策划'], ['Genshin Impact', 'COMING SOON · WISH SYSTEMS']),
   marquee: T(['把想法，做成体验。', 'Between rules & wonder.'], ['Ideas, made into experiences.', 'Between rules & wonder.']),
   outro: {
@@ -84,10 +71,10 @@ export const COPY = {
     foot: {systems: T('系统策划', 'Systems'), art: T('美术作品', 'Art'), about: T('关于我', 'About'), resume: T('简历 PDF ↗', 'Résumé PDF ↗'), top: T('回到顶部 ↑', 'Back to top ↑')},
   },
   cursor: {
-    drag: T('拖动旋转', 'Drag to turn'), soon: T('即将上线', 'Coming soon'), open: T('展开', 'Open'), work: T('查看作品', 'View the work'),
-    compare: T('原画 ↔ 模型', 'Painting ↔ Model'), enter: T('进入 →', 'Enter →'), write: T('写信给我 ↗', 'Write to me ↗'), rise: T('继续滚动', 'Keep scrolling'),
+    drag: T('拖动旋转', 'Drag to turn'), soon: T('即将上线', 'Coming soon'), open: T('展开', 'Open'),
+    enter: T('进入 →', 'Enter →'), write: T('写信给我 ↗', 'Write to me ↗'), rise: T('继续滚动', 'Keep scrolling'),
   },
-  index: ['00 · INDEX', '01 · SYSTEMS', '02 · ABOUT', '03 · TIMELINE', '04 · WORLDS', '05 · CONTACT'],
+  index: ['00 · INDEX', '01 · SYSTEMS', '02 · ABOUT', '03 · TIMELINE', '04 · PRODUCT', '05 · CONTACT'],
 };
 
 export {author};

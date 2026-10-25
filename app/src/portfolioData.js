@@ -597,6 +597,7 @@ export const author = {
   "statement": "我研究目标、规则与反馈，也通过概念设计构建世界。",
   "statementEn": "I explore goals, rules and feedback, and build worlds through concept design.",
   "email": "shijielin00@gmail.com",
+  "linkedin": "",
   "phone": "+1 626-727-0409",
   "phoneHref": "tel:+16267270409",
   "resume": "/assets/docs/jay-lin-systems-resume-zh.pdf",

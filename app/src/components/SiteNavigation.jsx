@@ -4,6 +4,8 @@ import OriginalLogo from './OriginalLogo';
 import MusicToggle from './MusicToggle';
 import ExpressiveTitle from './ExpressiveTitle';
 import { author } from '../portfolioData';
+import ContactPill from './Contact';
+import {resumeFor} from './contact-model';
 import './SiteNavigation.css';
 
 const logo = '/assets/logo.png';
@@ -62,10 +64,10 @@ export default function SiteNavigation({ lang = 'zh', onLanguage, onNavigate, on
   const labels = useMemo(() => en ? {
     home: 'Home', product: 'Product', systems: 'Systems', art: 'Art', about: 'About', vibecoding: 'Other Project', contact: 'Contact',
   } : { home: '首页', product: '产品', systems: '系统策划', art: '美术作品', about: '关于我', vibecoding: 'Other Project', contact: '联系' }, [en]);
-  const hrefFor = id => id === 'product' ? '/product' : id === 'art' ? '/works' : id === 'systems' ? '/systems' : id === 'vibecoding' ? '/other-project' : '/#' + id;
-  const primary = useMemo(() => ['product', 'systems', 'art', 'about', 'contact'].map(id => ({ id, label: labels[id], href: hrefFor(id) })), [labels]);
+  const hrefFor = id => id === 'about' ? '/about' : id === 'product' ? '/product' : id === 'art' ? '/works' : id === 'systems' ? '/systems' : id === 'vibecoding' ? '/other-project' : '/#' + id;
+  const primary = useMemo(() => ['product', 'systems', 'about', 'contact'].map(id => ({ id, label: labels[id], href: hrefFor(id) })), [labels]);
   const fullMenu = useMemo(() => ['home', 'product', 'systems', 'art', 'vibecoding', 'about', 'contact'].map(id => ({ id, label: labels[id], link: hrefFor(id), ariaLabel: labels[id] })), [labels]);
-  const navigate = id => id === 'about' ? onAbout?.() : onNavigate?.(id);
+  const navigate = id => id === 'about' ? (onAbout ? onAbout() : location.assign('/about')) : (onNavigate ? onNavigate(id) : location.assign(hrefFor(id)));
   const containMenuFocus = event => {
     if (!menuOpen || event.key !== 'Tab') return;
     const controls = [...event.currentTarget.querySelectorAll('.v16-language button,.music-toggle,.sm-toggle,.staggered-menu-panel a[href]')]
@@ -75,20 +77,23 @@ export default function SiteNavigation({ lang = 'zh', onLanguage, onNavigate, on
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
   };
   return <div className={`v16-navigation${menuOpen ? ' is-menu-open' : ''}`} data-tone={surfaceTone} onKeyDown={containMenuFocus}>
+    <div className="v16-nav-bar">
     <a className="v16-wordmark" href="/#home" onClick={event => { event.preventDefault(); navigate('home'); }} aria-label={en ? 'Jay Lin — Home' : '林世杰 · 首页'}>
       <OriginalLogo/><span><ExpressiveTitle variant="type" typingSpeed={55} reduced={reducedMotion} hover={false}>JAY LIN</ExpressiveTitle></span>
     </a>
-    <nav className="v16-primary-nav" inert={menuOpen ? true : undefined} aria-hidden={menuOpen || undefined} aria-label={en ? 'Primary navigation' : '主导航'}>{primary.map(item => <a key={item.id} aria-label={item.label} href={item.href} onClick={event => { event.preventDefault(); navigate(item.id); }}><span><ExpressiveTitle variant="type" typingSpeed={42} reduced={reducedMotion} hover={false}>{item.label}</ExpressiveTitle></span></a>)}</nav>
+    <nav className="v16-primary-nav" inert={menuOpen ? true : undefined} aria-hidden={menuOpen || undefined} aria-label={en ? 'Primary navigation' : '主导航'}>{primary.map(item => <a key={item.id} data-nav={item.id} aria-label={item.label} href={item.href} onClick={event => { event.preventDefault(); navigate(item.id); }}><span><ExpressiveTitle variant="type" typingSpeed={42} reduced={reducedMotion} hover={false}>{item.label}</ExpressiveTitle></span></a>)}</nav>
+    <ContactPill lang={lang} hidden={menuOpen} tone={surfaceTone}/>
     <div className="v16-language" role="group" aria-label={en ? 'Language' : '语言'} data-language={lang}>
       <span className="v16-language-thumb" aria-hidden="true"/>
       {[['en','EN'],['zh','中文']].map(([value,label])=><button type="button" key={value} lang={value==='zh'?'zh-CN':'en'} aria-label={value==='en'?'Switch to English':'切换到中文'} aria-pressed={lang===value} onClick={()=>{if(lang===value)return;setMenuOpen(false);setMenuReset(current=>current+1);onLanguage?.(value);}}><ExpressiveTitle variant="type" typingSpeed={42} reduced={reducedMotion} hover={false}>{label}</ExpressiveTitle></button>)}
     </div>
     <MusicToggle lang={lang} reduced={reducedMotion || prefersReduced} />
+    </div>
     <StaggeredMenu key={`${lang}-${menuReset}`} className="v16-staggered" isFixed logoUrl={logo} items={fullMenu} reducedMotion={reducedMotion || prefersReduced}
       colors={['#d9d9d9', '#737373']} menuButtonColor={surfaceTone === 'light' ? '#111111' : '#ffffff'} openMenuButtonColor="#ffffff" accentColor="#b6b6b6"
       openLabel={en ? 'Menu' : '目录'} closeLabel={en ? 'Close' : '关闭'} socialLabel={en ? 'A conversation starts here' : '下一幕，从一次交谈开始'}
       onMenuOpen={() => setMenuOpen(true)} onMenuClose={() => setMenuOpen(false)}
       onItemClick={(item, event) => { event.preventDefault(); event.currentTarget.closest('.staggered-menu-wrapper')?.querySelector('.sm-toggle')?.focus({ preventScroll: true }); navigate(item.id); }}
-      socialItems={[{ label: en ? 'Email ↗' : '邮箱 ↗', link: `mailto:${author.email}` }, { label: en ? 'Résumé ↗' : '简历 ↗', link: author.resume }]} />
+      socialItems={[{ label: en ? 'Email ↗' : '邮箱 ↗', link: `mailto:${author.email}` }, { label: en ? 'Résumé ↗' : '简历 ↗', link: resumeFor(author,lang) }]} />
   </div>;
 }

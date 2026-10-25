@@ -9,7 +9,7 @@ const importers={
  // /product, its case studies and /for/* share one module.
  product:()=>import('../product/ProductRoute'),
 };
-export const PRODUCT_TYPES=['product','product-case','for'];
+export const PRODUCT_TYPES=['product','product-case','for','about'];
 export const loadedPages={};
 const promises={};
 export const pageLoaders=Object.fromEntries(Object.entries(importers).map(([type,load])=>[type,()=>

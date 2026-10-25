@@ -24,6 +24,7 @@ const LangContext = createContext('en');
 /** The language a product page renders in: the site's, if the page has been translated; English otherwise. */
 export function pageLanguage(page, siteLang) {
   if (siteLang !== 'zh') return 'en';
+  if (page?.type === 'about') return 'zh';
   if (page?.type === 'product') return TRANSLATED.has('product') ? 'zh' : 'en';
   if (page?.type === 'product-case') return TRANSLATED.has(page.item?.slug) ? 'zh' : 'en';
   return page ? 'en' : 'zh';     // a missing page is only chrome

@@ -207,6 +207,7 @@ export const movedProductPath = pathname => MOVED[clean(pathname)] || null;
     A moved address resolves to {type: 'moved', to}; each router sends it on to its new home. */
 export function resolveProductPath(pathname) {
   const path = clean(pathname);
+  if (path === '/about') return {type: 'about'};
   if (path === PRODUCT_HOME) return {type: 'product'};
   if (MOVED[path]) return {type: 'moved', to: MOVED[path]};
   const match = path.match(/^\/product\/([a-z0-9-]+)$/);
@@ -220,6 +221,7 @@ export function resolveProductPath(pathname) {
 }
 
 export function productRouteFor(page) {
+  if (page?.type === 'about') return '/about';
   if (page?.type === 'product') return PRODUCT_HOME;
   if (page?.type === 'product-case') return PAGES.some(c => c.slug === page.item?.slug) ? `${PRODUCT_HOME}/${page.item.slug}` : null;
   if (page?.type === 'for') return FOR_PAGES[page.item?.slug] ? `/for/${page.item.slug}` : null;
@@ -227,11 +229,12 @@ export function productRouteFor(page) {
 }
 
 /** True for every path the standalone product entry should own (including unknown /product/* paths, which get a 404 view). */
-export const isProductPath = pathname => /^\/(product|for)(\/|$)/.test(clean(pathname) + '/');
+export const isProductPath = pathname => clean(pathname)==='/about' || /^\/(product|for)(\/|$)/.test(clean(pathname) + '/');
 
 /** The page's title for the browser tab, in the site language (lang 'zh' or 'en'). */
 export function productTitle(page, lang = 'en') {
   const zh = lang === 'zh';
+  if (page?.type === 'about') return zh ? '关于我' : 'About';
   if (page?.type === 'product-case') return (zh && page.item.zh?.pageTitle) || page.item.pageTitle || page.item.title;
   if (page?.type === 'for') return 'For the Figma team';
   if (page?.type === 'product') return zh ? '产品设计' : 'Product design';

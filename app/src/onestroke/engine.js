@@ -11,8 +11,10 @@ import {Reflector} from 'three/addons/objects/Reflector.js';
 import helvetiker from 'three/examples/fonts/helvetiker_bold.typeface.json';
 import OUTLINE from './jl-outline.json';
 import {N, Tube, jlPose, poseFromStrokes, curve, flow, copyPose, makePose, LOGO_C} from './line.js';
-import {CINEMATIC_PROJECTS as PROJECTS, ART, ABOUT, TIMELINE, COPY, pick} from './content.js';
+import {CINEMATIC_PROJECTS as PROJECTS, ABOUT, TIMELINE, COPY, pick} from './content.js';
 import {toJourney, toScroll} from './pacing.js';
+import {createProductScene} from './product-scene.js';
+import {PRODUCT_STATIONS, productWhite} from './product-layout.js';
 import {createScrollCameraTrack, projectOpacity} from './camera-track.js';
 export {TOTAL, SCROLL_TOTAL, toJourney, toScroll} from './pacing.js';
 
@@ -20,13 +22,13 @@ export {TOTAL, SCROLL_TOTAL, toJourney, toScroll} from './pacing.js';
    is the horizon of a lake at dusk. A monolith of the mark rises from the water; the headline hangs in the sky and the lake
    answers it with "& wonder.". On scroll the stone sinks, we look down into the lake, and a pen of light writes SYSTEMS on the
    lakebed; the letters rise. The thread runs past the projects, lies down as ink on a drafting sheet (about, the mark's
-   construction), becomes the timeline, closes into a ring you pass through, and stays on as the horizon of the art worlds.
-   The last world burns out to white; the white is morning mist over the same lake, where the stone rises again for the letter.
+   construction), becomes the timeline, closes into a ring you pass through, and draws five products on the JL mark.
+   The mark burns out to white; the white is morning mist over the same lake, where the stone rises again for the letter.
 
    The page is a 900-unit-tall design space scaled to the window. Its scroll position S is counted in screens from the moment
    the office has gone dark (the section overlaps the office's last screen), so S = 0 is the switch-on. */
 
-export const CHAPTERS = [0, 2.05, 8.3, 10.9, 16.9, 22.6];    // where the index takes you, in screens
+export const CHAPTERS = [0, 2.05, 8.3, 10.9, 17.5, 30.6];    // where the index takes you, in screens
 // All scene timing stays in authored S; pacing.js maps it to wheel travel.
 // Anchors, chapter jumps and section height use the same inverse map.
 export const SCREEN_SIDES = [1, -1, 1, -1];                  // which side of its screen each project's words stand on
@@ -100,7 +102,6 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   }
   function measure(g, text, size, face = 'sans', weight = 560, ls = 0) { g.save(); g.font = FONT[face](weight).replace('SZ', size); g.letterSpacing = `${ls}em`; const w = g.measureText(text).width; g.restore(); return w; }
   const fit = (g, text, size, maxW, face = 'sans', weight = 560, ls = 0) => Math.min(size, size * maxW / Math.max(1, measure(g, text, size, face, weight, ls)));
-  function vert(g, text, x, y, {size = 40, face = 'song', weight = 600, color = INK, gap = 1.1, alpha = 1} = {}) { [...text].forEach((ch, i) => txt(g, ch, x, y + i * size * gap, {size, face, weight, color, align: 'center', alpha})); }
   function coverImg(g, im, x, y, w, h) { const ia = im.width / im.height, ba = w / h; let sw = im.width, sh = im.height; if (ba > ia) sh = im.width / ba; else sw = im.height * ba; g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); g.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, x, y, w, h); g.restore(); }
   function labelBox(g, text, x, y, size, {bg = INK, color = '#fff', weight = 620} = {}) {
     g.save(); g.font = FONT.sans(weight).replace('SZ', size); const w = g.measureText(text).width, top = y - size * 0.98, bh = size * 1.3;
@@ -112,7 +113,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
 
   /* ---------------- pictures, the typeface for SYSTEMS, the mark's outline ---------------- */
   const IMG = {}, AVG = {}, TEX = {};
-  const paths = [...new Set([...PROJECTS.map(p => p.tex), ...ART.flatMap(a => [a.tex, a.tex2]), ...TIMELINE.filter(n => n.img).map(n => `/assets/home/${n.img}.jpg`)].filter(Boolean))];
+  const paths = [...new Set([...PROJECTS.map(p => p.tex), ...TIMELINE.filter(n => n.img).map(n => `/assets/home/${n.img}.jpg`)].filter(Boolean))];
   const imgReady = Promise.all(paths.map(src => new Promise(res => { const im = new Image(); im.decoding = 'async';
     im.onload = () => { IMG[src] = im; const c = document.createElement('canvas'); c.width = c.height = 1; const g = c.getContext('2d'); g.drawImage(im, 0, 0, 1, 1); const d = g.getImageData(0, 0, 1, 1).data; AVG[src] = new THREE.Color(`rgb(${d[0]},${d[1]},${d[2]})`);
       const t = new THREE.Texture(im); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.needsUpdate = true; TEX[src] = t; res(); };
@@ -154,7 +155,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   }
   const envDusk = lakeEnv(0), envDawn = lakeEnv(1);
 
-  const POOLS = 13;
+  const POOLS = 6;
   const floorFrag = `uniform float uPaper; uniform vec3 uCam, uWipe; uniform vec4 uPool[${POOLS}]; uniform vec3 uPoolC[${POOLS}]; varying vec3 vW; ${LIN}
     float lineAA(float c, float w){ float fw = fwidth(c); return 1. - smoothstep(w * .5 - fw, w * .5 + fw, abs(c)); }
     void main(){
@@ -491,59 +492,21 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     headD.t.needsUpdate = true;
   }
 
-  /* ---------------- 04 · the portal ring and the art worlds ---------------- */
+  /* ---------------- 04 · the portal ring ---------------- */
   const RX = PX + 5100, RING_R = 300, RY = FLOOR + 330;
   const GZ = AZ, AX0 = RX + 1500;
   const disc = new THREE.Mesh(new THREE.CircleGeometry(RING_R - 3, 128), new THREE.MeshBasicMaterial({colorWrite: false, depthWrite: false, side: THREE.DoubleSide}));
   Object.assign(disc.material, {stencilWrite: true, stencilRef: 1, stencilFunc: THREE.AlwaysStencilFunc, stencilZPass: THREE.ReplaceStencilOp});
   disc.rotation.y = Math.PI / 2; disc.position.set(RX, RY, AZ); disc.renderOrder = -2000; disc.visible = false; scene.add(disc);
-  const artObjs = [];
-  const ART_LAYOUT = [{dx: 250, depth: 1500, y: 350, w: 880}, {dx: 1250, depth: 1350, y: 330, w: 320}, {dx: 2080, depth: 1950, y: 470, w: 760},
-    {dx: 2980, depth: 1250, y: 300, w: 520}, {dx: 3780, depth: 1700, y: 380, w: 640}, {dx: 4950, depth: 1600, y: 350, w: 780}, {dx: 6250, depth: 1500, y: 340, w: 820}];
-  const ARTS = ART.map((a, i) => ({...a, ...ART_LAYOUT[i]}));
-  let cmpMat, worldsSign, worldsTex;
-  function buildArt() {
-    ARTS.forEach(a => {
-      const im = imgOf(a.tex); a.h = Math.round(a.w * (im ? im.height / im.width : 0.56));
-      let mat;
-      if (a.cmp) {
-        cmpMat = new THREE.ShaderMaterial({uniforms: {tA: {value: TEX[a.tex]}, tB: {value: TEX[a.tex2]}, uSplit: {value: 0.5}, uGlow: {value: 0}},
-          vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
-          fragmentShader: `uniform sampler2D tA, tB; uniform float uSplit, uGlow; varying vec2 vUv;
-            void main(){ vec3 a = texture2D(tA, vUv).rgb, b = texture2D(tB, vUv).rgb; float e = smoothstep(uSplit - .002, uSplit + .002, vUv.x);
-              vec3 c = mix(a, b, e); float line = exp(-pow((vUv.x - uSplit) / .0022, 2.)); c += vec3(.95) * line * 2.4;
-              gl_FragColor = vec4(c * (1. + uGlow * .06), 1.);
-              #include <colorspace_fragment>
-            }`});
-        mat = cmpMat;
-      } else mat = new THREE.MeshBasicMaterial({map: TEX[a.tex] || null, color: new THREE.Color(1, 1, 1)});
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(a.w, a.h), mat);
-      m.position.set(AX0 + a.dx, FLOOR + a.y, GZ - a.depth); scene.add(m); a.mesh = m; artObjs.push(m);
-      const tl = canvasTex(120, 520, 2); a.tl = tl; drawArtTitle(a, 0);
-      const tm = new THREE.Mesh(new THREE.PlaneGeometry(120, 520), new THREE.MeshBasicMaterial({map: tl.t, transparent: true, depthWrite: false}));
-      tm.position.set(AX0 + a.dx + a.w / 2 + 90, FLOOR + a.y + a.h / 2 - 260, GZ - a.depth); scene.add(tm); a.tm = tm; artObjs.push(tm);
-      a.col = grey(AVG[a.tex] || new THREE.Color('#555'));
-    });
-    worldsTex = canvasTex(1300, 560, 2); drawWorlds();
-    worldsSign = new THREE.Mesh(new THREE.PlaneGeometry(1300, 560), new THREE.MeshBasicMaterial({map: worldsTex.t, transparent: true, depthWrite: false}));
-    worldsSign.rotation.y = -Math.PI / 2; worldsSign.position.set(RX + 2900, FLOOR + 420, AZ); scene.add(worldsSign); artObjs.push(worldsSign);
+  const productSignTex = canvasTex(1300, 560, 2);
+  const productSign = new THREE.Mesh(new THREE.PlaneGeometry(1300,560), new THREE.MeshBasicMaterial({map:productSignTex.t,transparent:true,depthWrite:false}));
+  productSign.rotation.y=-Math.PI/2; productSign.position.set(RX+2900,FLOOR+420,AZ); productSign.visible=false; scene.add(productSign);
+  function drawProductSign() {
+    productSignTex.clear(); const g=productSignTex.g;
+    txt(g,'PRODUCT',650,300,{size:250,weight:680,ls:-.06,color:'#ffffff',align:'center'});
+    txt(g,lang==='en'?'04 / PRODUCT · FIVE CASES':'04 / 产品 · 五个案例',650,385,{face:'mono',size:13,ls:.18,color:'#ffffff88',align:'center'});
+    productSignTex.t.needsUpdate=true;
   }
-  function drawWorlds() {
-    const g = worldsTex.g; worldsTex.clear();
-    txt(g, 'WORLDS', 650, 300, {size: 250, weight: 680, ls: -0.06, color: '#ffffff', align: 'center'});
-    txt(g, 'worth entering.', 650, 450, {face: 'serif', size: 130, color: '#c4c4ca', align: 'center'});
-    txt(g, pick(COPY.worlds, lang), 650, 530, {face: 'mono', size: 13, ls: 0.18, color: '#ffffff88', align: 'center'});
-    worldsTex.t.needsUpdate = true;
-  }
-  function drawArtTitle(a, hov) {
-    const g = a.tl.g; a.tl.clear(); const title = pick(a.title, lang), hot = hov > 0.5;
-    if (lang === 'en') { g.save(); g.translate(46, 30); g.rotate(Math.PI / 2); txt(g, title, 0, 0, {size: fit(g, title, 30, 460, 'sans', 620), weight: 620, color: hot ? '#ffffff' : '#e4e4e6'}); g.restore(); }
-    else vert(g, title, 40, 60, {size: 34, color: hot ? '#ffffff' : '#e4e4e6', face: 'song', weight: 600});
-    g.save(); g.translate(84, 30); g.rotate(Math.PI / 2); txt(g, `${a.en} · ${a.year}`, 0, 0, {face: 'mono', size: 10, ls: 0.18, color: hot ? '#ffffff' : '#ffffff88'}); g.restore();
-    if (hov > 0.01) { g.fillStyle = `rgba(255,255,255,${hov})`; g.fillRect(16, 36, 2, Math.min(460, (lang === 'en' ? measure(g, title, 30, 'sans', 620) : title.length * 37.4)) * eo3(hov)); }
-    a.tl.t.needsUpdate = true;
-  }
-
   /* ---------------- 05 · the letter: the same lake, at dawn ---------------- */
   const OX = AX0 + 6250, OY = FLOOR + 2600, OZ = GZ - 3200, WL2 = OY - 140;
   const ENDC = V(OX, WL2 + 34 + 170.3 * JL_S, OZ - 3000);
@@ -577,15 +540,14 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   }
 
   /* ---------------- poses of the one line ---------------- */
-  let JL_CORE, FLAT_JL, AXIS, RING, HORIZON, JL_END;
+  const product = createProductScene({scene, root, center: ENDC, scale: JL_S, alive: () => alive});
+  let JL_CORE, FLAT_JL, AXIS, RING;
   function buildPoses() {
     JL_CORE = jlPose(JLC, JL_S, V(1, 0, 0), V(0, 1, 0), 2.6);
     FLAT_JL = jlPose(FJ.c, FJ.s, V(1, 0, 0), V(0, 0, -1), 1.1);
     AXIS = poseFromStrokes([[V(PX - 620, FLOOR + 1.5, AZ), V(PX + 5200, FLOOR + 1.5, AZ)]], 0.75);
     RING = poseFromStrokes([curve(u => { const a = -Math.PI / 2 + u * Math.PI * 2 * 1.002; return V(RX, RY + RING_R * Math.sin(a), AZ + RING_R * Math.cos(a)); }, 400)], 3.2);
     for (let i = 0; i < N; i++) RING.D[i] = 1e4;
-    HORIZON = poseFromStrokes([[V(RX - 3000, FLOOR + 30, GZ - 9000), V(AX0 + 11000, FLOOR + 30, GZ - 9000)]], 4);
-    JL_END = jlPose(V(OX, OY + 20, OZ - 1500), 0.62, V(1, 0, 0), V(0, 1, 0), 2.1);
   }
   function linePose(S) {
     if (S < 1.2) return copyPose(live, JL_CORE);
@@ -595,9 +557,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     if (S < 14.2) return copyPose(live, AXIS);
     if (S < 15.0) return flow(live, AXIS, RING, seg(S, 14.2, 15.0), {spread: 0.5, dir: -1, lift: V(0, 1, 0), liftAmt: 160});
     if (S < 15.8) return copyPose(live, RING);
-    if (S < 16.6) return flow(live, RING, HORIZON, seg(S, 15.8, 16.6), {spread: 0.5});
-    if (S < 21.3) return copyPose(live, HORIZON);
-    return copyPose(live, JL_END);
+    return product.pose(live, S, RING, jlEnd);
   }
 
   /* ---------------- camera choreography ---------------- */
@@ -619,12 +579,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     k(14.75, V(RX - 1900, FLOOR + 1050, AZ + 1500), V(RX, RY - 40, AZ), V(0, 1, 0));
     k(15.15, V(RX - 2900, RY, AZ), V(RX, RY, AZ), V(0, 1, 0));
     k(15.8, V(RX + 420, RY, AZ), V(RX + 3000, RY, AZ), V(0, 1, 0), 'in');
-    k(16.5, V(AX0 - 320, FLOOR + 260, GZ), V(AX0 - 320, FLOOR + 380, GZ - 1600), V(0, 1, 0), 'io');
-    k(20.6, V(AX0 + 5000, FLOOR + 260, GZ), V(AX0 + 5000, FLOOR + 380, GZ - 1600), V(0, 1, 0), 'lin');
-    const lastArt = ARTS.at(-1);
-    k(21.3, V(AX0 + lastArt.dx, FLOOR + lastArt.y, GZ - lastArt.depth + 560), V(AX0 + lastArt.dx, FLOOR + lastArt.y, GZ - lastArt.depth), V(0, 1, 0), 'in');
-    k(21.31, V(OX, OY, OZ + 400), V(OX, OY, OZ - 1500));
-    k(22.6, V(OX, OY, OZ), V(OX, OY, OZ - 1500));
+    product.keys(k);
+    k(29.3, V(OX, OY, OZ + 400), V(OX, OY, OZ - 1500));
+    k(30.6, V(OX, OY, OZ), V(OX, OY, OZ - 1500));
   }
   const EASE = {io: eio, lin: t => t, in: t => t * t * t, out: eo3};
   const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), camUp = new THREE.Vector3();
@@ -677,7 +634,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   const stage = q$('.os-stage'), idx = q$('.os-index'), idxRows = [...idx.querySelectorAll('[data-k]')];
   const monitor = q$('.os-monitor'), crtT = monitor.querySelector('.t'), crtB = monitor.querySelector('.b'), crtLine = monitor.querySelector('b');
   const kvMeta = q$('.os-kv-meta'), kvHud = q$('.os-kv-hud'), kvScroll = q$('.os-kv-scroll'), hudQ = q$('.os-hud-q'), gzA = q$('.os-gz-a'), gzB = q$('.os-gz-b');
-  const artHead = q$('.os-art-head'), artCount = q$('.os-art-count'), outro = q$('.os-outro'), mail = q$('.os-mail'), tracer = q$('.os-tracer'), tracerL = tracer.querySelector('span');
+  const outro = q$('.os-outro'), mail = q$('.os-mail'), tracer = q$('.os-tracer'), tracerL = tracer.querySelector('span');
   const outroLines = [...outro.querySelectorAll('line')];
   const oParts = [outro.querySelector('.o-top'), ...outro.querySelectorAll('.o-grid > *'), outro.querySelector('.o-foot')];
 
@@ -739,7 +696,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   on(window, 'click', e => {
     if (!activeNow || OFFLINE || !within(e.target) || e.target.closest('a,button,[data-os-action]')) return;
     if (hoverScreen >= 0 && PROJECTS[hoverScreen].ready) actions.openProject?.(PROJECTS[hoverScreen]);
-    else if (hoverArt >= 0 && !ARTS[hoverArt].cmp) actions.openArt?.(ARTS[hoverArt]);
+    else if (hoverProduct >= 0) location.href = '/product/' + PRODUCT_STATIONS[hoverProduct].slug;
     else if (hoverNode >= 0) actions.node?.(TIMELINE[hoverNode].go);
     else if (hov.ring > 0.5) goChapter(4);
     else if (hov.end > 0.5) actions.mail?.();
@@ -751,7 +708,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   const pool = (i, x, z, r, w, col) => { [floorA, floorB].forEach(f => { f.material.uniforms.uPool.value[i].set(x, z, r, w); f.material.uniforms.uPoolC.value[i].copy(col); }); };
   const qJL = new THREE.Quaternion(), eul = new THREE.Euler();
   const pluck = {x: 0, z: 0, a: 0}, hov = {mark: 0, guides: 0, ring: 0, end: 0}, eulE = new THREE.Euler();
-  let hoverScreen = -1, hoverNode = -1, hoverArt = -1;
+  let hoverScreen = -1, hoverNode = -1, hoverProduct = -1;
   const inkAbout = new THREE.Color(0x55545d), inkAxis = new THREE.Color(0xb2b1b9), inkRing = new THREE.Color(0x18181d);
   const white1 = new THREE.Color('#ffffff');
   const bodyTone = tone => { if (tone) { if (document.body.dataset.navTone !== tone) document.body.dataset.navTone = tone; } else if (document.body.dataset.navTone) delete document.body.dataset.navTone; };
@@ -768,13 +725,13 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     const active = inJourney || (activeNow && screen.o > 0 && !paused);
     if (active !== activeNow) {
       activeNow = active; root.classList.toggle('is-live', active); section.classList.toggle('is-live', active); document.body.classList.toggle('past-office', active);
-      if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else bodyTone(null);
+      if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else {bodyTone(null);document.body.classList.remove('os-nav-burn');}
     }
     if (!active || paused) { if (!OFFLINE) raf = requestAnimationFrame(frame); return; }
     S += (St - S) * (1 - Math.exp(-dt / 0.12)); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
     if (window.__tourPointer) { const was = pointer.down; Object.assign(pointer, window.__tourPointer); if (pointer.down && !was) spin.lx = pointer.x; }
     // layout is read before this frame writes any style, so reading it never forces a second layout
-    const mailBox = S > 21.3 ? mail.getBoundingClientRect() : null, domHit = domHover();
+    const mailBox = S > 29.3 ? mail.getBoundingClientRect() : null, domHit = domHover();
     /* the office's dark monitor switches on, the line it opens from is the horizon; at the very top of the journey (or for
        "back to top") it switches off again: the picture folds into that line, the line into a dot */
     if (power.off >= 0 || !inJourney || St < 0.012) screen.want = 0; else if (St > 0.03) screen.want = 1;
@@ -795,7 +752,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     camAt(S); const topDown = seg(S, 7.6, 7.9) * (1 - seg(S, 14.2, 14.5));
     cam.position.copy(camPos); cam.up.copy(camUp); cam.lookAt(camLook);
     // while the screen switches on the camera holds still, so the horizon lands exactly on the monitor's line
-    const lean = (1 - topDown) * (S < 1 ? eio(seg(screen.o, 0.7, 1)) : 1); cam.translateX(px * 32 * lean); cam.translateY(-py * 20 * lean); cam.lookAt(camLook);
+    const lean = (1 - topDown) * (S < 1 ? eio(seg(screen.o, 0.7, 1)) : 1); const leanScale = S > 15.8 && S < 29.3 ? .035 + .965 * eio(seg(S, 28.8, 29.3)) : 1; cam.translateX(px * 32 * lean * leanScale); cam.translateY(-py * 20 * lean * leanScale); cam.lookAt(camLook);
     cam.updateMatrixWorld();
 
     /* the monolith: rises out of the lake as the screen opens, turns with the pointer or a drag, sinks on the first scroll */
@@ -809,16 +766,17 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     [[1.1, 1.5], [1.55, 1.0], [2.3, 0.55]].forEach(([t, a]) => { if (introPrev < t && iv >= t && S < 1) ripple(JLC.x, JLC.z + 25, a); });
     const bob = Math.sin(time * 0.9) * 5;                              // it breathes; now and then the water answers with a ring
     if (S < 0.95 && iv > 2.9 && Math.floor(time / 3.4) !== ringTick) { ringTick = Math.floor(time / 3.4); ripple(JLC.x, JLC.z + 25, 0.22); }
-    if (S > 22.3 && Math.floor(time / 3.4) !== ringTick) { ringTick = Math.floor(time / 3.4); ripple(ENDC.x, ENDC.z + 25, 0.22); }
+    if (S > 30.3 && Math.floor(time / 3.4) !== ringTick) { ringTick = Math.floor(time / 3.4); ripple(ENDC.x, ENDC.z + 25, 0.22); }
     jlKV.position.set(JLC.x, JLC.y + bob - (1 - rise) * 420 - sink * 460, JLC.z); jlKV.quaternion.copy(qJL); jlKV.scale.setScalar(JL_S); jlKV.visible = S < 1.25 && rise > 0.001;
     stoneKV.envMapIntensity = 2.4 + hov.mark * 0.8;
-    const endIn = eo3(seg(S, 21.62, 22.35));
-    hov.end += ((S > 22.1 && pointer.inside && hitTest([jlEnd]) ? 1 : 0) - hov.end) * (1 - Math.exp(-dt / 0.2));
+    // Begin the rise under the burn so the thinning mist already contains stone.
+    const endIn = eo3(seg(S, 29.24, 30.35));
+    hov.end += ((S > 30.1 && pointer.inside && hitTest([jlEnd]) ? 1 : 0) - hov.end) * (1 - Math.exp(-dt / 0.2));
     eulE.set(py * (0.08 + hov.end * 0.08), px * (0.24 + hov.end * 0.18) + Math.sin(time * 0.3) * 0.1, 0); jlEnd.quaternion.setFromEuler(eulE);
-    jlEnd.position.set(ENDC.x, ENDC.y + bob - (1 - endIn) * 420, ENDC.z); jlEnd.scale.setScalar(JL_S); jlEnd.visible = S > 21.3 && endIn > 0.001;
+    jlEnd.position.set(ENDC.x, ENDC.y + bob - (1 - endIn) * 420, ENDC.z); jlEnd.scale.setScalar(JL_S); jlEnd.visible = S > 29.3 && endIn > 0.001;
     stoneEnd.envMapIntensity = 0.5 + hov.end * 0.5;   // in the white mist the stone stays black: the one dark thing in the frame
 
-    const beyond = S > 14.3 && cam.position.x > RX - 6, portal = S > 14.3 && !beyond, letterOn = S > 21.3;
+    const beyond = S > 14.3 && cam.position.x > RX - 6, portal = S > 14.3 && !beyond, letterOn = S > 29.3;
     linePose(S);
     let reveal = 1;
     if (S >= 1.2 && S < 2.45) reveal = seg(S, 1.2, 1.9);                // the pen writes SYSTEMS on the lakebed, letter by letter
@@ -827,8 +785,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     const wx = cam.position.x + (pointer.x - W / 2), wz = cam.position.z + (pointer.y - H / 2);
     const want = onAxis && Math.abs(wz - AZ) < 240 ? 1 : 0; pluck.a += (want - pluck.a) * (1 - Math.exp(-dt / 0.2)); if (want) { pluck.x = wx; pluck.z = wz; }
     const wob = pluck.a > 0.001 ? (u, x) => { const g = Math.exp(-(((x - pluck.x) / 200) ** 2)) * pluck.a; return [0, 0, (pluck.z - AZ) * 0.3 * g + Math.sin(time * 8 + x * 0.01) * 1.5 * g]; } : null;
-    const inkAmt = (S > 7.3 && S < 21.3 && !beyond) || S > 21.3 ? 1 : 0;
-    const lineOn = S >= 1.2 && S < 21.3 ? 1 : 0;
+    if (S > 15.8) reveal = product.reveal(S);
+    const inkAmt = S <= 15.8 && S > 7.3 && !beyond ? 1 : 0;
+    const lineOn = S >= 1.2 && S < 29.46 ? 1 : 0;
     const rest = 1 - seg(S, 2.5, 2.9) * (1 - seg(S, 7.2, 7.3));   // the thread rests while the projects speak
     lightMesh.visible = inkAmt < 0.999 && rest > 0.001 && lineOn > 0; inkMesh.visible = inkAmt > 0.001 && lineOn > 0;
     if (lightMesh.visible) tubeL.update(live, {k: (1 - inkAmt) * rest, reveal, wobble: wob});
@@ -836,7 +795,8 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     inkMat.color.copy(inkAbout).lerp(inkAxis, seg(S, 9.8, 10.5)).lerp(inkRing, seg(S, 14.2, 14.7));
     let glow = 1.55;                                                     // a pen of light, not a neon tube
     if (S >= 2.6 && S < 7.0) glow = mix(1.55, 1.2, seg(S, 2.6, 3.0));
-    if (S > 14.2) glow = 0.85;
+    if (S > 14.2) glow = S <= 15.8 ? .85 : 1.35 + 3 * eio(seg(S, 28.8, 29.3));
+    if (S >= 29.3) glow *= 1 - seg(S, 29.3, 29.46);
     lightMat.color.copy(LIGHT).multiplyScalar(glow);
 
     /* the lake: the horizon is there the moment the screen opens; the headline is set once the monolith stands; the pointer
@@ -849,8 +809,8 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     headA.mesh.visible = headB.mesh.visible = S < 1.1;
     if (splash && S < 0.95) touchWater(waterKV, 1.3, true);
     else if (pointer.inside && S < 0.95 && iv > 1.2) touchWater(waterKV, 0.4);
-    if (splash && S > 22.05) touchWater(waterEnd, 1.3, true);
-    else if (pointer.inside && S > 22.05) touchWater(waterEnd, 0.4);
+    if (splash && S > 30.05) touchWater(waterEnd, 1.3, true);
+    else if (pointer.inside && S > 30.05) touchWater(waterEnd, 0.4);
     splash = false;
     const hudA = seg(iv, 2.7, 3.5) * (1 - seg(S, 0.62, 0.9));
     [kvMeta, kvHud, kvScroll].forEach(el => setStyle(el, 'opacity', op(hudA)));
@@ -886,10 +846,11 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     skyA.material.uniforms.uLake.value = letterOn ? 1 : 1 - seg(S, 1.3, 1.6); skyA.material.uniforms.uDawn.value = letterOn ? 1 : 0;
     floorA.material.uniforms.uCam.value.copy(cam.position); floorB.material.uniforms.uCam.value.copy(cam.position);
     skyA.position.copy(cam.position); skyB.position.copy(cam.position);
-    const paperMode = (!beyond && S > 7.5 && S < 21.3) || letterOn;
+    const paperMode = (!beyond && S > 7.5 && S < 29.3) || letterOn;
     gl.toneMapping = paperMode ? THREE.NoToneMapping : THREE.NeutralToneMapping;
-    bloom.enabled = S > 1.1 && S < 7.45;                                 // the pen of light and project reflections glow
-    bloom.strength = S < 2.6 ? 0.3 : 0.22;
+    bloom.enabled = (S > 1.1 && S < 7.45) || (S > 15.8 && S < 29.95);                                 // the pen of light and project reflections glow
+    bloom.strength = S > 15.8 ? .2 : S < 2.6 ? 0.3 : 0.22;
+    floorA.visible = S <= 16.15 || letterOn;
     const paperVis = S > 7.0 && S < 16.0 && !beyond;
     paperObjs.forEach(o => { o.visible = paperVis; });
     aboutD.u.uP.value = seg(S, 7.35, 8.3); aboutD.u.uO.value = 1 - seg(S, 9.7, 10.2); aboutD.mesh.position.x = PX - 205 - seg(S, 9.7, 10.3) * 160;
@@ -916,73 +877,55 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     floorB.visible = portal; skyB.visible = portal;
     setStencil(floorA, portal ? 'outside' : 'none'); setStencil(skyA, portal ? 'outside' : 'none');
     paperObjs.forEach(o => setStencil(o, portal ? 'outside' : 'none'));
-    const artVis = S > 14.3 && S < 21.3;
-    artObjs.forEach(o => { o.visible = artVis; setStencil(o, portal ? 'inside' : 'none'); });
     setStencil(floorB, 'inside'); setStencil(skyB, 'inside');
+    productSign.visible=S>14.3&&S<16.2;
+    productSign.material.opacity=1-seg(S,15.9,16.2);
+    setStencil(productSign,portal?'inside':'none');
     hov.ring += ((portal && S > 15.0 && pointer.inside && hitTest([disc]) ? 1 : 0) - hov.ring) * (1 - Math.exp(-dt / 0.2));
 
-    /* art: panels lean toward the camera; hover brings one forward and names it */
-    hoverArt = -1;
-    if (S > 16.4 && S < 21.0 && pointer.inside) { const h = hitTest(ARTS.map(a => a.mesh)); if (h) hoverArt = ARTS.findIndex(a => a.mesh === h.object); }
-    ARTS.forEach((a, i) => {
-      const target = hoverArt === i ? 1 : 0; a.hov = (a.hov || 0) + (target - (a.hov || 0)) * (1 - Math.exp(-dt / 0.2));
-      const rel = (AX0 + a.dx - cam.position.x) / a.depth;
-      a.mesh.rotation.y = -Math.atan(rel) * 0.35; a.mesh.position.z = GZ - a.depth + a.hov * 90; a.tm.rotation.y = a.mesh.rotation.y; a.tm.position.z = a.mesh.position.z;
-      a.mesh.position.y = FLOOR + a.y + Math.sin(time * 0.6 + i) * 6;
-      if (!a.cmp) a.mesh.material.color.setScalar(1 + a.hov * 0.12); else cmpMat.uniforms.uGlow.value = a.hov;
-      if (Math.abs(a.hov - (a.dh ?? -1)) > 0.03) { drawArtTitle(a, a.hov); a.dh = a.hov; }
-    });
-    if (cmpMat) {
-      const a = ARTS.find(qa => qa.cmp), hit = hoverArt === ARTS.indexOf(a) ? hitTest([a.mesh]) : null;
-      const target = hit ? hit.uv.x : 0.5 + 0.38 * Math.sin((S - 19.0) * 2.4);
-      cmpMat.uniforms.uSplit.value += (target - cmpMat.uniforms.uSplit.value) * (1 - Math.exp(-dt / 0.12));
-    }
-    worldsSign.material.opacity = 1 - seg(S, 15.9, 16.4);
+    hoverProduct = product.update(S, {cam, w: W, h: H, px, py, time, dt, pointer, hitTest, stone: jlEnd});
 
     /* floor light pools under whatever glows nearby */
     let pi = 0;
     pool(pi++, 0, 0, 1, 0, white1);
     pool(pi++, 0, LET.z - 120, 1300, 0.12 * seg(S, 1.3, 1.9) * (1 - seg(S, 2.9, 3.3)), white1);
     SCREENS.forEach(s => { pool(pi++, s.c.x, s.c.z + 200, 420, 0.5 * s.mesh.material.uniforms.uReveal.value, s.col); });
-    ARTS.slice(0, POOLS - pi).forEach(a => { pool(pi++, AX0 + a.dx, GZ - a.depth + 340, a.w * 0.62, artVis ? 0.55 + a.hov * 0.3 : 0, a.col); });
 
     /* the letter */
     const eu = lakeEnd.material.uniforms; eu.uTime.value = time; lakeEnd.visible = letterOn;
-    eu.uSink.value.set(ENDC.x, ENDC.z + 25, seg(S, 21.62, 22.3) * 2400, S > 21.62 ? 1.4 * (1 - seg(S, 21.62, 22.3)) : 0);
-    marqPlane.visible = letterOn; marqPlane.material.uniforms.uTime.value = time; marqPlane.material.uniforms.uIn.value = seg(S, 21.75, 22.35);
-    const white = S < 21.3 ? eio(seg(S, 20.92, 21.3)) : 1 - eio(seg(S, 21.3, 21.95));   // the last world burns out to white; the white is mist, and it thins
+    eu.uSink.value.set(ENDC.x, ENDC.z + 25, seg(S, 29.62, 30.3) * 2400, S > 29.62 ? 1.4 * (1 - seg(S, 29.62, 30.3)) : 0);
+    marqPlane.visible = letterOn; marqPlane.material.uniforms.uTime.value = time; marqPlane.material.uniforms.uIn.value = seg(S, 29.75, 30.35);
+    const white = productWhite(S);
     expose.uniforms.uWhite.value = white; expose.enabled = white > 0.001;
-    const o = seg(S, 21.45, 22.6);
-    const outroA = S > 21.35 ? (power.off >= 0 ? 1 - seg(time - power.off, 0, 0.2) : 1) : 0;
+    const o = seg(S, 29.45, 30.6);
+    const outroA = S > 29.35 ? (power.off >= 0 ? 1 - seg(time - power.off, 0, 0.2) : 1) : 0;
     setStyle(outro, 'opacity', op(outroA)); setStyle(outro, 'visibility', outroA > 0.001 ? 'visible' : 'hidden');
-    if (S > 21.3) {
+    if (S > 29.3) {
       outroLines.forEach((l, i) => { setStyle(l, 'strokeDashoffset', (l.dataset.len * (1 - eio(clamp(o * 1.5 - i * 0.07)))).toFixed(1)); });
-      oParts.forEach((el, i) => { const qq = eo3(clamp((S - 22.0) * 2.2 - i * 0.12)); setStyle(el, 'opacity', op(qq)); setStyle(el, 'transform', `translateY(${((1 - qq) * 24).toFixed(2)}px)`); });
+      oParts.forEach((el, i) => { const qq = eo3(clamp((S - 30) * 2.2 - i * 0.12)); setStyle(el, 'opacity', op(qq)); setStyle(el, 'transform', `translateY(${((1 - qq) * 24).toFixed(2)}px)`); });
       // the button leans toward a pointer that comes near; measured from where it rests, not from where it has leaned to
       // (measuring the leaned button fed its own motion back and made it shiver)
       const mx = pointer.x - ((mailBox.left + mailBox.width / 2) / UI - mag.x), my = pointer.y - ((mailBox.top + mailBox.height / 2) / UI - mag.y), md = Math.hypot(mx, my);
-      const mpull = S > 22 && pointer.inside && md < 190 ? (1 - md / 190) : 0, km = 1 - Math.exp(-dt / 0.16);
+      const mpull = S > 30 && pointer.inside && md < 190 ? (1 - md / 190) : 0, km = 1 - Math.exp(-dt / 0.16);
       mag.x += (mx * mpull * 0.35 - mag.x) * km; mag.y += (my * mpull * 0.35 - mag.y) * km;
       setStyle(mail, 'translate', `${mag.x.toFixed(1)}px ${mag.y.toFixed(1)}px`);
     }
 
     /* chrome: the site's navigation takes its tone from the page; the index, the headers */
-    const light = (S > 7.25 && S < 16.5 && !beyond) || S > 21.32;   // dark ink as soon as the page is paper
+    const light = (S > 7.25 && S < 16.5 && !beyond) || S > 29.32;   // dark ink as soon as the page is paper
+    document.body.classList.toggle('os-nav-burn', S >= 29.12 && S <= 29.46);
     bodyTone(light ? 'light' : 'dark');
     idx.classList.toggle('dark', light);
-    const ch = S < 2.3 ? 0 : S < 7.3 ? 1 : S < 9.9 ? 2 : S < 14.5 ? 3 : S < 21.3 ? 4 : 5;
+    const ch = S < 2.3 ? 0 : S < 7.3 ? 1 : S < 9.9 ? 2 : S < 14.5 ? 3 : S < 29.3 ? 4 : 5;
     idxRows.forEach((r, i) => r.classList.toggle('on', i === ch));
-    const idxA = seg(S, 0.8, 1.3) * (1 - seg(S, 21.0, 21.3)) * (1 - 0.65 * seg(S, 1.15, 1.3) * (1 - seg(S, 2.45, 2.6)));
+    const idxA = seg(S, 0.8, 1.3) * (1 - seg(S, 29, 29.3)) * (1 - 0.65 * seg(S, 1.15, 1.3) * (1 - seg(S, 2.45, 2.6)));
     setStyle(idx, 'opacity', op(idxA)); setStyle(idx, 'visibility', idxA > 0.001 ? 'visible' : 'hidden');
-    const ahA = seg(S, 16.5, 16.9) * (1 - seg(S, 20.5, 20.9)), acA = seg(S, 19.9, 20.3) * (1 - seg(S, 20.9, 21.1));
-    setStyle(artHead, 'opacity', op(ahA)); setStyle(artCount, 'opacity', op(acA)); setStyle(artCount, 'visibility', acA > 0.001 ? 'visible' : 'hidden');
-
     /* cursor */
     const C = COPY.cursor;
     let label = '';
     if (hoverScreen >= 0) label = PROJECTS[hoverScreen].ready ? `${pick(PROJECTS[hoverScreen].cta, lang)} ↗` : pick(C.soon, lang);
     else if (hoverNode >= 0) label = pick(C.open, lang);
-    else if (hoverArt >= 0) label = ARTS[hoverArt].cmp ? pick(C.compare, lang) : pick(C.work, lang);
+    else if (hoverProduct >= 0) label = lang === 'en' ? 'Open the case ↗' : '查看案例 ↗';
     else if (hov.mark > 0.5) label = pick(C.drag, lang);
     else if (hov.ring > 0.5) label = pick(C.enter, lang);
     else if (hov.end > 0.5) label = pick(C.write, lang);
@@ -1004,10 +947,10 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   /* ---------------- build, warm, run ---------------- */
   ready.then(() => {
     if (!alive) return;
-    drawHead(); drawSoon(); buildLetters(); buildScreens(); buildArt(); buildOutro();
+    drawHead(); drawSoon(); buildLetters(); buildScreens(); buildOutro();
     aboutD = sheet(620, 720, PX - 205, PZ + 10, 2, {fade: 0.2}); guideD = sheet(1000, 800, FJ.c.x, FJ.c.z, 1.2, {fade: 0.1, gain: 1}); buildAbout(); buildGuides();
     rulerD = floorDecal(5700, 60, PX - 700 + 2850, AZ, 1.1); drawRuler();
-    headD = floorDecal(700, 120, PX + 60, PZ - 300, 1.3); drawTimelineHead();
+    headD = floorDecal(700, 120, PX + 60, PZ - 300, 1.3); drawTimelineHead(); drawProductSign();
     TIMELINE.forEach(n0 => {
       const n = {...n0}, zc = n.side < 0 ? AZ - 60 - n.h / 2 : AZ + 60 + n.h / 2;
       n.d = sheet(n.w, n.h, PX + n.x + n.w / 2 - 40, zc, 3, {fade: 0.35, hover: true});
@@ -1032,11 +975,11 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     // for the recorder (and ?debug): where things land on screen, and handles on the scene
     window.__probe = {
       project: (x, y, z) => { const v = new THREE.Vector3(x, y, z).project(cam); return [(v.x + 1) / 2 * W, (1 - v.y) / 2 * H]; },
-      screens: SCREENS.map(s => s.c.toArray()), art: ARTS.map(a => [AX0 + a.dx, FLOOR + a.y, GZ - a.depth, a.w]), ring: [RX, RY, AZ],
+      screens: SCREENS.map(s => s.c.toArray()), products: product.layout.anchors.map(a => a.toArray()), ring: [RX, RY, AZ],
       nodes: TIMELINE.map(n => ({x: PX + n.x, w: n.w, h: n.h, side: n.side})), PX, PZ, AZ, FJ: FJ.c.toArray(), mark: JLC.toArray(), end: ENDC.toArray(),
       rects: sel => [...document.querySelectorAll(sel)].map(e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2, r.width, r.height]; }),
     };
-    window.__dbg = {cam, composer, bloom, letters, lightMesh, inkMesh, floorA, skyA, screenMeshes, jlKV, jlEnd, lake, lakeEnd, scene, frame, power, headA, headB};
+    window.__dbg = {cam, composer, bloom, letters, lightMesh, inkMesh, floorA, skyA, screenMeshes, jlKV, jlEnd, lake, lakeEnd, scene, frame, power, headA, headB, product};
     window.__ready = true;
   });
 
@@ -1044,15 +987,14 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     if (next === lang) return;
     lang = next;
     if (!built) return;
-    drawHead(); drawSoon(); buildAbout(); drawTimelineHead(); nodes.forEach(buildNode); drawWorlds(); drawMarquee();
-    ARTS.forEach(a => { a.dh = -1; });
+    drawHead(); drawSoon(); buildAbout(); drawTimelineHead(); nodes.forEach(buildNode); drawMarquee(); drawProductSign();
     requestAnimationFrame(collectHover);
   }
 
   function dispose() {
-    alive = false; cancelAnimationFrame(raf);
+    alive = false; cancelAnimationFrame(raf); product.dispose();
     listeners.forEach(([t, type, fn, opts]) => t.removeEventListener(type, fn, opts));
-    bodyTone(null); document.body.classList.remove('past-office');
+    bodyTone(null); document.body.classList.remove('past-office','os-nav-burn');
     const mats = new Set();
     scene.traverse(o => { if (o.geometry) o.geometry.dispose(); [].concat(o.material || []).forEach(m => mats.add(m)); });
     mats.forEach(m => m.dispose());

@@ -1032,11 +1032,7 @@ button.ar-xp-n[data-on]{background:var(--ink);color:var(--bg);box-shadow:none}
 
 /* Shared header measurements are scoped to this case; the other worlds keep their layout. */
 body:has(.ar) .v16-navigation{--edge:clamp(20px,3.2vw,56px)}
-body:has(.ar) .v16-wordmark{left:var(--edge)}
 body:has(.ar) .v16-staggered .staggered-menu-header{padding-inline:var(--edge)}
-body:has(.ar) .v16-language{right:calc(var(--edge) + 82px)}
-body:has(.ar) .v16-music{right:calc(var(--edge) + 201px)}
-body:has(.ar) .v16-primary-nav{right:calc(var(--edge) + 279px)}
 
 /* Chapter rhythm and the 12-column content system. */
 .ar-chapter > :is(.ar-head,.ar-say) + *{margin-top:var(--sp-5)}

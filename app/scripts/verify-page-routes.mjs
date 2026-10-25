@@ -57,6 +57,9 @@ for (const system of systems.filter(s=>s.status==='coming-soon')) {
   assert.equal(routing.routeFor({type:'system',item:system}),null);
 }
 assert.equal(routing.resolvePath('/product').type,'product');
+assert.equal(routing.resolvePath('/about').type,'about');
+assert.equal(routing.resolvePath('/about/').type,'about');
+assert.equal(routing.routeFor({type:'about'}),'/about');
 assert.equal(routing.resolvePath('/product/').type,'product');
 // the five product cases, and the research write-up kept as the flagship's appendix
 for (const slug of ['ready-for-agents','atelier','last-100-feet','choose-not-to-lose','arden','design-to-code']) {
