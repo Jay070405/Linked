@@ -49,7 +49,9 @@ export function stationImageOpacity(i,s) {
   return (1-productFold(s))*Math.max(exit?1-unit((s-exit[0])/(exit[1]-exit[0])):0,productFoldReturn(s));
 }
 export const productNavScrim = s => unit((s-15.8)/.15)*(1-unit((s-28.65)/.15));
-export const productTubeOpacity = s => 1-unit((s-29.27)/.09);
+// The glowing tube and its caps are HDR white: any partial alpha still burns to white over the grey stone. They go at the
+// white peak, where the whole frame is white, so the swap to the stone is never seen.
+export const productTubeOpacity = s => s < DAWN_START ? 1 : 0;
 // Retain the handover windows, with a quiet middle tenth between captions.
 export function captionPose(i, s) {
   const joins = [[18.1,18.55],[20.1,20.5],[22.55,22.85],[24.65,24.95]];

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Vector3} from 'three';
 import {fixture,screen,bounds,cameraAt,loaded,objectArea} from './product-test-fixture.mjs';
-import {ARDEN_SIZE,ARDEN_BOUNDS,stationImageOpacity,productFold,productNavScrim,productTubeOpacity} from './product-layout.js';
+import {ARDEN_SIZE,ARDEN_BOUNDS,stationImageOpacity,productFold,productNavScrim,productTubeOpacity,productWhite} from './product-layout.js';
 import {ARDEN_PARTS} from './arden-parts.js';
 
 test('every handover sample has a visible product covering at least 6% of 1440 × 900',async()=>{
@@ -95,6 +95,6 @@ test('chart flag has its own line and clears navigation in EN/ZH at every hold w
 
 test('navigation scrim and outgoing tube use the requested boundaries',()=>{
   for(const [s,a] of [[15.8,0],[15.95,1],[28.65,1],[28.8,0]])assert.ok(Math.abs(productNavScrim(s)-a)<1e-9);
-  assert.equal(productTubeOpacity(29.27),1);assert.ok(productTubeOpacity(29.36)<1e-9);
+  assert.equal(productTubeOpacity(29.29),1);assert.equal(productTubeOpacity(29.3),0);assert.ok(productWhite(29.29)>.99);
   for(const s of [29.4,29.5])assert.equal(productTubeOpacity(s),0);
 });
