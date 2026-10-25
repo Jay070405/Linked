@@ -16,7 +16,8 @@ const segments = text => {
 
 function canRead(node) {
   if (!node?.isConnected || document.hidden || node.closest('[inert]') || document.body.classList.contains('brand-loading')) return false;
-  if (document.body.classList.contains('portfolio-route-open') && !node.closest('.portfolio-page-viewport,dialog[open]')) return false;
+  // an open page covers the home, but the site nav stays on top of it
+  if (document.body.classList.contains('portfolio-route-open') && !node.closest('.portfolio-page-viewport,dialog[open],.v16-navigation')) return false;
   const box = node.getBoundingClientRect();
   if (box.bottom <= 0 || box.top >= innerHeight || box.right <= 0 || box.left >= innerWidth) return false;
   let opacity=1;
