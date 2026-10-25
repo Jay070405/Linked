@@ -465,7 +465,7 @@ export const StaggeredMenu = ({
                     data-index={idx + 1}>
                     <span className="sm-panel-itemLabel">{it.label}</span>
                   </a>
-                  {it.id==='art'&&<span className="sm-art-preview" aria-hidden="true">{['world-tree','sakura-village','cathedral-painting','sword-immortal'].map(name=><img key={name} src={open?`/assets/home/${name}.jpg`:undefined} alt="" loading="lazy"/>)}</span>}
+                  {it.id==='art'&&<span className="sm-art-preview" aria-hidden="true">{['world-tree','sakura-village','cathedral-painting','sword-immortal'].map(name=><img key={name} src={`/assets/home/menu/${name}.webp`} alt="" width="48" height="56" decoding="async"/>)}</span>}
                 </li>
               ))
             ) : (

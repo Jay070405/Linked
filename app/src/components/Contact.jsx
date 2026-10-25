@@ -32,6 +32,8 @@ export default function ContactPill({lang='en', hidden=false, tone='light'}) {
     return ()=>{panel.close();document.body.style.overflow=overflow;trigger.current?.focus({preventScroll:true});};
   },[open]);
   useEffect(()=>{if(hidden)dispatch('close');},[hidden]);
+  // "Contact" in the nav or Menu on pages outside the homepage journey opens this card instead of reloading the homepage
+  useEffect(()=>{const show=()=>dispatch('open');addEventListener('jl:contact',show);return()=>removeEventListener('jl:contact',show);},[]);
   const keyboard=e=>{
     if(e.key!=='Tab')return;
     const controls=[...dialog.current.querySelectorAll('a[href],button:not([disabled])')];

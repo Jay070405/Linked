@@ -11,8 +11,18 @@ import {usePortfolioRouting} from './usePortfolioRouting';
 import CircularTransition,{useCircularTransition} from './components/CircularTransition';
 import {initialLanguage, saveLanguage} from './language';
 
+// The loading screen plays once per visit: coming back to the homepage from a case or /about goes straight in.
+const ARRIVED='jl-arrived';
+const arrivedBefore=()=>{try{return sessionStorage.getItem(ARRIVED)==='1';}catch{return false;}};
+const JOURNEY_SECTIONS=['systems','journey-about','journey-timeline','product','worlds','contact'];
+
 export default function App(){
- const[loading,setLoading]=useState(true);
+ const[loading,setLoading]=useState(()=>!arrivedBefore());
+ const arrive=()=>{try{sessionStorage.setItem(ARRIVED,'1');}catch{}setLoading(false);};
+ // a link such as /#contact lands on its chapter instead of the top of the journey
+ useEffect(()=>{const id=location.hash.slice(1);if(!JOURNEY_SECTIONS.includes(id))return;
+  const f=requestAnimationFrame(()=>requestAnimationFrame(()=>{document.getElementById(id)?.scrollIntoView({behavior:'instant'});window.dispatchEvent(new Event('journey:jump'));}));
+  return()=>cancelAnimationFrame(f);},[]);
  const[lang,setLang]=useState(initialLanguage);
  // only a language the visitor picks is remembered; until then the browser (or ?lang=) decides
  const chooseLang=value=>{setLang(value);saveLanguage(value);};
@@ -61,6 +71,6 @@ export default function App(){
  <button className="motion-toggle" aria-pressed={quiet} aria-label={quiet?(lang==='en'?'Enable motion':'恢复动态'):(lang==='en'?'Reduce motion':'减少动态')} onClick={toggleMotion} title={lang==='en'?'Toggle reduced motion':'切换减少动态'}><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>{quiet?'MOTION −':'MOTION +'}</ExpressiveTitle></button>
  {modal&&<PortfolioPages page={modal} lang={lang} reduced={quiet} onNavigate={open} onBack={back} pageScroll={pageScroll} archiveState={archiveState}/>}
  <CircularTransition layer={transitionLayer} lang={lang}/>
- {loading&&<LoadingScreen lang={lang} reduced={reduced} onDone={()=>setLoading(false)}/>}
+ {loading&&<LoadingScreen lang={lang} reduced={reduced} onDone={arrive}/>}
  </>;
 }

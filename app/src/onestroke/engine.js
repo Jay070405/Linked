@@ -737,7 +737,11 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
       activeNow = active; root.classList.toggle('is-live', active); section.classList.toggle('is-live', active); document.body.classList.toggle('past-office', active);
       if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else {bodyTone(null);document.body.classList.remove('os-nav-burn');document.body.style.removeProperty('--os-nav-scrim');}
     }
-    if (!active || paused) { if (!OFFLINE) raf = requestAnimationFrame(frame); return; }
+    if (!active || paused) {
+      // a page opened over the journey (/product, /systems …) must not keep chapter 04's dark band or burn behind its nav
+      if (paused) { document.body.style.removeProperty('--os-nav-scrim'); document.body.classList.remove('os-nav-burn'); }
+      if (!OFFLINE) raf = requestAnimationFrame(frame); return;
+    }
     S += (St - S) * (1 - Math.exp(-dt / (S > 15.6 || St > 15.6 ? 0.3 : 0.12))); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
     if (window.__tourPointer) { const was = pointer.down; Object.assign(pointer, window.__tourPointer); if (pointer.down && !was) spin.lx = pointer.x; }
     // layout is read before this frame writes any style, so reading it never forces a second layout

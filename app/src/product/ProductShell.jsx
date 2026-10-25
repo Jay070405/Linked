@@ -29,6 +29,8 @@ export default function ProductShell() {
     return () => { document.body.classList.remove('product-shell'); media.removeEventListener('change', motion); };
   }, []);
   useEffect(() => { document.body.classList.toggle('quiet', reduced); }, [reduced]);
+  // entering the site on a case counts as arriving: the homepage's loading screen will not play later in this visit
+  useEffect(() => { try { sessionStorage.setItem('jl-arrived', '1'); } catch {} }, []);
   useEffect(() => { document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN'; }, [lang]);
   const chooseLang = value => { setLang(value); saveLanguage(value); };
   useEffect(() => { document.title = `Jay Lin — ${productTitle(resolveProductPath(path), lang)}`; }, [path, lang]);
@@ -60,7 +62,7 @@ export default function ProductShell() {
       show(to);
     });
   }, [transition, show]);
-  const onNavigate = id => id === 'product' ? navigate('/product') : location.assign(SITE[id] || '/');
+  const onNavigate = id => id === 'product' ? navigate('/product') : id === 'contact' ? dispatchEvent(new Event('jl:contact')) : location.assign(SITE[id] || '/');
 
   return <>
     <a className="skip-link" href="#product-main">{lang === 'en' ? 'Skip to content' : '跳到正文'}</a>
