@@ -34,8 +34,26 @@ export const LANYARD_PHYSICS = Object.freeze({
   bottomClearance: 1.4,
 });
 
-export function getLanyardSpringRestLength(gravityY) {
-  const p = LANYARD_PHYSICS;
+// Opt-in About study E rig. The original variant above remains untouched.
+export const ABOUT_LANYARD_PHYSICS = Object.freeze({
+  ...LANYARD_PHYSICS,
+  anchorY: 0, clipOffsetY: 1.25, restY: -1.75,
+  segmentLength: 1 / 6, springStiffness: 600, springDamping: 24,
+  minimumSpringRestLength: .02, topRopeMaxLength: 1.45, dragReach: 1.72,
+  cardLinearDamping: 4, segmentLinearDamping: 5,
+  strapPixels: 65, tiltStiffness: 30, tiltDamping: 6,
+  cardHeight: 2.25, cardAspect: 630 / 950, visualOffsetY: -1.1765366,
+  visualScaleX: (630 / 950) / .7164179087,
+  yawStiffness: 90, yawDamping: 11, flipAngularSpeed: 14,
+  flickThreshold: 500, velocityWindowMs: 60,
+  scrollKick: .00012, maxScrollVelocity: 1000, maxLagPx: 24,
+  maxScrollKick: .6, scrollKickX: .08, scrollKickY: .25, pitchDamping: 8,
+  sideClearance: .15, verticalClearance: .2, minimumViewReach: .2,
+  sleepSpeed: .025, sleepYawError: .01,
+  maxTilt: 8 * Math.PI / 180, sleepAfter: 1.5,
+});
+
+export function getLanyardSpringRestLength(gravityY, p = LANYARD_PHYSICS) {
   const suspendedMass = p.cardMass + p.segmentMass * p.segmentCount;
   // The loaded spring should measure one unit at rest: x = m*g/k.
   return Math.max(p.minimumSpringRestLength,

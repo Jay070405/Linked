@@ -12,7 +12,8 @@ import lanyard from './lanyard.png';
 
 import * as THREE from 'three';
 import useBadgePointerSurface from './useBadgePointerSurface';
-import { LANYARD_PHYSICS as P, getLanyardSpringRestLength, getLanyardDragBounds } from './lanyard-physics';
+import { LANYARD_PHYSICS as DEFAULT_PHYSICS, ABOUT_LANYARD_PHYSICS, getLanyardSpringRestLength, getLanyardDragBounds } from './lanyard-physics';
+import {flickSide, releaseVelocity as pointerVelocity, wrappedYawError} from '../product/about-model';
 import './Lanyard.css';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
@@ -40,8 +41,12 @@ export default function Lanyard({
   lanyardImage = null,
   lanyardWidth = 1,
   onReveal,
-  onRestProjection
+  onRestProjection,
+  variant, side = 'product', onSideChange, onFlipStart, onCardProjection,
+  cardHeight = 306, anchorTop = 150, scrollOffset = 0, strapColor = '#131315'
 }) {
+  const study = variant === 'about';
+  const P = study ? ABOUT_LANYARD_PHYSICS : DEFAULT_PHYSICS;
   const wrapper = useRef(null);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   const [active, setActive] = useState(true);
@@ -65,15 +70,19 @@ export default function Lanyard({
   return (
     <div className="lanyard-wrapper" ref={wrapper}>
       <Canvas
-        frameloop={active ? 'always' : 'never'}
-        camera={{ position: isMobile ? [position[0], position[1], position[2] * .72] : position, fov: fov }}
-        dpr={[1, isMobile ? 1.5 : 2]}
+        style={study ? {pointerEvents: 'none'} : undefined}
+        frameloop={active ? (study ? 'demand' : 'always') : 'never'}
+        camera={{ position: isMobile && !study ? [position[0], position[1], position[2] * .72] : position, fov: fov }}
+        dpr={[1, study ? 1.75 : isMobile ? 1.5 : 2]}
         gl={{ alpha: transparent }}
         onCreated={({ gl }) => gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)}>
         <ambientLight intensity={Math.PI} />
         <Physics gravity={gravity} timeStep={P.timeStep} paused={!active}>
           <Band
             active={active}
+            study={study} side={side} onSideChange={onSideChange} onFlipStart={onFlipStart}
+            onCardProjection={onCardProjection} cardHeight={cardHeight} anchorTop={anchorTop}
+            scrollOffset={scrollOffset} strapColor={strapColor}
             isMobile={isMobile}
             gravityY={gravity[1]}
             frontImage={frontImage}
@@ -124,16 +133,23 @@ function Band({
   lanyardImage = null,
   lanyardWidth = 1,
   onReveal,
-  onRestProjection
+  onRestProjection, study = false, side = 'product', onSideChange, onFlipStart, onCardProjection,
+  cardHeight, anchorTop, scrollOffset, strapColor
 }) {
+  const P = study ? ABOUT_LANYARD_PHYSICS : DEFAULT_PHYSICS;
+  const invalidate = useThree(state => state.invalidate);
+  const canvas = useThree(state => state.gl.domElement);
   const camera = useThree(state => state.camera);
   const size = useThree(state => state.size);
   const captureRef = useRef(null);
   const badgeVisual = useRef(null);
   const releaseVelocity = useRef(null);
   const touched = useRef(false), revealed = useRef(false);
-  const callbacks = useRef({ onReveal, onRestProjection });
-  callbacks.current = { onReveal, onRestProjection };
+  const callbacks = useRef({});
+  callbacks.current = {onReveal, onRestProjection, onSideChange, onFlipStart, onCardProjection};
+  const samples = useRef([]), chosenSide = useRef(side), visibleSide = useRef(side);
+  const activity = useRef({idle: 0, scroll: scrollOffset, time: 0, velocity: 0});
+  const yawEuler = useMemo(() => new THREE.Euler(0, 0, 0, 'YXZ'), []);
   const band = useRef(),
     fixed = useRef(),
     j1 = useRef(),
@@ -148,6 +164,9 @@ function Band({
   }), []);
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: P.angularDamping, linearDamping: P.segmentLinearDamping, additionalSolverIterations: P.solverIterations };
   const { nodes, materials } = useGLTF(cardGLB);
+  // About: mid-grey hardware reads on both the paper and the black world; the GLB's dark metal vanishes on black
+  const hardware = useMemo(() => study ? new THREE.MeshStandardMaterial({ color: '#a4a4aa', metalness: .3, roughness: .4 }) : materials.metal, [study, materials.metal]);
+  useEffect(() => () => { if (hardware !== materials.metal) hardware.dispose(); }, [hardware, materials.metal]);
   const texture = useTexture(lanyardImage || lanyard);
   // useTexture must be called unconditionally; use a blank pixel when an image
   // isn't supplied for a given face, then skip compositing it below.
@@ -210,9 +229,41 @@ function Band({
   const [dragged, drag] = useState(false);
   const [hovered, hover] = useState(false);
 
+  useEffect(() => {
+    if (!study) return;
+    const pixelsPerUnit = cardHeight / P.cardHeight;
+    // A fixed upper lead keeps the visible strap at 65px while perspective changes card size.
+    const lead = P.strapPixels / pixelsPerUnit - P.segmentLength * P.segmentCount;
+    // the strap's visible top (world y = lead) projects to anchorTop px from the canvas top
+    camera.position.set(0, lead - (size.height / 2 - anchorTop) / pixelsPerUnit,
+      size.height / pixelsPerUnit / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))));
+    camera.updateProjectionMatrix();
+    activity.current.idle = 0; invalidate();
+  }, [study, cardHeight, anchorTop, size.height, size.width, camera, invalidate, P]);
+  useEffect(() => {
+    if (!study) return;
+    chosenSide.current = side; activity.current.idle = 0;
+    [card, j1, j2, j3].forEach(ref => ref.current?.wakeUp()); invalidate();
+  }, [side, study, invalidate]);
+  useEffect(() => {
+    if (!study) return;
+    const now = performance.now(), a = activity.current;
+    const dt = Math.max(.016, (now - (a.time || now - 16)) / 1000);
+    const velocity = THREE.MathUtils.clamp((scrollOffset - a.scroll) / dt, -P.maxScrollVelocity, P.maxScrollVelocity);
+    const acceleration = (velocity - a.velocity) / dt;
+    const kick = THREE.MathUtils.clamp(acceleration * P.scrollKick, -P.maxScrollKick, P.maxScrollKick);
+    if (card.current && Math.abs(scrollOffset - a.scroll) > .1) {
+      [card, j1, j2, j3].forEach(ref => ref.current?.applyImpulse({x: kick * P.scrollKickX, y: kick * P.scrollKickY, z: 0}, true));
+      a.idle = 0; invalidate();
+    }
+    a.scroll = scrollOffset; a.time = now; a.velocity = velocity;
+  }, [scrollOffset, study, invalidate, P]);
+  useEffect(() => { if (study && active) { activity.current.idle = 0; invalidate(); } }, [active, study, invalidate]);
+
   // The hidden DOM picture sits inside the badge's resting screen projection.
   // Publish only on layout changes, never one React update per physics frame.
   useEffect(() => {
+    if (study) return;
     const center = new THREE.Vector3(0, -.523, -.043).project(camera);
     const left = new THREE.Vector3(-.806, -.523, -.043).project(camera);
     const right = new THREE.Vector3(.806, -.523, -.043).project(camera);
@@ -223,7 +274,7 @@ function Band({
       width: (right.x - left.x) * size.width / 2,
       height: (top.y - bottom.y) * size.height / 2,
     });
-  }, [camera, size.width, size.height]);
+  }, [camera, size.width, size.height, study]);
 
   const releaseCapture = useCallback(() => {
     const capture = captureRef.current;
@@ -238,10 +289,19 @@ function Band({
     // Keep a little momentum, never hand a pointer teleport to the rope solver.
     releaseVelocity.current = motion.velocity.clone().multiplyScalar(P.releaseMomentum).clampLength(0, P.releaseSpeed);
     if (!event || event.type === 'pointercancel' || event.type === 'lostpointercapture') releaseVelocity.current.set(0, 0, 0);
+    if (study && event?.type === 'pointerup') {
+      const now = performance.now();
+      const next = flickSide(pointerVelocity(samples.current, now, P.velocityWindowMs), chosenSide.current, P.flickThreshold);
+      if (next !== chosenSide.current) {
+        chosenSide.current = next; callbacks.current.onFlipStart?.(next);
+      }
+    }
+    activity.current.idle = 0;
+    if (study) invalidate();
     releaseCapture();
     drag(false);
     hover(false);
-  }, [releaseCapture, motion]);
+  }, [releaseCapture, motion, study, invalidate, P]);
   useBadgePointerSurface({ objectRef: badgeVisual, active, onCancel: finishDrag });
   useEffect(() => { if (!active) finishDrag(); }, [active, finishDrag]);
   useEffect(() => {
@@ -260,7 +320,7 @@ function Band({
   // The first strap section gives under a downward pull. Gravity compensation
   // keeps the original resting pose; the parallel rope is a hard travel stop.
   // Three taut rope joints alone left no downward travel at all.
-  const springLength = getLanyardSpringRestLength(gravityY);
+  const springLength = getLanyardSpringRestLength(gravityY, P);
   useSpringJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], springLength, P.springStiffness, P.springDamping]);
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], P.topRopeMaxLength]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], P.segmentLength]);
@@ -286,7 +346,14 @@ function Band({
       motion.target.copy(motion.point).sub(dragged);
       const halfHeight = Math.tan(THREE.MathUtils.degToRad(state.camera.fov / 2)) * state.camera.position.z;
       const halfView = halfHeight * state.size.width / state.size.height;
-      const { reach, minY, maxY } = getLanyardDragBounds(halfHeight, halfView);
+      const screen = study ? canvas.getBoundingClientRect() : null;
+      const pixels = study ? cardHeight / P.cardHeight : 1;
+      const visibleHalf = study ? Math.min(halfView, (screen.left + size.width / 2) / pixels, (innerWidth - screen.left - size.width / 2) / pixels) : halfView;
+      const { reach, minY, maxY } = study ? {
+        reach: Math.max(P.minimumViewReach, visibleHalf - P.cardHeight * P.cardAspect / 2 - P.sideClearance),
+        minY: camera.position.y - halfHeight + P.cardHeight / 2 + P.verticalClearance,
+        maxY: camera.position.y + halfHeight - P.cardHeight / 2 - P.verticalClearance,
+      } : getLanyardDragBounds(halfHeight, halfView);
       motion.target.x = THREE.MathUtils.clamp(motion.target.x, -reach, reach);
       motion.target.y = THREE.MathUtils.clamp(motion.target.y, minY, maxY);
       motion.target.z = 0;
@@ -316,18 +383,69 @@ function Band({
       curve.points[1].copy(j2.current.lerped);
       curve.points[2].copy(j1.current.lerped);
       curve.points[3].copy(fixed.current.translation());
+      if (study) curve.points[3].y += P.strapPixels / (cardHeight / P.cardHeight) - P.segmentLength * P.segmentCount;
       band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
       if (!dragged && !card.current.isSleeping()) {
         motion.velocity.copy(card.current.linvel());
         if (motion.velocity.lengthSq() > P.dynamicSpeed ** 2) card.current.setLinvel(motion.velocity.clampLength(0, P.dynamicSpeed), false);
         motion.angular.copy(card.current.angvel());
         motion.rotation.copy(card.current.rotation());
-        motion.angular.y -= motion.rotation.y * .5 * dt;
-        card.current.setAngvel(motion.angular.clampLength(0, P.angularSpeed), false);
+        if (study) {
+          yawEuler.setFromQuaternion(motion.rotation, 'YXZ');
+          const error = wrappedYawError(chosenSide.current === 'game' ? Math.PI : 0, yawEuler.y);
+          motion.angular.y += (error * P.yawStiffness - motion.angular.y * P.yawDamping) * dt;
+          motion.angular.x *= Math.exp(-dt * P.pitchDamping);
+          motion.angular.z += (-yawEuler.z * P.tiltStiffness - motion.angular.z * P.tiltDamping) * dt;
+          if (!touched.current && Math.abs(yawEuler.z) > P.maxTilt) motion.angular.z = -Math.sign(yawEuler.z) * Math.abs(motion.angular.z);
+          motion.angular.y = THREE.MathUtils.clamp(motion.angular.y, -P.flipAngularSpeed, P.flipAngularSpeed);
+          motion.angular.x = THREE.MathUtils.clamp(motion.angular.x, -P.angularSpeed, P.angularSpeed);
+          motion.angular.z = THREE.MathUtils.clamp(motion.angular.z, -P.angularSpeed, P.angularSpeed);
+          card.current.setAngvel(motion.angular, false);
+        } else {
+          motion.angular.y -= motion.rotation.y * .5 * dt;
+          card.current.setAngvel(motion.angular.clampLength(0, P.angularSpeed), false);
+        }
       }
-      const distance = motion.point.copy(card.current.translation()).distanceTo(motion.rest);
+      const distance = study ? Math.max(0, P.restY - card.current.translation().y) : motion.point.copy(card.current.translation()).distanceTo(motion.rest);
       const nextReveal = touched.current && distance > (revealed.current ? .46 : .96);
       if (nextReveal !== revealed.current) { revealed.current = nextReveal; callbacks.current.onReveal?.(nextReveal); }
+      if (study) {
+        const body = card.current;
+        motion.rotation.copy(body.rotation()); yawEuler.setFromQuaternion(motion.rotation, 'YXZ');
+        if (!dragged) {
+          const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
+          const halfW = halfH * size.width / size.height;
+          const w = P.cardHeight * (P.cardAspect * Math.abs(Math.cos(yawEuler.y) * Math.cos(yawEuler.z)) + Math.abs(Math.sin(yawEuler.z))) / 2;
+          const h = P.cardHeight * (Math.abs(Math.cos(yawEuler.z)) + P.cardAspect * Math.abs(Math.sin(yawEuler.z))) / 2;
+          motion.target.copy(body.translation());
+          const screen = canvas.getBoundingClientRect(), pixels = cardHeight / P.cardHeight;
+          const left = Math.max(-halfW, -(screen.left + size.width / 2) / pixels);
+          const right = Math.min(halfW, (innerWidth - screen.left - size.width / 2) / pixels);
+          const x = THREE.MathUtils.clamp(motion.target.x, left + w + P.sideClearance, right - w - P.sideClearance);
+          const y = THREE.MathUtils.clamp(motion.target.y, camera.position.y - halfH + h + P.verticalClearance, camera.position.y + halfH - h - P.verticalClearance);
+          if (x !== motion.target.x || y !== motion.target.y) {
+            motion.velocity.copy(body.linvel());
+            if (x !== motion.target.x) motion.velocity.x = 0;
+            if (y !== motion.target.y) motion.velocity.y = 0;
+            motion.target.set(x, y, 0); body.setTranslation(motion.target, false); body.setLinvel(motion.velocity, false);
+          }
+        }
+        const position = body.translation();
+        const nextVisible = Math.cos(yawEuler.y) < 0 ? 'game' : 'product';
+        if (nextVisible !== visibleSide.current) { visibleSide.current = nextVisible; callbacks.current.onSideChange?.(nextVisible); }
+        const rect = canvas.getBoundingClientRect();
+        motion.point.copy(position).project(camera);
+        callbacks.current.onCardProjection?.({x: rect.left + (motion.point.x + 1) * size.width / 2,
+          y: rect.top + (1 - motion.point.y) * size.height / 2, width: cardHeight * P.cardAspect,
+          height: cardHeight, yaw: yawEuler.y, tilt: yawEuler.z});
+        band.current.material.color.set(typeof strapColor === 'object' ? strapColor.current : strapColor);
+        const calm = !dragged && Math.hypot(...Object.values(body.linvel())) < P.sleepSpeed &&
+          Math.hypot(...Object.values(body.angvel())) < P.sleepSpeed &&
+          Math.abs(wrappedYawError(chosenSide.current === 'game' ? Math.PI : 0, yawEuler.y)) < P.sleepYawError;
+        activity.current.idle = calm ? activity.current.idle + dt : 0;
+        if (activity.current.idle < P.sleepAfter) state.invalidate();
+        else [card, j1, j2, j3].forEach(ref => ref.current.sleep());
+      }
     }
   });
 
@@ -338,29 +456,35 @@ function Band({
     <>
       <group position={[0, P.anchorY, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
-        <RigidBody position={[0, -1, 0]} ref={j1} {...segmentProps}>
+        <RigidBody position={[0, -P.segmentLength, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.07]} mass={P.segmentMass} restitution={0} />
         </RigidBody>
-        <RigidBody position={[0, -2, 0]} ref={j2} {...segmentProps}>
+        <RigidBody position={[0, -2 * P.segmentLength, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.07]} mass={P.segmentMass} restitution={0} />
         </RigidBody>
-        <RigidBody position={[0, -3, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[0, -3 * P.segmentLength, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.07]} mass={P.segmentMass} restitution={0} />
         </RigidBody>
         <RigidBody
-          position={[0, -4.5, 0]}
+          position={[0, P.restY - P.anchorY, 0]}
           ref={card}
           {...segmentProps}
           linearDamping={P.cardLinearDamping}
           angularDamping={P.angularDamping}
           ccd
           type={dragged ? 'kinematicPosition' : 'dynamic'}>
-          <CuboidCollider args={[0.8, 1.125, 0.025]} mass={P.cardMass} restitution={0} />
+          <CuboidCollider args={[study ? P.cardHeight * P.cardAspect / 2 : .8, 1.125, .025]} mass={P.cardMass} restitution={0} />
           <group
             ref={badgeVisual}
-            scale={2.25}
-            position={[0, -1.2, -0.05]}
-            onPointerOver={() => hover(true)}
+            scale={study ? [2.25 * P.visualScaleX, 2.25, 2.25] : 2.25}
+            position={[0, study ? P.visualOffsetY : -1.2, -0.05]}
+            onPointerOver={() => { hover(true); if (study) { activity.current.idle = 0; invalidate(); } }}
+            onPointerMove={e => {
+              if (!study || !captureRef.current) return;
+              const time = performance.now();
+              samples.current.push({x: e.clientX, time});
+              samples.current = samples.current.filter(p => time - p.time <= 4 * P.velocityWindowMs);
+            }}
             onPointerOut={() => hover(false)}
             onPointerUp={finishDrag}
             onPointerDown={e => {
@@ -369,6 +493,7 @@ function Band({
               e.target.setPointerCapture(e.pointerId);
               captureRef.current = { pointerId: e.pointerId, target: e.target };
               touched.current = true;
+              if (study) { samples.current = [{x: e.clientX, time: performance.now()}]; activity.current.idle = 0; invalidate(); }
               releaseVelocity.current = null;
               motion.velocity.set(0, 0, 0);
               motion.plane.constant = -e.point.z;
@@ -384,23 +509,24 @@ function Band({
                 metalness={0.8} />
             </mesh>
             <mesh
+              position={study ? [0, -.125, 0] : undefined}
               geometry={nodes.clip.geometry}
-              material={materials.metal}
-              material-roughness={0.3} />
-            <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
+              material={hardware}
+              material-roughness={study ? .4 : 0.3} />
+            <mesh position={study ? [0, -.125, 0] : undefined} geometry={nodes.clamp.geometry} material={hardware} />
           </group>
         </RigidBody>
       </group>
       <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial
-          color="white"
+          color={study ? (typeof strapColor === "object" ? strapColor.current : strapColor) : "white"}
           depthTest={false}
-          resolution={isMobile ? [1000, 2000] : [1000, 1000]}
-          useMap
+          resolution={study ? [size.width, size.height] : isMobile ? [1000, 2000] : [1000, 1000]}
+          useMap={!study}
           map={texture}
           repeat={[-4, 1]}
-          lineWidth={lanyardWidth} />
+          lineWidth={study ? 2 * P.cardHeight / cardHeight : lanyardWidth} />
       </mesh>
     </>
   );
