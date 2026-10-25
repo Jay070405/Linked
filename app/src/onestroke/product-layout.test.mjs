@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Vector3, Quaternion, Euler, PerspectiveCamera} from 'three';
 import {jlStrokes2D, jlPose, makePose, copyPose, N, Tube, LOGO_C, poseFromStrokes} from './line.js';
-import {PRODUCT_STATIONS, productAnchors2D, productLayout, ROUTE_PIXELS, DRAW_BEATS, strokeReveal, alignProductMark, MARK_FACE_Z, retractProductOutlines, captionOpacity, productWhite} from './product-layout.js';
+import {PRODUCT_STATIONS, productAnchors2D, productLayout, ROUTE_PIXELS, DRAW_BEATS, strokeReveal, alignProductMark, MARK_FACE_Z, retractProductOutlines, captionOpacity, productWhite, productDetours, productFold} from './product-layout.js';
 import {toScroll, toJourney} from './pacing.js';
 import outline from './jl-outline.json' with {type:'json'};
 import {captionPose} from './product-layout.js';
@@ -52,6 +52,18 @@ test('fold lifts detours backwards without moving a single JL sample',()=>{
     for(let i=0;i<N;i++)if(i/(N-1)<=drawn.ends[0])visible+=live.R[i];
     assert.ok(visible<=previous);previous=visible;
   }
+});
+
+test('each detour lifts as its product leaves, and the fold never draws one back',()=>{
+  const strokes=jlStrokes2D().map(s=>s.map(([x,y])=>new Vector3(x,y,0)));
+  const drawn=poseFromStrokesForTest(strokes), live=makePose();
+  const shown=k=>{let v=0;for(let i=0;i<N;i++){const u=i/(N-1);if(u>(k?drawn.ends[k-1]:0)&&u<=drawn.ends[k])v+=live.R[i];}return v;};
+  for(const [k,leave] of [[0,18.5],[2,20.6],[5,22.95]]) {
+    assert.equal(productDetours(leave-.25)[k],0);
+    retractProductOutlines(live,drawn,0,productDetours(leave));assert.equal(shown(k),0);
+    for(const s of [26.9,27.5,27.99]){retractProductOutlines(live,drawn,productFold(s),productDetours(s));assert.equal(shown(k),0);}
+  }
+  retractProductOutlines(live,drawn,0,productDetours(18));assert.deepEqual(live.R,drawn.R);
 });
 
 test('caption handovers are sequential inside the original windows',()=>{

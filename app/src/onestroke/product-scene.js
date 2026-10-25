@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {poseFromStrokes, jlPose, flow, copyPose, LOGO_R} from './line.js';
-import {PRODUCT_STATIONS, productLayout, TOKEN_LINES, strokeReveal, alignProductMark, MARK_FACE_Z, retractProductOutlines, captionPose, ARDEN_SIZE, productHoldCamera, ARDEN_BOUNDS, productFold, stationImageOpacity, productTubeOpacity} from './product-layout.js';
+import {PRODUCT_STATIONS, productLayout, TOKEN_LINES, strokeReveal, alignProductMark, MARK_FACE_Z, retractProductOutlines, captionPose, ARDEN_SIZE, productHoldCamera, ARDEN_BOUNDS, productFold, stationImageOpacity, productTubeOpacity, productDetours} from './product-layout.js';
 
 import {createArdenFilm} from './arden-film.js';
 import {createProductChart} from './product-chart.js';
@@ -107,8 +107,8 @@ export function createProductScene({scene, root, center, scale, alive}) {
   }
   function pose(live, s, ring, stone) {
     if (s < 15.92) return flow(live,ring,entry,seg(s,15.8,15.92),{spread:.35});
-    if (s < 27) return copyPose(live,drawn);
-    if (s < 28) return retractProductOutlines(live,drawn,productFold(s));
+    if (s < 27) return retractProductOutlines(live,drawn,0,productDetours(s));
+    if (s < 28) return retractProductOutlines(live,drawn,productFold(s),productDetours(s));
     copyPose(live,clean);
     return alignProductMark(live,clean,center,stone,s,scale);
   }

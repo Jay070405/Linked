@@ -60,16 +60,19 @@ export function captionPose(i, s) {
 }
 export const captionOpacity = (i,s) => captionPose(i,s).opacity;
 
+// The pen lifts each detour (phone frame, route, Ready-for-agents frame) as its product leaves, with the same timing as
+// the image, so an empty outline never lingers at the edge of the next station's frame.
+export const productDetours = s => {const e=t=>t*t*(3-2*t);return {0:e(unit((s-18.25)/.25)),2:e(unit((s-20.35)/.25)),5:e(unit((s-22.7)/.25))};};
+
 // Do not interpolate unlike paths: keep every sample fixed and lift the pen
 // backwards over each detour. Original invisible gaps remain invisible.
-export function retractProductOutlines(live, drawn, progress) {
+export function retractProductOutlines(live, drawn, progress, detours = {}) {
   live.P.set(drawn.P); live.R.set(drawn.R); live.D.set(drawn.D);
   for (let i=0; i<N; i++) {
     const u=i/(N-1), stroke=drawn.ends.findIndex(end=>u<=end);
     if ([0,2,5].includes(stroke)) {
-      const start=stroke ? drawn.ends[stroke-1] : 0, end=drawn.ends[stroke];
-      const head=start+(end-start)*(1-unit(progress));
-      live.R[i]*=unit((head-u)*N/2);
+      const start=stroke ? drawn.ends[stroke-1] : 0, end=drawn.ends[stroke], lift=unit(Math.max(progress,detours[stroke]||0));
+      if (lift>0) live.R[i]*=unit((start+(end-start)*(1-lift)-u)*N/2);
     } else live.R[i]=drawn.R[i]+(.5-drawn.R[i])*unit(progress);
   }
   return live;
