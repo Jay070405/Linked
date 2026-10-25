@@ -568,6 +568,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   let systemsCamera;
   function k(s, pos, look, up = V(0, 1, 0), e = 'io') { KEYS.push({s, pos, look, up, e}); }
   function buildKeys() {
+    KEYS.length = 0;
     k(0, V(0, 30, 1500), V(0, 30, 0));
     k(1.0, V(0, 28, 1340), V(0, 26, 0));
     k(1.75, V(0, 2050, 2850), V(0, FLOOR, LET.z - 110));
@@ -582,8 +583,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     k(14.75, V(RX - 1900, FLOOR + 1050, AZ + 1500), V(RX, RY - 40, AZ), V(0, 1, 0));
     k(15.15, V(RX - 2900, RY, AZ), V(RX, RY, AZ), V(0, 1, 0));
     k(15.8, V(RX + 420, RY, AZ), V(RX + 3000, RY, AZ), V(0, 1, 0), 'in');
-    product.keys(k);
-    k(29.3, V(OX, OY, OZ + 400), V(OX, OY, OZ - 1500));
+    product.keys(k, W, H);
     k(30.6, V(OX, OY, OZ), V(OX, OY, OZ - 1500));
   }
   const EASE = {io: eio, lin: t => t, in: t => t * t * t, out: eo3};
@@ -601,6 +601,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   /* ---------------- interaction ---------------- */
   // inside: over the journey itself (hovers and clicks); inWin: anywhere in the window. The view leans toward the pointer
   // wherever it is, so crossing the site's own navigation or a corner button never snaps the scene back to centre.
+  let endRipple = false;
   const pointer = {x: W * 0.6, y: H * 0.5, inside: false, down: false, inWin: false};
   const within = t => t instanceof Element && !!t.closest('.onestroke');
   const move = e => { pointer.x = e.clientX / UI; pointer.y = e.clientY / UI; pointer.inside = within(e.target); pointer.inWin = true; };
@@ -731,7 +732,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
       if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else {bodyTone(null);document.body.classList.remove('os-nav-burn');}
     }
     if (!active || paused) { if (!OFFLINE) raf = requestAnimationFrame(frame); return; }
-    S += (St - S) * (1 - Math.exp(-dt / 0.12)); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
+    S += (St - S) * (1 - Math.exp(-dt / (S > 15.6 || St > 15.6 ? 0.2 : 0.12))); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
     if (window.__tourPointer) { const was = pointer.down; Object.assign(pointer, window.__tourPointer); if (pointer.down && !was) spin.lx = pointer.x; }
     // layout is read before this frame writes any style, so reading it never forces a second layout
     const mailBox = S > 29.3 ? mail.getBoundingClientRect() : null, domHit = domHover();
@@ -755,7 +756,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     camAt(S); const topDown = seg(S, 7.6, 7.9) * (1 - seg(S, 14.2, 14.5));
     cam.position.copy(camPos); cam.up.copy(camUp); cam.lookAt(camLook);
     // while the screen switches on the camera holds still, so the horizon lands exactly on the monitor's line
-    const lean = (1 - topDown) * (S < 1 ? eio(seg(screen.o, 0.7, 1)) : 1); const leanScale = S > 15.8 && S < 29.3 ? .035 + .965 * eio(seg(S, 28.8, 29.3)) : 1; cam.translateX(px * 32 * lean * leanScale); cam.translateY(-py * 20 * lean * leanScale); cam.lookAt(camLook);
+    const lean = (1 - topDown) * (S < 1 ? eio(seg(screen.o, 0.7, 1)) : 1); const leanScale = S > 15.8 ? .035 + .965 * eio(seg(S, 29.45, 30.6)) : 1; cam.translateX(px * 32 * lean * leanScale); cam.translateY(-py * 20 * lean * leanScale); cam.lookAt(camLook);
     cam.updateMatrixWorld();
 
     /* the monolith: rises out of the lake as the screen opens, turns with the pointer or a drag, sinks on the first scroll */
@@ -772,11 +773,10 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     if (S > 30.3 && Math.floor(time / 3.4) !== ringTick) { ringTick = Math.floor(time / 3.4); ripple(ENDC.x, ENDC.z + 25, 0.22); }
     jlKV.position.set(JLC.x, JLC.y + bob - (1 - rise) * 420 - sink * 460, JLC.z); jlKV.quaternion.copy(qJL); jlKV.scale.setScalar(JL_S); jlKV.visible = S < 1.25 && rise > 0.001;
     stoneKV.envMapIntensity = 2.4 + hov.mark * 0.8;
-    // Begin the rise under the burn so the thinning mist already contains stone.
-    const endIn = eo3(seg(S, 29.24, 30.35));
+    // The stone is already in place underneath the matching glowing silhouette.
     hov.end += ((S > 30.1 && pointer.inside && hitTest([jlEnd]) ? 1 : 0) - hov.end) * (1 - Math.exp(-dt / 0.2));
     eulE.set(py * (0.08 + hov.end * 0.08), px * (0.24 + hov.end * 0.18) + Math.sin(time * 0.3) * 0.1, 0); jlEnd.quaternion.setFromEuler(eulE);
-    jlEnd.position.set(ENDC.x, ENDC.y + bob - (1 - endIn) * 420, ENDC.z); jlEnd.scale.setScalar(JL_S); jlEnd.visible = S > 29.3 && endIn > 0.001;
+    jlEnd.position.set(ENDC.x, ENDC.y + bob, ENDC.z); jlEnd.scale.setScalar(JL_S); jlEnd.visible = S > 29.28;
     stoneEnd.envMapIntensity = 0.5 + hov.end * 0.5;   // in the white mist the stone stays black: the one dark thing in the frame
 
     const beyond = S > 14.3 && cam.position.x > RX - 6, portal = S > 14.3 && !beyond, letterOn = S > 29.3;
@@ -790,7 +790,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     const wob = pluck.a > 0.001 ? (u, x) => { const g = Math.exp(-(((x - pluck.x) / 200) ** 2)) * pluck.a; return [0, 0, (pluck.z - AZ) * 0.3 * g + Math.sin(time * 8 + x * 0.01) * 1.5 * g]; } : null;
     if (S > 15.8) reveal = product.reveal(S);
     const inkAmt = S <= 15.8 && S > 7.3 && !beyond ? 1 : 0;
-    const lineOn = S >= 1.2 && S < 29.46 ? 1 : 0;
+    const lineOn = S >= 1.2 && S < 29.55 ? 1 : 0;
     const rest = 1 - seg(S, 2.5, 2.9) * (1 - seg(S, 7.2, 7.3));   // the thread rests while the projects speak
     lightMesh.visible = inkAmt < 0.999 && rest > 0.001 && lineOn > 0; inkMesh.visible = inkAmt > 0.001 && lineOn > 0;
     if (lightMesh.visible) tubeL.update(live, {k: (1 - inkAmt) * rest, reveal, wobble: wob});
@@ -799,7 +799,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     let glow = 1.55;                                                     // a pen of light, not a neon tube
     if (S >= 2.6 && S < 7.0) glow = mix(1.55, 1.2, seg(S, 2.6, 3.0));
     if (S > 14.2) glow = S <= 15.8 ? .85 : 1.35 + 3 * eio(seg(S, 28.8, 29.3));
-    if (S >= 29.3) glow *= 1 - seg(S, 29.3, 29.46);
+    const dissolving = S >= 29.3;
+    if (lightMat.transparent !== dissolving) { lightMat.transparent = dissolving; lightMat.depthWrite = !dissolving; lightMat.needsUpdate = true; }
+    lightMat.opacity = 1 - seg(S, 29.3, 29.55);
     lightMat.color.copy(LIGHT).multiplyScalar(glow);
 
     /* the lake: the horizon is there the moment the screen opens; the headline is set once the monolith stands; the pointer
@@ -896,7 +898,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
 
     /* the letter */
     const eu = lakeEnd.material.uniforms; eu.uTime.value = time; lakeEnd.visible = letterOn;
-    eu.uSink.value.set(ENDC.x, ENDC.z + 25, seg(S, 29.62, 30.3) * 2400, S > 29.62 ? 1.4 * (1 - seg(S, 29.62, 30.3)) : 0);
+    eu.uSink.value.set(0, 0, 0, 0);
+    if (S >= 29.6 && !endRipple) { ripple(ENDC.x, ENDC.z + 25, .22); endRipple = true; }
+    if (S < 29.3) endRipple = false;
     marqPlane.visible = letterOn; marqPlane.material.uniforms.uTime.value = time; marqPlane.material.uniforms.uIn.value = seg(S, 29.75, 30.35);
     const white = productWhite(S);
     expose.uniforms.uWhite.value = white; expose.enabled = white > 0.001;
@@ -916,7 +920,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
 
     /* chrome: the site's navigation takes its tone from the page; the index, the headers */
     const light = (S > 7.25 && S < 16.5 && !beyond) || S > 29.32;   // dark ink as soon as the page is paper
-    document.body.classList.toggle('os-nav-burn', S >= 29.12 && S <= 29.46);
+    document.body.classList.toggle('os-nav-burn', S >= 29.05 && S <= 29.55);
     bodyTone(light ? 'light' : 'dark');
     idx.classList.toggle('dark', light);
     const ch = S < 2.3 ? 0 : S < 7.3 ? 1 : S < 9.9 ? 2 : S < 14.5 ? 3 : S < 29.3 ? 4 : 5;
@@ -962,7 +966,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     });
     paperObjs.push(aboutD.mesh, guideD.mesh, rulerD.mesh, headD.mesh, ...nodes.flatMap(n => [n.d.mesh, n.yd.mesh]));
     buildPoses(); buildKeys(); collectHover();
-    layout(); on(window, 'resize', layout);
+    layout(); buildKeys(); on(window, 'resize', () => { layout(); buildKeys(); });
     { // everything drawn once, unculled, so every shader, buffer and picture is on the GPU before the page moves
       const saved = []; scene.traverse(o => { if (o.isMesh || o.isLine) { saved.push([o, o.visible, o.frustumCulled]); o.visible = true; o.frustumCulled = false; } }); expose.enabled = true;
       [THREE.NoToneMapping, THREE.NeutralToneMapping].forEach(m => { gl.toneMapping = m; composer.render(0.016); });

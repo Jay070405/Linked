@@ -1,7 +1,6 @@
 import {Vector3} from 'three';
 import {jlStrokes2D, LOGO_C, LOGO_R, N} from './line.js';
 import {PRODUCT_CASES} from '../product/content.js';
-import {plans, scenarioCost, money} from '../product/v2/data/cntl-model.js';
 
 export const PRODUCT_START = 15.8;
 export const DAWN_START = 29.3;
@@ -11,18 +10,34 @@ export const PRODUCT_STATIONS = [
   {slug: 'atelier', hold: [16.4, 18.05], image: '/assets/product/atelier/screens/check.webp'},
   {slug: 'last-100-feet', hold: [18.55, 20.1], image: '/assets/product/last-100-feet/plan-base.webp'},
   {slug: 'ready-for-agents', hold: [20.65, 22.55], image: '/assets/product/ready-for-agents/tile.webp'},
-  {slug: 'arden', hold: [23, 24.65], image: '/assets/home/product/arden-dark.webp'},
+  {slug: 'arden', hold: [23, 24.65]},
   {slug: 'choose-not-to-lose', hold: [25.1, 26.85], image: '/assets/product/choose-not-to-lose/tile.webp'},
 ].map(s => ({...s, case: PRODUCT_CASES.find(p => p.slug === s.slug)}));
 export const productCopy = (station, lang) => lang === 'en' ? station.case : {...station.case, ...station.case.zh};
-export const COST_BARS = ['a', 'd', 'b', 'c'].map(id => {
-  const plan = plans.find(p => p.id === id), cost = scenarioCost(plan, 'typical');
-  return {...cost, id, name: plan.name, label: `${plan.name} ${money(cost.total)}`};
-});
-export const COST_DIFFERENCE = COST_BARS[2].total - COST_BARS[0].total;
 export const ROUTE_PIXELS = [[428,745], [428,706], [465,706], [465,540], [503,502], [505,428], [507,290]];
 export const TOKEN_LINES = ['--background: #F7F7F5;', '--text-primary: #1C1D21;', '--text-secondary: #6E6F78;', '--border: #E4E3DF;', '--space-20: 20px;', '--space-16: 16px;'];
 export const TOKEN_CHIPS = ['#F7F7F5', '#1C1D21', '#6E6F78', '#E4E3DF', '20', '16'];
+export const ARDEN_SIZE = [160, 160 * 1165 / 1200];
+export const ARDEN_BOUNDS = [[.149,.414,.999,.769],[.048,.205,.952,.754],[.072,.182,.894,.715]];
+export const CHART_ROWS = [309,321,333,345];
+export const costX = cents => 308 + cents / 900000 * 101;
+
+// Hold compositions use viewport fractions, keeping the same hierarchy on all
+// three desktop widths. A front-on camera also keeps DOM and film in register.
+export function productHoldCamera(layout, i, w=1440, h=900, scale=1) {
+  let at, x, y, pixelsPerUnit;
+  if(i===3) {
+    pixelsPerUnit=.44*w/(ARDEN_SIZE[0]*(.894-.072)*scale);
+    at=layout.centers[3].clone().add(new Vector3((.483-.5)*ARDEN_SIZE[0]*scale,(.5-.4485)*ARDEN_SIZE[1]*scale,0));
+    x=.67*w; y=.45*h;
+  } else {
+    pixelsPerUnit=(.46*w-64)/(101*scale);
+    at=layout.world([409,359]); x=w-100; y=h*652/900;
+  }
+  const distance=h/(2*Math.tan(12*Math.PI/180)*pixelsPerUnit);
+  const look=at.clone().add(new Vector3((w/2-x)/pixelsPerUnit,(y-h/2)/pixelsPerUnit,0));
+  return {look,pos:look.clone().add(new Vector3(0,0,distance))};
+}
 
 const unit = t => Math.max(0, Math.min(1, t));
 // Retain the handover windows, with a quiet middle tenth between captions.
@@ -41,7 +56,7 @@ export function retractProductOutlines(live, drawn, progress) {
   live.P.set(drawn.P); live.R.set(drawn.R); live.D.set(drawn.D);
   for (let i=0; i<N; i++) {
     const u=i/(N-1), stroke=drawn.ends.findIndex(end=>u<=end);
-    if ([0,2,5,8].includes(stroke)) {
+    if ([0,2,5].includes(stroke)) {
       const start=stroke ? drawn.ends[stroke-1] : 0, end=drawn.ends[stroke];
       const head=start+(end-start)*(1-unit(progress));
       live.R[i]*=unit((head-u)*N/2);
@@ -50,11 +65,10 @@ export function retractProductOutlines(live, drawn, progress) {
   return live;
 }
 
-// A narrow peak, followed immediately by thinning mist. Linear decay avoids
-// the old ease-in plateau against an already pale dawn background.
+// Smooth bloom into the match cut; cubic ease-out clears the stone first.
 export function productWhite(s) {
-  if(s<29.3) return unit((s-29.12)/.18)**2;
-  return .68 * (1-unit((s-29.3)/.16)) + .32 * (1-unit((s-29.3)/.04));
+  if(s<29.3) { const t=unit((s-29.05)/.25); return t*t*(3-2*t); }
+  return (1-unit((s-29.3)/.5))**3;
 }
 
 // Derive anchors from the actual polylines, including the bowl's sampled low point.
@@ -67,14 +81,14 @@ export function productLayout(center, scale = 1) {
   const world = ([x, y]) => new Vector3(center.x + (x - LOGO_C[0]) * scale, center.y - (y - LOGO_C[1]) * scale, center.z);
   const strokes = jlStrokes2D().map(s => s.map(world)), anchors = productAnchors2D().map(world);
   const offset = (i, x, y, z) => anchors[i].clone().add(new Vector3(x, y, z).multiplyScalar(scale));
-  const centers = [offset(0, 0, 30, 0), offset(1, 0, -5, 42), offset(2, 0, 28.8, 0), offset(3, 58, 0, 5), offset(4, 0, 18, 0)];
+  const centers = [offset(0, 0, 30, 0), offset(1, 0, -5, 42), offset(2, 0, 28.8, 0), offset(3, 87, 0, 5), offset(4, 0, 18, 0)];
   const route = ROUTE_PIXELS.map(([x, y]) => centers[1].clone().add(new Vector3((x / 808 - .5) * 75, .35, (y / 768 - .5) * 71).multiplyScalar(scale)));
-  return {strokes, anchors, centers, route, bowlSplit: jlStrokes2D()[0].findIndex(p => p[1] === productAnchors2D()[1][1])};
+  return {world, strokes, anchors, centers, route, bowlSplit: jlStrokes2D()[0].findIndex(p => p[1] === productAnchors2D()[1][1])};
 }
 
 // Each detour is a separate lifted stroke. At the fold only its visibility
 // retracts; the source geometry and the JL strokes stay fixed.
-export const DRAW_BEATS = [[15.92,16.18], [18.05,18.5], [18.85,19.65], [19.9,20.05], [20.05,20.3], [20.3,20.65], [22.55,23], [24.65,25.15], [26,26.4]];
+export const DRAW_BEATS = [[15.92,16.18], [18.05,18.5], [18.85,19.65], [19.9,20.05], [20.05,20.3], [20.3,20.65], [22.55,23], [24.65,25.15]];
 export function strokeReveal(s, ends) {
   let previous = 0;
   for (let i = 0; i < DRAW_BEATS.length; i++) {
@@ -87,7 +101,7 @@ export function strokeReveal(s, ends) {
 }
 
 // The outgoing line inherits the incoming stone's live transform (including bob,
-// pointer rotation and rise). Both are projected by the same engine camera.
+// pointer rotation). Both are projected by the same engine camera.
 export function alignProductMark(live, clean, center, stone, s, scale = 1) {
   const t = Math.max(0, Math.min(1, (s - 28.8) / .5)), match = t*t*(3-2*t), v = new Vector3();
   for (let i=0; i<N; i++) {

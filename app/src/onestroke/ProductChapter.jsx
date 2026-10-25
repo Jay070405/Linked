@@ -1,5 +1,6 @@
-import {PRODUCT_STATIONS, productCopy, TOKEN_CHIPS, COST_BARS, COST_DIFFERENCE, productAnchors2D} from './product-layout.js';
-import {money} from '../product/v2/data/cntl-model.js';
+import {PRODUCT_STATIONS, productCopy, TOKEN_CHIPS, productAnchors2D} from './product-layout.js';
+import {money, plans, scenarios} from '../product/v2/data/cntl-model.js';
+import {ARDEN_PARTS} from './arden-parts.js';
 import {jlStrokes2D} from './line.js';
 
 export function ProductChapter({lang}) {
@@ -13,8 +14,19 @@ export function ProductChapter({lang}) {
     {TOKEN_CHIPS.map((chip,i)=><span className="os-l os-product-chip" data-product-chip={i} key={chip} style={chip.startsWith('#')?{background:chip,color:i===1?'#fff':'#1c1d21'}:undefined}>{chip.startsWith('#')?'':chip}</span>)}
     <span className="os-l os-product-tag" data-product-tag="parking">P</span>
     <span className="os-l os-product-tag" data-product-tag="door">{en?'Door 214':'214 号门'}</span>
-    {COST_BARS.map((b,i)=><div key={b.id} className="os-l os-product-bar" data-product-bar={i}><span>{b.label}</span><small>{en?'Premium':'保费'} {money(b.premium)}<br/>{en?'Out-of-pocket':'自付'} {money(b.outOfPocket)}</small></div>)}
-    <div className="os-l os-product-flag"><b>{en?`+${money(COST_DIFFERENCE)} a year · same coverage as A`:`每年多 ${money(COST_DIFFERENCE)} · 保障与 A 相同`}</b><span>{en?'Fictional plans · $4,000 in covered bills':'虚构方案 · $4,000 承保医疗费用'}</span></div>
+    {['projector','board','camera','battery'].map(id=><div key={id} className={`os-l os-arden-part os-arden-${id}`} data-arden-part={id}><i/><b/><span>{ARDEN_PARTS.find(p=>p.id===id)[en?'en':'zh']}</span></div>)}
+    <div className="os-l os-arden-part os-arden-hover" data-arden-hover data-lang={lang}><i/><b/><span/></div>
+    {plans.map((p,i)=><a href="/product/choose-not-to-lose" className="os-l os-cost-row" data-cost-row={i} key={p.id}>{p.name.toUpperCase()}</a>)}
+    {plans.map((p,i)=><span className="os-l os-cost-value" data-cost-value={i} key={p.id}/>)}
+    {[0,300000,600000,900000].map((cost,i)=><span className="os-l os-cost-tick" data-cost-tick={i} key={cost}>{cost?money(cost/1000)+'k':money(cost)}</span>)}
+    <div className="os-l os-cost-axis" data-cost-axis><div>{en?'YEARLY COST · FICTIONAL PLANS':'全年费用 · 虚构方案'}</div><div>{en?'EACH LINE: PREMIUM ONLY → WORST YEAR':'每条线：只交保费 → 最坏的一年'}</div></div>
+    <div className="os-l os-cost-controls" data-cost-controls data-lang={lang} role="group" aria-label={en?'Covered bills':'承保医疗费用'}>
+      <span>{en?'COVERED BILLS':'承保医疗费用'}</span>
+      {scenarios.map(s=><button key={s.id} type="button" data-cost-scenario={s.id} aria-pressed={s.id==='typical'}>{s.short}</button>)}
+    </div>
+    <svg className="os-l os-cost-proof" data-cost-proof aria-hidden="true"><defs><mask id="os-cost-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="10000" height="10000"><path data-cost-proof-mask fill="none" stroke="white" strokeWidth="4"/></mask></defs><path data-cost-proof-line fill="none" stroke="white" strokeWidth="1" strokeDasharray="3 4" mask="url(#os-cost-reveal)"/></svg>
+    <span className="os-l os-cost-difference" data-cost-difference/>
+    <div className="os-l os-cost-flag" data-cost-flag/>
     {PRODUCT_STATIONS.map((s,i)=><a className="os-l os-product-point" data-os-point={i} data-h key={s.slug} href={`/product/${s.slug}`}><i/><span>{s.case.title}</span></a>)}
     <div className="os-l os-product-end"><a href="/product" data-h>{en?'Five products ↗':'五个产品 ↗'}</a><p>{en?'Each case has a prototype you can try.':'每个案例都有一个可以试用的原型。'}</p></div>
   </>;
