@@ -192,7 +192,7 @@
 .os-product-end a{font-size:28px;letter-spacing:-.03em;font-weight:600}
 .os-product-end p{font-size:14px;line-height:1.6;color:#ffffff90;max-width:220px}
 .os-arden-capture{opacity:0;visibility:hidden;pointer-events:none;font:400 12px/1.45 Mono,monospace}
-.os-arden-capture i{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff 0 1.5px,#ffffff88 2px,#ffffff30 4px,#fff0 9px);mix-blend-mode:plus-lighter;opacity:var(--capture-pulse,1);transform:scale(var(--capture-pulse,1))}
+.os-arden-capture i{position:absolute;left:-22px;top:-22px;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle,#fff 0 2.5px,#ffffffd9 3.5px,#ffffff59 7px,#ffffff1f 13px,#fff0 22px);mix-blend-mode:plus-lighter;opacity:var(--capture-pulse,1);transform:scale(var(--capture-pulse,1))}
 .os-arden-capture span{position:absolute;left:16px;bottom:16px;width:max-content;white-space:nowrap;background:#050506d9;padding:3px 7px;border-radius:3px}
 .os-cost-row,.os-cost-value,.os-cost-tick,.os-cost-axis,.os-cost-controls,.os-cost-flag,.os-cost-difference,.os-cost-proof{opacity:0;visibility:hidden}
 .os-cost-row{font:400 12px/1 Mono,monospace;transform:translate(calc(-100% - 16px),-50%);white-space:nowrap;padding:8px 0}
