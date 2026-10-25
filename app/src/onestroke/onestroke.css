@@ -165,6 +165,8 @@
 
 /* 04 · PRODUCT. Captions own the lower-left; every camera hold keeps the object right. */
 .os-product-caption{left:160px;bottom:62px;width:min(380px,28vw);opacity:0;visibility:hidden}
+/* a soft night behind the words, so a stroke of the mark passing behind never runs through them */
+.os-product-caption::before{content:"";position:absolute;inset:-56px -90px -48px -120px;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,#050506f0 55%,#05050600)}
 .os-product-caption .os-mono{font-size:10px;line-height:1.6;letter-spacing:.1em;color:#ffffff85}
 .os-product-caption h3{font-size:36px;line-height:1.08;font-weight:620;letter-spacing:-.035em;margin:12px 0}
 .os-product-caption p{font-size:15px;line-height:1.55;color:#ffffffb8;margin:0;text-wrap:pretty}
