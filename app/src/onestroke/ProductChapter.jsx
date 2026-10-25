@@ -14,7 +14,7 @@ export function ProductChapter({lang}) {
     {TOKEN_CHIPS.map((chip,i)=><span className="os-l os-product-chip" data-product-chip={i} key={chip} style={chip.startsWith('#')?{background:chip,color:i===1?'#fff':'#1c1d21'}:undefined}>{chip.startsWith('#')?'':chip}</span>)}
     <span className="os-l os-product-tag" data-product-tag="parking">P</span>
     <span className="os-l os-product-tag" data-product-tag="door">{en?'Door 214':'214 号门'}</span>
-    {['projector','board','camera','battery'].map(id=><div key={id} className={`os-l os-arden-part os-arden-${id}`} data-arden-part={id}><i/><b/><span>{ARDEN_PARTS.find(p=>p.id===id)[en?'en':'zh']}</span></div>)}
+    {['projector','board','camera','battery'].map(id=><div key={id} className={`os-l os-arden-part os-arden-${id}`} data-arden-part={id}><i/><svg aria-hidden="true"><path/></svg><span>{ARDEN_PARTS.find(p=>p.id===id)[en?'en':'zh']}</span></div>)}
     <div className="os-l os-arden-part os-arden-hover" data-arden-hover data-lang={lang}><i/><b/><span/></div>
     {plans.map((p,i)=><a href="/product/choose-not-to-lose" className="os-l os-cost-row" data-cost-row={i} key={p.id}>{p.name.toUpperCase()}</a>)}
     {plans.map((p,i)=><span className="os-l os-cost-value" data-cost-value={i} key={p.id}/>)}

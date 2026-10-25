@@ -1,5 +1,6 @@
 .v16-navigation { --nav-ink:#fff; position:fixed; inset:0 0 auto; z-index:1100; height:96px; color:var(--nav-ink); pointer-events:none; font-family:inherit; }
 .v16-navigation[data-tone=light] { --nav-ink:#111; }
+.v16-navigation::before{content:"";position:fixed;inset:0 0 auto;height:112px;background:linear-gradient(#050506 0%,#050506e0 40%,#05050600 100%);opacity:var(--os-nav-scrim,0);pointer-events:none;z-index:-1}
 .os-nav-burn .v16-navigation{opacity:0;visibility:hidden}
 .os-nav-burn .v16-navigation *{visibility:hidden!important;pointer-events:none!important}
 .v16-navigation a,.v16-navigation button { -webkit-tap-highlight-color:transparent; }

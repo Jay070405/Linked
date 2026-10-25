@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {plans, scenarios, annualPremium, scenarioCost, totalDifference, money} from '../product/v2/data/cntl-model.js';
-import {CHART_ROWS, costX} from './product-layout.js';
+import {CHART_ROWS, costX, productFold} from './product-layout.js';
 
 const seg=(s,a,b)=>Math.max(0,Math.min(1,(s-a)/(b-a)));
 const ease=t=>t*t*(3-2*t);
@@ -41,8 +41,8 @@ export function createProductChart({group,layout,root,scale,show,project}) {
   const screen=(p,cam,w,h)=>{const v=world(p).project(cam);return {x:(v.x+1)*w/2,y:(1-v.y)*h/2};};
   return {
     update(s,{cam,w,h,dt,pointer}) {
-      const active=s>=25.6&&s<=27, fade=1-seg(s,27,27.3), fold=ease(seg(s,27,28));
-      const chipAlpha=seg(s,25.9,26.1)*fade;
+      const active=s>=25.6&&s<=27, fade=1-seg(s,27,27.3), fold=productFold(s);
+      const chipAlpha=seg(s,25.65,25.85)*fade;
       enabled=active&&chipAlpha>.005;
       if(!enabled)preview=null;
       const scenario=preview||selected;
@@ -56,14 +56,14 @@ export function createProductChart({group,layout,root,scale,show,project}) {
         if(active&&((pointer.inside&&pointer.x>=a.x-8&&pointer.x<=b.x+8&&Math.abs(pointer.y-a.y)<14)||rowEls[i].matches(':hover,:focus-visible')))hovered=i;
       });
       rows.forEach((r,i)=>{
-        const grow=ease(seg(s,25.1+i*.08,25.36+i*.08)), on=plans[i]===best;
+        const grow=ease(seg(s,24.85+i*.06,25.12+i*.06)), on=plans[i]===best;
         const y=r.y+(359-r.y)*fold, left=r.lo+(370-r.lo)*fold, right=r.lo+(r.hi-r.lo)*grow;
         const end=right+(370-right)*fold;
         r.track.position.copy(local([(left+end)/2,y]));r.track.scale.x=Math.max(.001,end-left);
         r.track.material.opacity=grow*(1-fold)*(hovered===i ? .9 : on ? .65 : .4);
         r.ends.forEach((m,j)=>{m.position.copy(local([j?end:left,y]));m.material.opacity=grow*(1-fold)*.4;});
-        const total=annualPremium(plans[i])+(values[i]-annualPremium(plans[i]))*ease(seg(s,25.55,26.1));
-        const x=costX(total), dotAlpha=seg(s,25.4,25.48)*fade;
+        const total=annualPremium(plans[i])+(values[i]-annualPremium(plans[i]))*ease(seg(s,25.25,25.8));
+        const x=costX(total), dotAlpha=seg(s,25.15,25.23)*fade;
         r.dot.position.copy(local([x,r.y]));r.dot.position.z+=.1;
         r.dot.scale.setScalar((on?1.1:.95)*scale);r.dot.material.color.set(on?0xffffff:0x9a9aa0);r.dot.material.opacity=dotAlpha;
         // HDR white stays white on screen and crosses the existing 1.35 bloom threshold.
@@ -77,26 +77,25 @@ export function createProductChart({group,layout,root,scale,show,project}) {
         // Keep the expanded value inside the viewport without moving the dot.
         valueEls[i].style.transform=hovered===i?'translate(-70%,-100%)':'translate(-50%,-100%)';
       });
-      const axisAlpha=seg(s,24.85,25.2)*(1-fold);
+      const axisAlpha=seg(s,24.75,25.0)*(1-fold);
       ticks.forEach((el,i)=>{project(el,world([costX(i*300000),359]),cam,w,h,axisAlpha);tickMeshes[i].material.opacity=axisAlpha*.5;});
       project(axis,world([409,359]),cam,w,h,axisAlpha);
       const chipAt=world([308,299]), flagAt=world([409,299]);
       project(controls,chipAt,cam,w,h,chipAlpha);controls.style.pointerEvents=enabled?'auto':'none';
       chips.forEach(el=>{el.disabled=!enabled;el.tabIndex=enabled?0:-1;el.setAttribute('aria-pressed',String(el.dataset.costScenario===selected));el.classList.toggle('is-active',el.dataset.costScenario===scenario);});
-      const displayed=values.map((v,i)=>annualPremium(plans[i])+(v-annualPremium(plans[i]))*ease(seg(s,25.55,26.1)));
+      const displayed=values.map((v,i)=>annualPremium(plans[i])+(v-annualPremium(plans[i]))*ease(seg(s,25.25,25.8)));
       const a=screen([costX(displayed[0]),309],cam,w,h), b=screen([costX(displayed[1]),321],cam,w,h);
       proof.setAttribute('viewBox',`0 0 ${w} ${h}`);
       path.setAttribute('d',`M ${a.x} ${a.y+8} V ${b.y} H ${b.x-8}`);
-      const length=Math.max(1,b.y-a.y-8+Math.abs(b.x-a.x)-8), draw=seg(s,26.05,26.35);
+      const length=Math.max(1,b.y-a.y-8+Math.abs(b.x-a.x)-8), draw=seg(s,25.8,26.05);
       // Clip the dashed path in path-length space without stretching its 3/4px dashes.
       const mask=proof.querySelector('[data-cost-proof-mask]');mask.setAttribute('d',path.getAttribute('d'));mask.style.strokeDasharray=`${length}`;mask.style.strokeDashoffset=`${length*(1-draw)}`;
-      show(proof,fade*(s>=26.05?1:0));
-      project(difference,world([(costX(values[0])+costX(values[1]))/2,321]),cam,w,h,seg(s,26.3,26.5)*fade);
+      show(proof,fade*(s>=25.8?1:0));
+      project(difference,world([(costX(values[0])+costX(values[1]))/2,321]),cam,w,h,seg(s,26.0,26.2)*fade);
       difference.textContent=`+${money(totalDifference(plans[1],plans[0],scenario))}`;
-      project(flag,flagAt,cam,w,h,seg(s,26.3,26.5)*fade);
-      const span=screen([409,299],cam,w,h).x-screen([308,299],cam,w,h).x;
-      flag.style.width=`${Math.max(160,span-320)}px`;
-      flag.textContent=controls.dataset.lang==='en'?`Plan B: +${money(totalDifference(plans[1],plans[0],scenario))} a year · same coverage as A`:`B 方案：每年多 ${money(totalDifference(plans[1],plans[0],scenario))} · 保障与 A 相同`;
+      project(flag,flagAt,cam,w,h,seg(s,26.0,26.2)*fade);
+      flag.style.top=`${screen([409,299],cam,w,h).y-34}px`;
+      flag.textContent=controls.dataset.lang==='en'?`Plan B: +${money(totalDifference(plans[1],plans[0],scenario))} a year · same coverage as A`:`Plan B：每年多 ${money(totalDifference(plans[1],plans[0],scenario))} · 保障与 Plan A 相同`;
       return hovered>=0?4:-1;
     },
     dispose(){listeners.forEach(fn=>fn());},

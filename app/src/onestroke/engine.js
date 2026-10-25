@@ -14,7 +14,7 @@ import {N, Tube, jlPose, poseFromStrokes, curve, flow, copyPose, makePose, LOGO_
 import {CINEMATIC_PROJECTS as PROJECTS, ABOUT, TIMELINE, COPY, pick} from './content.js';
 import {toJourney, toScroll} from './pacing.js';
 import {createProductScene} from './product-scene.js';
-import {PRODUCT_STATIONS, productWhite} from './product-layout.js';
+import {PRODUCT_STATIONS, productWhite, productNavScrim, productTubeOpacity} from './product-layout.js';
 import {createScrollCameraTrack, projectOpacity} from './camera-track.js';
 export {TOTAL, SCROLL_TOTAL, toJourney, toScroll} from './pacing.js';
 
@@ -729,7 +729,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     const active = inJourney || (activeNow && screen.o > 0 && !paused);
     if (active !== activeNow) {
       activeNow = active; root.classList.toggle('is-live', active); section.classList.toggle('is-live', active); document.body.classList.toggle('past-office', active);
-      if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else {bodyTone(null);document.body.classList.remove('os-nav-burn');}
+      if (active) { t0 = now; S = St; introPrev = -1; power.off = -1; screen.o = 0; } else {bodyTone(null);document.body.classList.remove('os-nav-burn');document.body.style.removeProperty('--os-nav-scrim');}
     }
     if (!active || paused) { if (!OFFLINE) raf = requestAnimationFrame(frame); return; }
     S += (St - S) * (1 - Math.exp(-dt / (S > 15.6 || St > 15.6 ? 0.2 : 0.12))); if (Math.abs(St - S) < 1e-4 || OFFLINE || snap) S = St; snap = false;
@@ -790,7 +790,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     const wob = pluck.a > 0.001 ? (u, x) => { const g = Math.exp(-(((x - pluck.x) / 200) ** 2)) * pluck.a; return [0, 0, (pluck.z - AZ) * 0.3 * g + Math.sin(time * 8 + x * 0.01) * 1.5 * g]; } : null;
     if (S > 15.8) reveal = product.reveal(S);
     const inkAmt = S <= 15.8 && S > 7.3 && !beyond ? 1 : 0;
-    const lineOn = S >= 1.2 && S < 29.55 ? 1 : 0;
+    const lineOn = S >= 1.2 && S < 29.36 ? 1 : 0;
     const rest = 1 - seg(S, 2.5, 2.9) * (1 - seg(S, 7.2, 7.3));   // the thread rests while the projects speak
     lightMesh.visible = inkAmt < 0.999 && rest > 0.001 && lineOn > 0; inkMesh.visible = inkAmt > 0.001 && lineOn > 0;
     if (lightMesh.visible) tubeL.update(live, {k: (1 - inkAmt) * rest, reveal, wobble: wob});
@@ -799,9 +799,9 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
     let glow = 1.55;                                                     // a pen of light, not a neon tube
     if (S >= 2.6 && S < 7.0) glow = mix(1.55, 1.2, seg(S, 2.6, 3.0));
     if (S > 14.2) glow = S <= 15.8 ? .85 : 1.35 + 3 * eio(seg(S, 28.8, 29.3));
-    const dissolving = S >= 29.3;
+    const dissolving = S >= 29.27;
     if (lightMat.transparent !== dissolving) { lightMat.transparent = dissolving; lightMat.depthWrite = !dissolving; lightMat.needsUpdate = true; }
-    lightMat.opacity = 1 - seg(S, 29.3, 29.55);
+    lightMat.opacity = productTubeOpacity(S);
     lightMat.color.copy(LIGHT).multiplyScalar(glow);
 
     /* the lake: the horizon is there the moment the screen opens; the headline is set once the monolith stands; the pointer
@@ -920,6 +920,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
 
     /* chrome: the site's navigation takes its tone from the page; the index, the headers */
     const light = (S > 7.25 && S < 16.5 && !beyond) || S > 29.32;   // dark ink as soon as the page is paper
+    document.body.style.setProperty('--os-nav-scrim', productNavScrim(S).toFixed(3));
     document.body.classList.toggle('os-nav-burn', S >= 29.05 && S <= 29.55);
     bodyTone(light ? 'light' : 'dark');
     idx.classList.toggle('dark', light);
@@ -1001,7 +1002,7 @@ export function createOneStroke({root, section, lang: startLang = 'zh', actions 
   function dispose() {
     alive = false; cancelAnimationFrame(raf); product.dispose();
     listeners.forEach(([t, type, fn, opts]) => t.removeEventListener(type, fn, opts));
-    bodyTone(null); document.body.classList.remove('past-office','os-nav-burn');
+    bodyTone(null); document.body.classList.remove('past-office','os-nav-burn');document.body.style.removeProperty('--os-nav-scrim');
     const mats = new Set();
     scene.traverse(o => { if (o.geometry) o.geometry.dispose(); [].concat(o.material || []).forEach(m => mats.add(m)); });
     mats.forEach(m => m.dispose());

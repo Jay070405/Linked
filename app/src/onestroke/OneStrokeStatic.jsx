@@ -69,7 +69,7 @@ export default function OneStrokeStatic({lang = 'zh', onOpen, onArchive, onAbout
       <span id="worlds" className="oss-worlds-alias" aria-hidden="true"/>
       <p className="os-mono">04 / PRODUCT</p><h2 id="oss-product">PRODUCT</h2>
       <ol className="oss-projects">{PRODUCT_STATIONS.map((s,i)=>{const p=productCopy(s,lang);return <li key={s.slug}>
-        <a className={"oss-product-image oss-product-"+s.slug} href={"/product/"+s.slug}><img src={productsReady?s.image:undefined} alt={p.title} loading="lazy"/></a>
+        <a className={"oss-product-image oss-product-"+s.slug} href={"/product/"+s.slug}><img src={productsReady?s.thumb:undefined} alt={p.title} loading="lazy"/></a>
         <div className="oss-proj-copy"><span className="os-mono">0{i+1} / 05 · {p.kind}</span><h3>{p.title}</h3><p>{p.summary}</p><a className="oss-link" href={"/product/"+s.slug}>{en?'Open the case ↗':'查看案例 ↗'}</a></div>
       </li>;})}</ol>
       <ProductMark lang={lang}/>

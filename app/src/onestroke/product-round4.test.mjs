@@ -1,51 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {Scene,Vector3,Quaternion,PerspectiveCamera} from 'three';
-import {createProductScene} from './product-scene.js';
+import {Vector3} from 'three';
 import {ARDEN_FRAME_ORDER,nearestArdenFrame} from './arden-film.js';
 import {PRODUCT_STATIONS, ARDEN_SIZE, ARDEN_BOUNDS, DRAW_BEATS} from './product-layout.js';
 import {plans,scenarios,scenarioCost,totalDifference,dominates,annualPremium,money} from '../product/v2/data/cntl-model.js';
 import {PACING,toScroll} from './pacing.js';
 
-const positions=JSON.parse(readFileSync(new URL('../../public/assets/product/arden/film/explode/parts.json',import.meta.url),'utf8'));
-const center=new Vector3(13750,2404.3,-15340);
-function element(dataset={}) {
-  const children=new Map(),listeners=new Map(),attributes=new Map();
-  return {style:{},dataset,textContent:'',classList:{toggle(){}},matches(){return false;},focus(){},
-    addEventListener(k,f){listeners.set(k,f);},removeEventListener(k){listeners.delete(k);},
-    fire(k,e={}){listeners.get(k)?.({stopPropagation(){},preventDefault(){},...e});},
-    setAttribute(k,v){attributes.set(k,v);},getAttribute(k){return attributes.get(k);},
-    querySelector(k){if(!children.has(k))children.set(k,element());return children.get(k);}};
-}
-function fixture() {
-  const single=new Map(),multi=new Map();
-  const root={querySelector(k){if(!single.has(k))single.set(k,element({lang:'en'}));return single.get(k);},querySelectorAll(k){
-    if(!multi.has(k)) {
-      let data=Array.from({length:k.includes('product-tag')?2:k.includes('product-chip')?6:4},()=>({}));
-      if(k==='[data-arden-part]')data=['projector','board','camera','battery'].map(ardenPart=>({ardenPart}));
-      if(k==='[data-cost-scenario]')data=scenarios.map(s=>({costScenario:s.id}));
-      multi.set(k,data.map(element));
-    }return multi.get(k);
-  }};
-  const originals={Image:globalThis.Image,document:globalThis.document,fetch:globalThis.fetch};
-  const requests=[],draws=[];
-  globalThis.document={createElement(){return {getContext(){return {clearRect(){},drawImage(im){draws.push(im.src);}};}};}};
-  globalThis.Image=class {set src(v){this.url=v;if(v)requests.push(this);}get src(){return this.url;}};
-  globalThis.fetch=async()=>({ok:true,json:async()=>positions});
-  const scene=new Scene(),product=createProductScene({scene,root,center,scale:1,alive:()=>true});
-  const cam=new PerspectiveCamera(24,1.6,5,120000);
-  const frame={cam,w:1440,h:900,px:0,py:0,time:1,dt:1,pointer:{inside:false},hitTest:()=>null,stone:{position:center,quaternion:new Quaternion()}};
-  function hold(i,w=1440) {
-    const keys=[];product.keys((s,pos,look)=>keys.push({s,pos,look}),w,900);
-    const key=keys.find(k=>k.s===PRODUCT_STATIONS[i].hold[1]);
-    cam.aspect=w/900;cam.updateProjectionMatrix();cam.position.copy(key.pos);cam.lookAt(key.look);cam.updateMatrixWorld();frame.w=w;
-    return keys;
-  }
-  return {root,scene,product,frame,requests,draws,hold,dispose(){product.dispose();scene.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});Object.assign(globalThis,originals);}};
-}
-const screen=(at,cam,w,h=900)=>{const p=at.clone().project(cam);return [(p.x+1)*w/2,(1-p.y)*h/2];};
-const bounds=points=>[Math.min(...points.map(p=>p[0])),Math.min(...points.map(p=>p[1])),Math.max(...points.map(p=>p[0])),Math.max(...points.map(p=>p[1]))];
+import {fixture,screen,bounds} from './product-test-fixture.mjs';
 
 test('Round 4 wheel points are monotone and handovers get 1.7 screens',()=>{
   assert.deepEqual(PACING.filter(([s])=>s>14.2),[[15.8,32.27],[16.4,34],[18.05,36.8],[18.55,38.5],[20.1,40.9],[20.65,42.6],[22.55,45.9],[23,47.6],[24.65,50.9],[25.1,52.6],[26.85,55.6],[28,57.7],[28.8,59.2],[29.3,60.8],[31.2,64.4]]);
@@ -62,7 +24,7 @@ test('Plan A dominates B and the proof is identical in every scenario; winners f
 test('film requests wait until 10.9, load once coarse-to-fine, and reuse one texture',async()=>{
   const f=fixture();try {
     f.hold(3);f.product.update(10.89,f.frame);assert.equal(f.requests.length,0);
-    f.product.update(10.9,f.frame);assert.deepEqual(f.requests.map(im=>im.src),[...PRODUCT_STATIONS.slice(0,3).map(s=>s.image),'/assets/product/arden/film/explode/001.webp','/assets/product/arden/film/explode/036.webp']);
+    f.product.update(10.9,f.frame);assert.deepEqual(f.requests.map(im=>im.src),[...PRODUCT_STATIONS.filter(s=>s.image).map(s=>s.image),'/assets/product/arden/film/explode/001.webp','/assets/product/arden/film/explode/036.webp']);
     for(let i=0;i<f.requests.length;i++)f.requests[i].onload?.();
     await new Promise(resolve=>setImmediate(resolve));
     const arden=f.scene.children[3].children[0],texture=arden.material.uniforms.map.value;
@@ -106,35 +68,7 @@ test('chart preview restores selection; keyboard selects; values glide and hidde
     chips[2].fire('keydown',{key:'Home'});update(.35);assert.equal(chips[0].getAttribute('aria-pressed'),'true');
     f.product.update(27.4,f.frame);assert.ok(chips.every(c=>c.disabled&&c.tabIndex===-1));
     assert.equal(f.root.querySelector('[data-cost-controls]').style.visibility,'hidden');
-    f.product.update(25.4,f.frame);assert.equal(values[0].textContent,money(annualPremium(plans[0])));
-  } finally {f.dispose();}
-});
-
-test('fixed Arden label envelopes never collide with each other or the caption',async()=>{
-  const f=fixture();try {
-    f.product.update(10.9,f.frame);for(let i=0;i<f.requests.length;i++)f.requests[i].onload?.();
-    await new Promise(resolve=>setImmediate(resolve));
-    const overlap=(a,b)=>a[0]<b[2]&&a[2]>b[0]&&a[1]<b[3]&&a[3]>b[1];
-    for(const w of [1280,1440,1920]) {
-      f.hold(3,w);
-      for(let s=24.2;s<24.8;s+=.01) {
-        f.product.update(s,f.frame);
-        // CSS max-width envelopes, 3 mono lines: conservative for both EN/ZH.
-        const rectangles=f.root.querySelectorAll('[data-arden-part]').map((el,i)=>{
-          const x=parseFloat(el.style.left),y=parseFloat(el.style.top);
-          return [[x-187,y-72,x-22,y-19],[x-105,y-82,x+105,y-29],[x-175,y+29,x,y+82],[x+22,y+22,x+172,y+75]][i];
-        });
-        rectangles.forEach((a,i)=>{
-          assert.ok(!overlap(a,[160,610,160+Math.min(380,w*.27),838]),`${w} at ${s}: caption`);
-          rectangles.slice(i+1).forEach(b=>assert.ok(!overlap(a,b),`${w} at ${s}: ${a} / ${b}`));
-        });
-      }
-      f.product.update(24.5,f.frame);
-      const el=f.root.querySelectorAll('[data-arden-part]')[0],pointer={inside:true,x:parseFloat(el.style.left),y:parseFloat(el.style.top)};
-      assert.equal(f.product.update(24.5,{...f.frame,pointer}),3);
-      assert.ok(f.root.querySelector('[data-arden-hover]').querySelector('span').textContent.includes('projector'));
-      assert.equal(+el.style.opacity,.35);
-    }
+    f.product.update(25.25,f.frame);assert.equal(values[0].textContent,money(annualPremium(plans[0])));
   } finally {f.dispose();}
 });
 

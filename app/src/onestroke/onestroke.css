@@ -195,14 +195,9 @@
 .os-arden-part i{position:absolute;width:5px;height:5px;left:-2.5px;top:-2.5px;border-radius:50%;background:#fff}
 .os-arden-part b{position:absolute;width:24px;height:1px;background:#ffffff99;transform-origin:left center}
 .os-arden-part span{position:absolute;width:max-content;max-width:210px;text-wrap:balance}
-.os-arden-projector b{transform:rotate(-135deg)}
-.os-arden-projector span{right:22px;bottom:19px;max-width:165px;text-align:right}
-.os-arden-board b{transform:rotate(-90deg)}
-.os-arden-board span{left:0;bottom:29px;transform:translateX(-50%);max-width:210px;text-align:center}
-.os-arden-camera b{transform:rotate(90deg)}
-.os-arden-camera span{right:0;top:29px;max-width:175px;text-align:right}
-.os-arden-battery b{transform:rotate(45deg)}
-.os-arden-battery span{left:22px;top:22px;max-width:150px}
+.os-arden-part[data-arden-part] span{max-width:none;white-space:nowrap;background:#050506d9;padding:3px 7px;border-radius:3px}
+.os-arden-part svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible}
+.os-arden-part svg path{fill:none;stroke:#ffffff8c;stroke-width:1}
 .os-arden-hover i{width:10px;height:10px;left:-5px;top:-5px;border:1px solid #fff;background:none}
 .os-arden-hover b{transform:rotate(-45deg)}
 .os-arden-hover span{left:22px;bottom:20px;padding:4px 6px;background:#050506df;max-width:290px}
@@ -219,7 +214,7 @@
 .os-layer .os-cost-controls button.is-active{background:#fff;color:#050506;border-color:#fff}
 .os-layer .os-cost-controls button:active{transform:scale(.97)}
 .os-layer .os-cost-controls button:disabled{pointer-events:none}
-.os-cost-flag{font:500 13px/1.5 'TikTok Sans',sans-serif;text-align:right;transform:translate(-100%,-50%);text-wrap:balance}
+.os-cost-flag{font:500 13px/1.5 'TikTok Sans',sans-serif;text-align:right;transform:translate(-100%,-50%);white-space:nowrap;width:max-content}
 .os-cost-difference{font:600 13px/1 'TikTok Sans',sans-serif;transform:translateX(-50%);margin-top:15px}
 .os-cost-proof{inset:0;width:100%;height:100%;pointer-events:none;color:#fff}
 .os-cost-proof [data-cost-proof-line]{stroke-opacity:.8}
@@ -227,7 +222,6 @@
 .oss-product-image{display:block;height:clamp(260px,36vw,520px)}
 .oss-product-image img{display:block;width:100%;height:100%;object-fit:contain}
 .oss-product-atelier img{max-width:260px;margin:auto}
-.oss-product-arden img{mask-image:radial-gradient(ellipse,black 35%,transparent 71%)}
 .oss-product-mark{display:block;max-width:800px;margin:10vh auto 0;color:#fff;text-align:center;text-decoration:none}
 .oss-product-mark svg{width:100%;height:auto;display:block}
 .oss-product-mark text{font:500 10px Mono,monospace;letter-spacing:.04em;text-transform:uppercase;fill:currentColor}

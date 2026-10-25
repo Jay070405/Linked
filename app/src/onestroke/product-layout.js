@@ -10,9 +10,10 @@ export const PRODUCT_STATIONS = [
   {slug: 'atelier', hold: [16.4, 18.05], image: '/assets/product/atelier/screens/check.webp'},
   {slug: 'last-100-feet', hold: [18.55, 20.1], image: '/assets/product/last-100-feet/plan-base.webp'},
   {slug: 'ready-for-agents', hold: [20.65, 22.55], image: '/assets/product/ready-for-agents/tile.webp'},
-  {slug: 'arden', hold: [23, 24.65]},
-  {slug: 'choose-not-to-lose', hold: [25.1, 26.85], image: '/assets/product/choose-not-to-lose/tile.webp'},
-].map(s => ({...s, case: PRODUCT_CASES.find(p => p.slug === s.slug)}));
+  {slug: 'arden', hold: [23, 24.65], thumb: '/assets/product/arden/film/explode-m/036.webp'},
+  {slug: 'choose-not-to-lose', hold: [25.1, 26.85], thumb: '/assets/product/choose-not-to-lose/tile.webp'},
+// `image` is what the 3D scene shows; `thumb` is the static page's card (Arden's film and the chart have no single image there)
+].map(s => ({...s, thumb: s.thumb || s.image, case: PRODUCT_CASES.find(p => p.slug === s.slug)}));
 export const productCopy = (station, lang) => lang === 'en' ? station.case : {...station.case, ...station.case.zh};
 export const ROUTE_PIXELS = [[428,745], [428,706], [465,706], [465,540], [503,502], [505,428], [507,290]];
 export const TOKEN_LINES = ['--background: #F7F7F5;', '--text-primary: #1C1D21;', '--text-secondary: #6E6F78;', '--border: #E4E3DF;', '--space-20: 20px;', '--space-16: 16px;'];
@@ -40,6 +41,15 @@ export function productHoldCamera(layout, i, w=1440, h=900, scale=1) {
 }
 
 const unit = t => Math.max(0, Math.min(1, t));
+export const productFold = s => {const t=unit((s-27.2)/.8);return t*t*(3-2*t);};
+export const productFoldReturn = s => unit((s-27)/.2);
+export function stationImageOpacity(i,s) {
+  const exits=[[18.25,18.5],[20.35,20.6],[22.7,22.95],[24.75,25.05]];
+  const exit=exits[i];
+  return (1-productFold(s))*Math.max(exit?1-unit((s-exit[0])/(exit[1]-exit[0])):0,productFoldReturn(s));
+}
+export const productNavScrim = s => unit((s-15.8)/.15)*(1-unit((s-28.65)/.15));
+export const productTubeOpacity = s => 1-unit((s-29.27)/.09);
 // Retain the handover windows, with a quiet middle tenth between captions.
 export function captionPose(i, s) {
   const joins = [[18.1,18.55],[20.1,20.5],[22.55,22.85],[24.65,24.95]];
