@@ -23,30 +23,34 @@ export function ContactRows({lang='en', className=''}) {
 }
 
 const quietMotion=()=>matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('quiet');
-// The card grows out of the status pill (from its top-right, where the pill sits) and folds back into it; on phones,
-// where it is a bottom sheet, it slides up. The content follows line by line. The clip first opens to the card's own
-// 24px shape, then widens past it so the shadow fades in.
+// The card grows out of the status pill: from a small card at the pill's centre it scales up and fades in, and it
+// shrinks back into the pill; on phones, where it is a bottom sheet, it slides up. Only transform and opacity move, so
+// the compositor keeps it smooth while the homepage's 3D scene keeps the main thread busy. The content follows line
+// by line.
 function cardFrames(card, pill) {
   const c=card.getBoundingClientRect(), p=pill?.getBoundingClientRect();
   if(matchMedia('(max-width:600px)').matches) return [{transform:'translateY(100%)'},{transform:'none'}];
   if(!p?.width) return [{opacity:0,transform:'translateY(-6px) scale(.97)'},{opacity:1,transform:'none'}];
-  return [{transform:`translate(${p.right-c.right}px,${p.top-c.top}px)`,clipPath:`inset(0 0 ${Math.max(0,c.height-p.height)}px ${Math.max(0,c.width-p.width)}px round ${p.height/2}px)`},
-    {offset:.82,transform:'none',clipPath:'inset(0 0 0 0 round 24px)'},
-    {transform:'none',clipPath:'inset(-80px -80px -100px -80px round 104px)'}];
+  const origin=`${Math.min(c.width,Math.max(0,p.left+p.width/2-c.left)).toFixed(1)}px 0px`;
+  return [{transformOrigin:origin,transform:`translateY(${(p.top+p.height/2-c.top).toFixed(1)}px) scale(.16)`,opacity:0},
+    {offset:.3,opacity:1},
+    {transformOrigin:origin,transform:'none',opacity:1}];
 }
 const reversed=frames=>frames.slice().reverse().map(frame=>'offset' in frame?{...frame,offset:1-frame.offset}:frame);
 const cardParts=card=>[card.querySelector('header'),card.querySelector('.contact-availability'),...card.querySelectorAll('.contact-row'),card.querySelector('.contact-close')].filter(Boolean);
+const stopMotion=card=>{card.getAnimations({subtree:true}).forEach(a=>a.cancel());card.classList.remove('is-closing');};
 function openCard(card, pill) {
-  card.getAnimations({subtree:true}).forEach(a=>a.cancel());card.classList.remove('is-closing');
-  if(quietMotion())return;
-  card.animate(cardFrames(card,pill),{duration:560,easing:'cubic-bezier(.32,.72,0,1)'});
-  cardParts(card).forEach((part,i)=>part.animate([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:380,delay:170+i*45,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'}));
+  stopMotion(card);
+  if(quietMotion())return Promise.resolve();
+  cardParts(card).forEach((part,i)=>part.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:440,delay:190+i*40,easing:'cubic-bezier(.25,.75,.25,1)',fill:'backwards'}));
+  return card.animate(cardFrames(card,pill),{duration:600,easing:'cubic-bezier(.25,.75,.25,1)'}).finished;
 }
 function closeCard(card, pill) {
+  stopMotion(card);
   if(quietMotion())return Promise.resolve();
   card.classList.add('is-closing');
-  cardParts(card).forEach(part=>part.animate([{opacity:1},{opacity:0}],{duration:120,easing:'ease-out',fill:'forwards'}));
-  return card.animate(reversed(cardFrames(card,pill)),{duration:340,delay:60,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).finished;
+  cardParts(card).forEach(part=>part.animate([{opacity:1},{opacity:0}],{duration:150,easing:'ease-out',fill:'forwards'}));
+  return card.animate(reversed(cardFrames(card,pill)),{duration:400,easing:'cubic-bezier(.45,0,.55,1)',fill:'forwards'}).finished;
 }
 
 export default function ContactPill({lang='en', hidden=false, tone='light'}) {
@@ -55,22 +59,27 @@ export default function ContactPill({lang='en', hidden=false, tone='light'}) {
   useEffect(()=>{if(open)setShown(true);},[open]);
   useLayoutEffect(()=>{
     if(!shown)return;
-    const panel=dialog.current;panel.showModal();openCard(panel,trigger.current);
-    const overflow=document.body.style.overflow;document.body.style.overflow='hidden';
-    panel.querySelector('button')?.focus();
-    return ()=>{panel.close();document.body.style.overflow=overflow;trigger.current?.focus({preventScroll:true});};
+    const panel=dialog.current;panel.showModal();panel.querySelector('button')?.focus();openCard(panel,trigger.current);
+    // The page underneath doesn't scroll while the card is open. Wheel and touch are stopped instead of hiding the page's
+    // overflow: that removed the scrollbar, shifting the page sideways and relaying it out in the middle of the motion.
+    // (On window: a listener on the dialog covers only the card's box, and the compositor scrolls the backdrop area without asking.)
+    const stop=e=>{const scrolls=panel.scrollHeight>panel.clientHeight+1;if(!(scrolls&&e.target!==panel&&panel.contains(e.target)))e.preventDefault();};
+    addEventListener('wheel',stop,{passive:false});addEventListener('touchmove',stop,{passive:false});
+    return ()=>{removeEventListener('wheel',stop);removeEventListener('touchmove',stop);panel.close();trigger.current?.focus({preventScroll:true});};
   },[shown]);
   useEffect(()=>{
     if(open||!shown)return;
     const panel=dialog.current;let alive=true;
     closeCard(panel,trigger.current).then(()=>{if(alive)setShown(false);},()=>{});
-    // opened again while folding: unfold from where it is
+    // opened again while folding: unfold from there
     return ()=>{alive=false;if(panel.isConnected)openCard(panel,trigger.current);};
   },[open,shown]);
   useEffect(()=>{if(hidden)dispatch('close');},[hidden]);
   // "Contact" in the nav or Menu on pages outside the homepage journey opens this card instead of reloading the homepage
   useEffect(()=>{const show=()=>dispatch('open');addEventListener('jl:contact',show);return()=>removeEventListener('jl:contact',show);},[]);
   const keyboard=e=>{
+    // keys that would scroll the page underneath (Space still presses a focused button)
+    if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(e.key)||(e.key===' '&&!e.target.closest('button,a')))e.preventDefault();
     if(e.key!=='Tab')return;
     const controls=[...dialog.current.querySelectorAll('a[href],button:not([disabled])')];
     e.preventDefault();controls[tabDestination(controls.indexOf(document.activeElement),controls.length,e.shiftKey)]?.focus();
