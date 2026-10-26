@@ -256,15 +256,18 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)wake();else{release();stop();}});
     const sizeObserver=new ResizeObserver(resize),routeObserver=new MutationObserver(visibility);
     observer.observe(host);sizeObserver.observe(host);routeObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
-    // Opened straight onto a page that covers the home (/systems, /works, /other-project): fetch the office (about 8 MB)
-    // only once the home is showing. Closing a page removes the class and dispatches visibilitychange.
+    // Opened straight onto a page that covers the home (/systems, /works, /other-project): that page loads first, and the
+    // office (about 8 MB) follows 4 s later, so it is ready when the home shows; at once if the home shows sooner.
+    // With Save-Data on, it waits for the home. Closing a page removes the class and dispatches visibilitychange.
     let stopWaiting=()=>{};
     const homeShown=new Promise(resolve=>{
       const covered=()=>/^\/(works|systems|other-project)(\/|$)/.test(location.pathname)||document.body.classList.contains('portfolio-route-open');
-      const check=()=>{if(covered())return;stopWaiting();resolve();};
+      const go=()=>{stopWaiting();resolve();};
+      const check=()=>{if(!covered())go();};
       const watch=new MutationObserver(check);watch.observe(document.body,{attributes:true,attributeFilter:['class']});
+      const later=navigator.connection?.saveData?0:setTimeout(go,4000);
       document.addEventListener('visibilitychange',check);addEventListener('popstate',check);
-      stopWaiting=()=>{watch.disconnect();document.removeEventListener('visibilitychange',check);removeEventListener('popstate',check);};
+      stopWaiting=()=>{clearTimeout(later);watch.disconnect();document.removeEventListener('visibilitychange',check);removeEventListener('popstate',check);};
       check();
     });
     root.addEventListener('office:progress',wake);document.addEventListener('visibilitychange',visibility);
