@@ -5,7 +5,7 @@ const importers={
  roco:()=>import('./RocoCase'), league:()=>import('./LeagueCase'), nexus:()=>import('./NexusCase'),
  maoxianjia:()=>import('./MaoxianjiaCase'),
  model:()=>import('./RocoModel'), vibecoding:()=>import('./VibeCoding'),
- 'brand-motion':()=>import('./BrandMotion'), field01:()=>import('./Field01'),
+ 'brand-motion':()=>import('./BrandMotion'), 'touch-on-beat':()=>import('./TouchOnBeat'), field01:()=>import('./Field01'),
  // /product, its case studies and /for/* share one module.
  product:()=>import('../product/ProductRoute'),
 };

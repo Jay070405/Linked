@@ -14,7 +14,9 @@ const preview='/assets/vibecoding/field01-exploded.webp';
 const featured=[
  {title:'FIELD / 01',href:'/other-project/field01',cover,preview,description:{en:'A camera to turn, take apart, and explore.',zh:'旋转、拆解，用手势探索一台相机。'},alt:{en:'FIELD / 01 — interactive camera',zh:'FIELD / 01 相机交互项目'}},
  {title:'JAY LIN — Brand & Motion',href:'/other-project/jay-lin',cover:'/assets/other-project/jay-lin/identity.png',preview:'/assets/other-project/jay-lin/logo-poster.jpg',description:{en:'A personal identity, a logo in motion, and a portfolio film.',zh:'个人品牌、Logo 动效与作品集展示影片。'},alt:{en:'JAY LIN — brand identity and motion design',zh:'JAY LIN 个人品牌与动态设计'}},
+ {title:'一拍一触 — Touch on Beat',href:'/other-project/touch-on-beat',cover:'/assets/other-project/touch-on-beat/cover.webp',preview:'/assets/other-project/touch-on-beat/preview.webp',description:{en:'A UI motion music video: every sung syllable, a touch.',zh:'UI 交互动态 MV：每个唱出的字，都是一次触碰。'},alt:{en:'Touch on Beat — UI motion music video',zh:'一拍一触 UI 交互动态 MV'}},
 ];
+const count=String(featured.length).padStart(2,'0');
 const projects=Array.from({length:12},(_,i)=>({number:String(i+1).padStart(2,'0'),ready:i<featured.length,shape:['wide','brand','small','wide','square','portrait','wide','small','square','wide','portrait','square'][i],...featured[i]}));
 
 export default function VibeCoding({lang,reduced,onNavigate,onOpenProject,onProjectIntent,isOpening}){
@@ -67,7 +69,7 @@ export default function VibeCoding({lang,reduced,onNavigate,onOpenProject,onProj
    <div className="vc-kicker"><span>03 / OTHER PROJECT</span><span>IDEAS IN PLAY · 2026</span></div>
    <div className="vc-heading-line"><h1 aria-label="Other Project.">{reduced?'Other Project.':<TextType text="Other Project." as="span" typingSpeed={105} initialDelay={260} loop={false} cursorCharacter="_" cursorBlinkDuration={.7}/>}</h1>
     <ScrollReveal key={lang} reduced={reduced} containerClassName="vc-intro" as="p">{en?'Identity, motion, and things to play with.':'品牌、动效，以及可以玩的想法。'}</ScrollReveal></div>
-   <div className="vc-gallery-index"><span>{en?'02 PROJECTS / MORE TO COME':'02 个作品 / 持续探索'}</span><span>{en?'SCROLL INTO THE PROJECTS':'滚动，探索作品'} <b>↓</b></span></div>
+   <div className="vc-gallery-index"><span>{en?`${count} PROJECTS / MORE TO COME`:`${count} 个作品 / 持续探索`}</span><span>{en?'SCROLL INTO THE PROJECTS':'滚动，探索作品'} <b>↓</b></span></div>
   </header>
   <section className="vc-grid" aria-label={en?'Other projects':'其他作品'}>
    {projects.map((project,index)=>{

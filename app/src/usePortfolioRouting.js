@@ -14,6 +14,7 @@ export function resolvePath(pathname) {
   if (path === '/other-project' || path === '/vibecoding') return { type: 'vibecoding' };
   if (path === '/other-project/field01' || path === '/vibecoding/field01') return { type: 'field01' };
   if (path === '/other-project/jay-lin') return { type: 'brand-motion' };
+  if (path === '/other-project/touch-on-beat') return { type: 'touch-on-beat' };
   if (path === '/systems/roco/model') return { type: 'model' };
   // research cases that moved from /product to /systems open their Systems page
   const product = resolveProductPath(path);
@@ -34,6 +35,7 @@ export function routeFor(page) {
   if (page?.type === 'vibecoding') return '/other-project';
   if (page?.type === 'field01') return '/other-project/field01';
   if (page?.type === 'brand-motion') return '/other-project/jay-lin';
+  if (page?.type === 'touch-on-beat') return '/other-project/touch-on-beat';
   if (page?.type === 'model') return '/systems/roco/model';
   if (['product', 'product-case', 'for', 'about'].includes(page?.type)) return productRouteFor(page);
   if (page?.type === 'art') return allWorks.find(w => w.id === page.item?.id || w.slug === page.item?.slug)?.href || null;
@@ -53,7 +55,7 @@ function historyState(meta) {
   return next;
 }
 function parentPath(page) {
-  if (page?.type === 'field01' || page?.type === 'brand-motion') return '/other-project';
+  if (['field01', 'brand-motion', 'touch-on-beat'].includes(page?.type)) return '/other-project';
   if (page?.type === 'art') return '/works/archive';
   if (page?.type === 'archive') return '/works';
   if (page?.type === 'system') return '/systems';

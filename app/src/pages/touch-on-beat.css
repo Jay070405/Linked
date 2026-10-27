@@ -1,0 +1,19 @@
+/* Touch on Beat reuses the Brand & Motion page; these rules add its stills and notes. */
+.tob-page .brand-motion-title h1{letter-spacing:.02em}
+.tob-page .brand-motion-title i{color:#e0457f}
+.tob-page .brand-motion-footer p{font-family:'TikTok Sans','PingFang SC','Microsoft YaHei',sans-serif;font-style:normal;font-size:18px;letter-spacing:.06em}
+.tob-section{max-width:1440px;margin:0 auto 104px}
+.tob-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;border-top:1px solid #14141625;padding-top:26px;margin-bottom:28px}
+.tob-section-head h2{font-size:clamp(26px,3.2vw,44px);line-height:1.15;font-weight:450;letter-spacing:-.035em}
+.tob-section-head>span,.tob-notes span{font:11px/1.6 Mono,monospace;color:#686970;flex-shrink:0}
+.tob-stills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 24px}
+.tob-stills figure{margin:0}
+.tob-stills img{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#ededee;border:1px solid #14141612}
+.tob-stills figcaption{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-top:13px}
+.tob-stills figcaption span:first-child{font-size:13px;letter-spacing:.18em;color:#141416}
+.tob-stills figcaption span:last-child{font:10px/1.6 Mono,monospace;letter-spacing:.05em;color:#686970;text-align:right}
+.tob-notes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
+.tob-notes h3{margin:14px 0 0;font-size:20px;line-height:1.3;font-weight:500;letter-spacing:-.02em}
+.tob-notes p{margin-top:10px;max-width:400px;font-size:13px;line-height:1.85;color:#686970}
+@media(max-width:900px){.tob-stills{grid-template-columns:repeat(2,minmax(0,1fr))}.tob-notes{grid-template-columns:1fr;gap:30px}}
+@media(max-width:600px){.tob-section{margin-bottom:64px}.tob-section-head{padding-top:20px;margin-bottom:20px}.tob-section-head h2{font-size:25px}.tob-section-head>span,.tob-notes span{font-size:9px}.tob-stills{grid-template-columns:1fr;gap:28px}.tob-stills figcaption span:first-child{font-size:12px}.tob-stills figcaption span:last-child{font-size:8px}.tob-notes h3{font-size:18px}.tob-notes p{font-size:12px}.tob-page .brand-motion-footer p{font-size:16px}}
