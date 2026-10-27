@@ -4,7 +4,9 @@ import './walkthrough.css';
 
 /* The walkthrough videos (public/video, served as plain URLs so the build never depends on them):
    for each case, "the case" (the page explained, about a minute) and "the app" (the prototype in use, about a minute
-   and a half), each as MP4 (H.264, first, for Safari), WebM (VP9) and a JPG poster, 1440 × 900.
+   and a half), each as MP4 (H.264, first, for Safari), WebM (VP9) and a JPG poster, 1440 × 900. Cases in FILMS also
+   have "the film", a 30-second launch film without sound (made in aigc-vibecoding/product-films): MP4 only,
+   1920 × 1080 at 60 fps, the last choice in the player's switch.
 
    A world wraps its page in <WalkthroughProvider>, inside its own root element, so the player is drawn with that
    world's tokens (--wt-*, set in each world's stylesheet) and follows its light or dark theme. <WatchButton> opens the
@@ -19,17 +21,21 @@ const STEMS = {
   // recorded later: the page shows its openers only once the files exist (worlds/arden/video.js)
   arden: 'd5-arden',
 };
+const FILMS = ['ready-for-agents', 'last-100-feet', 'choose-not-to-lose'];
 const OPTIONS = [
   {id: 'page', label: UI.caseVideo, length: UI.oneMin},
   {id: 'app', label: UI.appVideo, length: UI.oneAndHalfMin},
 ];
+const FILM = {id: 'film', label: UI.filmVideo, length: UI.halfMin};
+const optionsOf = slug => FILMS.includes(slug) ? [...OPTIONS, FILM] : OPTIONS;
 
-/** {mp4, webm, poster} for a case's `which` video ('page' or 'app'), or null for a case without videos. */
+/** {mp4, webm, poster} for a case's `which` video ('page', 'app' or 'film'), or null for a case without videos. The
+    film has no WebM. */
 export function videoOf(slug, which) {
   const stem = STEMS[slug];
   if (!stem) return null;
   const base = `/video/${stem}-${which}`;
-  return {mp4: `${base}.mp4`, webm: `${base}.webm`, poster: `${base}.jpg`};
+  return {mp4: `${base}.mp4`, webm: which === 'film' ? null : `${base}.webm`, poster: `${base}.jpg`};
 }
 
 const Ctx = createContext(null);
@@ -109,7 +115,8 @@ function Player({slug, title, start, opener, reduced, onClose}) {
   const [which, setWhich] = useState(start);
   const [failed, setFailed] = useState(null);
   const v = videoOf(slug, which);
-  const option = OPTIONS.find(o => o.id === which);
+  const options = optionsOf(slug);
+  const option = options.find(o => o.id === which);
 
   useLayoutEffect(() => {
     const d = dialog.current;
@@ -158,22 +165,23 @@ function Player({slug, title, start, opener, reduced, onClose}) {
         </button>
       </div>
       <div className="wt-switch" role="group" aria-label={t(UI.whichVideo)}>
-        {OPTIONS.map(o => <button key={o.id} type="button" className="wt-opt" aria-pressed={which === o.id} onClick={() => choose(o.id)}>
+        {options.map(o => <button key={o.id} type="button" className="wt-opt" aria-pressed={which === o.id} onClick={() => choose(o.id)}>
           <span className="wt-opt-label">{t(o.label)}</span><span className="wt-opt-len">{zh ? `（${t(o.length)}）` : ` (${t(o.length)})`}</span>
         </button>)}
       </div>
       <div className="wt-stage">
         <video key={which} ref={video} className="wt-video" controls playsInline preload="none" poster={v.poster} inert={failed === which || undefined}
           aria-label={`${t(option.label)}${zh ? '，' : ', '}${t(option.length)}`} aria-describedby={`${id}-note`}>
-          <source src={v.mp4} type="video/mp4"/>
-          <source src={v.webm} type="video/webm" onError={() => setFailed(which)}/>
+          {/* an error on the last source means none of them loaded */}
+          <source src={v.mp4} type="video/mp4" onError={v.webm ? undefined : () => setFailed(which)}/>
+          {v.webm ? <source src={v.webm} type="video/webm" onError={() => setFailed(which)}/> : null}
         </video>
         {failed === which ? <div className="wt-missing">
           <p aria-hidden="true">{t(UI.videoMissing)}</p>
           {which === 'page' ? <button type="button" className="wt-alt" onClick={chooseApp}>{t(UI.watchAppInstead)}</button> : null}
         </div> : null}
       </div>
-      <p id={`${id}-note`} className="wt-sr">{t(UI.captionsBurnedIn)}</p>
+      <p id={`${id}-note`} className="wt-sr">{t(which === 'film' ? UI.filmSilent : UI.captionsBurnedIn)}</p>
       <p className="wt-sr" aria-live="polite">{failed === which ? t(UI.videoMissing) : ''}</p>
     </div>
     <span className="wt-guard" tabIndex={0} onFocus={guard(false)}/>
