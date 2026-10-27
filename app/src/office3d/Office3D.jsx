@@ -11,7 +11,7 @@ import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import LiquidOffice from '../LiquidOffice';
 import { STUDIO_TITLE_FONT } from '../studio-title-composite';
-import { preloadOffice } from './model';
+import { OFFICE_OPENING, preloadOffice } from './model';
 import { cameraPose, CAMERA_FOV } from './camera';
 import { pickupPlane, pickupPosition } from './drag';
 import { DOLL_ID, DOLL_OUTFITS, loadCompanions, loadDollOutfit } from './companions';
@@ -41,7 +41,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
   const hoverRef = useRef(null), langRef = useRef(lang);
   langRef.current = lang;
   modeRef.current = onMode;
-  const [mode, setMode] = useState('loading'), [lostCount, setLostCount] = useState(0);
+  const [mode, setMode] = useState(() => reducedMotion ? 'image' : 'loading'), [lostCount, setLostCount] = useState(0);
   const [speakerPosition, setSpeakerPosition] = useState(null);
   const [wardrobePosition,setWardrobePosition]=useState(null),[outfitId,setOutfitId]=useState('classic');
   const [outfitLoading,setOutfitLoading]=useState(''),[outfitError,setOutfitError]=useState(false);
@@ -87,7 +87,8 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     function resize() {
       width=Math.max(1,host.clientWidth);height=Math.max(1,host.clientHeight);
       if (!renderer) return;
-      const ratio=Math.min(devicePixelRatio||1,width<700?1.2:1.5,2200/Math.max(width,height));
+      // scripts/capture-office-opening.mjs lifts the 2200 px cap to render the opening stills at full height
+      const ratio=Math.min(devicePixelRatio||1,width<700?1.2:1.5,(globalThis.__officeMaxPixels||2200)/Math.max(width,height));
       renderer.setPixelRatio(ratio);renderer.setSize(width,height,false);
       composer?.setPixelRatio(ratio);composer?.setSize(width,height);
       camera.aspect=width/height;camera.updateProjectionMatrix();
@@ -368,7 +369,7 @@ export default function Office3D({ progressRef, reducedMotion, onMode, lang = 'z
     };
   },[reducedMotion,progressRef]);
   return <div ref={hostRef} className="office-3d" data-mode={mode}>
-    {mode!=='3d'&&<LiquidOffice reducedMotion allowAlternate={false} progressRef={progressRef}/>}
+    {mode==='image'?<LiquidOffice reducedMotion allowAlternate={false} progressRef={progressRef}/>:<picture>{OFFICE_OPENING.slice(0,-1).map(still=><source key={still.src} media={still.media} srcSet={still.src}/>)}<img className="office-3d-opening" src={OFFICE_OPENING.at(-1).src} alt="" aria-hidden="true" draggable="false" decoding="async" fetchPriority="high"/></picture>}
     <canvas ref={canvasRef} className={mode==='3d'?'is-ready':''} tabIndex={mode==='3d'?0:-1}
       aria-label={english?'Interactive office. Drag objects to lift. Click the doll to change outfits. Keyboard: L switches the lamp, S opens volume, W opens the wardrobe.':'互动办公室。拖动物件拎起，单击玩偶换装。键盘 L 开关灯，S 调节音量，W 打开衣橱。'}
       aria-keyshortcuts="L S W" onKeyDown={event=>{

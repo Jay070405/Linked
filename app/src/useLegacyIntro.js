@@ -58,6 +58,7 @@ export default function useLegacyIntro({ rootRef, progressRef, reduced }) {
       roomWidth = Math.max(width, height * 1.6014); roomHeight = roomWidth / 1.6014;
       room.style.width = `${roomWidth}px`; room.style.height = `${roomHeight}px`;
       room.style.marginLeft = `${-roomWidth / 2}px`; room.style.marginTop = `${-roomHeight / 2}px`;
+      room.style.setProperty('--office-view-w', `${roomWrap.clientWidth}px`); room.style.setProperty('--office-view-h', `${roomWrap.clientHeight}px`);
       if (!reduced) render(clock.p);
     }
     function stopTour() {
@@ -86,7 +87,7 @@ export default function useLegacyIntro({ rootRef, progressRef, reduced }) {
       const bounds = stage.getBoundingClientRect();
       if (bounds.bottom <= 0 || bounds.top >= innerHeight) return;
       const x = event.clientX / width, y = event.clientY / height;
-      if (clock.p < .165 && root.dataset.officeRenderer !== '3d') gsap.to(roomWrap, { x: (x - .5) * 8, y: (y - .5) * 5, scale: 1.013, duration: .2, overwrite: true });
+      if (clock.p < .165 && root.dataset.officeRenderer === 'image') gsap.to(roomWrap, { x: (x - .5) * 8, y: (y - .5) * 5, scale: 1.013, duration: .2, overwrite: true });
       pointer.style.opacity = clock.p < .13 ? '1' : '0';
       pointer.style.transform = `translate(${event.clientX - bounds.left}px,${event.clientY - bounds.top}px)`;
       pointer.dataset.over = event.target instanceof Element && event.target.closest('a,button') ? 'true' : 'false';

@@ -1,6 +1,8 @@
 .office-3d{position:absolute;inset:0;width:100%;height:100%;background:#111a16;overflow:hidden;user-select:none;-webkit-user-select:none}
 .office-3d>canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;pointer-events:auto;touch-action:pan-y}
-.office-3d>canvas.is-ready{opacity:1}
+.office-3d>canvas.is-ready{opacity:1;transition:opacity .45s ease-out}
+/* the live room renders at the hero's size, not the 1.6:1 box the painted room fills, so the still does too (useLegacyIntro measure()) */
+.office-3d-opening{position:absolute;left:50%;top:50%;width:var(--office-view-w,100%);height:var(--office-view-h,100%);transform:translate(-50%,-50%);display:block;object-fit:cover;pointer-events:none;user-select:none;-webkit-user-select:none}
 .office-3d-description{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .office-hover-label{position:absolute;z-index:3;pointer-events:none;padding:8px 12px;border:1px solid #ffffff30;background:#141610d9;backdrop-filter:blur(12px);color:#f7f1e7;font-size:10px;letter-spacing:.07em;border-radius:3px;box-shadow:0 3px 16px #0002}
 .office-hover-label:not([hidden]){animation:office-label-in .16s ease-out both}
@@ -24,8 +26,9 @@
 .office-tools .expressive-title,.office-tools .expressive-word{line-height:inherit}
 @media(prefers-reduced-motion:reduce){.office-hover-label:not([hidden]){animation:none}}
 .legacy-hero[data-office-renderer="3d"] .office-camera{inset:0!important;width:100%!important;height:100%!important;margin:0!important;transform:none!important}
-.legacy-hero[data-office-renderer="3d"] .legacy-office-wrap{transform:none!important}
-.legacy-hero[data-office-renderer="3d"] .legacy-screen-glint{display:none}
+/* only the painted room sways with the pointer and needs the glint; the opening still holds still like the room it stands in for */
+.legacy-hero:not([data-office-renderer="image"]) .legacy-office-wrap{transform:none!important}
+.legacy-hero:not([data-office-renderer="image"]) .legacy-screen-glint{display:none}
 .office-tools{position:absolute;z-index:4;right:3.3vw;bottom:92px;display:flex;flex-direction:column;align-items:flex-end;gap:12px;color:#eee9df;transition:opacity .25s}
 .office-drag-hint{font-size:11px;letter-spacing:.06em;text-shadow:0 1px 5px #000b}
 .office-tool-buttons{display:flex;gap:8px}

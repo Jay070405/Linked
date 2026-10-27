@@ -1,7 +1,7 @@
 import {useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import gsap from 'gsap';
 import BrandConstruction from './BrandConstruction';
-import {preloadOffice} from '../office3d/model';
+import {officeOpening,preloadOffice} from '../office3d/model';
 
 export default function LoadingScreen({lang='zh',reduced=false,onDone}) {
  const dialog=useRef(null),done=useRef(onDone),construction=useRef(null);
@@ -26,7 +26,7 @@ export default function LoadingScreen({lang='zh',reduced=false,onDone}) {
   // The film still owns its original independent readiness and seek timeline.
   // a page that opens over the home (/works, /systems, /other-project) doesn't wait for the office it covers
   const covered=/^\/(works|systems|other-project)(\/|$)/.test(location.pathname);
-  const sources=covered?['/assets/logo.png']:['/assets/logo.png','/assets/studio-clean.webp'];
+  const sources=covered?['/assets/logo.png']:['/assets/logo.png',reduced?'/assets/studio-clean.webp':officeOpening()];
   const ready=()=>{if(alive)setResources(true);};
   const timeout=setTimeout(ready,5500);
   Promise.allSettled([document.fonts.ready,...sources.map(picture),...(!reduced&&!covered?[preloadOffice()]:[])]).then(ready);
