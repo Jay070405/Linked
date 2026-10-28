@@ -48,14 +48,34 @@
   font:600 15px/1.25 var(--wt-font,system-ui);cursor:pointer;transition:transform 140ms cubic-bezier(.23,1,.32,1)}
 .wt .wt-alt:active{transform:scale(.98)}
 
+/* the choice the button opens on: a card per video, side by side (stacked rows on phones) */
+.wt .wt-choose{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:18px 16px}
+.wt .wt-pick{display:flex;flex-direction:column;gap:10px;min-width:0;padding:0;border:0;border-radius:var(--wt-video-radius,calc(var(--wt-radius,14px) * .6));
+  background:transparent;color:var(--wt-ink,#161616);font-family:var(--wt-font,system-ui);text-align:left;cursor:pointer;transition:transform 140ms cubic-bezier(.23,1,.32,1)}
+.wt .wt-pick:active{transform:scale(.98)}
+.wt .wt-pick-shot{position:relative;display:block;width:100%;aspect-ratio:16/10;overflow:hidden;border-radius:var(--wt-video-radius,calc(var(--wt-radius,14px) * .6));
+  background:#000;box-shadow:0 0 0 1px var(--wt-line,rgb(0 0 0 / .14));transition:box-shadow 160ms ease}
+.wt .wt-pick-shot img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 320ms cubic-bezier(.23,1,.32,1)}
+.wt .wt-pick-play{position:absolute;inset:0;display:grid;place-items:center;color:#fff}
+.wt .wt-pick-play .wt-icon{width:44px;height:44px;border-radius:50%;background:rgb(0 0 0 / .5);filter:drop-shadow(0 2px 8px rgb(0 0 0 / .3));transition:transform 200ms cubic-bezier(.23,1,.32,1)}
+.wt .wt-pick-text{display:grid;gap:3px;min-width:0;padding:0 2px}
+.wt .wt-pick-title{font:600 16px/1.3 var(--wt-font,system-ui)}
+.wt .wt-pick-len{font-weight:450;color:var(--wt-dim,#525252);white-space:pre}
+.wt .wt-pick-note{font:450 14px/1.4 var(--wt-font,system-ui);color:var(--wt-dim,#525252)}
+@media(hover:hover) and (pointer:fine){
+  .wt .wt-pick:hover .wt-pick-shot{box-shadow:0 0 0 2px var(--wt-ink,#161616)}
+  .wt .wt-pick:hover .wt-pick-shot img{transform:scale(1.03)}
+  .wt .wt-pick:hover .wt-pick-play .wt-icon{transform:scale(1.08)}
+}
+
 /* the entrance: a short fade and settle; nothing with reduced motion */
 .wt[open] .wt-panel{animation:wt-in 220ms cubic-bezier(.23,1,.32,1)}
 .wt[open]::backdrop{animation:wt-fade 200ms ease-out}
 @keyframes wt-in{from{opacity:0;transform:translateY(8px) scale(.985)}}
 @keyframes wt-fade{from{opacity:0}}
 .wt.is-still .wt-panel,.wt.is-still::backdrop{animation:none}
-.wt.is-still :is(.wt-opt,.wt-close){transition:none}
-@media(prefers-reduced-motion:reduce){.wt[open] .wt-panel,.wt[open]::backdrop{animation:none}.wt :is(.wt-opt,.wt-close){transition:none}}
+.wt.is-still :is(.wt-opt,.wt-close,.wt-pick,.wt-pick-shot,.wt-pick-shot img,.wt-pick-play .wt-icon){transition:none}
+@media(prefers-reduced-motion:reduce){.wt[open] .wt-panel,.wt[open]::backdrop{animation:none}.wt :is(.wt-opt,.wt-close,.wt-pick,.wt-pick-shot,.wt-pick-shot img,.wt-pick-play .wt-icon){transition:none}}
 
 @media(max-width:560px){
   .wt{padding-left:12px;padding-right:12px}
@@ -63,6 +83,12 @@
   .wt .wt-title{font-size:17px}
   .wt .wt-opt{padding:4px 8px;font-size:14px}
   .wt .wt-missing{gap:12px;padding:12px;font-size:15px}
+  .wt .wt-choose{grid-template-columns:1fr;gap:12px}
+  .wt .wt-pick{flex-direction:row;align-items:center;gap:14px}
+  .wt .wt-pick-shot{flex:none;width:128px}
+  .wt .wt-pick-play .wt-icon{width:32px;height:32px}
+  .wt .wt-pick-title{font-size:15px}
+  .wt .wt-pick-note{font-size:13.5px}
 }
 @media(max-height:520px){
   .wt .wt-panel{gap:8px;padding-top:8px;padding-bottom:10px}

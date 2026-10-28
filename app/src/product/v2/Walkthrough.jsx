@@ -6,11 +6,12 @@ import './walkthrough.css';
    for each case, "the case" (the page explained, about a minute) and "the app" (the prototype in use, about a minute
    and a half), each as MP4 (H.264, first, for Safari), WebM (VP9) and a JPG poster, 1440 × 900. Cases in FILMS also
    have "the film", a 30-second launch film without sound (made in aigc-vibecoding/product-films): MP4 only,
-   1920 × 1080 at 60 fps, the last choice in the player's switch.
+   1920 × 1080 at 60 fps, offered first.
 
    A world wraps its page in <WalkthroughProvider>, inside its own root element, so the player is drawn with that
    world's tokens (--wt-*, set in each world's stylesheet) and follows its light or dark theme. <WatchButton> opens the
-   player on the case video; <WatchCard> sits beside the live prototype and opens it on the app video.
+   player on a choice of the case's videos (their posters, nothing plays until one is picked); <WatchCard> sits beside
+   the live prototype and opens it straight on the app video.
    Nothing touches /video/ until the player opens (or, for the card's poster, until the card is near the screen). */
 
 const STEMS = {
@@ -23,11 +24,11 @@ const STEMS = {
 };
 const FILMS = ['ready-for-agents', 'last-100-feet', 'choose-not-to-lose'];
 const OPTIONS = [
-  {id: 'page', label: UI.caseVideo, length: UI.oneMin},
-  {id: 'app', label: UI.appVideo, length: UI.oneAndHalfMin},
+  {id: 'page', label: UI.caseVideo, length: UI.oneMin, note: UI.caseVideoNote},
+  {id: 'app', label: UI.appVideo, length: UI.oneAndHalfMin, note: UI.appVideoNote},
 ];
-const FILM = {id: 'film', label: UI.filmVideo, length: UI.halfMin};
-const optionsOf = slug => FILMS.includes(slug) ? [...OPTIONS, FILM] : OPTIONS;
+const FILM = {id: 'film', label: UI.filmVideo, length: UI.halfMin, note: UI.filmVideoNote};
+const optionsOf = slug => FILMS.includes(slug) ? [FILM, ...OPTIONS] : OPTIONS;
 
 /** {mp4, webm, poster} for a case's `which` video ('page', 'app' or 'film'), or null for a case without videos. The
     film has no WebM. */
@@ -39,13 +40,13 @@ export function videoOf(slug, which) {
 }
 
 const Ctx = createContext(null);
-/** {slug, open(which, opener)} from the nearest provider. */
+/** {slug, open(which, opener)} from the nearest provider; `which` null opens on the choice. */
 export const useWalkthrough = () => useContext(Ctx);
 
 /** Holds the player for one case page. `title` names the case in the player's heading. */
 export function WalkthroughProvider({slug, title, reduced = false, children}) {
   const [shown, setShown] = useState(null);     // {which, opener} while the player is open
-  const open = useCallback((which = 'page', opener = null) => setShown({which, opener}), []);
+  const open = useCallback((which = null, opener = null) => setShown({which, opener}), []);
   const value = useMemo(() => ({slug, open}), [slug, open]);
   if (!STEMS[slug]) return children;
   return <Ctx.Provider value={value}>
@@ -56,7 +57,7 @@ export function WalkthroughProvider({slug, title, reduced = false, children}) {
 
 /** The button near the top of a case page. Pass the world's own button classes; the icon and the words are the same
     everywhere unless `children` says otherwise. */
-export function WatchButton({className = '', which = 'page', icon = <PlayIcon/>, children, ...rest}) {
+export function WatchButton({className = '', which = null, icon = <PlayIcon/>, children, ...rest}) {
   const {t} = useCaseLang();
   const ctx = useWalkthrough();
   if (!ctx) return null;
@@ -104,17 +105,18 @@ function lockScroll(node) {
 
 const FOCUSABLE = 'button:not([disabled]), [href], video[controls], [tabindex]:not([tabindex="-1"]):not(.wt-guard)';
 
-/** The player: a modal <dialog> with the case's name, a switch between the two videos, and the video. Focus goes to
-    the close button and stays inside (Tab wraps); Esc, the close button or a click outside the panel close it, and
-    focus goes back to the button that opened it. The page behind is inert and doesn't scroll. The chosen video plays
-    at once (it was asked for with a click), except with reduced motion, where it waits for Play. */
+/** The player: a modal <dialog> with the case's name, then either the choice (a card per video: poster, name, length,
+    what it shows) or a switch between the videos and the video. Focus goes to the close button and stays inside (Tab
+    wraps); Esc, the close button or a click outside the panel close it, and focus goes back to the button that opened
+    it. The page behind is inert and doesn't scroll. The chosen video plays at once (it was asked for with a click),
+    except with reduced motion, where it waits for Play. */
 function Player({slug, title, start, opener, reduced, onClose}) {
   const {t, zh} = useCaseLang();
   const id = useId();
   const dialog = useRef(null), video = useRef(null), closer = useRef(null), downOutside = useRef(false);
-  const [which, setWhich] = useState(start);
+  const [which, setWhich] = useState(start);    // null while the choice is showing
   const [failed, setFailed] = useState(null);
-  const v = videoOf(slug, which);
+  const v = which ? videoOf(slug, which) : null;
   const options = optionsOf(slug);
   const option = options.find(o => o.id === which);
 
@@ -137,8 +139,9 @@ function Player({slug, title, start, opener, reduced, onClose}) {
 
   const close = () => dialog.current?.close();
   const choose = next => { if (next !== which) { setFailed(null); setWhich(next); } };
-  // the fallback button goes away with the missing video: keep focus on the switch, now on the app
-  const chooseApp = () => { choose('app'); requestAnimationFrame(() => dialog.current?.querySelector('.wt-opt[aria-pressed="true"]')?.focus()); };
+  // the button that was clicked goes away (a card of the choice, or the fallback under a missing video): keep focus
+  // on the switch, on the video now playing
+  const pick = next => { choose(next); requestAnimationFrame(() => dialog.current?.querySelector('.wt-opt[aria-pressed="true"]')?.focus()); };
   // the two guards keep Tab inside: tabbing past either end lands on the control at the other end; focus that
   // arrives from outside (opening, or coming back from the browser's own UI) lands on the nearest real control
   const guard = atStart => e => {
@@ -164,6 +167,7 @@ function Player({slug, title, start, opener, reduced, onClose}) {
           <span className="wt-close-label">{t(UI.close)}</span>
         </button>
       </div>
+      {which ? <>
       <div className="wt-switch" role="group" aria-label={t(UI.whichVideo)}>
         {options.map(o => <button key={o.id} type="button" className="wt-opt" aria-pressed={which === o.id} onClick={() => choose(o.id)}>
           <span className="wt-opt-label">{t(o.label)}</span><span className="wt-opt-len">{zh ? `（${t(o.length)}）` : ` (${t(o.length)})`}</span>
@@ -178,10 +182,22 @@ function Player({slug, title, start, opener, reduced, onClose}) {
         </video>
         {failed === which ? <div className="wt-missing">
           <p aria-hidden="true">{t(UI.videoMissing)}</p>
-          {which === 'page' ? <button type="button" className="wt-alt" onClick={chooseApp}>{t(UI.watchAppInstead)}</button> : null}
+          {which === 'page' ? <button type="button" className="wt-alt" onClick={() => pick('app')}>{t(UI.watchAppInstead)}</button> : null}
         </div> : null}
       </div>
-      <p id={`${id}-note`} className="wt-sr">{t(which === 'film' ? UI.filmSilent : UI.captionsBurnedIn)}</p>
+      </> : <div className="wt-choose" role="group" aria-label={t(UI.whichVideo)}>
+        {options.map(o => <button key={o.id} type="button" className="wt-pick" onClick={() => pick(o.id)}>
+          <span className="wt-pick-shot" aria-hidden="true">
+            <img src={videoOf(slug, o.id).poster} alt="" decoding="async"/>
+            <span className="wt-pick-play"><PlayIcon/></span>
+          </span>
+          <span className="wt-pick-text">
+            <span className="wt-pick-title">{t(o.label)}<span className="wt-pick-len">{zh ? `（${t(o.length)}）` : ` · ${t(o.length)}`}</span></span>
+            <span className="wt-pick-note">{t(o.note)}</span>
+          </span>
+        </button>)}
+      </div>}
+      <p id={`${id}-note`} className="wt-sr">{t(!which ? UI.chooseVideo : which === 'film' ? UI.filmSilent : UI.captionsBurnedIn)}</p>
       <p className="wt-sr" aria-live="polite">{failed === which ? t(UI.videoMissing) : ''}</p>
     </div>
     <span className="wt-guard" tabIndex={0} onFocus={guard(false)}/>
