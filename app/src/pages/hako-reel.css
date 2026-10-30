@@ -1,0 +1,53 @@
+/* Hako's own parts of the story page: section titles framed by the film's selection box, and the ten beats as a reel
+   that runs sideways while the page scrolls. */
+
+/* the selection box: drawn from its top-left corner, then the four handles pop */
+.hk-page .hk-sel{position:relative;display:inline-block;padding:.04em .16em .1em;margin:-.04em -.16em -.1em}
+.hk-page .hk-sel::before{content:'';position:absolute;inset:0;border:1.5px solid var(--accent);background:#ff5a1f0d;transform-origin:0 0;transform:scale(.02);opacity:0;transition:transform .9s var(--soft) .2s,opacity .15s linear .2s}
+.hk-page .hk-sel i{position:absolute;width:9px;height:9px;margin:-5px;background:var(--bg);border:1.5px solid var(--accent);border-radius:2px;transform:scale(0);transition:transform .45s cubic-bezier(.3,1.5,.5,1) 1s}
+.hk-page .hk-sel i:nth-of-type(1){left:0;top:0}.hk-page .hk-sel i:nth-of-type(2){right:0;top:0}
+.hk-page .hk-sel i:nth-of-type(3){left:0;bottom:0}.hk-page .hk-sel i:nth-of-type(4){right:0;bottom:0}
+.hk-page .st-head.is-in .hk-sel::before{transform:none;opacity:1}
+.hk-page .st-head.is-in .hk-sel i{transform:none}
+.hk-page.st-still .hk-sel::before,.hk-page.st-still .hk-sel i{transform:none;opacity:1;transition:none}
+
+/* the reel: a tall track whose sticky stage slides the row of beats sideways */
+.hk-reel{position:relative;margin-inline:calc(50% - 50vw)}
+.hk-reel-stage{position:sticky;top:0;height:100svh;min-height:560px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:clamp(72px,10vh,104px) 0 clamp(64px,9vh,96px)}
+.hk-reel-row{list-style:none;margin:0;padding:0 6vw;display:flex;gap:clamp(20px,2.6vw,40px);width:max-content;will-change:transform}
+.hk-reel-row>li{flex:none;width:clamp(280px,38vw,620px);opacity:.38;transition:opacity .6s var(--soft)}
+.hk-reel-row>li.is-on{opacity:1}
+.hk-reel-row button{position:relative;display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;color:inherit}
+.hk-reel-row img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--surface);transition:transform .5s var(--soft)}
+.hk-reel-row button:hover img{transform:translate3d(0,-4px,0)}
+.hk-reel-play{position:absolute;left:12px;bottom:12px;padding:6px 10px;border-radius:99px;background:var(--accent);color:#0b0b0d;font:10px/1 Mono,monospace;letter-spacing:.06em;opacity:0;transform:translate3d(0,6px,0);transition:opacity .3s var(--soft),transform .4s var(--soft)}
+.hk-reel-row button:hover .hk-reel-play,.hk-reel-row button:focus-visible .hk-reel-play{opacity:1;transform:none}
+.hk-reel-text{padding-top:18px;max-width:520px}
+.hk-reel-text>.st-mono{color:var(--muted)}
+.hk-reel-text h3{margin:6px 0 10px;font-size:clamp(28px,3vw,46px);line-height:1;font-weight:500;letter-spacing:-.045em}
+.hk-reel-text p{margin:0;font-size:14px;line-height:1.7;color:#c9c7c0}
+.hk-reel-text .hk-reel-cam{margin-top:10px;color:var(--muted);font-size:13px}
+.hk-reel-cam .st-mono{display:inline-block;margin-right:10px;color:var(--muted)}
+.hk-reel-jobs{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.hk-reel-jobs li{display:inline-flex;align-items:center;gap:8px;padding:5px 10px 5px 8px;border:1px solid #ff5a1f66;border-radius:6px;font-size:12px;color:var(--accent)}
+.hk-reel-jobs i{width:9px;height:9px;border:1.5px solid var(--accent);border-radius:2px}
+.hk-reel-foot{position:absolute;left:6vw;right:max(6vw,150px);bottom:clamp(24px,4vh,40px);display:flex;align-items:center;gap:20px;color:var(--muted)}
+.hk-reel-foot>span:first-child{min-width:150px;color:var(--text)}
+.hk-reel-bar{position:relative;flex:1;height:2px;background:var(--line)}
+.hk-reel-bar i{position:absolute;inset:0;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+.hk-reel-bar b{position:absolute;top:-3px;width:1px;height:8px;background:#ffffff40}
+
+/* still: no pinning, the row scrolls sideways by hand */
+.hk-reel.is-still .hk-reel-stage{position:static;height:auto;min-height:0;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;padding:0 0 24px}
+.hk-reel.is-still .hk-reel-row>li{opacity:1;scroll-snap-align:center}
+.hk-reel.is-still .hk-reel-foot{display:none}
+
+@media(max-width:700px){
+ .hk-reel-row{padding:0 20px;gap:16px}
+ .hk-reel-row>li{width:min(78vw,420px)}
+ .hk-reel-text h3{font-size:28px}
+ .hk-reel-text p{font-size:13px}
+ .hk-reel-text .hk-reel-cam{display:none}
+ .hk-reel-foot{left:20px;right:120px;gap:12px}
+ .hk-reel-foot>span:first-child{min-width:0}
+}

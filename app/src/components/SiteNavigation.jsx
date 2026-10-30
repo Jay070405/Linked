@@ -35,8 +35,9 @@ function useNavigationTone(tone) {
     observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['data-nav-tone'] });
     const coverObserver = new MutationObserver(queue);
     coverObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('scroll', queue, { passive: true }); window.addEventListener('resize', queue); sample();
-    return () => { observer.disconnect(); coverObserver.disconnect(); cancelAnimationFrame(frame); window.removeEventListener('scroll', queue); window.removeEventListener('resize', queue); };
+    // capture, so pages that scroll inside their own viewport (the portfolio pages) retune it too
+    window.addEventListener('scroll', queue, { passive: true, capture: true }); window.addEventListener('resize', queue); sample();
+    return () => { observer.disconnect(); coverObserver.disconnect(); cancelAnimationFrame(frame); window.removeEventListener('scroll', queue, { capture: true }); window.removeEventListener('resize', queue); };
   }, [tone]);
   return tone === 'auto' ? detected : tone;
 }

@@ -13,6 +13,8 @@ import {initialLanguage, saveLanguage} from './language';
 
 // The loading screen plays once per visit: coming back to the homepage from a case or /about goes straight in.
 const ARRIVED='jl-arrived';
+// the product-film pages printed on paper, with dark frames on them: the navigation reads its tone from what is under it
+const LIGHT_FILMS=['variables-for-agents','last-100-feet'];
 const arrivedBefore=()=>{try{return sessionStorage.getItem(ARRIVED)==='1';}catch{return false;}};
 const JOURNEY_SECTIONS=['systems','journey-about','journey-timeline','product','worlds','contact'];
 
@@ -62,7 +64,7 @@ export default function App(){
  useEffect(()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>setReduced(preference.matches);preference.addEventListener('change',sync);return()=>preference.removeEventListener('change',sync);},[]);
  return <>
  <a className="skip-link" href={modal?'#portfolio-page':'#systems'}>{lang==='en'?'Skip to content':'跳到正文'}</a>
- <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive','systems','product-film','hako'].includes(modal.type)?'dark':modal.type==='about'?'auto':'light'):'auto'} onLanguage={chooseLang} onNavigate={nav} onAbout={()=>nav('about')}/>
+ <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(modal.type==='product-film'&&LIGHT_FILMS.includes(modal.slug)?'auto':['desk','archive','systems','product-film','hako'].includes(modal.type)?'dark':modal.type==='about'?'auto':'light'):'auto'} onLanguage={chooseLang} onNavigate={nav} onAbout={()=>nav('about')}/>
  <main className="home-journey" inert={modal?true:undefined} aria-hidden={!!modal}>
   <LegacyHero lang={lang} reduced={quiet} onProduct={()=>open('/product')}/>
   <OneStroke lang={lang} reduced={quiet} onOpen={open} onArchive={()=>open('/works/archive')} onAbout={()=>nav('about')} onNavigate={nav} onTransition={transition}/>

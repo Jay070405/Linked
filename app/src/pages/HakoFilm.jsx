@@ -2,10 +2,11 @@ import {lazy,Suspense,useEffect,useRef,useState} from 'react';
 import {useMusic} from '../components/BackgroundMusic';
 import EDIT from './hako-edit.json';
 import {nextAfter} from './product-films-data';
-import {Hero,SectionHead,Statement,CountUp,Reveal,Decisions,Flipbook,NextProject} from './story/Story';
+import {Hero,SectionHead,Statement,CountUp,Reveal,Decisions,NextProject} from './story/Story';
 import './brand-motion.css';
 import './hako-film.css';
 import './film-case.css';
+import './hako-reel.css';
 
 const HakoDemo=lazy(()=>import('./demos/HakoDemo'));
 
@@ -53,16 +54,8 @@ const MOTIF=[
  {id:'canvas',t:43.2,label:{en:'It selects the whole canvas',zh:'框住整张画布'}},
  {id:'mark',t:44,label:{en:'It becomes the mark',zh:'收拢成标志'}},
 ];
-// the opening, frame by frame (Flipbook), and four calls that shaped the film (from the project's review notes and the
+// four calls that shaped the film (from the project's review notes and the
 // user's verdicts on the music and the interface sounds)
-const OPENING=[
- {t:.25,label:{en:'The B key, the box tool, goes down',zh:'按下 B 键，也就是框选工具'}},
- {t:.6,label:{en:'The drag starts a box',zh:'拖动，框开始出现'}},
- {t:1.05,label:{en:'“Draw a box.” appears inside it',zh:'“Draw a box.” 在框里显现'}},
- {t:1.45,label:{en:'The drag reaches its far corner',zh:'拖到对角'}},
- {t:1.75,label:{en:'Release: the handles pop',zh:'松手，控制点弹出'}},
- {t:2,label:{en:'Smart guides settle the box',zh:'智能参考线把框对齐'}},
-];
 const DECISIONS=[
  {title:{en:'Music from prompts, not from code',zh:'音乐来自提示词，不是代码'},verdict:{en:'A score modelled in code can’t reach a produced track.',zh:'用代码模拟出来的配乐，达不到制作好的成品音乐。'},
   tried:{en:'A score I built in code from modelled piano, marimba and bass. It sounded messy.',zh:'我先用代码模拟钢琴、马林巴和贝斯做了一版配乐，听起来很乱。'},
@@ -86,6 +79,50 @@ const NOTES=[
 const waveD=(()=>{const top=[],bottom=[];EDIT.wave.forEach((v,i)=>{const x=((i+.5)/20).toFixed(3),y=Math.max(v*.92,.02).toFixed(3);top.push(x+','+(-y));bottom.unshift(x+','+y);});return 'M'+top.join('L')+'L'+bottom.join('L')+'Z';})();
 const motionMax=Math.max(...EDIT.motion);
 const motionD='M'+EDIT.motion.map((v,i)=>(i+.5).toFixed(1)+','+(100-v/motionMax*92).toFixed(2)).join('L');
+
+/** A selection box around a section title, drawn from its top-left corner as the title comes in, as in the film. */
+const Sel=({id,children})=><span id={id} className="hk-sel">{children}<i/><i/><i/><i/></span>;
+
+/** The ten beats as a reel that runs sideways while the page scrolls down; each still plays the film from its beat. */
+function Reel({lang,reduced,onPlay}){
+ const en=lang==='en',track=useRef(null),rail=useRef(null),row=useRef(null),bar=useRef(null),activeRef=useRef(0),[active,setActive]=useState(0);
+ useEffect(()=>{
+  if(reduced)return;
+  const el=track.current,list=row.current,scroller=el.closest('.portfolio-page-viewport')||window;let raf=0,dist=0;
+  const size=()=>{dist=Math.max(0,list.scrollWidth-rail.current.clientWidth);el.style.height=`calc(100svh + ${dist}px)`;paint();};
+  const paint=()=>{raf=0;
+   const box=el.getBoundingClientRect(),p=dist?Math.min(1,Math.max(0,-box.top/dist)):0;
+   list.style.transform=`translate3d(${(-p*dist).toFixed(1)}px,0,0)`;bar.current.style.transform=`scaleX(${p.toFixed(4)})`;
+   const i=Math.min(BEATS.length-1,Math.round(p*(BEATS.length-1)));
+   if(i!==activeRef.current){activeRef.current=i;setActive(i);}
+  };
+  const queue=()=>{if(!raf)raf=requestAnimationFrame(paint);};
+  const observer=new ResizeObserver(size);observer.observe(rail.current);observer.observe(list);
+  scroller.addEventListener('scroll',queue,{passive:true});size();
+  return()=>{cancelAnimationFrame(raf);observer.disconnect();scroller.removeEventListener('scroll',queue);el.style.height='';list.style.transform='';};
+ },[reduced]);
+ return <div ref={track} className={'hk-reel'+(reduced?' is-still':'')}>
+  <div ref={rail} className="hk-reel-stage">
+   <ol ref={row} className="hk-reel-row">{BEATS.map((b,i)=>{
+    const from=i?BEATS[i-1].to:0,jobs=MOTIF.filter(m=>m.t>=from&&m.t<b.to);
+    return <li key={b.name} className={i===active?'is-on':undefined}>
+     <button type="button" onClick={()=>onPlay(from)} aria-label={(en?'Play from ':'从这里播放：')+sec(from)+' · '+b.name}>
+      <img src={`${media}/reel-${String(i+1).padStart(2,'0')}.webp`} width="960" height="540" loading="lazy" decoding="async" alt=""/>
+      <span className="hk-reel-play" aria-hidden="true">▶ {sec(from)}</span>
+     </button>
+     <div className="hk-reel-text">
+      <span className="st-mono">{String(i+1).padStart(2,'0')} / {BEATS.length} · {sec(from)}–{sec(Math.min(b.to,DUR))}</span>
+      <h3>{b.name}</h3>
+      <p>{b.what[lang]}</p>
+      <p className="hk-reel-cam"><span className="st-mono">{en?'Camera':'镜头'}</span>{b.camera[lang]}</p>
+      {jobs.length>0&&<ul className="hk-reel-jobs">{jobs.map(m=><li key={m.id}><i aria-hidden="true"/>{m.label[lang]}</li>)}</ul>}
+     </div>
+    </li>;
+   })}</ol>
+   <div className="hk-reel-foot" aria-hidden="true"><span className="st-mono">{String(active+1).padStart(2,'0')} · {BEATS[active].name}</span><div className="hk-reel-bar"><i ref={bar}/>{BEATS.map((b,i)=><b key={b.name} style={{left:i/(BEATS.length-1)*100+'%'}}/>)}</div></div>
+  </div>
+ </div>;
+}
 
 export default function HakoFilm({lang,reduced,onNavigate}){
  const en=lang==='en',root=useRef(null),demo=useRef(null),video=useRef(null),lanes=useRef(null),scroller=useRef(null),strip=useRef(null),head=useRef(null),tc=useRef(null);
@@ -149,8 +186,7 @@ export default function HakoFilm({lang,reduced,onNavigate}){
  const jump=t=>{seek(t);video.current.play().catch(()=>{});video.current.scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});};
  const current=BEATS[beat];
  const behavior=reduced?'auto':'smooth';
- const flipFrames=Array.from({length:24},(_,i)=>`${media}/flip-${String(i+1).padStart(2,'0')}.webp`);
- return <article ref={root} className={'st-page hk-page'+(reduced?' st-still':'')} data-nav-tone="dark" style={{'--accent':'#ff5a1f'}}>
+  return <article ref={root} className={'st-page hk-page'+(reduced?' st-still':'')} data-nav-tone="dark" style={{'--accent':'#ff5a1f'}}>
   <Hero reduced={reduced} video={film} poster={media+'/poster.webp'} title="Hako" tagline={['Draw a box.','Ship a product.']}
    back={<a href="/other-project" onClick={go('/other-project')}>← Other Project</a>} kicker={en?'SAAS CONCEPT / LAUNCH FILM':'SaaS 概念 / 发布短片'}
    meta={[[en?'FILM':'片长','50 s · 60 fps'],[en?'SOUND':'声音',en?'Track A + 82 recorded sounds':'配乐 A + 82 个录音音效'],[en?'MADE':'制作',en?'Product, brand, film':'产品、品牌、短片'],[en?'STATUS':'状态',en?'Fictional product':'虚构产品']]}
@@ -171,31 +207,28 @@ export default function HakoFilm({lang,reduced,onNavigate}){
    </section>
 
    <section ref={demo} className="st-section" aria-labelledby="hk-try">
-    <SectionHead index={`02 / ${en?'TRY IT':'试一试'}`} title={<span id="hk-try">{en?'Draw a box':'画一个框'}</span>} lead={en?'Hako has one gesture. Drag a box over any part of the team’s sketch: an agent takes each region, thinks, and scans it into the real dashboard. Persimmon is your selection, ultraviolet is the agents’, exactly as in the film. Ship when it’s ready.':'Hako 只有一个手势。在团队的草图上随便拖出一个框：每块区域由一个 agent 接手，想一想，再一道扫描把它变成真正的仪表盘。柿子橙是你的选框，群青紫是 agent 的，和片子里一模一样。做好了就点上线。'}/>
+    <SectionHead index={`02 / ${en?'TRY IT':'试一试'}`} title={<Sel id="hk-try">{en?'Draw a box':'画一个框'}</Sel>} lead={en?'Hako has one gesture. Drag a box over any part of the team’s sketch: an agent takes each region, thinks, and scans it into the real dashboard. Persimmon is your selection, ultraviolet is the agents’, exactly as in the film. Ship when it’s ready.':'Hako 只有一个手势。在团队的草图上随便拖出一个框：每块区域由一个 agent 接手，想一想，再一道扫描把它变成真正的仪表盘。柿子橙是你的选框，群青紫是 agent 的，和片子里一模一样。做好了就点上线。'}/>
     <Reveal className="st-demo"><Suspense fallback={<div className="st-demo-loading st-mono">{en?'Loading the demo…':'正在加载演示…'}</div>}><HakoDemo lang={lang} reduced={reduced}/></Suspense></Reveal>
    </section>
 
+   <section className="st-section hk-film-section" aria-labelledby="hk-film">
+    <SectionHead index={`03 / ${en?'THE FILM':'短片'}`} title={<Sel id="hk-film">{en?'Ten beats, one box':'十个段落，一个框'}</Sel>} lead={en?'The selection box carries the whole film: it reveals the first words, lands on the sketch, splits into the agents’ frames, becomes a real box, selects the whole canvas and ends as the mark. Keep scrolling and the reel runs through all ten beats; click a still to play from there.':'整支片子由选框串起来：它显出第一句话，落到草图上，分成 agent 的工作框，变成一个真盒子，框住整张画布，最后成为标志。继续往下滚，十个段落会横着走一遍；点任意一张画面，就从那里开始播放。'}/>
+    <Reel lang={lang} reduced={reduced} onPlay={jump}/>
+   </section>
+
    <section className="st-section" aria-labelledby="hk-brand">
-    <SectionHead index={`03 / ${en?'BRAND':'品牌'}`} title={<span id="hk-brand">{en?'A product, a name and a mark':'产品、名字和标志'}</span>} lead={en?'Hako (箱, box). The mark is the selection box itself, a square frame with four handles that also reads as 口. Persimmon belongs only to your own selection and ultraviolet only to agents, so in every frame the colour tells you who is acting. The product being built keeps its own palette.':'Hako（箱，盒子）。标志就是选框本身：一个带四个控制点的方框，也像一个“口”字。柿子橙只属于你自己的选择，群青紫只属于 agent，所以每一帧里，颜色都在说明是谁在动手。被搭出来的产品保留它自己的配色。'}/>
+    <SectionHead index={`04 / ${en?'BRAND':'品牌'}`} title={<Sel id="hk-brand">{en?'A product, a name and a mark':'产品、名字和标志'}</Sel>} lead={en?'Hako (箱, box). The mark is the selection box itself, a square frame with four handles that also reads as 口. Persimmon belongs only to your own selection and ultraviolet only to agents, so in every frame the colour tells you who is acting. The product being built keeps its own palette.':'Hako（箱，盒子）。标志就是选框本身：一个带四个控制点的方框，也像一个“口”字。柿子橙只属于你自己的选择，群青紫只属于 agent，所以每一帧里，颜色都在说明是谁在动手。被搭出来的产品保留它自己的配色。'}/>
     <Reveal as="figure" className="st-board"><img src={media+'/brand-board.webp'} width="1920" height="1080" loading="lazy" decoding="async" alt={en?'Hako brand board: the mark, the wordmark, the palette, the typefaces and the motion tokens':'Hako 品牌板：标志、字标、配色、字体和动效参数'}/></Reveal>
    </section>
 
    <section className="st-section" aria-labelledby="hk-why">
-    <SectionHead index={`04 / ${en?'DECISIONS':'决策'}`} title={<span id="hk-why">{en?'What changed, and why':'改了什么，为什么'}</span>} lead={en?'Four calls that shaped the film. Each card shows what it ended up as; flip it to see what came first.':'四个影响全片的决定。每张卡片先给最后的样子，切换一下能看到最初的版本。'}/>
+    <SectionHead index={`05 / ${en?'DECISIONS':'决策'}`} title={<Sel id="hk-why">{en?'What changed, and why':'改了什么，为什么'}</Sel>} lead={en?'Four calls that shaped the film. Each card shows what it ended up as; flip it to see what came first.':'四个影响全片的决定。每张卡片先给最后的样子，切换一下能看到最初的版本。'}/>
     <Decisions items={DECISIONS} lang={lang} accent="#ff5a1f"/>
    </section>
 
-   <section className="st-section" aria-labelledby="hk-film">
-    <SectionHead index={`05 / ${en?'THE FILM':'短片'}`} title={<span id="hk-film">{en?'One motif, six jobs':'一个母题，六次变身'}</span>} lead={en?'The selection box carries the whole film, so there is never a cut to a new idea, only the same box doing its next job. Scroll through the opening frame by frame, then play any moment.':'整支片子由选框串起来：从不切到一个新的概念，只是同一个框去做下一件事。先逐帧滚过开场，再从任意时刻播放。'}/>
-    <Flipbook frames={flipFrames} steps={OPENING} duration={[.2,2.1]} reduced={reduced} lang={lang} onPlay={jump}/>
-    <ol className="hk-motif st-motif">{MOTIF.map((m,i)=><Reveal as="li" key={m.id} delay={i*60}><button type="button" onClick={()=>jump(m.t)} aria-label={(en?'Play from ':'从这里播放：')+sec(m.t)+' · '+m.label[lang]}>
-     <img src={media+'/motif-'+m.id+'.webp'} width="1600" height="900" loading="lazy" decoding="async" alt=""/>
-     <span><b>0{i+1}</b>{m.label[lang]}<em>▶ {sec(m.t)}</em></span>
-    </button></Reveal>)}</ol>
-   </section>
 
    <section className="st-section" aria-labelledby="hk-cut">
-    <SectionHead index={`06 / ${en?'THE EDIT':'剪辑台'}`} title={<span id="hk-cut">{en?'The final cut, on its timeline':'成片，摊开在时间线上'}</span>} lead={en?'Eleven shots, a 2:53 song cut down to four pieces, and 82 recorded sounds, all on a 100 BPM grid. Click or drag the timeline to jump; the strip under the picture says what each beat is doing.':'11 个镜头，一首 2 分 53 秒的歌剪成 4 段，82 个录音音效，全部对在 100 BPM 的节拍网格上。点击或拖动时间线可以跳转，画面下方会显示当前这一段在做什么。'}/>
+    <SectionHead index={`06 / ${en?'THE EDIT':'剪辑台'}`} title={<Sel id="hk-cut">{en?'The final cut, on its timeline':'成片，摊开在时间线上'}</Sel>} lead={en?'Eleven shots, a 2:53 song cut down to four pieces, and 82 recorded sounds, all on a 100 BPM grid. Click or drag the timeline to jump; the strip under the picture says what each beat is doing.':'11 个镜头，一首 2 分 53 秒的歌剪成 4 段，82 个录音音效，全部对在 100 BPM 的节拍网格上。点击或拖动时间线可以跳转，画面下方会显示当前这一段在做什么。'}/>
     <Reveal>
     <div className="hk-desk">
      <div className="hk-bar"><span className="hk-dots" aria-hidden="true"><i/><i/><i/></span><b>hako-a-sfx.mp4</b><span className="hk-bar-meta">1920 × 1080 · 60 FPS · {en?'TRACK A + FOLEY':'配乐 A + 音效'}</span><span ref={tc} className="hk-tc" aria-hidden="true">00:00:00:00</span></div>
@@ -240,7 +273,7 @@ export default function HakoFilm({lang,reduced,onNavigate}){
    </section>
 
    <section className="st-section" aria-labelledby="hk-craft">
-    <SectionHead index={`07 / ${en?'CRAFT':'技术'}`} title={<span id="hk-craft">{en?'Music first, then every click':'先剪音乐，再配每一下点击'}</span>} lead={en?'The music came from written prompts for an AI music generator: two directions, and this one was chosen. Its 2:53 were cut to 50 seconds in four pieces joined on the beat, then the picture was gently time-warped so its key moments land on the hits. Inside a shot the camera never stops, and every cut lands on motion, on an exact frame.':'音乐来自写给 AI 音乐生成器的提示词：做了两个方向，选了这一版。原曲 2 分 53 秒，在拍子上剪成 4 段、拼成 50 秒，再把画面做轻微变速，让关键动作落在重拍上。镜头内的摄影机从不停下，每个剪辑点都落在动作上、落在整帧上。'}/>
+    <SectionHead index={`07 / ${en?'CRAFT':'技术'}`} title={<Sel id="hk-craft">{en?'Music first, then every click':'先剪音乐，再配每一下点击'}</Sel>} lead={en?'The music came from written prompts for an AI music generator: two directions, and this one was chosen. Its 2:53 were cut to 50 seconds in four pieces joined on the beat, then the picture was gently time-warped so its key moments land on the hits. Inside a shot the camera never stops, and every cut lands on motion, on an exact frame.':'音乐来自写给 AI 音乐生成器的提示词：做了两个方向，选了这一版。原曲 2 分 53 秒，在拍子上剪成 4 段、拼成 50 秒，再把画面做轻微变速，让关键动作落在重拍上。镜头内的摄影机从不停下，每个剪辑点都落在动作上、落在整帧上。'}/>
     <Reveal as="figure" className="hk-music">
      <div className="hk-music-row"><span>{en?'SONG':'原曲'} · 2:53</span><div className="hk-music-bar">{MUSIC.map(([,,s0,s1])=><i key={s0} style={{left:s0/SONG*100+'%',width:(s1-s0)/SONG*100+'%'}}/>)}</div></div>
      <svg className="hk-music-links" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">{MUSIC.map(([a,b,s0,s1])=><path key={a} d={`M${s0/SONG*1000},0L${s1/SONG*1000},0L${b/DUR*1000},60L${a/DUR*1000},60Z`}/>)}</svg>
