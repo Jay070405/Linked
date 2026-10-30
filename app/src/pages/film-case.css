@@ -1,36 +1,15 @@
-/* Product launch films reuse the Hako page (hako-film.css); each film brings its own accent from its colour world. */
-.fc-page .brand-motion-title h1{font-size:clamp(60px,8.2vw,128px);letter-spacing:-.06em}
-.fc-page .brand-motion-title i{color:var(--fc-accent)}
-.fc-page .hk-tc,.fc-page .hk-motif em,.fc-page .hk-notes p+span{color:var(--fc-accent)}
-.fc-page .hk-head::before,.fc-page .hk-head i{background:var(--fc-accent)}
-.fc-page .hk-lanes:focus-visible{outline-color:var(--fc-accent)}
+/* Product film pages: the story page (story/story.css) plus the edit desk from hako-film.css, in the film's accent. */
+.fc-page .hk-tc,.fc-page .hk-notes p+span{color:var(--accent)}
+.fc-page .hk-head::before,.fc-page .hk-head i{background:var(--accent)}
+.fc-page .hk-lanes:focus-visible{outline-color:var(--accent)}
 .fc-tl .hk-labels,.fc-tl .hk-lanes{grid-template-rows:20px 24px 22px 56px 48px}
 .fc-motion{border-top:1px solid #ffffff12}
 .fc-motion svg{position:absolute;inset:0;width:100%;height:100%}
 .fc-motion path{fill:none;stroke:#cfcdc6;stroke-width:1.2;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.fc-motion line{stroke:var(--fc-accent);stroke-width:1.5;vector-effect:non-scaling-stroke}
-.hk-legend .fc-key-motion{height:2px;background:#cfcdc6}.hk-legend .fc-key-cut{width:2px;height:10px;background:var(--fc-accent)}
-.fc-pairs{list-style:none;margin:0;padding:0;display:grid;gap:40px}
-.fc-pairs li{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
-.fc-pairs figure{margin:0}
-.fc-pairs img{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:6px;border:1px solid #14141612;background:#ededee}
-.fc-pairs figcaption{margin-top:9px;font:10px/1.6 Mono,monospace;letter-spacing:.05em;color:#686970}
-.fc-pairs figure+figure figcaption{color:var(--fc-accent)}
-.fc-pairs p{grid-column:1/-1;max-width:760px;font-size:13px;line-height:1.75;color:#141416}
-.fc-scores{list-style:none;margin:0;padding:22px 24px 16px;border-radius:8px;background:#f2f0eb;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;align-items:end;height:220px}
-.fc-scores li{display:grid;grid-template-rows:auto 1fr auto;height:100%;gap:8px;text-align:center}
-.fc-scores b{font:500 15px/1 system-ui,sans-serif;letter-spacing:-.02em;color:#141416}
-.fc-scores i{align-self:end;justify-self:center;width:min(64px,100%);height:calc(var(--h) * 100%);min-height:6px;border-radius:4px 4px 0 0;background:#14141622}
-.fc-scores li:last-child i{background:var(--fc-accent)}
-.fc-scores span{font:9px/1.4 Mono,monospace;color:#686970}
-.fc-more{max-width:1440px;margin:0 auto 96px;border-top:1px solid #14141625;padding-top:26px}
-.fc-more>span{font:10px/1.6 Mono,monospace;letter-spacing:.05em;color:#686970}
-.fc-more ul{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
-.fc-more a{display:grid;grid-template-columns:150px minmax(0,1fr);grid-template-rows:auto 1fr;gap:6px 22px;align-items:start;color:#141416}
-.fc-more img{grid-row:1/3;display:block;width:100%;height:auto;aspect-ratio:1274/1080;object-fit:cover;border-radius:6px;border:1px solid #14141612;background:#ededee}
-.fc-more a>span{margin-top:6px;font-size:clamp(20px,2vw,28px);line-height:1.15;font-weight:500;letter-spacing:-.03em}
-.fc-more small{font-size:13px;line-height:1.6;color:#686970}
-@media(max-width:900px){.fc-more ul{grid-template-columns:1fr}}
-@media(max-width:600px){.fc-page .brand-motion-title h1{font-size:13.5vw}.fc-pairs li{grid-template-columns:1fr}.fc-scores{height:180px;padding:16px 14px 12px;gap:8px}.fc-scores b{font-size:13px}.fc-more{margin-bottom:64px}.fc-more a{grid-template-columns:110px minmax(0,1fr)}.fc-more a>span{font-size:20px}}
+.fc-motion line{stroke:var(--accent);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.hk-legend .fc-key-motion{height:2px;background:#cfcdc6}.hk-legend .fc-key-cut{width:2px;height:10px;background:var(--accent)}
+.fc-page .brand-motion-film-note{margin-top:16px}
 .fc-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px 28px}
-@media(max-width:600px){.fc-page .brand-motion-film-note{align-items:flex-start}.fc-links{flex-direction:column;align-items:flex-end}}
+.st-lead-index{display:block;margin-bottom:28px}
+.st-chips-gap{margin-top:28px}
+@media(max-width:600px){.fc-page .brand-motion-film-note{display:block}.fc-links{justify-content:flex-start;margin-top:10px}}

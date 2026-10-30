@@ -1,8 +1,13 @@
-import {useEffect,useRef,useState} from 'react';
+import {lazy,Suspense,useEffect,useRef,useState} from 'react';
 import {useMusic} from '../components/BackgroundMusic';
 import EDIT from './hako-edit.json';
+import {nextAfter} from './product-films-data';
+import {Hero,SectionHead,Statement,CountUp,Reveal,Decisions,Flipbook,NextProject} from './story/Story';
 import './brand-motion.css';
 import './hako-film.css';
+import './film-case.css';
+
+const HakoDemo=lazy(()=>import('./demos/HakoDemo'));
 
 // Everything on this page comes from the film's own project (aigc-vibecoding/saas-film): the cut, its shots, the
 // music edit, the 82 foley cues and the per-frame motion read from the final render (hako-edit.json).
@@ -48,13 +53,29 @@ const MOTIF=[
  {id:'canvas',t:43.2,label:{en:'It selects the whole canvas',zh:'框住整张画布'}},
  {id:'mark',t:44,label:{en:'It becomes the mark',zh:'收拢成标志'}},
 ];
-const FRAMES=[1916,1921,1926,1931,1936,1941,1946,1951];
-const REFERENCES=[
- ['Notion 3.0',{en:'three shot scales, and no shot ever holds still',zh:'三种景别切换，镜头从不静止'}],
- ['Linear Agent',{en:'the whole app on one steep 3D plane, at 60 fps',zh:'整个应用放在一块大倾角的 3D 平面上，60 帧'}],
- ['Moda',{en:'agent cursors with name tags, working beside people',zh:'带名字标签的 agent 光标，和人一起干活'}],
- ['Framer 3.0',{en:'one glossy 3D button beside crisp 2D interface',zh:'一个有光泽的 3D 按钮，配清晰的 2D 界面'}],
- ['Higgsfield Katana',{en:'long interface takes driven by a virtual camera',zh:'由虚拟摄影机带动的长镜头界面'}],
+// the opening, frame by frame (Flipbook), and four calls that shaped the film (from the project's review notes and the
+// user's verdicts on the music and the interface sounds)
+const OPENING=[
+ {t:.25,label:{en:'The B key, the box tool, goes down',zh:'按下 B 键，也就是框选工具'}},
+ {t:.6,label:{en:'The drag starts a box',zh:'拖动，框开始出现'}},
+ {t:1.05,label:{en:'“Draw a box.” appears inside it',zh:'“Draw a box.” 在框里显现'}},
+ {t:1.45,label:{en:'The drag reaches its far corner',zh:'拖到对角'}},
+ {t:1.75,label:{en:'Release: the handles pop',zh:'松手，控制点弹出'}},
+ {t:2,label:{en:'Smart guides settle the box',zh:'智能参考线把框对齐'}},
+];
+const DECISIONS=[
+ {title:{en:'Music from prompts, not from code',zh:'音乐来自提示词，不是代码'},verdict:{en:'A score modelled in code can’t reach a produced track.',zh:'用代码模拟出来的配乐，达不到制作好的成品音乐。'},
+  tried:{en:'A score I built in code from modelled piano, marimba and bass. It sounded messy.',zh:'我先用代码模拟钢琴、马林巴和贝斯做了一版配乐，听起来很乱。'},
+  chose:{en:'Written prompts for an AI music generator, two directions; one was chosen, cut on the beat, and the picture time-warped onto its hits.',zh:'写提示词交给 AI 音乐生成器，做了两个方向；选中一版，在拍子上剪，再让画面变速对上它的重拍。'},img:{src:'/assets/other-project/hako/motif-carton.webp',kind:'wide',position:'50% 50%'}},
+ {title:{en:'Recorded sounds, not interface blips',zh:'录音音效，不用界面提示音'},verdict:{en:'Pure tones read as electronic; the film needed touch.',zh:'纯音听起来很电子，这支片子需要手感。'},
+  tried:{en:'A pack of interface sounds: drops, glass, toggles, ticks. Measured, they were pure sine tones.',zh:'一套界面音效包：drop、glass、toggle、tick。测出来全是纯正弦波。'},
+  chose:{en:'82 recordings: a real mouse, a mechanical keyboard, marimba tuned to the song’s key, book knocks for the box, mouth pops only where something springs out.',zh:'82 个录音：真实的鼠标、机械键盘、按歌曲调性定音的马林巴、给盒子用的书本敲击声，只在东西弹出来的地方才用嘴巴的“啵”声。'},img:{src:'/assets/other-project/hako/frame-1926.webp',kind:'wide',position:'50% 50%'}},
+ {title:{en:'Headlines face the lens',zh:'标题始终朝向镜头'},verdict:{en:'Type that shears reads as a different font.',zh:'被拉歪的字，看起来就像换了一种字体。'},
+  tried:{en:'“Hako builds what’s inside.” placed in 3D space; under the tilted camera its H leaned 8° and read as italic.',zh:'“Hako builds what’s inside.” 放在 3D 空间里，被倾斜的镜头一拉，H 歪了 8°，看起来像斜体。'},
+  chose:{en:'Every headline in the scene is billboarded: it moves with the world but always faces the camera.',zh:'场景里的每行标题都做成始终朝向镜头：跟着场景一起动，但永远正对摄影机。'},img:{src:'/assets/other-project/hako/decision-type.webp',kind:'wide',position:'30% 50%'}},
+ {title:{en:'A camera that never stops',zh:'镜头从不停下'},verdict:{en:'A stop in the middle of a shot reads as a hitch.',zh:'镜头中途一停，看起来就是卡了一下。'},
+  tried:{en:'Camera keys where every axis turned at once, and shots that eased to rest before a cut.',zh:'所有轴在同一个关键帧上一起转向，镜头在剪辑点前减速停住。'},
+  chose:{en:'A smooth spline that never reverses between keys, and cut-ins that start moving before the cut, so every cut lands on motion.',zh:'一条在关键帧之间不会折返的平滑样条曲线；切入的镜头在剪辑点之前就开始运动，每一刀都切在动作上。'},img:{src:'/assets/other-project/hako/decision-camera.webp',kind:'wide',position:'50% 50%'}},
 ];
 const NOTES=[
  {note:{en:'Cuts braked. One shot slowed to 0.4 px a frame going into a cut, and the next opened at 15.',zh:'剪辑点会“刹车”：一个镜头进剪辑点前慢到每帧 0.4 像素，下一个镜头却以 15 像素起步。'},fix:{en:'The next camera now starts moving before the cut, so every cut lands on motion.',zh:'下一个镜头的摄影机在剪辑点之前就开始运动，每一刀都切在动作上。'}},
@@ -67,7 +88,7 @@ const motionMax=Math.max(...EDIT.motion);
 const motionD='M'+EDIT.motion.map((v,i)=>(i+.5).toFixed(1)+','+(100-v/motionMax*92).toFixed(2)).join('L');
 
 export default function HakoFilm({lang,reduced,onNavigate}){
- const en=lang==='en',root=useRef(null),video=useRef(null),lanes=useRef(null),scroller=useRef(null),strip=useRef(null),head=useRef(null),tc=useRef(null);
+ const en=lang==='en',root=useRef(null),demo=useRef(null),video=useRef(null),lanes=useRef(null),scroller=useRef(null),strip=useRef(null),head=useRef(null),tc=useRef(null);
  const beatRef=useRef(0),dragging=useRef(false),paintRef=useRef(null);
  const [beat,setBeat]=useState(0),[failed,setFailed]=useState(false);
  const {setSuppressed}=useMusic();
@@ -127,16 +148,55 @@ export default function HakoFilm({lang,reduced,onNavigate}){
  };
  const jump=t=>{seek(t);video.current.play().catch(()=>{});video.current.scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});};
  const current=BEATS[beat];
- return <article ref={root} className="brand-motion-page hk-page" data-nav-tone="light">
-  <header className="brand-motion-heading">
-   <div className="brand-motion-kicker"><a href="/other-project" onClick={go('/other-project')}>← Other Project</a><span>SAAS / LAUNCH FILM</span></div>
-   <div className="brand-motion-title"><h1>Hako</h1><p>Draw a box. <i>Ship a product.</i></p></div>
-   <div className="brand-motion-intro"><span>{en?'SAAS LAUNCH FILM':'SaaS 发布短片'}</span><p>{en?'A 50-second launch film for Hako, a SaaS product I invented along with its name, its brand and the dashboard it builds: draw a box around anything, and agents build it with your team until it ships. Every frame is rendered from code; there is no footage. Hako and Daybreak are fictional.':'为 Hako 做的 50 秒发布短片。Hako 是我虚构的 SaaS 产品，名字、品牌和片中被搭出来的仪表盘也都由我设计：在任何东西上画一个框，agent 就和你的团队一起把它做出来，直到上线。每一帧都由代码渲染，没有任何拍摄素材。Hako 和 Daybreak 都是虚构产品。'}</p></div>
-  </header>
+ const behavior=reduced?'auto':'smooth';
+ const flipFrames=Array.from({length:24},(_,i)=>`${media}/flip-${String(i+1).padStart(2,'0')}.webp`);
+ return <article ref={root} className={'st-page hk-page'+(reduced?' st-still':'')} data-nav-tone="dark" style={{'--accent':'#ff5a1f'}}>
+  <Hero reduced={reduced} video={film} poster={media+'/poster.webp'} title="Hako" tagline={['Draw a box.','Ship a product.']}
+   back={<a href="/other-project" onClick={go('/other-project')}>← Other Project</a>} kicker={en?'SAAS CONCEPT / LAUNCH FILM':'SaaS 概念 / 发布短片'}
+   meta={[[en?'FILM':'片长','50 s · 60 fps'],[en?'SOUND':'声音',en?'Track A + 82 recorded sounds':'配乐 A + 82 个录音音效'],[en?'MADE':'制作',en?'Product, brand, film':'产品、品牌、短片'],[en?'STATUS':'状态',en?'Fictional product':'虚构产品']]}
+   actions={<>
+    <button type="button" className="st-btn is-primary" onClick={()=>jump(0)}>▶ {en?'Watch with sound':'开声音看片'}</button>
+    <button type="button" className="st-btn" onClick={()=>demo.current.scrollIntoView({behavior,block:'start'})}>{en?'Draw a box':'画一个框'} ↓</button>
+   </>}/>
 
-  <section className="brand-motion-films hk-cut" aria-labelledby="hk-cut">
-   <div className="brand-motion-film">
-    <header><span className="brand-motion-number">01 /</span><div><h2 id="hk-cut">{en?'The final cut, on its timeline':'成片，摊开在时间线上'}</h2><p>{en?'The film plays above its own edit: eleven shots, a 2:53 song cut down to four pieces, and 82 recorded sounds, all on a 100 BPM grid. Click or drag the timeline to jump; the strip under the picture says what each beat is doing.':'成片放在它自己的剪辑时间线上方：11 个镜头，一首 2 分 53 秒的歌剪成 4 段，82 个录音音效，全部对在 100 BPM 的节拍网格上。点击或拖动时间线可以跳转，画面下方会显示当前这一段在做什么。'}</p></div><span className="brand-motion-duration">00:50</span></header>
+  <div className="st-wrap">
+   <section className="st-section" aria-labelledby="hk-idea">
+    <Reveal as="span" className="st-index st-lead-index" id="hk-idea">01 / {en?'THE IDEA':'想法'}</Reveal>
+    <Statement reduced={reduced} text={en?'Most tools ask you to describe what you want. Hako lets you point at it: draw a box around a sketch, a board or a chart, and agents build what’s inside, with your team, until it ships.':'大多数工具要你把想要的东西描述出来。Hako 让你直接指给它看：在草图、白板或图表上画一个框，agent 就和你的团队一起把框里的东西做出来，直到上线。'}/>
+    <div className="st-facts">
+     <Reveal className="st-fact"><CountUp to={1} reduced={reduced}/><p>{en?'gesture to learn: the selection box is the product, the logo and the hero of the film':'个手势就够了：选框既是产品本身，也是标志，也是片子的主角'}</p></Reveal>
+     <Reveal className="st-fact" delay={90}><CountUp to={50} suffix=" s" reduced={reduced}/><p>{en?'launch film, every frame rendered from code, no footage':'的发布短片，每一帧都由代码渲染，没有拍摄素材'}</p></Reveal>
+     <Reveal className="st-fact" delay={180}><CountUp to={82} reduced={reduced}/><p>{en?'recorded sounds, each placed on the frame of its action':'个录音音效，每一个都对在它所属动作的那一帧'}</p></Reveal>
+    </div>
+   </section>
+
+   <section ref={demo} className="st-section" aria-labelledby="hk-try">
+    <SectionHead index={`02 / ${en?'TRY IT':'试一试'}`} title={<span id="hk-try">{en?'Draw a box':'画一个框'}</span>} lead={en?'Hako has one gesture. Drag a box over any part of the team’s sketch: an agent takes each region, thinks, and scans it into the real dashboard. Persimmon is your selection, ultraviolet is the agents’, exactly as in the film. Ship when it’s ready.':'Hako 只有一个手势。在团队的草图上随便拖出一个框：每块区域由一个 agent 接手，想一想，再一道扫描把它变成真正的仪表盘。柿子橙是你的选框，群青紫是 agent 的，和片子里一模一样。做好了就点上线。'}/>
+    <Reveal className="st-demo"><Suspense fallback={<div className="st-demo-loading st-mono">{en?'Loading the demo…':'正在加载演示…'}</div>}><HakoDemo lang={lang} reduced={reduced}/></Suspense></Reveal>
+   </section>
+
+   <section className="st-section" aria-labelledby="hk-brand">
+    <SectionHead index={`03 / ${en?'BRAND':'品牌'}`} title={<span id="hk-brand">{en?'A product, a name and a mark':'产品、名字和标志'}</span>} lead={en?'Hako (箱, box). The mark is the selection box itself, a square frame with four handles that also reads as 口. Persimmon belongs only to your own selection and ultraviolet only to agents, so in every frame the colour tells you who is acting. The product being built keeps its own palette.':'Hako（箱，盒子）。标志就是选框本身：一个带四个控制点的方框，也像一个“口”字。柿子橙只属于你自己的选择，群青紫只属于 agent，所以每一帧里，颜色都在说明是谁在动手。被搭出来的产品保留它自己的配色。'}/>
+    <Reveal as="figure" className="st-board"><img src={media+'/brand-board.webp'} width="1920" height="1080" loading="lazy" decoding="async" alt={en?'Hako brand board: the mark, the wordmark, the palette, the typefaces and the motion tokens':'Hako 品牌板：标志、字标、配色、字体和动效参数'}/></Reveal>
+   </section>
+
+   <section className="st-section" aria-labelledby="hk-why">
+    <SectionHead index={`04 / ${en?'DECISIONS':'决策'}`} title={<span id="hk-why">{en?'What changed, and why':'改了什么，为什么'}</span>} lead={en?'Four calls that shaped the film. Each card shows what it ended up as; flip it to see what came first.':'四个影响全片的决定。每张卡片先给最后的样子，切换一下能看到最初的版本。'}/>
+    <Decisions items={DECISIONS} lang={lang} accent="#ff5a1f"/>
+   </section>
+
+   <section className="st-section" aria-labelledby="hk-film">
+    <SectionHead index={`05 / ${en?'THE FILM':'短片'}`} title={<span id="hk-film">{en?'One motif, six jobs':'一个母题，六次变身'}</span>} lead={en?'The selection box carries the whole film, so there is never a cut to a new idea, only the same box doing its next job. Scroll through the opening frame by frame, then play any moment.':'整支片子由选框串起来：从不切到一个新的概念，只是同一个框去做下一件事。先逐帧滚过开场，再从任意时刻播放。'}/>
+    <Flipbook frames={flipFrames} steps={OPENING} duration={[.2,2.1]} reduced={reduced} lang={lang} onPlay={jump}/>
+    <ol className="hk-motif st-motif">{MOTIF.map((m,i)=><Reveal as="li" key={m.id} delay={i*60}><button type="button" onClick={()=>jump(m.t)} aria-label={(en?'Play from ':'从这里播放：')+sec(m.t)+' · '+m.label[lang]}>
+     <img src={media+'/motif-'+m.id+'.webp'} width="1600" height="900" loading="lazy" decoding="async" alt=""/>
+     <span><b>0{i+1}</b>{m.label[lang]}<em>▶ {sec(m.t)}</em></span>
+    </button></Reveal>)}</ol>
+   </section>
+
+   <section className="st-section" aria-labelledby="hk-cut">
+    <SectionHead index={`06 / ${en?'THE EDIT':'剪辑台'}`} title={<span id="hk-cut">{en?'The final cut, on its timeline':'成片，摊开在时间线上'}</span>} lead={en?'Eleven shots, a 2:53 song cut down to four pieces, and 82 recorded sounds, all on a 100 BPM grid. Click or drag the timeline to jump; the strip under the picture says what each beat is doing.':'11 个镜头，一首 2 分 53 秒的歌剪成 4 段，82 个录音音效，全部对在 100 BPM 的节拍网格上。点击或拖动时间线可以跳转，画面下方会显示当前这一段在做什么。'}/>
+    <Reveal>
     <div className="hk-desk">
      <div className="hk-bar"><span className="hk-dots" aria-hidden="true"><i/><i/><i/></span><b>hako-a-sfx.mp4</b><span className="hk-bar-meta">1920 × 1080 · 60 FPS · {en?'TRACK A + FOLEY':'配乐 A + 音效'}</span><span ref={tc} className="hk-tc" aria-hidden="true">00:00:00:00</span></div>
      <video ref={video} controls playsInline preload="metadata" poster={media+'/poster.webp'} aria-label={en?'Hako — SaaS launch film':'Hako SaaS 发布短片'} onPlay={syncMusic} onPause={syncMusic} onEnded={syncMusic} onError={()=>{setFailed(true);syncMusic();}}>
@@ -175,73 +235,31 @@ export default function HakoFilm({lang,reduced,onNavigate}){
      </div>
      <ul className="hk-legend">{FAMILIES.map(f=><li key={f.id}><i style={{background:f.color}}/>{f.label[lang]} <span>{f.count}</span></li>)}<li className="hk-legend-grid">{en?'Lines: beats and bars at 100 BPM':'竖线：100 BPM 的拍与小节'}</li></ul>
     </div>
-    {failed&&<p className="brand-motion-error" role="alert">{en?'The video could not load. Try opening it directly below.':'视频暂时未能加载，请通过下方链接直接打开。'}</p>}
-    <div className="brand-motion-film-note"><span>1920 × 1080 / 60 FPS / {en?'SOUND ON':'请开声音'}</span><a href={film} target="_blank" rel="noopener noreferrer">{en?'Open video':'单独打开视频'} ↗</a></div>
-   </div>
-  </section>
+    </Reveal>
+    {failed&&<p className="brand-motion-error" role="alert">{en?'The video could not load. Try opening it directly.':'视频暂时未能加载，请直接打开。'} <a href={film}>{en?'Open video':'打开视频'} ↗</a></p>}
+   </section>
 
-  <section className="hk-process" aria-labelledby="hk-process">
-   <header className="hk-process-head"><h2 id="hk-process">{en?'How it was made':'制作过程'}</h2><span>06 / {en?'STEPS':'步骤'}</span></header>
-
-   <div className="hk-step">
-    <div className="hk-step-text"><span>01</span><h3>{en?'One sentence before any frame':'先写一句话，再做画面'}</h3>
-     <p>{en?'The brief asked for a 40–50 s SaaS launch film: bold type, detailed interface, cursors and selection frames, depth in the camera, some 3D among the 2D, fast but smooth. Before designing anything, I wrote down what the film has to say and how it should feel.':'需求是一支 40–50 秒的 SaaS 发布短片：大字、细致的界面、光标和选框、有纵深的镜头、2D 里夹一点 3D，快但要顺。动手设计之前，我先写下这支片子要说什么、要给人什么感觉。'}</p></div>
-    <div className="hk-step-media">
-     <blockquote className="hk-quote"><p>“Anything you can draw a box around, Hako’s agents build, with your team, and ship.”</p><footer>{en?'Tone: bold and precise. The rush of speed, with full control.':'语气：大胆、精确。速度带来的爽感，同时一切尽在掌控。'}</footer></blockquote>
-     <p className="hk-small">{en?'Five launch films, studied frame by frame for their grammar only. No footage, frames, music or copy were taken from them.':'逐帧拆解了五支发布片，只借鉴镜头语法，没有使用它们的任何画面、音乐或文案。'}</p>
-     <ul className="hk-refs">{REFERENCES.map(([name,what])=><li key={name}><span>{name}</span><p>{what[lang]}</p></li>)}</ul>
-    </div>
-   </div>
-
-   <div className="hk-step">
-    <div className="hk-step-text"><span>02</span><h3>{en?'A product, a name and a mark':'产品、名字和标志'}</h3>
-     <p>{en?'Hako (箱, box): draw a selection box around a sketch, a board or a chart, and agents build what is inside. The mark is that selection box, a square frame with four handles that also reads as 口. Persimmon belongs only to your own selection and ultraviolet only to agents, so in every frame the colour tells you who is acting.':'Hako（箱，盒子）：在草图、白板或图表上画一个选框，agent 就把框里的东西做出来。标志就是这个选框：一个带四个控制点的方框，也像一个“口”字。柿子橙只属于你自己的选择，群青紫只属于 agent，所以每一帧里，颜色都在说明是谁在动手。'}</p></div>
-    <figure className="hk-step-media"><img src={media+'/brand-board.webp'} width="1920" height="1080" loading="lazy" decoding="async" alt={en?'Hako brand board: the mark, the wordmark, the palette, the typefaces and the motion tokens':'Hako 品牌板：标志、字标、配色、字体和动效参数'}/><figcaption>{en?'Brand board: Mona Sans, Inter, Geist Mono; six motion durations and three eases.':'品牌板：Mona Sans、Inter、Geist Mono；六档动效时长、三条缓动曲线。'}</figcaption></figure>
-   </div>
-
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>03</span><h3>{en?'One motif, six jobs':'一个母题，六次变身'}</h3>
-     <p>{en?'The selection box carries the whole film, so there is never a cut to a new idea, only the same box doing its next job. Click a frame to see it in the film.':'整支片子由选框串起来：从不切到一个新的概念，只是同一个框去做下一件事。点击画面可以跳到片中对应的位置。'}</p></div>
-    <ol className="hk-motif">{MOTIF.map((m,i)=><li key={m.id}><button type="button" onClick={()=>jump(m.t)} aria-label={(en?'Play from ':'从这里播放：')+sec(m.t)+' · '+m.label[lang]}>
-     <img src={media+'/motif-'+m.id+'.webp'} width="1600" height="900" loading="lazy" decoding="async" alt=""/>
-     <span><b>0{i+1}</b>{m.label[lang]}<em>▶ {sec(m.t)}</em></span>
-    </button></li>)}</ol>
-   </div>
-
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>04</span><h3>{en?'Smoothness you can measure':'顺滑，是量出来的'}</h3>
-     <p>{en?'Inside a shot the camera never stops: every move is a spline that keeps its speed through each key, and cuts land on motion, on exact frames and, where they can, on the beat. Each pass was checked by measurement, not by eye. Below is how much the picture changes from frame to frame across the film (the marks are the cuts), then the Ship click, every fifth frame.':'镜头内的摄影机从不停下：每段运动都是一条在关键帧处也不减速的样条曲线；剪辑点落在动作上、落在整帧上，能对拍的都对在拍子上。每一版都靠测量检查，而不是凭肉眼。下图是整支片子逐帧的画面变化量（竖线是剪辑点），再往下是点击 Ship 的那一下，每隔 5 帧取一帧。'}</p>
-     <ul className="hk-specs"><li>60 FPS</li><li>{en?'180° motion blur, 8 samples':'180° 运动模糊，8 次采样'}</li><li>{en?'≤ 20 px of screen travel a frame':'每帧画面位移 ≤ 20 像素'}</li><li>{en?'Cuts on exact frames':'剪辑点对齐到整帧'}</li></ul></div>
-    <figure className="hk-chart">
-     <svg viewBox="0 0 600 100" preserveAspectRatio="none" role="img" aria-label={en?'Frame-to-frame picture change across the 50-second film':'50 秒成片逐帧的画面变化量'}>
-      {SHOTS.slice(1,-1).map(s=><line key={s} className="hk-chart-cut" x1={s*12} x2={s*12} y1="0" y2="100"/>)}
-      <path d={motionD}/>
-     </svg>
-     <div className="hk-chart-axis" aria-hidden="true">{Array.from({length:6},(_,i)=><span key={i} style={{left:i*20+'%'}}>{i*10}s</span>)}</div>
-     <figcaption>{en?'Peaks: the three agents bursting out of Build (8 s) and the canvas collapsing into the mark (43 s).':'两个高峰：三个 agent 从 Build 飞出（8 秒），以及整张画布收拢成标志（43 秒）。'}</figcaption>
-    </figure>
-    <ol className="hk-frames">{FRAMES.map(f=><li key={f}><img src={media+'/frame-'+f+'.webp'} width="640" height="360" loading="lazy" decoding="async" alt={(en?'Frame ':'第 ')+f+(en?' of the Ship click':' 帧：点击 Ship')}/><span>F {f}</span></li>)}</ol>
-   </div>
-
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>05</span><h3>{en?'Music first, then every click':'先剪音乐，再配每一下点击'}</h3>
-     <p>{en?'The music came from written prompts for an AI music generator: two directions, and this one was chosen. Its 2:53 were cut down to 50 seconds in four pieces joined on the beat, then the picture was gently time-warped so its key moments land on the hits. On top sit 82 recorded sounds: a real mouse, a mechanical keyboard, marimba notes tuned to the song’s key, book knocks for the box, and mouth pops only where something springs out. No synthesized blips.':'音乐来自写给 AI 音乐生成器的提示词：做了两个方向，选了这一版。原曲 2 分 53 秒，在拍子上剪成 4 段、拼成 50 秒；再把画面做轻微的变速，让关键动作落在重拍上。最上面一层是 82 个录音音效：真实的鼠标、机械键盘、按原曲调性定音的马林巴、给盒子用的书本敲击声，只在东西弹出来的地方才用嘴巴的“啵”声。没有一个合成器音效。'}</p></div>
-    <figure className="hk-music">
+   <section className="st-section" aria-labelledby="hk-craft">
+    <SectionHead index={`07 / ${en?'CRAFT':'技术'}`} title={<span id="hk-craft">{en?'Music first, then every click':'先剪音乐，再配每一下点击'}</span>} lead={en?'The music came from written prompts for an AI music generator: two directions, and this one was chosen. Its 2:53 were cut to 50 seconds in four pieces joined on the beat, then the picture was gently time-warped so its key moments land on the hits. Inside a shot the camera never stops, and every cut lands on motion, on an exact frame.':'音乐来自写给 AI 音乐生成器的提示词：做了两个方向，选了这一版。原曲 2 分 53 秒，在拍子上剪成 4 段、拼成 50 秒，再把画面做轻微变速，让关键动作落在重拍上。镜头内的摄影机从不停下，每个剪辑点都落在动作上、落在整帧上。'}/>
+    <Reveal as="figure" className="hk-music">
      <div className="hk-music-row"><span>{en?'SONG':'原曲'} · 2:53</span><div className="hk-music-bar">{MUSIC.map(([,,s0,s1])=><i key={s0} style={{left:s0/SONG*100+'%',width:(s1-s0)/SONG*100+'%'}}/>)}</div></div>
      <svg className="hk-music-links" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true">{MUSIC.map(([a,b,s0,s1])=><path key={a} d={`M${s0/SONG*1000},0L${s1/SONG*1000},0L${b/DUR*1000},60L${a/DUR*1000},60Z`}/>)}</svg>
      <div className="hk-music-row"><span>{en?'FILM':'成片'} · 0:50</span><div className="hk-music-bar hk-music-out">{MUSIC.map(([a,b,s0,s1])=><i key={a} style={span(a,b)}><b>{mmss(s0)}–{mmss(s1)}</b></i>)}</div></div>
      <figcaption>{en?'Four pieces of the song, joined on the beat at 22.0, 29.2 and 36.4 s.':'原曲的 4 个片段，在 22.0、29.2、36.4 秒处按拍子拼接。'}</figcaption>
-    </figure>
-    <ul className="hk-foley">{FAMILIES.map(f=><li key={f.id}><span>{f.label[lang]}</span><i style={{width:f.count/30*100+'%',background:f.onPaper||f.color}}/><b>{f.count}</b></li>)}</ul>
-   </div>
+    </Reveal>
+    <ul className="st-stats st-stats-gap">{FAMILIES.map((f,i)=><Reveal as="li" key={f.id} delay={i*60}><b style={{color:f.color}}>{f.count}</b><span>{f.label[lang]}</span></Reveal>)}</ul>
+    <Reveal as="figure" className="st-chart">
+     <svg viewBox="0 0 600 100" preserveAspectRatio="none" role="img" aria-label={en?'Frame-to-frame picture change across the 50-second film':'50 秒成片逐帧的画面变化量'}>
+      {SHOTS.slice(1,-1).map(s=><line key={s} x1={s*12} x2={s*12} y1="0" y2="100"/>)}
+      <path d={motionD}/>
+     </svg>
+     <figcaption>{en?'Picture change from frame to frame. Peaks: the agents bursting out of Build (8 s) and the canvas collapsing into the mark (43 s). Dashed: the cuts.':'逐帧画面变化。两个高峰：agent 从 Build 飞出（8 秒），以及画布收拢成标志（43 秒）。虚线是剪辑点。'}</figcaption>
+    </Reveal>
+    <ol className="st-notes">{NOTES.map((n,i)=><Reveal as="li" key={i} delay={i*80}><span>{en?'REVIEW NOTE':'评审意见'} 0{i+1}</span><p>{n.note[lang]}</p><span>{en?'WHAT CHANGED':'怎么改的'}</span><p>{n.fix[lang]}</p></Reveal>)}</ol>
+   </section>
 
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>06</span><h3>{en?'Three rounds of review':'三轮审片'}</h3>
-     <p>{en?'Each version went to a separate review pass that measured instead of guessing: screen speed on both sides of each cut, the lean of each headline, the gap between a sound and its frame. A few of the notes, and what changed.':'每一版都交给单独的一轮审片，靠测量而不是猜：每个剪辑点前后的画面速度、每行标题的倾斜角度、每个声音和画面之间差了多少。下面是其中几条意见，以及怎么改的。'}</p></div>
-    <ol className="hk-notes">{NOTES.map((n,i)=><li key={i}><span>{en?'NOTE':'意见'} 0{i+1}</span><p>{n.note[lang]}</p><span>{en?'FIX':'修改'}</span><p>{n.fix[lang]}</p></li>)}</ol>
-   </div>
-  </section>
-
-  <footer className="brand-motion-footer"><span>JAY LIN / HAKO</span><p>Draw a box. Ship a product.</p></footer>
+   <NextProject item={nextAfter('hako')} lang={lang} onNavigate={onNavigate}/>
+   <footer className="st-footer"><span>JAY LIN / HAKO</span><p>Draw a box. Ship a product.</p></footer>
+  </div>
  </article>;
 }

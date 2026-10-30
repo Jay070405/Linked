@@ -1,0 +1,205 @@
+/* Last 100 Feet demo: a light, map-like panel. Paper and white, ink type, hairlines; Dana's red route is the only
+   strong colour. Everything that moves moves by transform or opacity; the courier, the pin and the slider thumb are
+   written per frame from one requestAnimationFrame loop (LastHundredFeetDemo.jsx). */
+
+.lf{
+  --lf-paper:#f2f0eb;--lf-white:#fff;--lf-ink:#141416;--lf-muted:#686970;--lf-line:#14141614;--lf-line-2:#14141626;
+  --lf-red:#e3241b;--lf-ease:cubic-bezier(.33,0,.2,1);
+  container:lf/inline-size;position:relative;box-sizing:border-box;width:100%;min-width:0;max-width:100%;padding:16px;border-radius:14px;
+  background:var(--lf-paper);color:var(--lf-ink);box-shadow:0 0 0 1px var(--lf-line);text-align:left;
+  -webkit-tap-highlight-color:transparent;
+}
+.lf *,.lf *::before,.lf *::after{box-sizing:border-box}
+.lf button{font:inherit;color:inherit;letter-spacing:inherit;margin:0}
+.lf p{margin:0}
+.lf :focus-visible{outline:2px solid var(--lf-ink);outline-offset:2px}
+.lf-label{font:10px/1.6 Mono,monospace;letter-spacing:.06em;text-transform:uppercase}
+.lf-muted{color:var(--lf-muted)}
+.lf-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* hint */
+.lf-hint{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:14px!important;font-size:14px;line-height:1.5}
+.lf-try{flex:none;padding:1px 8px;border-radius:999px;background:var(--lf-ink);color:#fff}
+
+/* layout: stacked on phones, plan left and the card right when there is room */
+.lf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.lf-main,.lf-side{display:grid;gap:10px;min-width:0;align-content:start}
+.lf-side{gap:12px}
+@container lf (min-width:760px){
+  .lf-grid{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:14px;align-items:start}
+}
+
+/* map pin | Dana's route */
+.lf-seg{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:12px;background:var(--lf-white);box-shadow:0 0 0 1px var(--lf-line)}
+.lf-seg-thumb{position:absolute;left:3px;top:3px;bottom:3px;width:calc(50% - 3px);border-radius:9px;background:var(--lf-ink);transition:transform .42s var(--lf-ease);will-change:transform}
+.lf-seg-thumb.is-right{transform:translate3d(100%,0,0)}
+.lf-seg button{position:relative;display:grid;min-height:42px;padding:0 10px;border:0;border-radius:9px;background:none;cursor:pointer;font-size:14px;font-weight:500;line-height:1.2}
+.lf-seg button>span{grid-area:1/1;align-self:center;transition:opacity .3s var(--lf-ease)}
+.lf-seg-off{color:var(--lf-muted)}
+.lf-seg-on{color:#fff;opacity:0}
+.lf-seg button[aria-pressed=true] .lf-seg-off{opacity:0}
+.lf-seg button[aria-pressed=true] .lf-seg-on{opacity:1}
+.lf-seg button:focus-visible{outline-offset:-4px}
+.lf-seg button[aria-pressed=true]:focus-visible{outline-color:#fff}
+.lf-range input:focus-visible{outline:none}
+
+/* the plan: basemap + SVG overlay in plan units + HTML markers */
+.lf-plan{position:relative;aspect-ratio:460/490;user-select:none;-webkit-user-select:none}
+.lf-plan-clip{position:absolute;inset:0;border-radius:12px;overflow:hidden;background:#ededeb}
+.lf-plan-clip::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px var(--lf-line);pointer-events:none}
+.lf-base{position:absolute;display:block;max-width:none;pointer-events:none}
+.lf-plan-art{position:absolute;inset:0}
+.lf-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+
+.lf-routes{transition:opacity .28s var(--lf-ease)}
+.lf-plan:not(.is-route) .lf-routes{opacity:0}
+.lf-routes path{stroke:var(--lf-red)}
+.lf-walked{opacity:.3}
+
+.lf-zone{opacity:0;transition:opacity .3s var(--lf-ease)}
+.lf-zone.is-ready{opacity:1}
+.lf-zone-ring{fill:none;stroke:var(--lf-red);stroke-opacity:.45}
+.lf-zone-fill{fill:var(--lf-red);opacity:0;transition:opacity .25s var(--lf-ease)}
+.lf-zone.is-near .lf-zone-fill{opacity:.06}
+
+.lf-token{position:absolute;z-index:1;width:18px;height:18px;margin:-9px 0 0 -9px;display:grid;place-items:center;border-radius:5px;
+  background:var(--lf-white);color:var(--lf-ink);box-shadow:0 0 0 1px var(--lf-line-2),0 1px 2px #1414161f;
+  opacity:0;transform:scale(.5);transition:opacity .2s var(--lf-ease),transform .34s var(--lf-ease);pointer-events:none}
+.lf-token.is-shown{opacity:1;transform:none}
+.lf-token-lit,.lf-tick-lit{position:absolute;inset:0;display:grid;place-items:center;border-radius:inherit;background:var(--lf-red);color:#fff;opacity:0;transition:opacity .22s var(--lf-ease)}
+.lf-token.is-reached .lf-token-lit,.lf-tick.is-reached .lf-tick-lit{opacity:1}
+.lf-glyph{font-size:10px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.lf-glyph-svg{display:block;width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:.9;stroke-linecap:round;stroke-linejoin:round}
+
+.lf-maplabel{position:absolute;z-index:2;margin:6px 0 0 12px;padding:3px 8px;border-radius:6px;white-space:nowrap;pointer-events:none;
+  background:var(--lf-white);color:var(--lf-ink);box-shadow:0 0 0 1px var(--lf-line-2),0 2px 6px #1414161a;transition:opacity .25s var(--lf-ease),transform .3s var(--lf-ease)}
+.lf-plan.is-route .lf-maplabel{opacity:0;transform:translate3d(0,4px,0)}
+
+.lf-pin{position:absolute;left:0;top:0;z-index:3;width:0;height:0;pointer-events:none;will-change:transform}
+.lf-pin-shadow{position:absolute;left:-9px;top:-3px;width:18px;height:6px;border-radius:50%;background:radial-gradient(closest-side,#14141652,#14141600);will-change:transform}
+.lf-pin-body{position:absolute;left:-14px;top:-35px;width:28px;height:36px;will-change:transform}
+.lf-pin-body svg{display:block;width:28px;height:36px;overflow:visible;filter:drop-shadow(0 2px 2px #14141638)}
+.lf-pin-ink{fill:var(--lf-ink);stroke:#fff;stroke-width:1.5}
+.lf-pin-red{fill:var(--lf-red);stroke:#fff;stroke-width:1.5;opacity:0;transition:opacity .3s var(--lf-ease)}
+.lf-plan.is-delivered .lf-pin-red{opacity:1}
+.lf-pin-dot{fill:#fff;transition:opacity .25s var(--lf-ease)}
+.lf-pin-num{fill:#fff;font:600 8px/1 Mono,monospace;letter-spacing:.02em;opacity:0;transition:opacity .25s var(--lf-ease)}
+.lf-plan.is-route .lf-pin-dot{opacity:0}
+.lf-plan.is-route .lf-pin-num{opacity:1;transition-delay:.45s}
+
+.lf-dot{position:absolute;left:0;top:0;z-index:4;width:44px;height:44px;margin:-22px 0 0 -22px;display:grid;place-items:center;
+  touch-action:none;cursor:grab;opacity:0;pointer-events:none;transition:opacity .3s var(--lf-ease);will-change:transform}
+.lf-plan.is-route .lf-dot{opacity:1;pointer-events:auto;transition-delay:.3s}
+.lf-dot:active{cursor:grabbing}
+.lf-dot-core{width:18px;height:18px;border-radius:50%;background:var(--lf-ink);box-shadow:0 0 0 3px #fff,0 0 0 4px var(--lf-line-2),0 3px 8px #14141640}
+
+/* distance, Walk it, the slider */
+.lf-controls{padding:14px 16px 8px;border-radius:12px;background:var(--lf-white);box-shadow:0 0 0 1px var(--lf-line)}
+.lf-meter{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lf-reading{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lf-num{display:block;width:3ch;font-size:44px;line-height:.86;font-weight:500;letter-spacing:-.025em;font-variant-numeric:tabular-nums;text-align:right;transition:opacity .3s var(--lf-ease)}
+.lf-reading .lf-label{white-space:nowrap}
+.lf-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border:0;border-radius:999px;cursor:pointer;
+  font-size:14px;font-weight:500;line-height:1.2;white-space:nowrap;transition:transform .14s var(--lf-ease);touch-action:manipulation}
+.lf-btn:active{transform:scale(.97)}
+.lf .lf-btn-ink{background:var(--lf-ink);color:#fff}
+.lf-btn-ink:focus-visible{outline-offset:3px}
+@media (hover:hover){.lf-btn-ink:hover{background:#2b2b30}}
+.lf-walk{flex:none;min-width:136px}
+.lf-ico{display:block;width:12px;height:12px;flex:none}
+.lf-ico-l{width:16px;height:16px}
+
+.lf-range{--th:26px;position:relative;height:58px;margin-top:14px;transition:opacity .3s var(--lf-ease)}
+.lf-controls.is-pin .lf-range,.lf-controls.is-pin .lf-num{opacity:.35}
+.lf-range input{position:absolute;z-index:2;left:0;top:-6px;width:100%;height:40px;margin:0;padding:0;opacity:0;cursor:pointer;background:none;-webkit-appearance:none;appearance:none;touch-action:pan-y}
+.lf-range input:disabled{cursor:default}
+.lf-range input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:40px;border:0;background:none}
+.lf-range input::-moz-range-thumb{width:26px;height:40px;border:0;background:none}
+.lf-range input::-moz-range-track{background:none}
+.lf-track{position:absolute;left:calc(var(--th)/2);right:calc(var(--th)/2);top:12px;height:4px;border-radius:2px;background:#1414161c;overflow:hidden}
+.lf-fill{position:absolute;inset:0;background:var(--lf-ink);transform:scaleX(0);transform-origin:0 50%;will-change:transform}
+.lf-rail{position:absolute;z-index:1;left:calc(var(--th)/2);right:calc(var(--th)/2);top:14px;height:0;pointer-events:none;will-change:transform}
+.lf-thumb{position:absolute;left:-11px;top:-11px;width:22px;height:22px;border-radius:50%;background:var(--lf-ink);box-shadow:0 0 0 3px #fff,0 0 0 4px var(--lf-line-2),0 2px 6px #14141633}
+.lf-range input:focus-visible~.lf-rail .lf-thumb{outline:2px solid var(--lf-ink);outline-offset:5px}
+.lf-ticks{position:absolute;left:calc(var(--th)/2);right:calc(var(--th)/2);top:32px;height:16px;pointer-events:none}
+.lf-tick{position:absolute;top:0;left:calc(var(--p)*100%);width:16px;height:16px;margin-left:-8px;display:grid;place-items:center;border-radius:4px;
+  background:var(--lf-paper);color:var(--lf-muted);box-shadow:0 0 0 1px var(--lf-line)}
+.lf-tick.is-wide{width:24px;margin-left:-12px}
+.lf-tick .lf-glyph{font-size:9px}
+.lf-tick .lf-glyph-svg{width:10px;height:10px}
+
+/* the card: the resident's photo, the step, the gate code */
+.lf-card{border-radius:12px;background:var(--lf-white);box-shadow:0 0 0 1px var(--lf-line);overflow:hidden}
+.lf-photo{position:relative;aspect-ratio:16/10;background:#e6e4de;overflow:hidden}
+.lf-shot{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;object-fit:cover;opacity:0}
+.lf-shot.is-kept{opacity:1}
+.lf-shot.is-on{opacity:1;transition:opacity .45s var(--lf-ease)}
+.lf-chip{position:absolute;z-index:20;left:10px;top:10px;padding:2px 8px;border-radius:999px;background:#ffffffeb;color:var(--lf-ink);box-shadow:0 1px 4px #14141626}
+.lf-card.is-pin .lf-chip{background:var(--lf-ink);color:#fff}
+.lf-card-body{padding:14px 16px 16px}
+.lf-step{animation:lf-rise .32s var(--lf-ease) both}
+.lf-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.lf-dist{font-variant-numeric:tabular-nums;white-space:nowrap}
+.lf-title{margin-top:4px!important;font-size:21px;line-height:1.25;font-weight:500;letter-spacing:-.01em}
+.lf-text{margin-top:6px!important;min-height:3em;font-size:14.5px;line-height:1.5;color:#3b3b41}
+.lf-card.is-pin .lf-text{color:var(--lf-muted)}
+
+.lf-cta{display:grid;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--lf-line)}
+.lf-note{font-size:13.5px;line-height:1.5;color:var(--lf-ink)}
+.lf-cta .lf-btn{justify-self:start}
+
+.lf-code{margin-top:14px;padding-top:10px;border-top:1px solid var(--lf-line)}
+.lf-code-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:24px}
+.lf-link{display:inline-flex;align-items:center;gap:6px;min-height:40px;margin:-8px -8px -8px 0!important;padding:0 8px;border:0;border-radius:8px;background:none;cursor:pointer;color:var(--lf-ink)}
+@media (hover:hover){.lf-link:hover{background:var(--lf-paper)}}
+.lf-code-main{position:relative;display:grid;align-items:center;min-height:66px;margin-top:6px}
+.lf-code-main>*{animation:lf-fade .2s var(--lf-ease) both}
+
+.lf-hold{position:relative;display:block;width:100%;min-height:52px;padding:0;border:0;border-radius:12px;overflow:hidden;cursor:pointer;
+  background:var(--lf-ink);color:#fff;font-size:14.5px;font-weight:500;line-height:1.3;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none}
+.lf-hold:focus-visible{outline-offset:3px}
+.lf-hold-fill{position:absolute;inset:0;background:var(--lf-red);transform:scaleX(0);transform-origin:0 50%;transition:transform .2s var(--lf-ease)}
+.lf-hold.is-holding .lf-hold-fill{transform:scaleX(1);transition:transform var(--hold) linear}
+.lf-hold-face{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;padding:8px 14px;text-align:left}
+.lf-hold-face .lf-ico{width:18px;height:18px}
+.lf-hold.is-locked{cursor:default;touch-action:auto;background:var(--lf-paper);color:var(--lf-muted);box-shadow:inset 0 0 0 1px var(--lf-line);font-size:13.5px;font-weight:450}
+
+.lf-tiles{position:relative;display:flex;gap:6px;width:max-content;padding-bottom:10px;border-radius:8px;transition:opacity .24s var(--lf-ease)}
+.lf-tiles.is-hiding{opacity:0}
+.lf-tile{position:relative;width:44px;height:56px;border-radius:8px;background:#060607;perspective:220px;color:#fff;font-size:32px;font-weight:500;font-variant-numeric:tabular-nums}
+.lf-half,.lf-flap{position:absolute;left:0;right:0;height:calc(50% - .5px);overflow:hidden;background:var(--lf-ink);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.lf-half-top,.lf-flap-front{top:0;border-radius:8px 8px 0 0}
+.lf-half-bot,.lf-flap-back{bottom:0;border-radius:0 0 8px 8px}
+.lf-half>span,.lf-flap>span{position:absolute;left:0;right:0;height:56px;line-height:56px;text-align:center}
+.lf-half-top>span{top:0}
+.lf-flap-back>span{bottom:0}
+.lf-flap-front{background:#202024;transform-origin:50% 100%;transform:rotateX(-90deg);animation:lf-flap-a .15s cubic-bezier(.5,0,1,1) calc(.14s + var(--i)*.085s) backwards}
+.lf-flap-back{transform-origin:50% 0;animation:lf-flap-b .18s cubic-bezier(0,0,.2,1) calc(.29s + var(--i)*.085s) backwards}
+.lf-drain{position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:1px;background:#1414161c;overflow:hidden}
+.lf-drain>span{position:absolute;inset:0;background:var(--lf-ink);transform-origin:0 50%;animation:lf-drain var(--reveal,20s) linear both}
+
+.lf-done{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--lf-line)}
+
+.lf-fine{margin-top:14px!important;font-size:12px;line-height:1.5;color:var(--lf-muted)}
+
+@keyframes lf-rise{from{opacity:0;transform:translate3d(0,5px,0)}to{opacity:1;transform:none}}
+@keyframes lf-fade{from{opacity:0}to{opacity:1}}
+@keyframes lf-flap-a{from{transform:rotateX(0deg)}to{transform:rotateX(-90deg)}}
+@keyframes lf-flap-b{from{transform:rotateX(90deg)}to{transform:rotateX(0deg)}}
+@keyframes lf-drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+
+@container lf (max-width:400px){
+  .lf{padding:12px}
+  .lf-num{font-size:40px}
+  .lf-controls{padding:12px 14px 6px}
+  .lf-card-body{padding:12px 14px 14px}
+  .lf-title{font-size:19px}
+  .lf-walk{min-width:124px;padding:0 14px}
+}
+
+/* reduced motion: no transitions or decorative animation; the hold progress and the 20 s countdown stay, they are
+   readouts rather than motion */
+.lf--reduced *,.lf--reduced *::before,.lf--reduced *::after{transition-duration:0s!important;transition-delay:0s!important;animation:none!important}
+.lf--reduced .lf-hold.is-holding .lf-hold-fill{transition:transform var(--hold) linear!important}
+.lf--reduced .lf-drain>span{animation:lf-drain var(--reveal,20s) linear both!important}

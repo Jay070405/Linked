@@ -1,31 +1,30 @@
-import {useEffect,useRef,useState} from 'react';
-import {FILMS,FILM_ORDER} from './product-films-data';
+import {lazy,Suspense,useEffect,useRef,useState} from 'react';
+import {FILMS,nextAfter} from './product-films-data';
+import {Hero,SectionHead,Statement,CountUp,Reveal,Decisions,Flipbook,BeforeAfter,NextProject} from './story/Story';
 import './brand-motion.css';
 import './hako-film.css';
 import './film-case.css';
 
-// One page per product launch film. Like Hako's, each plays above its own edit (beats, headlines, shots, and the
-// frame-to-frame motion measured from the file itself, since the films are silent), then shows how it was made from
-// the film project's own record (aigc-vibecoding/product-films: RESEARCH.md, README, the first cuts, six review rounds).
+// One story page per product launch film: the problem, the product to try (a demo built on the case's own model), the
+// design decisions from its case study, how the film tells it (a scroll-scrubbed key moment and the edit itself), the
+// first cut against the final, and a short craft section, from aigc-vibecoding/product-films' own record.
 const FPS=60;
+const DEMOS={
+ 'variables-for-agents':lazy(()=>import('./demos/VariablesDemo')),
+ 'last-100-feet':lazy(()=>import('./demos/LastHundredFeetDemo')),
+ 'common-ground':lazy(()=>import('./demos/CommonGroundDemo')),
+};
 const clock=t=>{const f=Math.round(t*FPS),s=Math.floor(f/FPS);return '00:00:'+String(s).padStart(2,'0')+':'+String(f%FPS).padStart(2,'0');};
-const sec=t=>'00:'+t.toFixed(1).padStart(4,'0');
-// the first cuts as measured in RESEARCH.md §二: seconds, seconds nearly the same as the second before, big changes
 const RESEARCH_FILMS=['Apple Creator Studio','Notion Mail','Figma Motion','Figma Config 2025','Linear Agent','Raycast','Dia','Notion AI','iOS 26 Liquid Glass'];
 
-export default function FilmCase({lang,reduced,onNavigate,slug}){
- const film=FILMS[slug],en=lang==='en',DUR=film.duration,media='/assets/other-project/'+slug,src='/video/'+film.stem+'-film.mp4';
+/** The edit: the film above its own timeline (beats, headlines, shots, measured motion), clickable and draggable. */
+function Desk({film,slug,lang,video}){
+ const en=lang==='en',DUR=film.duration,media='/assets/other-project/'+slug,src='/video/'+film.stem+'-film.mp4';
  const pos=t=>t/DUR*100+'%',span=(a,b)=>({left:pos(a),width:(b-a)/DUR*100+'%'});
  const shots=[0,...film.cuts,DUR];
- const video=useRef(null),lanes=useRef(null),scroller=useRef(null),strip=useRef(null),head=useRef(null),tc=useRef(null);
+ const lanes=useRef(null),scroller=useRef(null),strip=useRef(null),head=useRef(null),tc=useRef(null);
  const beatRef=useRef(0),dragging=useRef(false),paintRef=useRef(null);
  const [beat,setBeat]=useState(0),[failed,setFailed]=useState(false);
- const go=to=>event=>{
-  if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
-  event.preventDefault();onNavigate(to);
- };
- useEffect(()=>{beatRef.current=0;setBeat(0);setFailed(false);},[slug]);
- // the playhead, timecode and inspector follow the video; while it plays they repaint every frame
  useEffect(()=>{
   const v=video.current;let raf=0;
   const paint=()=>{
@@ -73,115 +72,121 @@ export default function FilmCase({lang,reduced,onNavigate,slug}){
   if(to!==undefined){event.preventDefault();seek(to);}
   else if(event.key===' '){event.preventDefault();v.paused?v.play().catch(()=>{}):v.pause();}
  };
- const jump=t=>{seek(t);video.current.play().catch(()=>{});video.current.scrollIntoView({behavior:reduced?'auto':'smooth',block:'center'});};
  const motionMax=Math.max(...film.motion),step=4/FPS;
  const motionD='M'+film.motion.map((v,i)=>((i+.5)*step).toFixed(3)+','+(1-v/motionMax*.92).toFixed(3)).join('L');
- const chartD='M'+film.motion.map((v,i)=>((i+.5)*step/DUR*600).toFixed(1)+','+(100-v/motionMax*92).toFixed(2)).join('L');
  const current=film.beats[beat]||film.beats[0];
- const others=FILM_ORDER.filter(s=>s!==slug&&FILMS[s]);
- const caseHref='/product/'+film.caseSlug;
- return <article className="brand-motion-page hk-page fc-page" data-nav-tone="light" style={{'--fc-accent':film.accent}}>
-  <header className="brand-motion-heading">
-   <div className="brand-motion-kicker"><a href="/other-project" onClick={go('/other-project')}>← Other Project</a><span>PRODUCT / LAUNCH FILM</span></div>
-   <div className="brand-motion-title"><h1 lang="en">{film.name}</h1><p>{film.tagline[0]} <i>{film.tagline[1]}</i></p></div>
-   <div className="brand-motion-intro"><span>{en?'PRODUCT LAUNCH FILM':'产品宣传片'}</span><p>{film.intro[lang]}</p></div>
-  </header>
-
-  <section className="brand-motion-films hk-cut" aria-labelledby="fc-cut">
-   <div className="brand-motion-film">
-    <header><span className="brand-motion-number">01 /</span><div><h2 id="fc-cut">{en?'The final cut, on its timeline':'成片，摊开在时间线上'}</h2><p>{en?`The film plays above its own edit: ${shots.length-1} shots, ${film.beats.length} beats and every headline. The film is silent, so the bottom track shows how much the picture changes from frame to frame instead; the spikes in it are the cuts. Click or drag the timeline to jump.`:`成片放在它自己的剪辑时间线上方：${shots.length-1} 个镜头、${film.beats.length} 个段落和每一行标题。片子没有声音，所以最下面一条轨道显示的是逐帧的画面变化量，竖起来的尖峰就是剪辑点。点击或拖动时间线可以跳转。`}</p></div><span className="brand-motion-duration">00:{String(Math.round(DUR)).padStart(2,'0')}</span></header>
-    <div className="hk-desk">
-     <div className="hk-bar"><span className="hk-dots" aria-hidden="true"><i/><i/><i/></span><b>{film.file}</b><span className="hk-bar-meta">1920 × 1080 · 60 FPS · {en?'NO SOUND':'无声'}</span><span ref={tc} className="hk-tc" aria-hidden="true">00:00:00:00</span></div>
-     <video key={slug} ref={video} controls muted playsInline preload="metadata" poster={'/video/'+film.stem+'-film.jpg'} aria-label={film.name+(en?' — launch film, no sound':' 宣传片，无声')} onError={()=>setFailed(true)}>
-      <source src={src} type="video/mp4"/>
-      <a href={src}>{en?'Open video':'打开视频'}</a>
-     </video>
-     <div className="hk-inspector" aria-live="polite">
-      <div><span>{en?'BEAT':'段落'} {String(beat+1).padStart(2,'0')} / {film.beats.length}</span><strong>{current.name}</strong></div>
-      <p>{current.what[lang]}</p>
-      <div><span>{en?'CAMERA':'镜头'}</span><p>{current.camera[lang]}</p></div>
-     </div>
-     <div ref={scroller} className="hk-timeline">
-      <div className="hk-tl fc-tl">
-       <div className="hk-labels" aria-hidden="true"><span/><span>{en?'BEAT':'段落'}</span><span>{en?'TEXT':'字幕'}</span><span>V1</span><span>{en?'MOTION':'运动'}</span></div>
-       <div ref={lanes} className="hk-lanes" role="slider" tabIndex={0} aria-label={en?'Timeline: drag or use the arrow keys to move through the film':'时间线：拖动或用方向键在片中跳转'} aria-valuemin={0} aria-valuemax={DUR}
-        onPointerDown={event=>{if(event.pointerType!=='mouse'||event.button!==0)return;event.currentTarget.setPointerCapture(event.pointerId);dragging.current=true;seekAt(event.clientX);}}
-        onPointerMove={event=>{if(dragging.current)seekAt(event.clientX);}}
-        onPointerUp={()=>{dragging.current=false;}} onPointerCancel={()=>{dragging.current=false;}}
-        onClick={event=>seekAt(event.clientX)} onKeyDown={keys}>
-        <svg className="hk-grid" viewBox={`0 0 ${DUR} 1`} preserveAspectRatio="none" aria-hidden="true">
-         {Array.from({length:Math.floor(DUR*2)},(_,i)=><line key={i} className={i%2?undefined:'hk-bar-line'} x1={(i+1)/2} x2={(i+1)/2} y1="0" y2="1"/>)}
-        </svg>
-        <div className="hk-ruler" aria-hidden="true">{Array.from({length:Math.floor(DUR/5)+1},(_,i)=><span key={i} style={{left:pos(i*5)}}>{String(i*5).padStart(2,'0')}</span>)}</div>
-        <div className="hk-lane hk-beats" aria-hidden="true">{film.beats.map((b,i)=>{const from=i?film.beats[i-1].to:0;return <span key={b.name+i} className={(i===beat?'is-on':'')+(b.to-from<1.2?' is-short':'')} style={span(from,b.to)}>{b.name}</span>;})}</div>
-        <div className="hk-lane hk-text" aria-hidden="true">{film.headlines.map(([a,b,text])=><span key={a+text} style={span(a,b)}>{text}</span>)}</div>
-        <div className="hk-lane hk-v1" aria-hidden="true"><canvas ref={strip}/>{shots.slice(0,-1).map((s,i)=><span key={s} className={shots[i+1]-s<1.2?'is-short':undefined} style={span(s,shots[i+1])}>{String(i+1).padStart(2,'0')}</span>)}</div>
-        <div className="hk-lane fc-motion" aria-hidden="true">
-         <svg viewBox={`0 0 ${DUR} 1`} preserveAspectRatio="none"><path d={motionD}/>{film.cuts.map(c=><line key={c} x1={c} x2={c} y1="0" y2="1"/>)}</svg>
-        </div>
-        <div ref={head} className="hk-head" aria-hidden="true"><i/></div>
-       </div>
+ return <>
+  <div className="hk-desk">
+   <div className="hk-bar"><span className="hk-dots" aria-hidden="true"><i/><i/><i/></span><b>{film.file}</b><span className="hk-bar-meta">1920 × 1080 · 60 FPS · {en?'NO SOUND':'无声'}</span><span ref={tc} className="hk-tc" aria-hidden="true">00:00:00:00</span></div>
+   <video key={slug} ref={video} controls muted playsInline preload="metadata" poster={'/video/'+film.stem+'-film.jpg'} aria-label={film.name+(en?' — launch film, no sound':' 宣传片，无声')} onError={()=>setFailed(true)}>
+    <source src={src} type="video/mp4"/>
+    <a href={src}>{en?'Open video':'打开视频'}</a>
+   </video>
+   <div className="hk-inspector" aria-live="polite">
+    <div><span>{en?'BEAT':'段落'} {String(beat+1).padStart(2,'0')} / {film.beats.length}</span><strong>{current.name}</strong></div>
+    <p>{current.what[lang]}</p>
+    <div><span>{en?'CAMERA':'镜头'}</span><p>{current.camera[lang]}</p></div>
+   </div>
+   <div ref={scroller} className="hk-timeline">
+    <div className="hk-tl fc-tl">
+     <div className="hk-labels" aria-hidden="true"><span/><span>{en?'BEAT':'段落'}</span><span>{en?'TEXT':'字幕'}</span><span>V1</span><span>{en?'MOTION':'运动'}</span></div>
+     <div ref={lanes} className="hk-lanes" role="slider" tabIndex={0} aria-label={en?'Timeline: drag or use the arrow keys to move through the film':'时间线：拖动或用方向键在片中跳转'} aria-valuemin={0} aria-valuemax={DUR}
+      onPointerDown={event=>{if(event.pointerType!=='mouse'||event.button!==0)return;event.currentTarget.setPointerCapture(event.pointerId);dragging.current=true;seekAt(event.clientX);}}
+      onPointerMove={event=>{if(dragging.current)seekAt(event.clientX);}}
+      onPointerUp={()=>{dragging.current=false;}} onPointerCancel={()=>{dragging.current=false;}}
+      onClick={event=>seekAt(event.clientX)} onKeyDown={keys}>
+      <svg className="hk-grid" viewBox={`0 0 ${DUR} 1`} preserveAspectRatio="none" aria-hidden="true">
+       {Array.from({length:Math.floor(DUR*2)},(_,i)=><line key={i} className={i%2?undefined:'hk-bar-line'} x1={(i+1)/2} x2={(i+1)/2} y1="0" y2="1"/>)}
+      </svg>
+      <div className="hk-ruler" aria-hidden="true">{Array.from({length:Math.floor(DUR/5)+1},(_,i)=><span key={i} style={{left:pos(i*5)}}>{String(i*5).padStart(2,'0')}</span>)}</div>
+      <div className="hk-lane hk-beats" aria-hidden="true">{film.beats.map((b,i)=>{const from=i?film.beats[i-1].to:0;return <span key={b.name+i} className={(i===beat?'is-on':'')+(b.to-from<1.2?' is-short':'')} style={span(from,b.to)}>{b.name}</span>;})}</div>
+      <div className="hk-lane hk-text" aria-hidden="true">{film.headlines.map(([a,b,text])=><span key={a+text} style={span(a,b)}>{text}</span>)}</div>
+      <div className="hk-lane hk-v1" aria-hidden="true"><canvas ref={strip}/>{shots.slice(0,-1).map((s,i)=><span key={s} className={shots[i+1]-s<1.2?'is-short':undefined} style={span(s,shots[i+1])}>{String(i+1).padStart(2,'0')}</span>)}</div>
+      <div className="hk-lane fc-motion" aria-hidden="true">
+       <svg viewBox={`0 0 ${DUR} 1`} preserveAspectRatio="none"><path d={motionD}/>{film.cuts.map(c=><line key={c} x1={c} x2={c} y1="0" y2="1"/>)}</svg>
       </div>
+      <div ref={head} className="hk-head" aria-hidden="true"><i/></div>
      </div>
-     <ul className="hk-legend"><li><i className="fc-key-motion"/>{en?'Picture change per frame':'逐帧画面变化'}</li><li><i className="fc-key-cut"/>{en?'Hard cuts':'硬切'} <span>{film.cuts.length}</span></li><li className="hk-legend-grid">{en?'Lines: half seconds':'竖线：每半秒'}</li></ul>
     </div>
-    {failed&&<p className="brand-motion-error" role="alert">{en?'The video could not load. Try opening it directly below.':'视频暂时未能加载，请通过下方链接直接打开。'}</p>}
-    <div className="brand-motion-film-note"><span>1920 × 1080 / 60 FPS / {en?'NO SOUND':'无声'}</span><span className="fc-links">
-     <a href={caseHref} onClick={go(caseHref)}>{film.caseName[lang]} →</a>
-     <a href={src} target="_blank" rel="noopener noreferrer">{en?'Open video':'单独打开视频'} ↗</a>
-    </span></div>
    </div>
-  </section>
+   <ul className="hk-legend"><li><i className="fc-key-motion"/>{en?'Picture change per frame':'逐帧画面变化'}</li><li><i className="fc-key-cut"/>{en?'Hard cuts':'硬切'} <span>{film.cuts.length}</span></li><li className="hk-legend-grid">{en?'Click or drag the timeline to jump':'点击或拖动时间线跳转'}</li></ul>
+  </div>
+  {failed&&<p className="brand-motion-error" role="alert">{en?'The video could not load. Try opening it directly.':'视频暂时未能加载，请直接打开。'} <a href={src}>{en?'Open video':'打开视频'} ↗</a></p>}
+ </>;
+}
 
-  <section className="hk-process" aria-labelledby="fc-process">
-   <header className="hk-process-head"><h2 id="fc-process">{en?'How it was made':'制作过程'}</h2><span>04 / {en?'STEPS':'步骤'}</span></header>
+export default function FilmCase({lang,reduced,onNavigate,slug}){
+ const film=FILMS[slug],en=lang==='en',DUR=film.duration,media='/assets/other-project/'+slug,src='/video/'+film.stem+'-film.mp4';
+ const Demo=DEMOS[slug],video=useRef(null),demo=useRef(null);
+ const go=to=>event=>{
+  if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+  event.preventDefault();onNavigate(to);
+ };
+ const behavior=reduced?'auto':'smooth';
+ const watch=t=>{const v=video.current;if(typeof t==='number')v.currentTime=t;v.play().catch(()=>{});v.scrollIntoView({behavior,block:'center'});};
+ const flipFrames=Array.from({length:24},(_,i)=>`${media}/flip-${String(i+1).padStart(2,'0')}.webp`);
+ const caseHref='/product/'+film.caseSlug,shots=film.cuts.length+1;
+ return <article key={slug} className={'st-page fc-page'+(reduced?' st-still':'')} data-nav-tone="dark" style={{'--accent':film.accent}}>
+  <Hero reduced={reduced} video={src} poster={'/video/'+film.stem+'-film.jpg'} title={film.name} tagline={film.tagline}
+   back={<a href="/other-project" onClick={go('/other-project')}>← Other Project</a>} kicker={en?'PRODUCT CONCEPT / LAUNCH FILM':'产品概念 / 宣传片'}
+   meta={[[en?'FILM':'片长',`${DUR} s · 60 fps`],[en?'SHOTS':'镜头',String(shots)],[en?'PRODUCT':'产品',film.caseName[lang].replace(/^The | case$|案例$/g,'').trim()],[en?'ROLE':'角色',en?'Product design, film':'产品设计、宣传片']]}
+   actions={<>
+    <button type="button" className="st-btn is-primary" onClick={()=>watch(0)}>▶ {en?'Watch the film':'看片子'}</button>
+    <button type="button" className="st-btn" onClick={()=>demo.current.scrollIntoView({behavior,block:'start'})}>{en?'Try the product':'试试这个产品'} ↓</button>
+   </>}/>
 
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>01</span><h3>{en?'The first cut read like a slide deck':'第一版像一份幻灯片'}</h3>
-     <p>{film.firstCutText[lang]}</p>
-     <ul className="hk-specs">{RESEARCH_FILMS.map(name=><li key={name}>{name}</li>)}</ul></div>
-    <ol className="fc-pairs">{film.firstCut.map((pair,i)=><li key={i}>
-     <figure><img src={`${media}/v1-${i+1}.webp`} width="960" height="540" loading="lazy" decoding="async" alt={(en?'First cut: ':'第一版：')+pair.caption[lang]}/><figcaption>{en?'FIRST CUT':'第一版'}</figcaption></figure>
-     <figure><img src={`${media}/final-${i+1}.webp`} width="960" height="540" loading="lazy" decoding="async" alt={(en?'Final: ':'终版：')+pair.caption[lang]}/><figcaption>{en?'FINAL':'终版'} · {sec(pair.final)}</figcaption></figure>
-     <p>{pair.caption[lang]}</p>
-    </li>)}</ol>
-   </div>
+  <div className="st-wrap">
+   <section className="st-section" aria-labelledby="fc-problem">
+    <Reveal as="span" className="st-index st-lead-index" id="fc-problem">01 / {en?'THE PROBLEM':'问题'}</Reveal>
+    <Statement text={film.problem[lang]} reduced={reduced}/>
+    <div className="st-facts">{film.facts.map((f,i)=><Reveal className="st-fact" key={i} delay={i*90}><CountUp to={f.to} prefix={f.prefix} suffix={f.suffix} reduced={reduced}/><p>{f.label[lang]}</p></Reveal>)}</div>
+   </section>
 
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>02</span><h3>{en?'One line, acted out':'把一句话演出来'}</h3>
-     <p>{film.signatureText[lang]}</p></div>
-    <ol className="hk-motif">{film.signature.map((m,i)=><li key={m.t}><button type="button" onClick={()=>jump(m.t)} aria-label={(en?'Play from ':'从这里播放：')+sec(m.t)+' · '+m.label[lang]}>
-     <img src={`${media}/sig-${i+1}.webp`} width="1600" height="900" loading="lazy" decoding="async" alt=""/>
-     <span><b>0{i+1}</b>{m.label[lang]}<em>▶ {sec(m.t)}</em></span>
-    </button></li>)}</ol>
-   </div>
+   <section ref={demo} className="st-section" aria-labelledby="fc-try">
+    <SectionHead index={`02 / ${en?'TRY IT':'试一试'}`} title={<span id="fc-try">{en?'How it works':'它怎么用'}</span>} lead={film.how[lang]}/>
+    <Reveal className="st-demo"><Suspense fallback={<div className="st-demo-loading st-mono">{en?'Loading the demo…':'正在加载演示…'}</div>}><Demo lang={lang} reduced={reduced}/></Suspense></Reveal>
+   </section>
 
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>03</span><h3>{en?'Smooth, frame by frame':'一帧一帧地顺下来'}</h3>
-     <p>{film.smoothText[lang]}</p>
-     <ul className="hk-specs"><li>60 FPS</li><li>{en?'16-sample motion blur':'16 次采样运动模糊'}</li><li>{en?'Moves placed by transform, not left/top':'用 transform 定位，不用 left/top'}</li><li>{en?'Speed changes only on a cut':'只在剪辑点换速度'}</li></ul></div>
-    <figure className="hk-chart">
+   <section className="st-section" aria-labelledby="fc-why">
+    <SectionHead index={`03 / ${en?'DESIGN DECISIONS':'设计决策'}`} title={<span id="fc-why">{en?'Why it works this way':'为什么这样设计'}</span>}
+     lead={film.decisions[0].tried?(en?'Five decisions from the case study. Each card shows what I chose; flip it to see what I tried first.':'案例里的五个设计决策。每张卡片先给最后的选择，切换一下能看到我先试过什么。'):(en?'Five principles the prototype was built to pass, each with the piece of interface that passes it.':'原型必须做到的五条原则，每条都配上做到这一点的那一小块界面。')}/>
+    <Decisions items={film.decisions} lang={lang} accent={film.accent}/>
+   </section>
+
+   <section className="st-section" aria-labelledby="fc-film">
+    <SectionHead index={`04 / ${en?'THE FILM':'宣传片'}`} title={<span id="fc-film">{en?'How the film tells it':'片子怎么讲这件事'}</span>} lead={film.signatureText[lang]}/>
+    <ol className="st-ideas">{film.ideas.map((idea,i)=><Reveal as="li" key={i} delay={i*90}><b>{String(i+1).padStart(2,'0')}</b><h3>{idea.title[lang]}</h3><p>{idea.body[lang]}</p></Reveal>)}</ol>
+    <Flipbook frames={flipFrames} steps={film.signature} duration={film.flip} reduced={reduced} lang={lang} onPlay={watch}/>
+    <Reveal><Desk film={film} slug={slug} lang={lang} video={video}/></Reveal>
+    <div className="brand-motion-film-note"><span>{en?'The edit: beats, headlines, shots and measured motion.':'剪辑台：段落、字幕、镜头和量出来的运动曲线。'}</span><span className="fc-links"><a href={caseHref} onClick={go(caseHref)}>{film.caseName[lang]} →</a><a href={src} target="_blank" rel="noopener noreferrer">{en?'Open video':'单独打开视频'} ↗</a></span></div>
+   </section>
+
+   <section className="st-section" aria-labelledby="fc-cut">
+    <SectionHead index={`05 / ${en?'FIRST CUT → FINAL':'第一版 → 终版'}`} title={<span id="fc-cut">{en?'From slide deck to film':'从幻灯片到片子'}</span>} lead={film.firstCutText[lang]}/>
+    <BeforeAfter pairs={film.firstCut} media={media} lang={lang} reduced={reduced}/>
+    <Reveal as="ul" className="st-chips st-chips-gap">{RESEARCH_FILMS.map(name=><li key={name}>{name}</li>)}</Reveal>
+   </section>
+
+   <section className="st-section" aria-labelledby="fc-craft">
+    <SectionHead index={`06 / ${en?'CRAFT':'技术'}`} title={<span id="fc-craft">{en?'Smooth, frame by frame':'一帧一帧地顺下来'}</span>} lead={film.smoothText[lang]}/>
+    <ul className="st-stats">
+     <Reveal as="li"><b>{shots}</b><span>{en?`shots, ${film.cuts.length} hard cuts on exact frames`:`个镜头，${film.cuts.length} 个硬切，都落在整帧上`}</span></Reveal>
+     <Reveal as="li" delay={80}><b>60</b><span>{en?'fps, so slow moves never step':'帧每秒，慢速运动不会一格一格'}</span></Reveal>
+     <Reveal as="li" delay={160}><b>16</b><span>{en?'shutter samples of motion blur in every frame':'个快门采样，合成每一帧的运动模糊'}</span></Reveal>
+     <Reveal as="li" delay={240}><b>{film.scores[0]}→{film.scores[film.scores.length-1]}</b><span>{en?'independent review score over six rounds':'六轮独立评审的分数变化'}</span></Reveal>
+    </ul>
+    <Reveal as="figure" className="st-chart">
      <svg viewBox="0 0 600 100" preserveAspectRatio="none" role="img" aria-label={en?'Frame-to-frame picture change across the film':'全片逐帧的画面变化量'}>
-      {film.cuts.map(c=><line key={c} className="hk-chart-cut" x1={c/DUR*600} x2={c/DUR*600} y1="0" y2="100"/>)}
-      <path d={chartD}/>
+      {film.cuts.map(c=><line key={c} x1={c/DUR*600} x2={c/DUR*600} y1="0" y2="100"/>)}
+      <path d={'M'+film.motion.map((v,i)=>((i+.5)*4/FPS/DUR*600).toFixed(1)+','+(100-v/Math.max(...film.motion)*92).toFixed(2)).join('L')}/>
      </svg>
-     <div className="hk-chart-axis" aria-hidden="true">{Array.from({length:Math.floor(DUR/5)+1},(_,i)=><span key={i} style={{left:i*5/DUR*100+'%'}}>{i*5}s</span>)}</div>
-     <figcaption>{en?'Measured from the file on this page: the mean change between each frame and the one before, 64 × 36 greyscale. Dashed lines are the cuts.':'从本页播放的文件量出来：每一帧和上一帧的平均差（64 × 36 灰度）。虚线是剪辑点。'}</figcaption>
-    </figure>
-   </div>
+     <figcaption>{en?'Picture change from frame to frame, measured from the file on this page. Dashed: the cuts.':'从本页播放的文件量出来的逐帧画面变化。虚线是剪辑点。'}</figcaption>
+    </Reveal>
+    <ol className="st-notes">{film.notes.map((n,i)=><Reveal as="li" key={i} delay={i*80}><span>{en?'REVIEW NOTE':'评审意见'} 0{i+1}</span><p>{n.note[lang]}</p><span>{en?'WHAT CHANGED':'怎么改的'}</span><p>{n.fix[lang]}</p></Reveal>)}</ol>
+   </section>
 
-   <div className="hk-step hk-step-wide">
-    <div className="hk-step-text"><span>04</span><h3>{en?'Six rounds of review':'六轮审片'}</h3>
-     <p>{en?'Each round went to a separate reviewer that changed nothing and scored the film out of 100: motion 30, craft 30, story 25, finish 15. Its notes became rules for the next round. Three of the notes on this film, and what changed.':'每一轮都交给一个不改文件的独立评审打分，满分 100：动效 30、工艺 30、叙事 25、完成度 15。它的意见变成下一轮的规则。下面是针对这支片子的三条意见，以及怎么改的。'}</p></div>
-    <ol className="fc-scores" aria-label={en?'Review scores by round':'各轮评审分数'}>{film.scores.map((s,i)=><li key={i} style={{'--h':(s-50)/50}}><b>{s}</b><i/><span>{en?`R${i+1}`:`第${i+1}轮`}</span></li>)}</ol>
-    <ol className="hk-notes">{film.notes.map((n,i)=><li key={i}><span>{en?'NOTE':'意见'} 0{i+1}</span><p>{n.note[lang]}</p><span>{en?'FIX':'修改'}</span><p>{n.fix[lang]}</p></li>)}</ol>
-   </div>
-  </section>
-
-  <nav className="fc-more" aria-label={en?'More launch films':'更多宣传片'}>
-   <span>{en?'MORE LAUNCH FILMS':'更多宣传片'}</span>
-   <ul>{others.map(s=>{const f=FILMS[s],href='/other-project/'+s;return <li key={s}><a href={href} onClick={go(href)}><img src={`/assets/other-project/${s}/cover.webp`} width="1274" height="1080" loading="lazy" decoding="async" alt=""/><span lang="en">{f.name}</span><small>{f.tagline.join(' ')}</small></a></li>;})}</ul>
-  </nav>
-  <footer className="brand-motion-footer"><span>JAY LIN / {film.name.toUpperCase()}</span><p>{en?'A product concept by Jay Lin.':'林世杰的产品概念。'}</p></footer>
+   <NextProject item={nextAfter(slug)} lang={lang} onNavigate={onNavigate}/>
+   <footer className="st-footer"><span>JAY LIN / {film.name.toUpperCase()}</span><p>{en?'A product concept by Jay Lin.':'林世杰的产品概念。'}</p></footer>
+  </div>
  </article>;
 }
