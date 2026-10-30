@@ -7,12 +7,13 @@ import ReadyForAgentsCase from './worlds/ready-for-agents/ReadyForAgentsWorld';
 import ChooseNotToLoseCase from './worlds/choose-not-to-lose/ChooseNotToLoseWorld';
 import LastHundredFeetCase from './worlds/last-100-feet/LastHundredFeetWorld';
 import ArdenCase from './worlds/arden/ArdenWorld';
+import HakoCase from './worlds/hako/HakoWorld';
 import {PRODUCT_HOME} from './content';
 import {L, LangProvider, pageLanguage, useCaseLang} from './i18n';
 import './product.css';
 import AboutPage from './AboutPage';
 
-const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'last-100-feet': LastHundredFeetCase, 'choose-not-to-lose': ChooseNotToLoseCase, arden: ArdenCase};
+const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'last-100-feet': LastHundredFeetCase, 'choose-not-to-lose': ChooseNotToLoseCase, arden: ArdenCase, hako: HakoCase};
 
 function NotFound() {
   const {t, htmlLang} = useCaseLang();

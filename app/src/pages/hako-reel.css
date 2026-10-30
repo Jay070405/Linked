@@ -29,7 +29,7 @@
 .hk-reel-text .hk-reel-cam{margin-top:10px;color:var(--muted);font-size:13px}
 .hk-reel-cam .st-mono{display:inline-block;margin-right:10px;color:var(--muted)}
 .hk-reel-jobs{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.hk-reel-jobs li{display:inline-flex;align-items:center;gap:8px;padding:5px 10px 5px 8px;border:1px solid #ff5a1f66;border-radius:6px;font-size:12px;color:var(--accent)}
+.hk-reel-jobs li{display:inline-flex;align-items:center;gap:8px;padding:5px 10px 5px 8px;border:1px solid #ff5a1f66;border-radius:6px;font-size:13px;color:var(--accent)}
 .hk-reel-jobs i{width:9px;height:9px;border:1.5px solid var(--accent);border-radius:2px}
 .hk-reel-foot{position:absolute;left:6vw;right:max(6vw,150px);bottom:clamp(24px,4vh,40px);display:flex;align-items:center;gap:20px;color:var(--muted)}
 .hk-reel-foot>span:first-child{min-width:150px;color:var(--text)}
@@ -48,6 +48,7 @@
  .hk-reel-text h3{font-size:28px}
  .hk-reel-text p{font-size:13px}
  .hk-reel-text .hk-reel-cam{display:none}
+ .hk-reel-play{font-size:13px}
  .hk-reel-foot{left:20px;right:120px;gap:12px}
  .hk-reel-foot>span:first-child{min-width:0}
 }

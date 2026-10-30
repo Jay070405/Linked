@@ -127,6 +127,27 @@ export const PRODUCT_CASES = [
     thumb: {src: '/assets/product/arden/still/cmf-natural-800.webp', width: 800, height: 533},
     page: true,
   },
+  {
+    slug: 'hako',
+    title: 'Hako',
+    subtitle: 'Draw a box around anything your team has half-made, and agents build what’s inside, alongside your teammates, until it ships',
+    pageTitle: 'Hako, draw a box and ship a product',
+    summary: 'A fictional SaaS canvas, designed with its brand for a launch film: one gesture (a selection box) scopes the work, colour says whether a person or an agent acted, agents build in frames you can see, and what you select is what ships.',
+    kind: 'SaaS concept: product and brand',
+    when: 'Oct 2026',
+    status: 'Concept',
+    zh: {
+      pageTitle: 'Hako：画一个框，发布一个产品',
+      subtitle: '在团队做了一半的东西外面画一个框，agent 就和队友一起把框里的东西做出来，直到上线',
+      summary: '一个虚构的 SaaS 画布，和它的品牌一起为一支发布片设计：一个手势（选框）划定范围，颜色说明动手的是人还是 agent，agent 在看得见的框里干活，选中什么就发布什么。',
+      kind: 'SaaS 概念设计：产品与品牌',
+      when: '2026 年 10 月',
+      status: '概念',
+    },
+    // The finished Daybreak dashboard on the canvas: a frame of the launch film at 22.5 s.
+    thumb: {src: '/assets/product/hako/tile.webp', width: 1180, height: 820},
+    page: true,
+  },
 ];
 export const PUBLISHED_CASES = PRODUCT_CASES.filter(c => c.page);
 

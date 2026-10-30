@@ -4,7 +4,6 @@
 import variablesForAgents from './films/variables-for-agents.json';
 import lastHundredFeet from './films/last-100-feet.json';
 import commonGround from './films/common-ground.json';
-import decisions from './films/decisions.json';
 
 const research={
  en:'So I studied nine app launch films from Apple, Notion, Figma, Linear, Raycast and The Browser Company, one frame a second. They crop a single component until it fills the frame, give each line a shot of its own, keep every shot moving, and give each film a colour world. Every film was rebuilt that way, motion first.',
@@ -178,14 +177,9 @@ export const FILMS={
 
 export const FILM_ORDER=['variables-for-agents','last-100-feet','common-ground'];
 
-// The story around each film, design first: the problem, how the product is used (the page's demo), the decisions
-// from its case study (films/decisions.json, copied from product/worlds/*: what was tried, what was chosen), and the
-// ideas behind the film itself.
+// The ideas behind each film, and the stretch of its key moment that the pages scrub frame by frame (flip).
 const STORY={
  'variables-for-agents':{
-  problem:{en:'Coding agents copy the hex values they see in a design file, then invent names for them. Change a token later, and in the median build only half the change reaches the code.',zh:'Coding agent 会照抄设计文件里看到的色值，再自己给它们起名字。之后改一个 token，中位数的构建里只有一半改动传到代码。'},
-  facts:[{to:12,label:{en:'unbound values in one frame of the design file',zh:'设计文件的一个 frame 里，有 12 个没绑定的值'}},{to:100,suffix:'%',label:{en:'of token changes followed once variables were bound (9 of 9 builds)',zh:'绑定 variables 之后，token 改动全部跟上（9 次构建 9 次做到）'}},{to:37,label:{en:'agent builds measured to find that out',zh:'次 agent 构建，测出了这个结论'}}],
-  how:{en:'It lives where designers already check their work. One row under the frame header counts what an agent can’t read; Check opens a list; you choose the variable for each value, and Apply binds them in one undo. What still needs a human goes to the agent as a question. Try it, then change a token and see what follows.',zh:'它放在设计师本来就会检查的地方：frame 标题下面多一行，数出 agent 读不懂的值；点 Check 打开清单，给每个值选好 variable，Apply 一步绑定、一步撤销。还需要人来定的，会变成一个问题交给 agent。自己试一试，然后改一个 token，看哪些地方跟着变。'},
   ideas:[
    {title:{en:'One object carries it',zh:'一个东西串起全片'},body:{en:'The hex values themselves: they stream past as what the agent sees, get renamed, get bound, and come back as the measurement.',zh:'就是那些色值本身：先是 agent 看到的数值流，然后被改名、被绑定，最后变成测量结果。'}},
    {title:{en:'A colour code, not decoration',zh:'颜色是编码，不是装饰'},body:{en:'A dark room lit like a canvas. Invented names are red, the file’s real token names are blue, and nothing else gets a colour.',zh:'暗场像一块被照亮的画布。编出来的名字是红色，文件里真正的 token 名是蓝色，其他东西都不上色。'}},
@@ -194,9 +188,6 @@ const STORY={
   flip:[1.4,4.8],
  },
  'last-100-feet':{
-  problem:{en:'Map apps drop this address on the residents-only garage gate. The last stretch, from the curb to the door, is where deliveries lose time: one company counts 10 to 15 minutes per delivery at apartment complexes.',zh:'地图 app 把这个地址落在只有住户能进的车库门口。从路边到家门口的最后这一段，是配送最耽误时间的地方：一家公司统计，公寓小区每单要多花 10 到 15 分钟。'},
-  facts:[{to:290,suffix:' ft',label:{en:'from the curb to door 214, in five photo steps',zh:'从路边到 214 号门，分 5 步，每步一张照片'}},{to:5,label:{en:'photos the resident takes once; every courier after follows them',zh:'张照片，住户拍一次，之后每位骑手都照着走'}},{to:160,suffix:' ft',label:{en:'around the gate where the code can be shown, only to the courier on this order',zh:'大门周围这个范围内才能显示门禁码，而且只给接了这一单的骑手'}}],
-  how:{en:'The resident maps the way in once; every courier after them follows it photo by photo, without calling. Walk it as the courier: start where map apps put the pin, hold to show the gate code at the gate, and finish at door 214.',zh:'住户把进门的路标一次，之后每位骑手都照着照片一步步走，不用打电话。你来当一次骑手：从地图 app 放错的定位点出发，到大门口长按显示门禁码，最后走到 214 号门。'},
   ideas:[
    {title:{en:'One object carries it',zh:'一个东西串起全片'},body:{en:'The site plan becomes the ground: the camera flies over it, the route draws on it, and the resident’s photos stand up on it like signposts.',zh:'小区平面图变成地面：镜头在上面飞，路线在上面画出来，住户拍的照片像路牌一样立在上面。'}},
    {title:{en:'One red line',zh:'一条红线'},body:{en:'Paper-white plan, ink type and a single red route, the only thing that glows. Wherever you are in the film, you can find the way.',zh:'纸白色的平面图、墨色的字，只有一条红色路线会发光。片子放到哪里，都能一眼找到路。'}},
@@ -205,9 +196,6 @@ const STORY={
   flip:[.9,2.95],
  },
  'common-ground':{
-  problem:{en:'Benefits portals lead with the monthly premium. Over a whole year, the plan with the lowest premium can cost the most, and two plans with the same coverage can be $600 apart.',zh:'福利平台总是先给你看月保费。可是按全年算，保费最低的方案可能最贵；保障完全一样的两个方案，一年可能差 $600。'},
-  facts:[{to:600,prefix:'$',label:{en:'a year between two plans with the same coverage',zh:'保障一样的两个方案，每年差这么多'}},{to:8820,prefix:'$',label:{en:'Plan C’s worst year, the plan with the lowest premium',zh:'保费最低的 Plan C，最坏的一年要花这么多'}},{to:4,label:{en:'fictional plans, priced on one yearly axis',zh:'个虚构方案，放在同一条全年费用轴上'}}],
-  how:{en:'Slide the covered bills from a quiet year to the worst one and watch the cheapest plan change. Plan B always costs $600 more than Plan A for the same coverage, and you can still choose it: the product proves the cost instead of hiding the option.',zh:'把承保医疗费用从平静的一年拖到最糟的一年，看最便宜的方案怎么变。Plan B 和 Plan A 保障一样，却永远每年多 $600；你照样可以选它，产品做的是把代价证明给你看，而不是把选项藏起来。'},
   ideas:[
    {title:{en:'One object carries it',zh:'一个东西串起全片'},body:{en:'The four plans as lines: pills that sort by premium, bars that stretch into a year, a chart cut into eight shots, and at the end the product’s mark.',zh:'四个方案就是四条线：先是按保费排好的胶囊，再拉长成全年费用条，然后是切成 8 个镜头的图表，最后变成产品的标志。'}},
    {title:{en:'A colour world from the plans',zh:'颜色世界来自方案本身'},body:{en:'Each plan keeps its colour from the prototype. The room is blue for the comparison and turns wine-dark for the $600; red marks money differences and nothing else.',zh:'每个方案沿用原型里的颜色。比较时背景是蓝色，讲到 $600 时转成酒红色；红色只用来标钱的差额。'}},
@@ -216,7 +204,7 @@ const STORY={
   flip:[11.2,14.2],
  },
 };
-for(const slug of FILM_ORDER)Object.assign(FILMS[slug],STORY[slug],{decisions:decisions[slug]});
+for(const slug of FILM_ORDER)Object.assign(FILMS[slug],STORY[slug]);
 
 /** Other Project's story pages in reading order, for the next-project link at the end of each. */
 export const STORY_ORDER=[

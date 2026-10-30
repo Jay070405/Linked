@@ -39,6 +39,19 @@ export function ArdenTileArt() {
   </span>;
 }
 
+/** Hako: the finished Daybreak dashboard from the launch film (a frame at 22.5 s) on Hako's dotted paper, your
+    persimmon selection around it, an agent's cursor in front. The selection's size tag is the film's (1280 × 800). */
+export function HakoTileArt() {
+  const arrow = 'M1 1 L13 9.5 L7.6 10.6 L5 16.5 Z';
+  return <span className="pt-hako">
+    <span className="pt-hako-frame">
+      <span className="pt-hako-shot" data-depth="6"><img src="/assets/product/hako/tile.webp" width={1180} height={820} alt="" loading="lazy" decoding="async"/></span>
+      <span className="pt-hako-sel" data-depth="14"><i/><i/><i/><i/><b>1280 × 800</b><svg className="pt-hako-me" viewBox="0 0 14 18"><path d={arrow}/></svg></span>
+      <span className="pt-hako-agent" data-depth="24"><svg viewBox="0 0 14 18"><path d={arrow}/></svg><b>Hako · Metrics</b></span>
+    </span>
+  </span>;
+}
+
 /** D4: the prototype's yearly-cost chart, with its cost-difference note lifted in front. Screenshots only. */
 export function CntlTileArt() {
   return <span className="pt-cntl">

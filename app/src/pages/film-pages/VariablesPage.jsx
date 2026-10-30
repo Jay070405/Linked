@@ -1,564 +1,850 @@
-import {lazy,memo,Suspense,useCallback,useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
+import {memo,useCallback,useEffect,useId,useMemo,useRef,useState} from 'react';
 import {FILMS,nextAfter} from '../product-films-data';
-import {Reveal,NextProject,useInView} from '../story/Story';
+import {NextProject,Reveal,useInView} from '../story/Story';
 import {Desk as FilmDesk} from '../story/FilmDesk';
-import {RUNS} from '../../product/v2/data/benchmark-runs';
+import * as CAM from '../films/variables-camera';
 import './variables-page.css';
 
-// Variables for agents, told as a design file: every section is a frame on a light canvas with a Figma-style label, the
-// frame in view is the selected one (Layers panel, blue outline, its live size). Blue marks the file's real token names
-// and the selection; red only marks names an agent invented.
-// Sources: FILMS[slug] (product-films-data.js and films/*.json), the demo (demos/VariablesDemo.jsx), the benchmark runs
-// (product/v2/data/benchmark-runs.js, levels as labelled in product/v2/modules/AblationChart.jsx), and the film itself
-// (aigc-vibecoding/product-films/src/films/VariablesForAgents2.tsx: STREAM and LANES below).
-// memoised: the page re-renders when the selected frame changes, and these don't depend on it
-const VariablesDemo=lazy(()=>import('../demos/VariablesDemo').then(m=>({default:memo(m.default)})));
+// How the Variables for agents film was made, drawn as a set of technical sheets on white drafting paper in the film's
+// blue. Its spine is the camera path: for its first 20.4 s the film has no cut, and from 6.9 s one monotone spline flies
+// the camera through twelve framings of the file. Every curve here is computed in the browser from the film's own keys
+// (films/variables-camera.js, copied from aigc-vibecoding/product-films/src/films/VariablesForAgents2.tsx); the frames
+// are the site's own file (public/video/d1-ready-for-agents-film.mp4). The product has its own case under /product.
 const Desk=memo(FilmDesk);
+const MEDIA='/assets/other-project/variables-for-agents';
+const T0=6.9,T1=20.4,SPAN=T1-T0;
+const {clamp}=CAM;
 
-// the film's first beat: the values that stream past, and its six lanes (font size and speed in the film's 1920 px frame,
-// blur in px, opacity); the two sharp lanes carry the values you can point at
-const STREAM=['F7F7F5','1C1D21','6E6F78','2F5D50','EDECE8','E4E3DF','C9A66B','FFFFFF','20px','16px','12px','2F5D50','1C1D21'];
-const LANES=[{size:20,speed:260,blur:3,o:.35},{size:30,speed:420,blur:1.5,o:.55},{size:44,speed:640,blur:0,o:.9},{size:40,speed:560,blur:0,o:.85},{size:28,speed:380,blur:1.5,o:.5},{size:18,speed:240,blur:3,o:.3}];
-const LIVE=[2,3],SLOW=.15;
-// the name an agent gave each value, from the demo's ROWS[].raw; two of them happen to be the tokens' own names (the demo
-// draws those in blue), and FFFFFF has two roles there (frame fill, text), so each live lane takes one
-const NAMES={F7F7F5:'bgLight','1C1D21':'darkText','6E6F78':'grey600',EDECE8:'cardBg2',C9A66B:'gold','2F5D50':'color-accent',E4E3DF:'color-border'};
-const GUESSED=new Set(['2F5D50','E4E3DF']);
-const nameOf=(v,li)=>v==='FFFFFF'?(li===2?'cardBg':'white'):NAMES[v];
-const isHex=v=>/^[0-9A-F]{6}$/.test(v);
-
-const FRAMES=[
- {id:'stream',name:{en:'Stream',zh:'数值流'}},
- {id:'try',name:{en:'Try it',zh:'试一试'}},
- {id:'result',name:{en:'Result',zh:'结果'}},
- {id:'principles',name:{en:'Principles',zh:'原则'}},
- {id:'film',name:{en:'The film',zh:'片子'}},
- {id:'review',name:{en:'Review',zh:'评审'}},
-];
-
-// the benchmark's four levels, named as the case's chart names them (AblationChart LEVELS) and described as the case's
-// table does (cases/DesignToCodeCase.jsx, "The four levels of the test file")
-const LEVELS=[
- {id:'L0',name:{en:'Raw',zh:'原始'},bound:false,desc:{en:'No auto layout; layers named “Frame 12”, “Text”',zh:'没有自动布局，图层名是 “Frame 12”“Text” 这种'}},
- {id:'L1',name:{en:'Structured',zh:'结构化'},bound:false,desc:{en:'Auto layout and names; no variables, styles or components',zh:'有自动布局和命名，没有 variables、样式和组件'}},
- {id:'L0V',name:{en:'Raw + variables',zh:'原始 + variables'},bound:true,desc:{en:'L0 plus the same variable bindings as L2, nothing else',zh:'L0 加上和 L2 一样的 variable 绑定，别的都没有'}},
- {id:'L2',name:{en:'Systematized',zh:'系统化'},bound:true,desc:{en:'Variables, text styles, components, auto layout, semantic names',zh:'variables、文字样式、组件、自动布局、语义化命名都有'}},
-];
-const LEVEL=Object.fromEntries(LEVELS.map(g=>[g.id,g]));
-const SCREEN_ZH={'Sign-in':'登录',Pricing:'定价',Settings:'设置','Product grid':'商品列表',Dashboard:'仪表盘',Profile:'个人主页'};
-
-/* ---------- small helpers ---------- */
-const bezier=(x1,y1,x2,y2)=>{
- const f=(t,a,b)=>3*a*(1-t)*(1-t)*t+3*b*(1-t)*t*t+t*t*t,d=(t,a,b)=>3*a*(1-t)*(1-t)+6*(b-a)*(1-t)*t+3*(1-b)*t*t;
- return x=>{if(x<=0)return 0;if(x>=1)return 1;let t=x;for(let i=0;i<8;i++){const s=d(t,x1,x2);if(s<1e-6)break;t=Math.min(1,Math.max(0,t-(f(t,x1,x2)-x)/s));}return f(t,y1,y2);};
-};
-const ease=bezier(.33,0,.2,1);
-const smoother=p=>p*p*p*(p*(p*6-15)+10);
-const GLYPHS='abcdefghijklmnopqrstuvwxyz0123456789/#';
-/** The film's scramble: characters settle left to right from `from` to `to`; unsettled ones flicker (held per step). */
-const scramble=(from,to,p,f)=>{
- if(p<=0)return from;if(p>=1)return to;
- const n=Math.round(from.length+(to.length-from.length)*smoother(p));let out='';
- for(let i=0;i<n;i++){const edge=p*(n+5)-i;out+=edge>=5?(to[i]??''):GLYPHS[Math.floor(Math.abs(Math.sin((i+1)*12.9898+f*78.233))*43758.5453)%GLYPHS.length];}
- return out;
-};
 const tc=t=>{const f=Math.round(t*60),s=Math.floor(f/60);return '00:00:'+String(s).padStart(2,'0')+':'+String(f%60).padStart(2,'0');};
-const pct=s=>`${Math.round(s*1000)/10}%`.replace('.0%','%');
-const round=r=>Math.round(r.share*100);
-const median=v=>{const s=[...v].sort((a,b)=>a-b),m=s.length>>1;return s.length%2?s[m]:(s[m-1]+s[m])/2;};
+const num=(n,d=0)=>n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 const pad2=n=>String(n).padStart(2,'0');
-const firstSentence=(text,zh)=>{const i=zh?text.indexOf('。'):text.indexOf('. ');return i<0?text:text.slice(0,i+1);};
+const scrollerOf=el=>el?.closest('.portfolio-page-viewport')||document.scrollingElement;
+const keyIndex=t=>{let i=0;while(i<CAM.KEYS.length-2&&t>=CAM.KEYS[i+1].t)i++;return i;};
+const stageAt=t=>[...CAM.STAGES].reverse().find(s=>t>=s.at)||CAM.STAGES[0];
 
-function FrameIcon(){
- return <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M3 .5v9M7 .5v9M.5 3h9M.5 7h9" fill="none" stroke="currentColor" strokeWidth="1.1"/></svg>;
+/* ---------- the file drawing: camera footprints over the file, in the file's own pixels ---------- */
+
+const VB={x:-330,y:-285,w:2150,h:1275};
+const px=x=>(x-VB.x)/VB.w*100+'%',py=y=>(y-VB.y)/VB.h*100+'%';
+const pts=q=>q&&q.every(Boolean)?q.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '):'';
+// the film's frames along the path, every 0.1 s from 6.9 s, plus its last frame before the cut (frame 1223)
+const SEQ=136,seqTime=i=>i<135?T0+i/10:1223/60;
+const seqAt=t=>{
+ if(t>=seqTime(134))return [134,135,clamp((t-seqTime(134))/(seqTime(135)-seqTime(134)))];
+ const f=clamp((t-T0)*10,0,134),a=Math.floor(f+1e-6);return [a,a+1,f-a];
+};
+const seqSrc=i=>`${MEDIA}/path/${String(i).padStart(3,'0')}.webp`;
+
+let planCache=null;
+/** Everything static about the drawing, computed once from the keys. */
+function plan(){
+ if(planCache)return planCache;
+ const centre=t=>CAM.unproject(CAM.winAt(t),960,540);
+ const path=[];for(let f=Math.round(T0*60);f<=T1*60;f++)path.push(centre(f/60));
+ const dots=Array.from({length:SEQ},(_,i)=>centre(Math.min(seqTime(i),T1)));
+ const keys=CAM.KEYS.map((k,i)=>({...k,i,c:CAM.unproject(k.w,960,540),q:i?CAM.footprint(k.w):null}));
+ const entry=path.find(p=>p&&p[1]>VB.y+40);
+ planCache={path:'M'+path.filter(Boolean).map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L'),dots,keys,entry};
+ return planCache;
 }
 
-/** A frame on the canvas: its label above, the body, and the selection (outline, handles, its live size) when in view. */
-function Frame({id,name,active,dark,bodyClass='',frameRef,labelledBy,children}){
- const box=useRef(null),size=useRef(null);
+function Plan({P,mini,liveRef,altRef,headRef,dotRefs,keyRefs}){
+ const clip=useId().replace(/:/g,'');
+ return <svg className="vf-plan-svg" viewBox={`${VB.x} ${VB.y} ${VB.w} ${VB.h}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+  <defs><clipPath id={clip}><rect x={VB.x+12} y={VB.y+12} width={VB.w-24} height={VB.h-24}/></clipPath></defs>
+  {/* dimension lines, with the architect's slash at each end */}
+  {!mini&&<g className="vf-dim">
+   <path d="M0 -130V-205M1440 -130V-205M-30 -168H1470M-14 -154L14 -182M1426 -154L1454 -182"/>
+   <path d="M-130 -40H-205M-130 900H-205M-168 -70V930M-182 -26L-154 -54M-182 914L-154 886"/>
+  </g>}
+  <g clipPath={`url(#${clip})`}>
+   {/* the file: the 1440 x 900 page under the window's 40 px bar */}
+   <rect className="vf-file" x="0" y="-40" width="1440" height="940"/>
+   <path className="vf-file-bar" d="M0 0H1440"/>
+   {CAM.REGIONS.map(r=><rect key={r.id} className="vf-region" x={r.x} y={r.y} width={r.w} height={r.h}/>)}
+   {/* every framing's footprint, faint; the pair being flown between is drawn stronger */}
+   {P.keys.map((k,i)=>k.q&&<polygon key={i} ref={keyRefs?el=>{keyRefs.current[i]=el;}:undefined} className="vf-kq" points={pts(k.q)}/>)}
+   <path className="vf-path" d={P.path}/>
+   {!mini&&P.dots.map((d,i)=>d&&<circle key={i} ref={dotRefs?el=>{dotRefs.current[i]=el;}:undefined} className="vf-dot" cx={d[0].toFixed(1)} cy={d[1].toFixed(1)} r="7"/>)}
+   {P.keys.map((k,i)=>k.c&&i>0&&<path key={i} className="vf-node" d={`M${k.c[0].toFixed(1)} ${(k.c[1]-15).toFixed(1)}l15 15l-15 15l-15 -15z`}/>)}
+   {altRef&&<polygon ref={altRef} className="vf-cam is-alt"/>}
+   <polygon ref={liveRef} className="vf-cam"/>
+   {headRef&&<g ref={headRef} className="vf-head"><circle r="15"/><path d="M-34 0H-19M19 0H34M0 -34V-19M0 19V34"/></g>}
+  </g>
+  <rect className="vf-plan-border" x={VB.x+12} y={VB.y+12} width={VB.w-24} height={VB.h-24}/>
+ </svg>;
+}
+
+/** Fits a box of the drawing's aspect inside its parent and reports its pixel size (for labels that follow points). */
+function usePlane(box,plane,onSize){
+ const cb=useRef(onSize);cb.current=onSize;
  useEffect(()=>{
-  const el=box.current;if(!el||typeof ResizeObserver==='undefined')return;
-  const ro=new ResizeObserver(([e])=>{
-   const b=e.borderBoxSize?.[0],w=b?b.inlineSize:e.contentRect.width,h=b?b.blockSize:e.contentRect.height;
-   if(size.current)size.current.textContent=Math.round(w)+' × '+Math.round(h);
-  });
-  ro.observe(el);return()=>ro.disconnect();
+  const el=box.current;if(!el)return undefined;
+  const fit=()=>{
+   const W=el.clientWidth,H=el.clientHeight,a=VB.w/VB.h;let w=W,h=W/a;if(h>H){h=H;w=H*a;}
+   if(plane.current){plane.current.style.width=w+'px';plane.current.style.height=h+'px';}
+   cb.current?.(w,h);
+  };
+  fit();const ro=new ResizeObserver(fit);ro.observe(el);return()=>ro.disconnect();
+ },[box,plane]);
+}
+
+/* ---------- sheet 1: the path, flown by scrolling ---------- */
+
+function PathPlot({film,lang,reduced,onWatch,onSkip}){
+ const en=lang==='en',L=en?'en':'zh',P=useMemo(plan,[]);
+ const sec=useRef(null),box=useRef(null),plane=useRef(null),mon=useRef(null),canvas=useRef(null),ruler=useRef(null),range=useRef(null);
+ const live=useRef(null),head=useRef(null),dotRefs=useRef([]),keyRefs=useRef([]),tag=useRef(null),rhead=useRef(null);
+ const r={t:useRef(null),tc:useRef(null),key:useRef(null),keyT:useRef(null),x:useRef(null),s:useRef(null),tilt:useRef(null),screen:useRef(null),speed:useRef(null),bar:useRef(null),cut:useRef(null),klabels:useRef([])};
+ const imgs=useRef([]),size=useRef({w:0,h:0,rw:0}),last=useRef({dot:-1,key:-1,stage:''}),tRef=useRef(T0);
+ const [rt,setRt]=useState(T0);
+
+ const drawMonitor=useCallback(t=>{
+  const c=canvas.current;if(!c||!c.width)return;
+  const g=c.getContext('2d'),[a,b,k]=seqAt(t),im=imgs.current;
+  const near=i=>{for(let d=0;d<SEQ;d++){if(im[i-d])return im[i-d];if(im[i+d])return im[i+d];}return null;};
+  const A=im[a]||near(a);if(!A)return;
+  g.globalAlpha=1;g.drawImage(A,0,0,c.width,c.height);
+  if(k>.02&&im[b]&&im[a]){g.globalAlpha=k;g.drawImage(im[b],0,0,c.width,c.height);g.globalAlpha=1;}
  },[]);
- return <section ref={frameRef} id={'vp-'+id} data-frame={id} tabIndex={-1} aria-labelledby={labelledBy} className={'vp-frame'+(active?' is-sel':'')}>
-  <div className="vp-flabel" aria-hidden="true"><FrameIcon/>{name}</div>
-  <div className="vp-fbox">
-   <div ref={box} className={'vp-fbody'+(dark?' is-dark':'')+(bodyClass?' '+bodyClass:'')} data-nav-tone={dark?'dark':undefined}>{children}</div>
-   <span className="vp-sel" aria-hidden="true"><b/><b/><b/><b/><span ref={size} className="vp-size"/></span>
+
+ const paint=useCallback(t=>{
+  tRef.current=t;
+  const w=CAM.winAt(t),q=CAM.footprint(w),c=CAM.unproject(w,960,540);
+  live.current?.setAttribute('points',pts(q));
+  if(head.current&&c)head.current.setAttribute('transform',`translate(${c[0].toFixed(1)} ${c[1].toFixed(1)})`);
+  // dots already flown past turn solid
+  const di=Math.floor(clamp((t-T0)*10,0,135)+1e-6);
+  if(di!==last.current.dot){const was=last.current.dot,lo=Math.min(was,di)+1,hi=Math.max(was,di);for(let i=Math.max(0,lo);i<=hi;i++)dotRefs.current[i]?.classList.toggle('is-past',i<=di);if(was<0)dotRefs.current[0]?.classList.add('is-past');last.current.dot=di;}
+  const ki=keyIndex(t);
+  if(ki!==last.current.key){
+   keyRefs.current.forEach((p,i)=>{if(!p)return;p.classList.toggle('is-from',i===ki);p.classList.toggle('is-to',i===ki+1);});
+   r.klabels.current.forEach((el,i)=>el&&el.classList.toggle('is-on',i===ki||i===ki+1));
+   last.current.key=ki;
+  }
+  // the CAM tag rides the footprint's top edge, kept on the sheet
+  const {w:pw,h:ph}=size.current;
+  if(tag.current&&pw&&q.every(Boolean)){
+   const top=q.slice(0,2),mx=(top[0][0]+top[1][0])/2,my=(top[0][1]+top[1][1])/2;
+   const x=clamp((mx-VB.x)/VB.w,.04,.86)*pw,y=clamp((my-VB.y)/VB.h,.05,.93)*ph;
+   tag.current.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+  }
+  const speed=CAM.pictureSpeed(CAM.winAt,clamp(t,T0+1e-3,T1-1e-3)),st=stageAt(t);
+  const K=CAM.KEYS;
+  if(r.t.current)r.t.current.textContent=t.toFixed(2)+' s';
+  if(r.tc.current)r.tc.current.textContent=tc(Math.min(t,1223/60));
+  if(r.key.current)r.key.current.textContent=`K${pad2(ki+1)} → K${pad2(ki+2)}`;
+  if(r.keyT.current)r.keyT.current.textContent=`${K[ki].t.toFixed(1)}–${K[ki+1].t.toFixed(1)} s`;
+  if(r.x.current)r.x.current.textContent=`x ${num(w.x)}  y ${num(w.y)}  ·  ${w.s.toFixed(2)}×`;
+  if(r.tilt.current)r.tilt.current.textContent=`${w.rx.toFixed(1)}°  /  ${w.ry.toFixed(1)}°`;
+  if(r.screen.current&&last.current.stage!==st.src+L){r.screen.current.textContent=st.name[L];last.current.stage=st.src+L;}
+  if(r.speed.current)r.speed.current.textContent=num(speed)+' px/s';
+  if(r.bar.current)r.bar.current.style.transform=`scaleX(${clamp(Math.log10(1+speed)/Math.log10(5001)).toFixed(4)})`;
+  if(r.cut.current)r.cut.current.classList.toggle('is-on',t>=1222/60);
+  if(rhead.current&&size.current.rw)rhead.current.style.transform=`translate3d(${((t-T0)/SPAN*size.current.rw).toFixed(1)}px,0,0)`;
+  if(range.current)range.current.value=t.toFixed(2);
+  range.current?.setAttribute('aria-valuetext',en?`${t.toFixed(1)} seconds, between framing ${ki+1} and ${ki+2}`:`${t.toFixed(1)} 秒，第 ${ki+1} 和第 ${ki+2} 个构图之间`);
+  drawMonitor(t);
+ },[drawMonitor,en,L]);
+
+ usePlane(box,plane,(w,h)=>{size.current.w=w;size.current.h=h;paint(tRef.current);});
+
+ // the monitor's canvas follows its box; the ruler's width places the playhead
+ useEffect(()=>{
+  const ro=new ResizeObserver(()=>{
+   const m=mon.current,c=canvas.current;if(m&&c){const d=Math.min(2,devicePixelRatio||1);c.width=Math.round(m.clientWidth*d);c.height=Math.round(m.clientWidth*9/16*d);}
+   if(ruler.current)size.current.rw=ruler.current.clientWidth;
+   paint(tRef.current);
+  });
+  if(mon.current)ro.observe(mon.current);if(ruler.current)ro.observe(ruler.current);
+  return()=>ro.disconnect();
+ },[paint]);
+
+ // the film's frames: the twelve framings first, then the rest, four at a time
+ useEffect(()=>{
+  let dead=false,i=0;
+  const keyFrames=CAM.KEYS.map(k=>Math.min(135,Math.round((k.t-T0)*10)));
+  const order=[...new Set([0,...keyFrames,...Array.from({length:SEQ},(_,j)=>j)])];
+  const next=()=>{
+   if(dead||i>=order.length)return;
+   const k=order[i++],im=new Image();im.decoding='async';im.src=seqSrc(k);
+   im.decode().then(()=>{if(dead)return;imgs.current[k]=im;const [a,b]=seqAt(tRef.current);if(Math.abs(k-a)<=12||k===b)drawMonitor(tRef.current);}).catch(()=>{}).finally(next);
+  };
+  for(let n=0;n<4;n++)next();
+  return()=>{dead=true;};
+ },[drawMonitor]);
+
+ // scroll flies the camera: the pinned sheet's progress is film time
+ useEffect(()=>{
+  if(reduced){paint(rt);return undefined;}
+  const el=sec.current,sc=scrollerOf(el),target=sc===document.scrollingElement?window:sc;let raf=0;
+  const measure=()=>{raf=0;const total=el.offsetHeight-sc.clientHeight;if(total<=0)return;const p=clamp(-el.getBoundingClientRect().top/total);paint(T0+SPAN*clamp((p-.03)/.94));};
+  const queue=()=>{if(!raf)raf=requestAnimationFrame(measure);};
+  measure();target.addEventListener('scroll',queue,{passive:true});addEventListener('resize',queue);
+  return()=>{cancelAnimationFrame(raf);target.removeEventListener('scroll',queue);removeEventListener('resize',queue);};
+ },[reduced,paint,rt]);
+
+ const seek=(t,smooth)=>{
+  t=clamp(t,T0,T1);
+  if(reduced){setRt(t);paint(t);return;}
+  const el=sec.current,sc=scrollerOf(el),total=el.offsetHeight-sc.clientHeight,p=.03+.94*(t-T0)/SPAN;
+  sc.scrollTo({top:sc.scrollTop+el.getBoundingClientRect().top+p*total,behavior:smooth?'smooth':'auto'});
+ };
+ const jump=dir=>{
+  const t=tRef.current,K=CAM.KEYS.map(k=>k.t);
+  const to=dir>0?K.find(k=>k>t+.02):[...K].reverse().find(k=>k<t-.02);
+  if(to!==undefined)seek(to,true);
+ };
+ const rp=t=>(t-T0)/SPAN*100+'%';
+
+ return <section ref={sec} className={'vf-plot'+(reduced?' is-still':'')} aria-labelledby="vf-title">
+  <div className="vf-stage">
+   <div className="vf-sheet vf-stage-in">
+    <Zones/>
+    <header className="vf-hero">
+     <p className="vf-kicker"><a href="/other-project" data-nav>← {en?'Other Project':'其他项目'}</a><span>{en?'How the film was made':'片子是怎么做的'}</span><button type="button" className="vf-skip-m" onClick={onSkip}>{en?'Skip':'跳过'} ↓</button></p>
+     <h1 id="vf-title">{film.name}</h1>
+     <p className="vf-deck">{en?'Nearly one take: no cut for 20.4 seconds.':'几乎是一个长镜头：前 20.4 秒没有剪辑点。'} <span className="vf-deck-more">{en?'From 6.9 s one camera path flies through twelve framings of the file, and the screens change inside the moving window.':'从 6.9 秒起，一条镜头路径飞过文件的 12 个构图，界面就在运动中的窗口里切换。'}</span> <b className="vf-hint-scroll">{reduced?(en?'Drag the ruler to fly it.':'拖动下面的标尺，沿路径飞一遍。'):(en?'Scroll to fly it.':'往下滚动，沿路径飞一遍。')}</b></p>
+     <div className="vf-actions">
+      <button type="button" className="vf-btn is-primary" onClick={onWatch}>▶ {en?'Watch the film':'看片子'}</button>
+      <button type="button" className="vf-btn" onClick={onSkip}>{en?'Skip the flight':'跳过这段'} ↓</button>
+     </div>
+    </header>
+    <figure className="vf-draw">
+     <div className="vf-draw-box" ref={box}><div className="vf-plane" ref={plane}>
+      <Plan P={P} liveRef={live} headRef={head} dotRefs={dotRefs} keyRefs={keyRefs}/>
+      <span className="vf-lab is-file" style={{left:px(0),top:py(-40)}}>{en?'FILE 1440 × 900':'文件 1440 × 900'}</span>
+      <span className="vf-lab is-dim" style={{left:px(720),top:py(-168)}}>1440</span>
+      <span className="vf-lab is-dim is-v" style={{left:px(-168),top:py(430)}}>900 + 40</span>
+      {CAM.REGIONS.map(g=><span key={g.id} className="vf-lab is-region" style={{left:px(g.x),top:py(g.place==='above'?g.y:g.y+g.h)}} data-place={g.place}>{g.label[L]}</span>)}
+      {P.entry&&<span className="vf-lab is-entry" style={{left:px(P.entry[0]),top:py(VB.y+20)}}>{en?'K01 · 6.9 s · rises in from below ↓':'K01 · 6.9 秒 · 从画面下方升入 ↓'}</span>}
+      {P.keys.map((k,i)=>k.c&&i>0&&<span key={i} ref={el=>{r.klabels.current[i]=el;}} className={'vf-lab is-key'+(i%2?' is-alt':'')} style={{left:px(k.c[0]),top:py(k.c[1])}}>K{pad2(i+1)} · {k.t.toFixed(1)} s</span>)}
+      <span ref={tag} className="vf-tag" aria-hidden="true"><b>{en?'CAMERA':'镜头'}</b></span>
+     </div></div>
+     <figcaption className="vf-legend">
+      <span><i className="is-cam"/>{en?'The frame, traced back onto the tilted file':'画面四角投回倾斜的文件上'}</span>
+      <span><i className="is-dot"/>{en?'Its centre, one dot every 0.1 s':'画面中心，每 0.1 秒一个点'}</span>
+      <span><i className="is-key"/>{en?'The twelve framings (keys)':'12 个构图（关键帧）'}</span>
+      <span><i className="is-swap"/>{en?'Screen swaps, mid-move (ruler)':'运动中切换界面（标尺）'}</span>
+     </figcaption>
+    </figure>
+    <div className="vf-side">
+    <figure className="vf-mon" ref={mon}>
+     <canvas ref={canvas} role="img" aria-label={en?'The film’s frame at this point of the path':'路径上这一点对应的片中画面'}/>
+     <span className="vf-mon-k">{en?'VIEW A · THE FILM':'视图 A · 片中画面'}</span>
+     <span ref={r.tc} className="vf-mon-tc">00:00:06:54</span>
+     <span className="vf-mon-scr"><em>{en?'Screen':'界面'}</em><span ref={r.screen}/></span>
+     <button type="button" className="vf-mon-play" onClick={onWatch}>▶ {en?'Watch the film':'看片子'}</button>
+     <span ref={r.cut} className="vf-mon-cut">{en?'CUT · 20.4 s →':'剪辑点 · 20.4 秒 →'}</span>
+    </figure>
+    <dl className="vf-read" aria-live="off">
+     <div><dt>{en?'Time':'时间'}</dt><dd ref={r.t}>6.90 s</dd></div>
+     <div><dt>{en?'Framing':'构图'}</dt><dd><span ref={r.key}>K01 → K02</span><span ref={r.keyT} className="vf-read-sub"/></dd></div>
+     <div><dt>{en?'Window':'窗口'}</dt><dd ref={r.x}/></div>
+     <div><dt>{en?'Tilt x / y':'倾斜 x / y'}</dt><dd ref={r.tilt}/></div>
+     <div className="is-wide"><dt>{en?'Picture speed':'画面速度'}</dt><dd><span ref={r.speed}/><span className="vf-read-bar"><i ref={r.bar}/></span></dd></div>
+    </dl>
+    <TitleBlock lang={lang}/>
+    </div>
+    <div className="vf-ruler">
+     <button type="button" className="vf-step" onClick={()=>jump(-1)} aria-label={en?'Previous framing':'上一个构图'}>‹</button>
+     <div className="vf-rtrack" ref={ruler}>
+      {Array.from({length:28},(_,i)=>7+i*.5).filter(t=>t<=20.4).map(t=><span key={t} className={'vf-rt'+(t%1===0?' is-s':'')} style={{left:rp(t)}}>{t%2===0&&t<20?<em>{t}</em>:null}</span>)}
+      {CAM.KEYS.map((k,i)=><span key={i} className="vf-rk" style={{left:rp(k.t)}}><b>{i+1}</b></span>)}
+      {CAM.STAGES.slice(1).map(s=><span key={s.at} className="vf-rs" style={{left:rp(s.at)}} title={s.name[L]}/>)}
+      <span className="vf-rcut" aria-hidden="true">{en?'CUT':'剪'}</span>
+      <span ref={rhead} className="vf-rhead" aria-hidden="true"/>
+      <input ref={range} type="range" min={T0} max={T1} step=".01" defaultValue={T0}
+       aria-label={en?'Film time along the camera path':'镜头路径上的片中时间'} onChange={e=>seek(+e.target.value,false)}
+       onKeyDown={e=>{const d={ArrowRight:.1,ArrowUp:.1,ArrowLeft:-.1,ArrowDown:-.1}[e.key];if(d!==undefined){e.preventDefault();seek(tRef.current+(e.shiftKey?Math.sign(d)/60:d),false);}else if(e.key==='PageDown'){e.preventDefault();jump(1);}else if(e.key==='PageUp'){e.preventDefault();jump(-1);}}}/>
+     </div>
+     <button type="button" className="vf-step" onClick={()=>jump(1)} aria-label={en?'Next framing':'下一个构图'}>›</button>
+    </div>
+   </div>
   </div>
+  {reduced&&<KeyFrames lang={lang}/>}
  </section>;
 }
 
-function Layers({active,onPick,lang,title}){
- const en=lang==='en',L=en?'en':'zh';
- return <aside className="vp-layers" aria-label={en?'Layers':'图层'}>
-  <p className="vp-layers-file"><svg viewBox="0 0 12 14" aria-hidden="true" focusable="false"><path d="M1.5.5h6l3 3v10h-9z M7.5.5v3h3" fill="none" stroke="currentColor" strokeWidth="1"/></svg><span>{title}</span></p>
-  <p className="vp-layers-h">{en?'Layers':'图层'}</p>
-  <ol>{FRAMES.map(f=><li key={f.id}>
-   <button type="button" aria-current={active===f.id?'true':undefined} onClick={()=>onPick(f.id)}><FrameIcon/><span>{f.name[L]}</span></button>
-  </li>)}</ol>
- </aside>;
-}
-
-/* ---------- 1. Stream ---------- */
-
-/** One value in a lane. The live ones are buttons: pointing at one (or focusing it, or tapping it) scrambles it into the
-    name an agent gave it. */
-function Chip({c,id,live,hidden,focusable,below,lang,reduced,onHold,onFocusChip,onKey,elRef}){
- const en=lang==='en',txt=useRef(null),pointer=useRef('mouse'),timer=useRef(0),first=useRef(true),[on,setOn]=useState(false);
- const hold=useRef(onHold);hold.current=onHold;
- useEffect(()=>{
-  if(first.current){first.current=false;return undefined;}
-  hold.current(id,on);
-  const el=txt.current;if(!el)return undefined;
-  const to=on?c.name:c.v,from=el.textContent;
-  if(reduced||from===to){el.textContent=to;return undefined;}
-  let raf=0,t0;const dur=on?520:360;
-  const step=now=>{t0??=now;const p=Math.min(1,(now-t0)/dur);el.textContent=scramble(from,to,p,Math.floor((now-t0)/50));if(p<1)raf=requestAnimationFrame(step);};
-  raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf);
- },[on]);
- useEffect(()=>()=>{clearTimeout(timer.current);hold.current(id,false);},[]);
- const hex=isHex(c.v);
- if(!live||!c.name)return <span className="vp-chip">{hex&&<span className="vp-sw" style={{background:'#'+c.v}}/>}<span className="vp-chip-t">{c.v}</span></span>;
- const label=en?`${c.v}: an agent named it ${c.name}${c.guess?', which happens to match a token':''}`:`${c.v}：agent 给它起名 ${c.name}${c.guess?'，碰巧和 token 同名':''}`;
- return <button ref={elRef} type="button" tabIndex={focusable?0:-1} aria-hidden={hidden?'true':undefined} aria-label={hidden?undefined:label}
-  className={'vp-chip is-live '+(c.guess?'is-guess':'is-made')+(on?' is-on':'')+(below?' is-below':'')}
-  onMouseDown={hidden?e=>e.preventDefault():undefined}
-  onPointerDown={e=>{pointer.current=e.pointerType;}}
-  onPointerEnter={e=>{if(e.pointerType==='mouse')setOn(true);}}
-  onPointerLeave={e=>{if(e.pointerType==='mouse')setOn(false);}}
-  onFocus={e=>{onFocusChip?.(e.currentTarget);if(e.currentTarget.matches(':focus-visible'))setOn(true);}}
-  onBlur={()=>{clearTimeout(timer.current);setOn(false);}}
-  onClick={e=>{
-   if(e.detail===0){setOn(o=>!o);return;}
-   if(pointer.current!=='mouse'){setOn(true);clearTimeout(timer.current);timer.current=setTimeout(()=>setOn(false),2800);}
-  }}
-  onKeyDown={e=>{if(e.key==='Escape'){setOn(false);return;}onKey?.(e);}}>
-  <span className="vp-sw" style={{background:'#'+c.v}}/>
-  <span ref={txt} className="vp-chip-t" style={{'--w':Math.max(c.v.length,c.name.length)}}>{c.v}</span>
-  <span className="vp-cap">{c.guess?(en?'happens to match a token':'碰巧和 token 同名'):(en?'an agent’s guess':'agent 编的名字')}</span>
- </button>;
-}
-
-const Stream=memo(function Stream({film,lang,reduced,onWatch,onTry}){
- const en=lang==='en',L=en?'en':'zh';
- const root=useRef(null),live=useInView(root,{threshold:0,once:false});
- const lanes=useRef([]),tracks=useRef([]),copies=useRef([]),durs=useRef([]),chipEls=useRef([]);
- const holds=useRef(new Set()),rate=useRef({v:1,to:1,raf:0}),seek=useRef(0),alive=useRef(true);
- const [roving,setRoving]=useState(0),[ready,setReady]=useState(false);
- useEffect(()=>{const id=requestAnimationFrame(()=>setReady(true));return()=>cancelAnimationFrame(id);},[]);
- // the film's lanes: value k of lane li is STREAM[(k + li·3) mod n]; wide lanes repeat once more so a copy outruns any frame
- const rows=useMemo(()=>LANES.map((l,li)=>Array.from({length:l.size>=28?13:26},(_,k)=>{
-  const v=STREAM[(k+li*3)%STREAM.length];
-  return {v,name:LIVE.includes(li)&&isHex(v)?nameOf(v,li):null,guess:GUESSED.has(v)};
- })),[]);
- const order=useMemo(()=>LIVE.flatMap(li=>rows[li].map((c,k)=>c.name?{li,k}:null).filter(Boolean)),[rows]);
- const anim=li=>tracks.current[li]?.getAnimations?.()[0];
-
- // each lane's duration from its measured copy, so it moves at the film's speed (scaled to its type, slowed down);
- // re-measured only when a copy changes size (fonts, resize), keeping each lane where it was
- useLayoutEffect(()=>{
-  if(reduced)return undefined;
-  const measure=()=>LANES.forEach((l,li)=>{
-   const c=copies.current[li],t=tracks.current[li];if(!c||!t)return;
-   const w=c.offsetWidth,fs=parseFloat(getComputedStyle(t).fontSize)||l.size;if(!w)return;
-   const dur=w/(l.speed*fs/l.size*SLOW),old=durs.current[li];
-   if(old&&Math.abs(old.dur-dur)<.01&&old.w===w)return;
-   const a=anim(li),p=a&&old?((a.currentTime||0)%(old.dur*1000))/(old.dur*1000):(li*.137)%1;
-   t.style.animationDuration=dur.toFixed(3)+'s';durs.current[li]={dur,w};
-   const b=anim(li);if(b){b.currentTime=p*dur*1000;b.playbackRate=rate.current.v;}
-  });
-  measure();
-  if(typeof ResizeObserver==='undefined')return undefined;
-  const ro=new ResizeObserver(measure);copies.current.forEach(c=>c&&ro.observe(c));
-  return()=>ro.disconnect();
- },[reduced]);
- useEffect(()=>{alive.current=true;return()=>{alive.current=false;cancelAnimationFrame(rate.current.raf);cancelAnimationFrame(seek.current);};},[]);
-
- // the lanes brake while you point at a live lane or a value is showing its name, and pick up again after
- const setRate=to=>{
-  const r=rate.current;if(reduced||!alive.current||r.to===to)return;
-  r.to=to;cancelAnimationFrame(r.raf);
-  const from=r.v,t0=performance.now(),dur=to<from?480:1100;
-  const step=now=>{
-   const k=Math.min(1,(now-t0)/dur);r.v=from+(to-from)*ease(k);
-   LANES.forEach((_,li)=>{const a=anim(li);if(a)a.playbackRate=r.v;});
-   if(k<1)r.raf=requestAnimationFrame(step);
-  };
-  r.raf=requestAnimationFrame(step);
- };
- const hold=(key,on)=>{const h=holds.current;if(on)h.add(key);else h.delete(key);setRate(h.size?0:1);};
-
- // keyboard focus can land on a value outside the frame: slide its lane until it is in view
- const bring=(li,el)=>{
-  const lane=lanes.current[li],t=tracks.current[li];if(!lane||!t)return;
-  const lr=lane.getBoundingClientRect(),r=el.getBoundingClientRect();
-  if(r.left>=lr.left+20&&r.right<=lr.right-20)return;
-  const x=Math.max(0,el.offsetLeft-lr.width*.3);
-  if(reduced){t.style.transform=`translate3d(${-x}px,0,0)`;return;}
-  const a=anim(li),d=durs.current[li];if(!a||!d)return;
-  const T=d.dur*1000,from=(a.currentTime||0)%T,to=x/d.w*T,t0=performance.now();
-  cancelAnimationFrame(seek.current);
-  const step=now=>{const k=Math.min(1,(now-t0)/560);a.currentTime=from+(to-from)*ease(k);if(k<1)seek.current=requestAnimationFrame(step);};
-  seek.current=requestAnimationFrame(step);
- };
- const keyNav=(e,idx)=>{
-  const n=order.length,d={ArrowRight:1,ArrowDown:1,ArrowLeft:-1,ArrowUp:-1}[e.key];
-  let next=null;
-  if(d)next=(idx+d+n)%n;else if(e.key==='Home')next=0;else if(e.key==='End')next=n-1;
-  if(next==null)return;
-  e.preventDefault();setRoving(next);chipEls.current[next]?.focus({preventScroll:true});
- };
-
- const lane=li=>{
-  const l=LANES[li],isLive=LIVE.includes(li);
-  return <div key={li} ref={el=>{lanes.current[li]=el;}} className={'vp-lane'+(isLive?' is-live':'')+(l.blur?' is-soft':'')}
-   style={{'--s':l.size,'--o':l.o,'--li':li,'--b':l.blur,'--off':li*137}} aria-hidden={isLive?undefined:'true'}
-   onPointerEnter={isLive?e=>{if(e.pointerType==='mouse')hold('lane'+li,true);}:undefined}
-   onPointerLeave={isLive?e=>{if(e.pointerType==='mouse')hold('lane'+li,false);}:undefined}>
-   <div ref={el=>{tracks.current[li]=el;}} className="vp-track">
-    {[0,1].map(copy=><div key={copy} ref={copy?undefined:el=>{copies.current[li]=el;}} className="vp-copy" aria-hidden={copy&&isLive?'true':undefined}>
-     {rows[li].map((c,k)=>{
-      const idx=!copy&&isLive&&c.name?order.findIndex(o=>o.li===li&&o.k===k):-1;
-      return <Chip key={k} c={c} id={`${copy}-${li}-${k}`} live={isLive} hidden={copy===1} focusable={idx>=0&&idx===roving} below={li===LIVE[1]}
-       lang={lang} reduced={reduced} onHold={hold}
-       elRef={idx>=0?el=>{chipEls.current[idx]=el;}:undefined}
-       onFocusChip={idx>=0?el=>{setRoving(idx);bring(li,el);}:undefined}
-       onKey={idx>=0?e=>keyNav(e,idx):undefined}/>;
-     })}
-    </div>)}
-   </div>
-  </div>;
- };
-
- return <div ref={root} className={'vp-hero'+(ready||reduced?' is-in':'')}>
-  <div className="vp-hint"><span>{en?'Point at a value, or tap it, to see the name an agent gave it':'指向或点按一个色值，看 agent 给它起了什么名字'}</span><span>{en?`From the film’s first ${film.beats[0].to} s`:`取自片子开头 ${film.beats[0].to} 秒`}</span></div>
-  <div className={'vp-stream'+(live||reduced?'':' is-paused')} role="group"
-   aria-label={en?'Values a coding agent sees. Tab in and use the arrow keys; each value shows the name an agent gave it.':'coding agent 看到的值。用 Tab 进入、方向键切换，每个值都会显示 agent 给它起的名字。'}
-   onFocus={e=>{if(e.target.matches?.(':focus-visible'))hold('focus',true);}}
-   onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))hold('focus',false);}}>
-   {[0,1,2].map(lane)}
-   <div className="vp-title">
-    <h1 id="vp-title" aria-label={film.name}>{film.name.split(' ').map((w,i)=><span className="vp-word" key={i} aria-hidden="true"><span style={{'--i':i}}>{w}</span></span>)}</h1>
-    <p className="vp-tagline">{film.tagline[0]} <span>{film.tagline[1]}</span></p>
-   </div>
-   {[3,4,5].map(lane)}
-  </div>
-  <div className="vp-hero-foot">
-   <div className="vp-hls" lang="en" style={{'--n':0}}>
-    {film.headlines.slice(0,2).map(([a,,text],i)=><p key={i} className="vp-hl"><span className="vp-tc" aria-hidden="true">{tc(a)}</span>{text}</p>)}
-   </div>
-   <div className="vp-hero-side" style={{'--n':1}}>
-    <p className="vp-intro">{firstSentence(film.intro[L],!en)}</p>
-    <div className="vp-actions">
-     <button type="button" className="st-btn is-primary" onClick={onWatch}>▶ {en?'Watch the film':'看片子'}</button>
-     <button type="button" className="st-btn" onClick={onTry}>{en?'Try it':'试一试'} ↓</button>
-    </div>
-   </div>
-  </div>
- </div>;
-});
-
-/* ---------- 3. Result ---------- */
-
-/** A ring that fills clockwise from 12 o'clock: two half-rings, each turned into its half of the window (transform only). */
-function Ring({color,label,partsRef}){
- const set=key=>el=>{partsRef.current[key]=el;};
- return <div className="vp-ring" style={{'--c':color}} role="img" aria-label={label}>
-  <span className="vp-ring-half is-r"><span ref={set('a')}/></span>
-  <span className="vp-ring-half is-l"><span ref={set('b')}/></span>
-  <b ref={set('num')} className="vp-ring-num" aria-hidden="true">0%</b>
+function Zones(){
+ return <div className="vf-zones" aria-hidden="true">
+  <span className="is-top">{['A','B','C','D','E','F'].map(z=><i key={z}>{z}</i>)}</span>
+  <span className="is-side">{[1,2,3,4].map(z=><i key={z}>{z}</i>)}</span>
  </div>;
 }
 
-const Result=memo(function Result({lang,reduced}){
- const en=lang==='en',L=en?'en':'zh';
- const data=useMemo(()=>{
-  const PITCH=15,STACK=5;
-  // ties (same whole percent) stack in a short column at their value; a long run of ties takes a second column
-  const place=runs=>{
-   const by={};runs.forEach(r=>{(by[round(r)]=by[round(r)]||[]).push(r);});
-   return Object.keys(by).map(Number).sort((a,b)=>a-b).flatMap(v=>{
-    const list=by[v],cols=Math.ceil(list.length/STACK);
-    return list.map((r,k)=>{const c=Math.floor(k/STACK),n=Math.min(STACK,list.length-c*STACK);return {r,v,dx:(c-(cols-1)/2)*PITCH,dy:(k%STACK-(n-1)/2)*PITCH};});
-   });
-  };
-  let i=0;
-  const rows=LEVELS.map(g=>{const runs=RUNS.filter(r=>r.level===g.id);return {g,n:runs.length,median:median(runs.map(round)),dots:place(runs).map(d=>({...d,g,i:i++}))};});
-  const hex=RUNS.filter(r=>!LEVEL[r.level].bound),bound=RUNS.filter(r=>LEVEL[r.level].bound),bare=RUNS.filter(r=>r.level==='L0V');
-  return {rows,dots:rows.flatMap(r=>r.dots),total:RUNS.length,
-   hexN:hex.length,hexMedian:median(hex.map(round)),hexMax:Math.max(...hex.map(round)),hexFull:hex.filter(r=>round(r)===100).length,
-   boundN:bound.length,boundFull:bound.filter(r=>round(r)===100).length,bareN:bare.length,bareFull:bare.filter(r=>round(r)===100).length};
- },[]);
- const screen=r=>en?r.name:(SCREEN_ZH[r.name]||r.name);
- const levelName=g=>`${g.id} ${g.name[L]}`;
-
- // rings: one eased fill as they come into view, the number counting with it
- const ringsRef=useRef(null),ringsIn=useInView(ringsRef,{threshold:.4});
- const partsA=useRef({}),partsB=useRef({});
- const RINGS=[{parts:partsA,to:data.bareFull/data.bareN,dur:1700,delay:0},{parts:partsB,to:data.hexMedian/100,dur:1250,delay:180}];
- useLayoutEffect(()=>{
-  const set=(r,p)=>{const {a,b,num}=r.parts.current;if(!a||!b||!num)return;
-   a.style.transform=`rotate(${Math.min(p,.5)*360}deg)`;a.style.opacity=p>0?1:0;
-   b.style.transform=`rotate(${Math.max(0,p-.5)*360}deg)`;b.style.opacity=p>.5?1:0;
-   num.textContent=Math.round(p*100)+'%';};
-  if(reduced){RINGS.forEach(r=>set(r,r.to));return undefined;}
-  RINGS.forEach(r=>set(r,0));
-  if(!ringsIn)return undefined;
-  let raf=0,t0;
-  const step=now=>{t0??=now;let done=true;
-   RINGS.forEach(r=>{const k=Math.min(1,Math.max(0,(now-t0-r.delay)/r.dur));if(k<1)done=false;set(r,ease(k)*r.to);});
-   if(!done)raf=requestAnimationFrame(step);};
-  raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf);
- },[ringsIn,reduced]);
-
- // the dots: in when the plot comes into view, then point, tap, focus or arrow through them for each build
- const plot=useRef(null),plotIn=useInView(plot,{threshold:.2}),[settled,setSettled]=useState(false);
- const [at,setAt]=useState(null),[tip,setTip]=useState(null),[focusIdx,setFocusIdx]=useState(0);
- useEffect(()=>{if(!plotIn||reduced)return undefined;const id=setTimeout(()=>setSettled(true),1700);return()=>clearTimeout(id);},[plotIn,reduced]);
- const show=(i,el)=>{
-  const p=plot.current;if(!p||!el)return;
-  const pr=p.getBoundingClientRect(),r=el.getBoundingClientRect(),half=Math.min(135,pr.width/2-4);
-  const x=Math.min(pr.width-half,Math.max(half,r.left+r.width/2-pr.left)),y=r.top+r.height/2-pr.top;
-  setAt(i);setTip({x,y,below:y<130});
- };
- const hide=()=>setAt(null);
- const move=(e,i)=>{
-  const n=data.dots.length,d={ArrowRight:1,ArrowDown:1,ArrowLeft:-1,ArrowUp:-1}[e.key];
-  let next=null;
-  if(d)next=(i+d+n)%n;else if(e.key==='Home')next=0;else if(e.key==='End')next=n-1;else if(e.key==='Escape'){hide();return;}
-  if(next==null)return;
-  e.preventDefault();setFocusIdx(next);plot.current?.querySelector(`[data-dot="${next}"]`)?.focus();
- };
- const cur=at!=null?data.dots[at]:null;
- const at50=v=>({'--x':v});
- const cond=[
-  {key:'hex',bound:false,head:en?'With hex values':'只有 hex 值',n:data.hexN},
-  {key:'bound',bound:true,head:en?'With variables bound':'绑定了 variables',n:data.boundN},
+function TitleBlock({lang}){
+ const en=lang==='en';
+ const rows=[
+  [en?'Length':'时长','29.4 s'],[en?'Frame':'画幅','1920 × 1080'],[en?'Rate':'帧率','60 fps'],
+  [en?'Shutter':'快门',en?'16 samples, 180°':'16 次采样，180°'],[en?'Cuts':'剪辑点','20.4 · 24 · 27.4 s'],
+  [en?'Built in':'制作','Remotion · React'],
  ];
+ return <dl className="vf-tb">{rows.map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}<div className="is-sheet"><dt>{en?'Sheet':'图纸'}</dt><dd>01 / 06</dd></div></dl>;
+}
 
- return <>
-  <div ref={ringsRef} className="vp-rings">
-   <Reveal className="vp-ringcard is-bound">
-    <Ring color="var(--accent)" partsRef={partsA} label={en?`${Math.round(100*data.bareFull/data.bareN)}% of token changes followed with variables bound, ${data.bareFull} of ${data.bareN} builds`:`绑定 variables 时，token 改动 ${Math.round(100*data.bareFull/data.bareN)}% 跟上，${data.bareN} 次构建 ${data.bareFull} 次做到`}/>
-    <div className="vp-ringtext">
-     <span className="vp-ring-head">{en?'With variables bound':'绑定了 variables'}</span>
-     <p>{en?`of token changes followed (${data.bareFull} of ${data.bareN} builds)`:`token 改动全部跟上（${data.bareN} 次构建 ${data.bareFull} 次做到）`}</p>
-     <small>{en?'A raw file with only variables added (L0V)':'原始文件，只加了 variables（L0V）'}</small>
-    </div>
-   </Reveal>
-   <Reveal className="vp-ringcard" delay={100}>
-    <Ring color="#9b9ba3" partsRef={partsB} label={en?`${data.hexMedian}% of token changes followed with hex values, median build`:`只有 hex 值时，token 改动跟上的中位数是 ${data.hexMedian}%`}/>
-    <div className="vp-ringtext">
-     <span className="vp-ring-head">{en?'With hex values':'只有 hex 值'}</span>
-     <p>{en?'of token changes followed (median build)':'token 改动跟上的比例（中位数）'}</p>
-     <small>{en?`${data.hexN} builds without variables; ${data.hexFull?`${data.hexFull} followed it all`:'none followed the whole change'}`:`${data.hexN} 次没有 variables 的构建，${data.hexFull?`${data.hexFull} 次完整跟上`:'没有一次完整跟上'}`}</small>
-    </div>
-   </Reveal>
+/** Without the scroll flight, the twelve framings as stills. */
+function KeyFrames({lang}){
+ const en=lang==='en';
+ return <ol className="vf-keyframes" aria-label={en?'The twelve framings':'12 个构图'}>{CAM.KEYS.map((k,i)=>{
+  const idx=i===CAM.KEYS.length-1?135:Math.round((k.t-T0)*10);
+  return <li key={i}><img src={seqSrc(idx)} width="640" height="360" alt="" loading="lazy" decoding="async"/><span>K{pad2(i+1)} · {k.t.toFixed(1)} s</span></li>;
+ })}</ol>;
+}
+
+/** Mounts its children only once they come within a screen or so of view, so the page opens without their maths. */
+function Near({min,children}){
+ const ref=useRef(null),near=useInView(ref,{threshold:0,margin:"900px 0px"});
+ return <div ref={ref} style={near?undefined:{minHeight:min}}>{near?children:null}</div>;
+}
+
+/* ---------- the shared sheet frame ---------- */
+
+function Sheet({id,n,title,kicker,lead,children,className=''}){
+ return <section id={id} className={'vf-sheet vf-block '+className} aria-labelledby={id+'-h'} tabIndex={-1}>
+  <Zones/>
+  <Reveal as="header" className="vf-head">
+   <p className="vf-k"><span>{pad2(n)}</span>{kicker}</p>
+   <h2 id={id+'-h'}>{title}</h2>
+   {lead&&<div className="vf-lead">{lead}</div>}
+  </Reveal>
+  {children}
+ </section>;
+}
+
+/* ---------- sheet 2: speed, from the keys ---------- */
+
+const ALTS={
+ eased:{f:CAM.easedAt,name:{en:'Eased into each key',zh:'每个关键帧缓停'}},
+ catmull:{f:CAM.catmullAt,name:{en:'Catmull-Rom spline',zh:'Catmull-Rom 样条'}},
+};
+const CURVE_DT=1/60;
+
+// The speed curves of the three paths, sampled every film frame. They take a moment to compute, so the page warms them
+// one path at a time while it is idle, before the speed sheet is reached.
+const CURVE_FNS={spline:CAM.winAt,eased:CAM.easedAt,catmull:CAM.catmullAt};
+const curveTimes=()=>{const ts=[];for(let f=Math.round(T0*60);f<=Math.round(T1*60);f++)ts.push(f/60);return ts;};
+const speedsOf=(f,ts)=>ts.map(t=>CAM.pictureSpeed(f,clamp(t,T0+1e-3,T1-1e-3)));
+const curveParts={};let curvesCache=null;
+function warmCurves(){
+ if(curvesCache)return ()=>{};
+ const ts=curveTimes(),todo=Object.keys(CURVE_FNS).filter(k=>!curveParts[k]),ric=window.requestIdleCallback,cic=window.cancelIdleCallback;
+ let id=0,dead=false;
+ const later=cb=>ric?ric(cb,{timeout:3000}):setTimeout(cb,80),cancel=i=>ric?cic(i):clearTimeout(i);
+ const step=()=>{if(dead)return;const k=todo.shift();if(!k)return;if(!curveParts[k])curveParts[k]=speedsOf(CURVE_FNS[k],ts);id=later(step);};
+ id=later(step);
+ return ()=>{dead=true;cancel(id);};
+}
+function getCurves(){
+ if(curvesCache)return curvesCache;
+ const ts=curveTimes();for(const k in CURVE_FNS)curveParts[k]=curveParts[k]||speedsOf(CURVE_FNS[k],ts);
+ const {spline,eased,catmull}=curveParts,inner=CAM.KEYS.slice(1,-1);
+ const stats=f=>{
+  const atKeys=inner.map(k=>({t:k.t,v:CAM.pictureSpeed(f,k.t)}));
+  let over=0,overAt=null;
+  for(let i=0;i<CAM.KEYS.length-1;i++){const a=CAM.KEYS[i],b=CAM.KEYS[i+1];
+   for(const ch of ['x','y']){const lo=Math.min(a.w[ch],b.w[ch]),hi=Math.max(a.w[ch],b.w[ch]);
+    for(let t=a.t;t<=b.t;t+=1/120){const v=f(t)[ch],o=Math.max(lo-v,v-hi);if(o>over){over=o;overAt=[a.t,b.t];}}}}
+  if(over<.5){over=0;overAt=null;}
+  return {stops:atKeys.filter(k=>k.v<1),slow:atKeys.filter(k=>k.v>=1&&k.v<20),over,overAt};
+ };
+ const peak=v=>Math.max(...v);
+ curvesCache={ts,spline,eased,catmull,max:5000,peaks:{spline:peak(spline),eased:peak(eased),catmull:peak(catmull)},
+  stats:{spline:stats(CAM.winAt),eased:stats(CAM.easedAt),catmull:stats(CAM.catmullAt)}};
+ return curvesCache;
+}
+const useCurves=()=>useMemo(getCurves,[]);
+
+const SpeedLab=memo(function SpeedLab({lang,reduced}){
+ const en=lang==='en',L=en?'en':'zh',P=useMemo(plan,[]),C=useCurves();
+ const [alt,setAlt]=useState('eased'),[playing,setPlaying]=useState(!reduced);
+ const root=useRef(null),inView=useInView(root,{threshold:.15,once:false});
+ const graph=useRef(null),cursor=useRef(null),dotA=useRef(null),dotB=useRef(null),readA=useRef(null),readB=useRef(null),readT=useRef(null);
+ const box=useRef(null),plane=useRef(null),live=useRef(null),ghost=useRef(null),barA=useRef(null),barB=useRef(null),gsize=useRef({w:0,h:0}),tRef=useRef(9.2);
+ // a log scale (log10 of 1 + speed), so the slow drifts between moves and the stops at the keys both show
+ const lg=v=>Math.log10(1+Math.max(0,v))/Math.log10(1+C.max),curveY=v=>400-lg(v)*400;
+ const d=v=>'M'+v.map((s,i)=>((C.ts[i]-T0)/SPAN*1000).toFixed(1)+' '+curveY(s).toFixed(1)).join('L');
+ const sampleAt=(arr,t)=>{const f=clamp((t-T0)/CURVE_DT,0,arr.length-1),i=Math.floor(f),k=f-i;return arr[i]+(arr[Math.min(arr.length-1,i+1)]-arr[i])*k;};
+ const paint=useCallback(t=>{
+  tRef.current=t;const {w,h}=gsize.current,f=ALTS[alt].f;
+  const a=sampleAt(C.spline,t),b=sampleAt(C[alt],t),x=(t-T0)/SPAN*w;
+  if(cursor.current)cursor.current.style.transform=`translate3d(${x.toFixed(1)}px,0,0)`;
+  if(dotA.current)dotA.current.style.transform=`translate3d(${x.toFixed(1)}px,${(curveY(a)/400*h).toFixed(1)}px,0)`;
+  if(dotB.current)dotB.current.style.transform=`translate3d(${x.toFixed(1)}px,${(curveY(b)/400*h).toFixed(1)}px,0)`;
+  if(readA.current)readA.current.textContent=num(a)+' px/s';
+  if(readB.current)readB.current.textContent=num(b)+' px/s';
+  if(readT.current)readT.current.textContent=t.toFixed(2)+' s';
+  if(barA.current)barA.current.style.transform=`scaleX(${clamp(lg(a)).toFixed(4)})`;
+  if(barB.current)barB.current.style.transform=`scaleX(${clamp(lg(b)).toFixed(4)})`;
+  live.current?.setAttribute('points',pts(CAM.footprint(CAM.winAt(t))));
+  ghost.current?.setAttribute('points',pts(CAM.footprint(f(t))));
+  graph.current?.setAttribute('aria-valuenow',t.toFixed(2));
+  graph.current?.setAttribute('aria-valuetext',en?`${t.toFixed(2)} s: film ${num(a)} px/s, ${ALTS[alt].name.en.toLowerCase()} ${num(b)} px/s`:`${t.toFixed(2)} 秒：片子 ${num(a)} px/s，${ALTS[alt].name.zh} ${num(b)} px/s`);
+ },[alt,C,en]);
+ usePlane(box,plane,()=>{});
+ useEffect(()=>{
+  const el=graph.current;if(!el)return undefined;
+  const ro=new ResizeObserver(()=>{gsize.current={w:el.clientWidth,h:el.clientHeight};paint(tRef.current);});
+  ro.observe(el);return()=>ro.disconnect();
+ },[paint]);
+ // both cameras fly the path in real time while the sheet is on screen
+ useEffect(()=>{
+  if(!playing||!inView||reduced)return undefined;
+  let raf=0,prev=performance.now();
+  const step=now=>{let t=tRef.current+(now-prev)/1000;prev=now;if(t>T1)t=T0+(t-T1);paint(t);raf=requestAnimationFrame(step);};
+  raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf);
+ },[playing,inView,reduced,paint]);
+ useEffect(()=>{if(reduced)setPlaying(false);},[reduced]);
+ const scrub=(e,pause=true)=>{const rc=graph.current.getBoundingClientRect();if(pause)setPlaying(false);paint(T0+SPAN*clamp((e.clientX-rc.left)/rc.width));};
+ const keys=e=>{
+  const step=e.shiftKey?1/60:.1,t=tRef.current;
+  const to={ArrowRight:t+step,ArrowUp:t+step,ArrowLeft:t-step,ArrowDown:t-step,Home:T0,End:T1}[e.key];
+  if(to!==undefined){e.preventDefault();setPlaying(false);paint(clamp(to,T0,T1));}
+  else if(e.key===' '){e.preventDefault();setPlaying(p=>!p);}
+ };
+ const S=C.stats,sp=S.spline,al=S[alt],stop=sp.stops[0];
+ const slowLo=Math.min(...sp.slow.map(k=>k.v)),slowHi=Math.max(...sp.slow.map(k=>k.v));
+ const lp=t=>(t-T0)/SPAN*100+'%';
+
+ return <div ref={root} className="vf-speed">
+  <div className="vf-seg" role="group" aria-label={en?'Compare the film’s spline with':'把片子的样条和它对比'}>
+   <span className="vf-seg-k">{en?'Compare with':'对比'}</span>
+   {Object.entries(ALTS).map(([k,a])=><button key={k} type="button" aria-pressed={alt===k} onClick={()=>setAlt(k)}>{a.name[L]}</button>)}
   </div>
-
-  <div ref={plot} className={'vp-plot'+(plotIn||reduced?' is-in':'')+(settled?' is-settled':'')}
-   onPointerLeave={e=>{if(e.pointerType==='mouse')hide();}}
-   onPointerDown={e=>{if(!e.target.closest('[data-dot]'))hide();}}
-   onBlur={e=>{if(!e.currentTarget.contains(e.relatedTarget))hide();}}>
-   <p className="vp-plot-k">{en?`${data.total} builds, one dot each: how much of a token change reached the code`:`${data.total} 次构建，一个点一次：token 改动有多少传进了代码`}</p>
-   {cond.map(cn=><div key={cn.key} className={'vp-cond'+(cn.bound?' is-bound':'')}>
-    <p className="vp-cond-h"><span className="vp-key" aria-hidden="true"/>{cn.head}<em>{en?`${cn.n} builds`:`${cn.n} 次构建`}</em></p>
-    {data.rows.filter(r=>r.g.bound===cn.bound).map(row=><div key={row.g.id} className="vp-row">
-     <div className="vp-row-l">
-      <p><b>{row.g.id}</b> {row.g.name[L]}</p>
-      <small>{row.g.desc[L]}</small>
-      <span>{en?`median ${row.median}% · ${row.n} builds`:`中位数 ${row.median}% · ${row.n} 次`}</span>
-     </div>
-     <div className="vp-rtrack">
-      {[0,25,50,75,100].map(v=><span key={v} className="vp-tick" style={at50(v)} aria-hidden="true"/>)}
-      <span className="vp-med" style={at50(row.median)} aria-hidden="true"/>
-      {row.dots.map(d=><button key={d.r.id} type="button" data-dot={d.i} className={'vp-dot'+(at===d.i?' is-on':'')} tabIndex={d.i===focusIdx?0:-1}
-       style={{'--x':d.v,'--dx':d.dx,'--dy':d.dy,'--i':d.i}}
-       aria-label={en?`${d.r.id}, ${d.r.name}, ${levelName(d.g)}: ${pct(d.r.share)} of the change reached the code`:`${d.r.id}，${screen(d.r)}，${levelName(d.g)}：改动有 ${pct(d.r.share)} 传进了代码`}
-       onPointerEnter={e=>{if(e.pointerType==='mouse')show(d.i,e.currentTarget);}}
-       onFocus={e=>{setFocusIdx(d.i);show(d.i,e.currentTarget);}}
-       onClick={e=>show(d.i,e.currentTarget)}
-       onKeyDown={e=>move(e,d.i)}><span/></button>)}
-     </div>
-    </div>)}
-   </div>)}
-   <div className="vp-row vp-axis" aria-hidden="true"><span/><div className="vp-rtrack">{[0,25,50,75,100].map(v=><span key={v} style={at50(v)}>{v}%</span>)}</div></div>
-   <div className={'vp-tip'+(cur?' is-on':'')+(tip?.below?' is-below':'')} style={tip?{'--tx':tip.x,'--ty':tip.y}:undefined} aria-hidden="true">
-    {cur&&<>
-     <img src={`/assets/product/ready-for-agents/runs/${cur.r.id}.webp`} width={cur.r.w} height={cur.r.h} alt="" decoding="async"/>
-     <div>
-      <p className="vp-tip-id">{cur.r.id}</p>
-      <p className="vp-tip-name">{screen(cur.r)} · {levelName(cur.g)}</p>
-      <p className="vp-tip-share"><b>{pct(cur.r.share)}</b> {en?'of the change reached the code':'的改动传进了代码'}</p>
-     </div>
-    </>}
+  <div className="vf-speed-grid">
+   <figure className="vf-graph-fig">
+    <div className="vf-graph-head">
+     <span className="vf-key-a">{en?'The film: monotone spline':'片子：单调样条'} <b ref={readA}/></span>
+     <span className="vf-key-b">{ALTS[alt].name[L]} <b ref={readB}/></span>
+     <span className="vf-graph-t" ref={readT}/>
+    </div>
+    <div ref={graph} className="vf-graph" role="slider" tabIndex={0} aria-label={en?'Picture speed over the camera path. Arrow keys move through time; space plays or pauses.':'镜头路径上的画面速度。方向键在时间上移动，空格键播放或暂停。'}
+     aria-valuemin={T0} aria-valuemax={T1} onKeyDown={keys}
+     onPointerDown={e=>{e.currentTarget.setPointerCapture?.(e.pointerId);scrub(e);}} onPointerMove={e=>{if(e.buttons)scrub(e);else if(e.pointerType==='mouse'&&!playing)scrub(e,false);}}>
+     {[10,100,1000].map(v=><span key={v} className="vf-gy" style={{top:(1-lg(v))*100+'%'}}><em>{num(v)}</em></span>)}<span className="vf-gy is-zero" style={{top:'100%'}}><em>0</em></span>
+     {CAM.KEYS.slice(1,-1).map((k,i)=><span key={i} className="vf-gk" style={{left:lp(k.t)}}><b>{i+2}</b></span>)}
+     <svg viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path className="vf-curve is-b" d={d(C[alt])}/>
+      <path className="vf-curve is-a" d={d(C.spline)}/>
+     </svg>
+     {al.stops.map(k=><span key={k.t} className="vf-stop is-b" style={{left:lp(k.t)}}/>)}
+     {sp.stops.map(k=><span key={k.t} className="vf-stop is-a" style={{left:lp(k.t)}}><em>{en?`rest at ${k.t.toFixed(1)} s`:`${k.t.toFixed(1)} 秒停住`}</em></span>)}
+     <span ref={cursor} className="vf-gcur" aria-hidden="true"/>
+     <span ref={dotB} className="vf-gdot is-b" aria-hidden="true"/>
+     <span ref={dotA} className="vf-gdot is-a" aria-hidden="true"/>
+    </div>
+    <div className="vf-gx" aria-hidden="true">{[8,10,12,14,16,18,20].map(t=><span key={t} style={{left:lp(t)}}>{t} s</span>)}</div>
+    <figcaption>{en?'Picture speed, computed in your browser from the film’s twelve keys: how fast the file’s points cross a 5 × 3 grid of the 1920 × 1080 frame, perspective included, on a log scale so slow drifts and full stops both show. Drag across it, or use the arrow keys.':'画面速度，在你的浏览器里由片子的 12 个关键帧算出：文件上落在画面 5 × 3 网格处的那些点，在 1920 × 1080 画面里移动得多快，含透视；纵轴是对数刻度，慢速漂移和完全停住都看得出来。可以在图上拖动，或用方向键。'}</figcaption>
+   </figure>
+   <div className="vf-speed-side">
+    <figure className="vf-mini">
+     <div className="vf-draw-box" ref={box}><div className="vf-plane" ref={plane}><Plan P={P} mini liveRef={live} altRef={ghost}/></div></div>
+     <figcaption>
+      <span><i className="is-cam"/>{en?'The film':'片子'}</span><span><i className="is-alt"/>{ALTS[alt].name[L]}</span>
+      <button type="button" className="vf-play" onClick={()=>setPlaying(p=>!p)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Fly both':'▶ 两个一起飞')}</button>
+     </figcaption>
+    </figure>
+    <div className="vf-bars" aria-hidden="true"><span className="is-a"><i ref={barA}/></span><span className="is-b"><i ref={barB}/></span></div>
+    <dl className="vf-stats">
+     <div><dt>{en?'Comes to rest at a framing':'在构图上停住'}</dt><dd><b>{al.stops.length}</b><span>{ALTS[alt].name[L]}</span></dd><dd><b className="is-a">{sp.stops.length}</b><span>{en?'the film':'片子'}</span></dd></div>
+     <div><dt>{en?'Swings past a key, at most':'冲过关键帧，最多'}</dt><dd><b>{num(al.over)} px</b><span>{al.overAt?`${al.overAt[0]}–${al.overAt[1]} s`:'—'}</span></dd><dd><b className="is-a">{num(sp.over)} px</b><span>{en?'the film':'片子'}</span></dd></div>
+     <div><dt>{en?'Fastest moment':'最快的一刻'}</dt><dd><b>{num(C.peaks[alt])}</b><span>px/s</span></dd><dd><b className="is-a">{num(C.peaks.spline)}</b><span>px/s</span></dd></div>
+    </dl>
    </div>
   </div>
-  {data.boundFull===data.boundN&&<p className="vp-takeaway">{en?`With variables, every build followed the whole change. Without them, none got past ${data.hexMax}%.`:`有 variables，每次构建都完整跟上了改动；没有，最高也没超过 ${data.hexMax}%。`}</p>}
-  <p className="vp-fine">{en?`Exploratory measure, added after the first round’s results: a four-token change injected into each build’s page. ${data.total} builds, one model family, one small design system.`:`探索性指标，第一轮初步结果出来后加的：构建完成后，往页面里注入四个 token 的改动。${data.total} 次构建，一个模型系列，一个小型设计系统。`}</p>
- </>;
-});
-
-/* ---------- 4. Principles ---------- */
-
-const Principles=memo(function Principles({items,lang,reduced}){
- const en=lang==='en',L=en?'en':'zh',list=useRef(null),rail=useRef(null),[at,setAt]=useState(0);
- // the principle crossing the middle of the screen is the one the frame shows
- useEffect(()=>{
-  if(reduced||!list.current)return undefined;
-  const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)setAt(+e.target.dataset.p);}),{rootMargin:'-49% 0px -50% 0px'});
-  list.current.querySelectorAll('[data-p]').forEach(el=>io.observe(el));
-  return()=>io.disconnect();
- },[reduced]);
- // progress through the list, for the rail under the frame: one read per frame while the page scrolls
- useEffect(()=>{
-  const el=list.current;if(reduced||!el)return undefined;
-  const scroller=el.closest('.portfolio-page-viewport')||window;let raf=0;
-  const measure=()=>{raf=0;const r=el.getBoundingClientRect(),p=Math.min(1,Math.max(0,(innerHeight/2-r.top)/Math.max(1,r.height)));rail.current?.style.setProperty('--pp',p.toFixed(4));};
-  const queue=()=>{if(!raf)raf=requestAnimationFrame(measure);};
-  measure();scroller.addEventListener('scroll',queue,{passive:true});addEventListener('resize',queue);
-  return()=>{cancelAnimationFrame(raf);scroller.removeEventListener('scroll',queue);removeEventListener('resize',queue);};
- },[reduced]);
- const snippet=(d,lazyLoad)=><span className="vp-snip" style={{'--w':d.img.w}}>
-  <img src={d.img.src} width={d.img.w} height={d.img.h} alt="" loading={lazyLoad?'lazy':undefined} decoding="async"/>
-  <b/><b/><b/><b/>
- </span>;
- return <div className="vp-prin">
-  <div className="vp-pv" aria-hidden="true">
-   <div className="vp-pv-frame">
-    <p className="vp-pv-label"><FrameIcon/>{en?'Principle':'原则'} {pad2(at+1)}</p>
-    <div className="vp-pv-stage">{items.map((d,i)=><figure key={i} className={'vp-pv-img'+(i===at?' is-on':'')}>
-     {snippet(d,i>0)}
-     <figcaption className="vp-badge">{d.img.w} × {d.img.h}</figcaption>
-    </figure>)}</div>
-   </div>
-   <div className="vp-pv-foot"><span>{pad2(at+1)} / {pad2(items.length)}</span><span ref={rail} className="vp-pv-rail"><span/></span></div>
+  <div className="vf-cols">
+   <p>{en?`Eased into each key, the usual way, the camera stops dead at every framing it reaches: ${S.eased.stops.length} times in 13.5 seconds. That stop-and-go is what the film’s first smoothness rule forbids. A Catmull-Rom spline keeps moving, but with these keys it swings up to ${num(S.catmull.over)} px past a framing and comes back.`:`按通常的做法在每个关键帧缓停，镜头每到一个构图就会停死：13.5 秒里停 ${S.eased.stops.length} 次。片子的第一条流畅规则禁止的正是这种走走停停。Catmull-Rom 样条会一直动，但用这组关键帧，它最多会冲过一个构图 ${num(S.catmull.over)} px 再折回来。`}</p>
+   <p>{en?`The film runs one monotone cubic through all twelve. Each key’s tangent is the harmonic mean of the slopes on either side, or zero where a value turns back: speed carries through a framing, and nothing passes one. It rests once, at ${stop?stop.t.toFixed(1):'18.0'} s, where the fast pull-back ends and every value turns back at the same moment. At ${sp.slow.length} other framings most values turn back too, and the one or two still moving keep the picture drifting, at ${num(slowLo)}–${num(slowHi)} px/s.`:`片子用的是一条穿过全部 12 个关键帧的单调三次曲线。每个关键帧的切线取两侧斜率的调和平均；某个数值要折返时，切线取零。速度能带着穿过构图，也不会冲过任何一个。它只停一次，在 ${stop?stop.t.toFixed(1):'18.0'} 秒：快速拉远在这里结束，所有数值同时折返。另有 ${sp.slow.length} 个构图，大部分数值也在折返，只剩一两个还在动，让画面以 ${num(slowLo)}–${num(slowHi)} px/s 慢慢漂移。`}</p>
   </div>
-  <ol ref={list} className="vp-plist">{items.map((d,i)=><li key={i} data-p={i} className={'vp-p'+(i===at?' is-on':'')}>
-   <figure className="vp-p-img" aria-hidden="true">{snippet(d,true)}</figure>
-   <span className="vp-p-n">{pad2(i+1)}</span>
-   <h3>{d.title[L]}</h3>
-   <p>{d.verdict[L]}</p>
-  </li>)}</ol>
  </div>;
 });
+
+/* ---------- sheet 3: the 16-sample shutter, demonstrated ---------- */
+
+const CHIP=0;// the flight drawn here: chip 1, color/background
+const FLIGHT_FRAMES=81;
+const REGION={x:620,y:200,w:1120,h:420};
+const SAMPLE_SET=[1,2,4,8,16];
+const JB='"VF JetBrains", ui-monospace, monospace';
+
+/** The chip as the film draws it (Chip in VariablesForAgents2.tsx): size 30 type, a swatch, padding .32em/.6em. */
+function chipSprite(scale,withText){
+ const size=30*scale,pad=[size*.32,size*.6],gap=size*.45,sw=size*.9,font=`500 ${size}px ${JB}`;
+ const m=document.createElement('canvas').getContext('2d');m.font=font;
+ const tw=m.measureText(CAM.BOUND[CHIP]).width,h=Math.ceil(Math.max(size*1.2,sw)+pad[0]*2+3),w=Math.ceil(pad[1]*2+sw+gap+tw+3);
+ const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');
+ const rr=(x,y,ww,hh,r)=>{g.beginPath();g.moveTo(x+r,y);g.arcTo(x+ww,y,x+ww,y+hh,r);g.arcTo(x+ww,y+hh,x,y+hh,r);g.arcTo(x,y+hh,x,y,r);g.arcTo(x,y,x+ww,y,r);g.closePath();};
+ rr(1,1,w-2,h-2,Math.min(size*.5,(h-2)/2));g.fillStyle='#0b2c4d';g.fill();g.lineWidth=1.5*scale;g.strokeStyle='#0d99ff';g.stroke();
+ rr(1.5+pad[1],(h-sw)/2,sw,sw,size*.2);g.fillStyle=CAM.RAW[CHIP];g.fill();g.lineWidth=1*scale;g.strokeStyle='rgba(255,255,255,.25)';g.stroke();
+ if(withText){g.font=font;g.fillStyle='#cfe9ff';g.textBaseline='middle';g.fillText(CAM.BOUND[CHIP],1.5+pad[1]+sw+gap,h/2+size*.04);}
+ return g.getImageData(0,0,w,h);
+}
+
+// premultiplied sprites, kept per scale (the chip shrinks slowly, so most frames reuse one)
+const spriteCache=new Map();
+function sprites(scale){
+ const key=scale.toFixed(3);let s=spriteCache.get(key);if(s)return s;
+ const pre=im=>{const d=im.data,o=new Float32Array(d.length);for(let i=0;i<d.length;i+=4){const a=d[i+3]/255;o[i]=d[i]*a;o[i+1]=d[i+1]*a;o[i+2]=d[i+2]*a;o[i+3]=d[i+3];}return o;};
+ const A=chipSprite(scale,true),B=chipSprite(scale,false);
+ s={A:pre(A),B:pre(B),w:A.width,h:A.height};
+ if(spriteCache.size>40)spriteCache.delete(spriteCache.keys().next().value);
+ spriteCache.set(key,s);return s;
+}
+// finished frames, so a looping flight only pays for each frame once
+const frameCache=new Map();
+
+/** One output frame of the flight: N samples across the first half of the frame, summed in floats, divided once. */
+function shutterFrame(F,n,fix,L){
+ const id=`${F}/${n}/${fix?1:0}/${L}`,hit=frameCache.get(id);if(hit)return hit;
+ const t0=CAM.flight(CHIP,0).start+F/60,samples=[];
+ for(let j=0;j<n;j++){const t=t0+j*(CAM.SHUTTER.span/n)/60,s=CAM.flight(CHIP,t);samples.push(s);}
+ const mid=samples[0],S=sprites(mid.scale*L),sw=S.w,sh=S.h,row=sw*4;
+ const xs=samples.map(s=>s.x*L-sw/2),ys=samples.map(s=>s.y*L-sh/2);
+ const ox=Math.floor(Math.min(...xs)),oy=Math.floor(Math.min(...ys));
+ const W=Math.ceil(Math.max(...xs))-ox+sw+2,H=Math.ceil(Math.max(...ys))-oy+sh+2,W4=W*4;
+ const acc=new Float32Array(W*H*4);
+ let mixed=null,mixedAt=-1;
+ samples.forEach((s,j)=>{
+  const txt=fix?s.text:1;
+  // the chip with its name at this sample's opacity: one array, mixed only when the name is part-way faded
+  let P=txt>=1?S.A:txt<=0?S.B:null;
+  if(!P){if(mixedAt!==txt){mixed=mixed||new Float32Array(S.A.length);for(let i=0;i<mixed.length;i++)mixed[i]=S.B[i]+(S.A[i]-S.B[i])*txt;mixedAt=txt;}P=mixed;}
+  const wgt=s.o/n,X=xs[j]-ox,Y=ys[j]-oy,ix=Math.floor(X),iy=Math.floor(Y),fx=X-ix,fy=Y-iy;
+  const w00=(1-fx)*(1-fy)*wgt,w10=fx*(1-fy)*wgt,w01=(1-fx)*fy*wgt,w11=fx*fy*wgt;
+  for(let y=0;y<sh;y++){
+   let si=y*row,di=((y+iy)*W+ix)*4,dj=di+W4;
+   for(let x=0;x<sw;x++,si+=4,di+=4,dj+=4){
+    const a=P[si+3];if(a===0)continue;
+    const r=P[si],g=P[si+1],b=P[si+2];
+    acc[di]+=r*w00;acc[di+1]+=g*w00;acc[di+2]+=b*w00;acc[di+3]+=a*w00;
+    acc[di+4]+=r*w10;acc[di+5]+=g*w10;acc[di+6]+=b*w10;acc[di+7]+=a*w10;
+    acc[dj]+=r*w01;acc[dj+1]+=g*w01;acc[dj+2]+=b*w01;acc[dj+3]+=a*w01;
+    acc[dj+4]+=r*w11;acc[dj+5]+=g*w11;acc[dj+6]+=b*w11;acc[dj+7]+=a*w11;
+   }
+  }
+ });
+ const out=new ImageData(W,H),o=out.data;
+ for(let i=0;i<acc.length;i+=4){const a=acc[i+3];if(a<=0)continue;o[i]=Math.round(acc[i]/a*255);o[i+1]=Math.round(acc[i+1]/a*255);o[i+2]=Math.round(acc[i+2]/a*255);o[i+3]=Math.round(a);}
+ const c=document.createElement('canvas');c.width=W;c.height=H;c.getContext('2d').putImageData(out,0,0);
+ const res={canvas:c,x:ox/L,y:oy/L,w:W/L,h:H/L,samples,mid};
+ if(frameCache.size>100)frameCache.delete(frameCache.keys().next().value);
+ frameCache.set(id,res);return res;
+}
+
+const Shutter=memo(function Shutter({lang,reduced}){
+ const en=lang==='en';
+ const [n,setN]=useState(16),[fix,setFix]=useState(true),[F,setF]=useState(38),[playing,setPlaying]=useState(!reduced),[font,setFont]=useState(false);
+ const root=useRef(null),inView=useInView(root,{threshold:.2,once:false});
+ const main=useRef(null),loupe=useRef(null),wrap=useRef(null),lwrap=useRef(null);
+ useEffect(()=>{let ok=true;document.fonts?.load(`500 30px "VF JetBrains"`).finally(()=>{if(!ok)return;spriteCache.clear();frameCache.clear();setFont(true);});return()=>{ok=false;};},[]);
+ useEffect(()=>{if(reduced)setPlaying(false);},[reduced]);
+ // a quarter of the film's speed: one film frame every four screen frames
+ useEffect(()=>{
+  if(!playing||!inView)return undefined;
+  let raf=0,prev=performance.now(),acc=0;
+  const step=now=>{acc+=now-prev;prev=now;if(acc>=1000/15){acc%=1000/15;setF(f=>(f+1)%FLIGHT_FRAMES);}raf=requestAnimationFrame(step);};
+  raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf);
+ },[playing,inView]);
+ // recomputed when the frame, the sample count or the fix changes, and once the film's mono face has loaded
+ const frame=useMemo(()=>typeof document==='undefined'?null:shutterFrame(F,n,fix,1),[F,n,fix,font]);// eslint-disable-line react-hooks/exhaustive-deps
+ const [sz,setSz]=useState({mw:0,lw:0});
+ useEffect(()=>{
+  const ro=new ResizeObserver(()=>setSz({mw:wrap.current?.clientWidth||0,lw:lwrap.current?.clientWidth||0}));
+  if(wrap.current)ro.observe(wrap.current);if(lwrap.current)ro.observe(lwrap.current);return()=>ro.disconnect();
+ },[]);
+ const path=useMemo(()=>Array.from({length:FLIGHT_FRAMES},(_,f)=>CAM.flight(CHIP,CAM.flight(CHIP,0).start+f/60)),[]);
+ useEffect(()=>{
+  const dpr=Math.min(2,devicePixelRatio||1);
+  // the frame region, scaled to the box
+  const m=main.current;if(m&&sz.mw){
+   const s=sz.mw/REGION.w,W=sz.mw,H=REGION.h*s;m.width=Math.round(W*dpr);m.height=Math.round(H*dpr);
+   const g=m.getContext('2d');g.setTransform(dpr*s,0,0,dpr*s,-REGION.x*s*dpr,-REGION.y*s*dpr);
+   g.fillStyle='#fff';g.fillRect(REGION.x,REGION.y,REGION.w,REGION.h);
+   g.strokeStyle='rgba(61,139,255,.09)';g.lineWidth=1/s;
+   for(let x=Math.ceil(REGION.x/40)*40;x<REGION.x+REGION.w;x+=40){g.beginPath();g.moveTo(x,REGION.y);g.lineTo(x,REGION.y+REGION.h);g.stroke();}
+   for(let y=Math.ceil(REGION.y/40)*40;y<REGION.y+REGION.h;y+=40){g.beginPath();g.moveTo(REGION.x,y);g.lineTo(REGION.x+REGION.w,y);g.stroke();}
+   g.setLineDash([6/s,6/s]);g.strokeStyle='rgba(61,139,255,.6)';g.lineWidth=1.2/s;g.beginPath();path.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.stroke();g.setLineDash([]);
+   // where the name is gone (a fifth of the flight)
+   const gone=path.find(p=>p.u>=.2);
+   g.fillStyle='#1a62d6';path.forEach((p,i)=>{if(i%4===0){g.beginPath();g.arc(p.x,p.y,2.4/s,0,7);g.fill();}});
+   if(gone&&fix){g.strokeStyle='#1a62d6';g.lineWidth=2/s;g.beginPath();g.arc(gone.x,gone.y,9/s,0,7);g.stroke();}
+   if(frame)g.drawImage(frame.canvas,frame.x,frame.y,frame.w,frame.h);
+  }
+  const l=loupe.current;if(l&&sz.lw&&frame){
+   const LW=sz.lw,LH=Math.round(Math.max(130,LW*.3)),cx=frame.mid.x,cy=frame.mid.y,s=1;
+   l.width=Math.round(LW*dpr);l.height=Math.round(LH*dpr);
+   const g=l.getContext('2d');g.setTransform(dpr*s,0,0,dpr*s,(LW/2-cx*s)*dpr,(LH/2-cy*s)*dpr);
+   g.fillStyle='#fff';g.fillRect(cx-LW,cy-LH,LW*2,LH*2);
+   g.imageSmoothingEnabled=true;g.drawImage(frame.canvas,frame.x,frame.y,frame.w,frame.h);
+   const below=cy+30*frame.mid.scale+12;g.fillStyle='#e5484d';frame.samples.forEach(p=>{g.fillRect(p.x-.6,below+(p.y-cy),1.2,7);});
+  }
+ },[frame,sz,path,fix]);
+ const cur=path[F],nxt=path[Math.min(FLIGHT_FRAMES-1,F+1)],move=Math.hypot(nxt.x-cur.x,nxt.y-cur.y);
+ const gap=n>1?move*CAM.SHUTTER.span/n:0,stepped=n>1&&gap>1.5,t=CAM.flight(CHIP,0).start+F/60;
+ return <div ref={root} className="vf-shutter">
+  <div className="vf-sh-grid">
+   <figure className="vf-sh-main">
+    <div className="vf-sh-k"><span>{en?'DEMONSTRATION · drawn live from the film’s flight maths, not its pixels':'演示 · 按片子的飞行公式实时绘制，不是片中像素'}</span></div>
+    <div ref={wrap} className="vf-sh-canvas"><canvas ref={main} role="img" aria-label={en?`Chip color/background in flight, frame ${F+1} of ${FLIGHT_FRAMES}, ${n} samples`:`color/background 芯片飞行中，第 ${F+1}/${FLIGHT_FRAMES} 帧，${n} 次采样`}/></div>
+    <div ref={lwrap} className="vf-sh-loupe">
+     <canvas ref={loupe} aria-hidden="true"/>
+     <span className="vf-sh-lk">{en?'DETAIL B · 1:1 with the 1920 frame · red ticks: where each sample sat':'局部 B · 与 1920 画面 1:1 · 红色刻度：每次采样的位置'}</span>
+    </div>
+   </figure>
+   <div className="vf-sh-ctrl">
+    <div className="vf-seg is-col" role="group" aria-label={en?'Samples per frame':'每帧采样次数'}>
+     <span className="vf-seg-k">{en?'Samples per frame':'每帧采样'}</span>
+     <div>{SAMPLE_SET.map(v=><button key={v} type="button" aria-pressed={n===v} onClick={()=>setN(v)}>{v}</button>)}</div>
+    </div>
+    <label className="vf-slider"><span className="vf-seg-k">{en?'Frame of the flight':'飞行中的帧'} <b>{pad2(F+1)} / {FLIGHT_FRAMES} · {t.toFixed(2)} s</b></span>
+     <input type="range" min="0" max={FLIGHT_FRAMES-1} value={F} onChange={e=>{setPlaying(false);setF(+e.target.value);}}/>
+    </label>
+    <div className="vf-sh-row">
+     <button type="button" className="vf-play" onClick={()=>setPlaying(p=>!p)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Play at ¼ speed':'▶ 四分之一速播放')}</button>
+     <button type="button" role="switch" aria-checked={fix} className="vf-switch" onClick={()=>setFix(v=>!v)}><i/>{en?'Name fades as it starts to fly (the fix)':'起飞时名字淡出（修正后）'}</button>
+    </div>
+    <dl className="vf-sh-read">
+     <div><dt>{en?'Moves this frame':'这一帧移动'}</dt><dd>{move.toFixed(1)} px</dd></div>
+     <div><dt>{en?'Between samples':'采样间距'}</dt><dd>{n>1?gap.toFixed(2)+' px':'—'}</dd></div>
+     <div className="is-wide"><dt>{en?'Reads as':'看起来是'}</dt><dd className={stepped?'is-warn':''}>{n===1?(en?'one sharp copy: it strobes in motion':'一个清晰的副本：运动中会频闪'):stepped?(en?`${n} stepped copies (over ~1.5 px apart)`:`${n} 个分开的副本（间距超过约 1.5 px）`):(en?'one continuous streak':'一道连续的拖影')}</dd></div>
+    </dl>
+   </div>
+  </div>
+ </div>;
+});
+
+/* ---------- sheet 4: words on a moving camera ---------- */
+
+const SCR_FROM=890,SCR_N=18;
+function Scramble({lang,reduced}){
+ const en=lang==='en',root=useRef(null),inView=useInView(root,{threshold:.3,once:false});
+ const [k,setK]=useState(SCR_N-1),[playing,setPlaying]=useState(!reduced);
+ useEffect(()=>{if(reduced)setPlaying(false);},[reduced]);
+ // ten times slower than the film: 6 frames a second, a short rest on the settled name before it loops
+ useEffect(()=>{
+  if(!playing||!inView)return undefined;
+  let i=0;const id=setInterval(()=>{i++;setK(i%(SCR_N+6)<SCR_N?i%(SCR_N+6):SCR_N-1);},1000/6);
+  return()=>clearInterval(id);
+ },[playing,inView]);
+ const f=SCR_FROM+k,p=CAM.prog(f/60,CAM.SCRAMBLES[0].at,CAM.SCRAMBLES[0].at+CAM.SCRAMBLES[0].dur);
+ const text=CAM.scramble(CAM.SCRAMBLES[0].from,CAM.SCRAMBLES[0].to,p,f);
+ const state=i=>{const fr=SCR_FROM+i,q=CAM.prog(fr/60,14.85,15.1);return q<=0?'is-pre':q>=1?'is-done':'is-scr';};
+ const scrN=Array.from({length:SCR_N},(_,i)=>state(i)).filter(s=>s==='is-scr').length;
+ return <div ref={root} className="vf-scr">
+  <div className="vf-scr-film" style={{'--k':k,'--n':SCR_N}}>
+   <img src={`${MEDIA}/scramble.webp`} width="600" height={126*SCR_N} alt={en?`Film frame ${f}: the chip reads ${text}`:`片中第 ${f} 帧：芯片上是 ${text}`} decoding="async" loading="lazy"/>
+   <span className="vf-scr-tc">{en?'FRAME':'帧'} {f} · {(f/60).toFixed(3)} s</span>
+  </div>
+  <ol className="vf-scr-cells" aria-hidden="true">{Array.from({length:SCR_N},(_,i)=><li key={i} className={state(i)+(i===k?' is-on':'')}/>)}</ol>
+  <p className="vf-scr-out"><span>{en?'scramble() run here for frame':'在这里为这一帧运行 scramble()'} {f}:</span><code>{text}</code></p>
+  <div className="vf-sh-row">
+   <button type="button" className="vf-play" onClick={()=>setPlaying(v=>!v)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Play, 10× slower':'▶ 放慢 10 倍播放')}</button>
+   <label className="vf-slider is-inline"><span className="vf-sr">{en?'Frame':'帧'}</span><input type="range" min="0" max={SCR_N-1} value={k} onChange={e=>{setPlaying(false);setK(+e.target.value);}} aria-valuetext={`${en?'frame':'帧'} ${f}: ${text}`}/></label>
+  </div>
+  <p className="vf-note">{en?`${scrN} frames of scramble, then the name: 0.25 s. The reviewers’ rule, set when the films ran at 30 fps, was 8 frames or fewer, about a quarter second; at 60 fps a quarter second is 15 frames. The product name never scrambles: it rises in word by word. Each frame’s characters are held for all 16 shutter samples (frameT), or one frame would print two strings over each other.`:`乱码 ${scrN} 帧，然后定格成名字：共 0.25 秒。评审的规则定于片子还是 30 帧的时候：不超过 8 帧，大约四分之一秒；换成 60 帧后，四分之一秒是 15 帧。产品名从不乱码，而是一个词一个词升起来。每一帧的字符在 16 次快门采样里保持不变（frameT），否则一帧里会叠出两串字。`}</p>
+ </div>;
+}
+
+function PlateDetail({film,lang}){
+ const en=lang==='en',L=en?'en':'zh',[dims,setDims]=useState(true),note=film.notes[0];
+ const fx=x=>x/1920*100+'%',fy=y=>y/1080*100+'%';
+ return <div className="vf-plate">
+  <figure className={'vf-plate-fig'+(dims?' is-dims':'')}>
+   <img src={`${MEDIA}/plate.webp`} width="1280" height="720" alt={en?'Film frame at 13.0 s: the headline on its dark plate over the file':'片中 13.0 秒：标题在深色底板上，下面是文件'} loading="lazy" decoding="async"/>
+   <svg viewBox="0 0 1920 1080" aria-hidden="true" focusable="false">
+    <rect className="vf-pl-box" x="96" y="66" width="860" height="210" rx="26"/>
+    <path className="vf-pl-dim" d="M96 316V296M956 316V296M96 306H956M996 66H976M996 276H976M986 66V276M0 40H96M56 0V66"/>
+    <path className="vf-pl-focus" d="M0 929H1920"/>
+   </svg>
+   <span className="vf-pl-lab" style={{left:fx(526),top:fy(306)}}>860</span>
+   <span className="vf-pl-lab" style={{left:fx(986),top:fy(171)}}>210</span>
+   <span className="vf-pl-lab is-sm" style={{left:fx(48),top:fy(40)}}>96 · 66</span>
+   <span className="vf-pl-lab is-focus" style={{left:fx(1560),top:fy(929)}}>{en?'86%: soft below (8 px)':'86% 以下虚化（8 px）'}</span>
+   <button type="button" className="vf-pl-toggle" aria-pressed={dims} onClick={()=>setDims(v=>!v)}>{dims?(en?'Hide dimensions':'隐藏尺寸'):(en?'Show dimensions':'显示尺寸')}</button>
+  </figure>
+  <div className="vf-rev">
+   <p className="vf-rev-n"><Tri n={1}/>{en?'Review note':'评审意见'}</p>
+   <p>{note.note[L]}</p>
+   <p className="vf-rev-fix">{note.fix[L]} <span>{en?'The plate is 860 × 210 frame px, a near-black at 84% with a 16 px backdrop blur, and it fades in and out with the shot.':'底板 860 × 210（画面像素），近黑色、84% 不透明度，加 16 px 背景模糊，随这个镜头淡入淡出。'}</span></p>
+  </div>
+ </div>;
+}
+
+function Tri({n}){return <svg className="vf-tri" viewBox="0 0 24 21" aria-hidden="true" focusable="false"><path d="M12 1.5L22.5 19.5H1.5Z"/><text x="12" y="16.5">{n}</text></svg>;}
+
+const CELLS=16,DRIFT=6;// px per second: a slow drift, magnified
+function PixelSnap({lang,reduced}){
+ const en=lang==='en',root=useRef(null),inView=useInView(root,{threshold:.3,once:false});
+ const a=useRef([]),b=useRef([]),ra=useRef(null),rb=useRef(null),pos=useRef(3.3);
+ const [x,setX]=useState(3.3);
+ const paint=useCallback(p=>{
+  pos.current=p;
+  const cover=(s,i)=>{let c=0;for(const o of [-CELLS,0,CELLS]){const l=s+o,r=l+4;c+=Math.max(0,Math.min(r,i+1)-Math.max(l,i));}return Math.min(1,c);};
+  const snapped=Math.round(p);
+  for(let i=0;i<CELLS;i++){a.current[i]?.style.setProperty('opacity',cover(p,i).toFixed(3));b.current[i]?.style.setProperty('opacity',cover(snapped%CELLS,i).toFixed(3));}
+  if(ra.current)ra.current.textContent=(p%CELLS).toFixed(2)+' px';
+  if(rb.current)rb.current.textContent=(snapped%CELLS)+' px';
+ },[]);
+ useEffect(()=>{paint(x);},[x,paint]);
+ useEffect(()=>{
+  if(reduced||!inView)return undefined;
+  let raf=0,prev=performance.now();
+  const step=now=>{paint((pos.current+(now-prev)/1000*DRIFT)%CELLS);prev=now;raf=requestAnimationFrame(step);};
+  raf=requestAnimationFrame(step);return()=>cancelAnimationFrame(raf);
+ },[reduced,inView,paint]);
+ const row=(ref,label,read)=><div className="vf-px-row"><span className="vf-px-l">{label} <b ref={read}/></span><div className="vf-px-cells">{Array.from({length:CELLS},(_,i)=><span key={i}><i ref={el=>{ref.current[i]=el;}}/></span>)}</div></div>;
+ return <div ref={root} className="vf-px">
+  {row(a,en?'transform: translate3d':'transform: translate3d',ra)}
+  {row(b,en?'left / top':'left / top',rb)}
+  {reduced&&<label className="vf-slider"><span className="vf-seg-k">{en?'Position':'位置'}</span><input type="range" min="0" max={CELLS-.01} step=".01" value={x} onChange={e=>setX(+e.target.value)}/></label>}
+  <p className="vf-note">{en?`Simulated at ${DRIFT} px a second, one cell per pixel. Placed by transform, the edge moves a tenth of a pixel each frame and the browser shades it across two pixels. Placed by left/top, Chrome snaps it to whole pixels: it holds, then jumps one pixel, ${DRIFT} times a second. The film’s window and its flying chips are placed by transform.`:`模拟每秒漂移 ${DRIFT} px，一格就是一个像素。用 transform 定位，边缘每帧移动十分之一像素，浏览器把它分摊到两个像素上渲染；用 left/top，Chrome 会吸附到整像素：先停住，再跳一个像素，每秒 ${DRIFT} 次。片子里的窗口和飞行的芯片都用 transform 定位。`}</p>
+ </div>;
+}
+
+/* ---------- sheet 5: revisions ---------- */
+
+const STUDY=[
+ ['Apple','Introducing Creator Studio',35],['Notion','Meet Notion Mail',60],['Figma','Introducing Figma Motion',68],
+ ['Figma','All the launches at Config 2025',81],['Linear','Introducing Linear Agent',55],['Raycast','New Raycast. Coming 2026',39],
+ ['The Browser Company','Dia',78],['Notion','Introducing the new Notion AI',57],['Apple','iOS 26 Liquid Glass',86],
+];
+const RULES=[
+ {en:'Only hard cuts, pushes and match cuts: no dissolves, irises or flashes',zh:'只用硬切、推镜和匹配剪辑：不用叠化、圆形遮罩和闪白'},
+ {en:'No still picture of 0.8 s or more; end cards keep pushing',zh:'没有 0.8 秒以上的静止画面；结尾卡也一直在推'},
+ {en:'A title-safe zone nothing else enters; labels at least 24 px',zh:'标题有固定安全区，其他东西不进去；标签至少 24 px'},
+ {en:'Scrambles 8 frames or fewer, never on the product name',zh:'乱码不超过 8 帧，不用在产品名上'},
+ {en:'One set of numbers, the same all the way through',zh:'全片只用一套数字，前后一致'},
+ {en:'Act out the key line once',zh:'把最关键的那句话演出来一次'},
+];
+
+function ScoreChart({scores,lang}){
+ const en=lang==='en',lo=60,hi=100,y=v=>(hi-v)/(hi-lo)*100,x=i=>(i+.5)/scores.length*100;
+ return <figure className="vf-score">
+  <div className="vf-score-plot">
+   <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    {[70,80,90].map(v=><path key={v} className="vf-score-grid" d={`M0 ${y(v)}H100`}/>)}
+    <path className="vf-score-target" d={`M0 ${y(95)}H100`}/>
+    <path className="vf-score-line" d={'M'+scores.map((s,i)=>`${x(i)} ${y(s)}`).join('L')}/>
+   </svg>
+   {[70,80,90].map(v=><span key={v} className="vf-score-y" style={{top:y(v)+'%'}}>{v}</span>)}
+   <span className="vf-score-tg" style={{top:y(95)+'%'}}>{en?'95 asked for':'目标 95'}</span>
+   {scores.map((s,i)=><span key={i} className={'vf-score-pt'+(i===scores.length-1?' is-last':'')} style={{left:x(i)+'%',top:y(s)+'%'}}><b>{s}</b></span>)}
+  </div>
+  <div className="vf-score-x" aria-hidden="true">{scores.map((_,i)=><span key={i} style={{left:x(i)+'%'}}>R{i+1}</span>)}</div>
+  <figcaption>{en?`Independent review, six rounds: ${scores.join(' → ')} out of 100 (motion 30, craft 30, story 25, finish 15).`:`独立评审六轮：${scores.join(' → ')}，满分 100（动效 30、工艺 30、叙事 25、完成度 15）。`}</figcaption>
+ </figure>;
+}
+
+function Revisions({film,lang}){
+ const en=lang==='en',L=en?'en':'zh';
+ return <>
+  <div className="vf-fc">
+   {film.firstCut.map((p,i)=><Reveal as="figure" key={i} delay={i*90} className="vf-fc-pair">
+    <div className="vf-fc-imgs">
+     <span><img src={`${MEDIA}/v1-${i+1}.webp`} width="960" height="540" alt="" loading="lazy" decoding="async"/><em>{en?'REV A · FIRST CUT':'A 版 · 第一版'}</em></span>
+     <span><img src={`${MEDIA}/final-${i+1}.webp`} width="960" height="540" alt="" loading="lazy" decoding="async"/><em className="is-final">{en?`FINAL · ${p.final.toFixed(1)} s`:`终版 · ${p.final.toFixed(1)} 秒`}</em></span>
+    </div>
+    <figcaption>{p.caption[L]}</figcaption>
+   </Reveal>)}
+  </div>
+  <dl className="vf-diff">
+   <div><dt>{en?'First cut':'第一版'}</dt><dd>{en?'37 s on light grey. Measured one frame a second, 11 seconds looked almost the same as the second before; 6 big changes; it ended on a 5-second still card.':'37 秒，浅灰底。按每秒一帧测量，有 11 秒和前一秒几乎一样；大变化只有 6 次；最后停在一张 5 秒不动的结尾卡上。'}</dd></div>
+   <div><dt>{en?'Final':'终版'}</dt><dd>{en?'29.4 s in a dark room lit like a canvas. One take to 20.4 s, then cuts at 24 and 27.4 s; the end card lasts 2 s and pushes in the whole time.':'29.4 秒，暗场里像被照亮的画布。一个长镜头到 20.4 秒，之后在 24 秒和 27.4 秒硬切；结尾卡 2 秒，全程都在推近。'}</dd></div>
+  </dl>
+  <div className="vf-study">
+   <div>
+    <h3>{en?'Nine app launch films, one frame a second':'九支 App 宣传片，每秒一帧'}</h3>
+    <p>{en?'Before the rebuild, the first cut was laid out one frame a second beside nine launch films by software companies. For this film the study pointed to Linear’s: nearly one long take, the interface on a big tilted plane, a low gliding camera, shallow focus, and a dark room where only the line in play is lit.':'重做之前，把第一版按每秒一帧铺开，和九支软件公司的宣传片放在一起对照。对这支片子，研究指向的是 Linear 那支：近乎一个长镜头，界面铺在一个倾斜的大平面上，镜头低角度滑过，景深很浅，暗场里只照亮正在发生的那一行。'}</p>
+    <p className="vf-note">{en?'Studied as text and contact sheets only; no frames of these films are shown here.':'只做文字记录和联系表对照，这里不展示这些片子的画面。'}</p>
+   </div>
+   <ol className="vf-study-list">{STUDY.map(([who,what,s],i)=><li key={i} className={who==='Linear'?'is-on':undefined}><span>{pad2(i+1)}</span><b>{who}</b><em>{what}</em><i>{s} s</i></li>)}</ol>
+  </div>
+  <div className="vf-reviews">
+   <ScoreChart scores={film.scores} lang={lang}/>
+   <ol className="vf-notes">{film.notes.map((n,i)=><Reveal as="li" key={i} delay={i*80}>
+    <p className="vf-rev-n"><Tri n={i+1}/>{en?'Review note':'评审意见'}</p>
+    <p>{n.note[L]}</p>
+    <p className="vf-rev-fix">{n.fix[L]}</p>
+   </Reveal>)}</ol>
+  </div>
+  <div className="vf-rules">
+   <p className="vf-k"><span>§</span>{en?'Rules the reviews produced':'评审压出来的规则'}</p>
+   <ol>{RULES.map((r,i)=><li key={i}><span>{pad2(i+1)}</span>{r[L]}</li>)}</ol>
+   <p className="vf-note">{en?'The reviewer was an agent that could watch the renders and frame scans but not change files. Six rounds did not reach the 95 asked for.':'评审是一个只能看渲染和逐帧扫描、不能改文件的智能体。六轮下来没有达到要求的 95 分。'}</p>
+  </div>
+ </>;
+}
 
 /* ---------- the page ---------- */
 
 export default function VariablesPage({lang,reduced,onNavigate,slug='variables-for-agents'}){
- const film=FILMS[slug],en=lang==='en',L=en?'en':'zh',DUR=film.duration;
- const src='/video/'+film.stem+'-film.mp4',caseHref='/product/'+film.caseSlug,shots=film.cuts.length+1;
- const video=useRef(null),frames=useRef({}),[active,setActive]=useState('stream');
+ const film=FILMS[slug],en=lang==='en',L=en?'en':'zh';
+ const src='/video/'+film.stem+'-film.mp4',caseHref='/product/'+film.caseSlug;
+ const video=useRef(null),desk=useRef(null);
  const behavior=reduced?'auto':'smooth';
- const go=to=>event=>{
-  if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
-  event.preventDefault();onNavigate(to);
- };
+ const go=to=>event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();onNavigate(to);};
  const watch=useCallback(()=>{const v=video.current;if(!v)return;v.scrollIntoView({behavior,block:'center'});v.play().catch(()=>{});},[behavior]);
- const toFrame=useCallback(id=>{const el=frames.current[id];if(!el)return;el.scrollIntoView({behavior,block:'start'});el.focus({preventScroll:true});},[behavior]);
- const tryIt=useCallback(()=>toFrame('try'),[toFrame]);
- const frameRef=id=>el=>{frames.current[id]=el;};
- // the frame crossing the middle of the screen is the selected one
- useEffect(()=>{
-  const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)setActive(e.target.dataset.frame);}),{rootMargin:'-45% 0px -54% 0px'});
-  Object.values(frames.current).forEach(el=>el&&io.observe(el));
-  return()=>io.disconnect();
- },[slug]);
- const name=id=>FRAMES.find(f=>f.id===id).name[L];
- const frame=(id,extra={})=>({id,name:name(id),active:active===id,frameRef:frameRef(id),labelledBy:'vp-h-'+id,...extra});
- const scores=film.scores,first=scores[0],last=scores[scores.length-1];
+ // warm the speed curves while the visitor reads the first sheet
+ useEffect(()=>warmCurves(),[]);
+ const skip=useCallback(()=>{const el=document.getElementById('vf-speed');if(!el)return;el.scrollIntoView({behavior,block:'start'});el.focus({preventScroll:true});},[behavior]);
+ // the back link in the hero is a plain anchor: route it
+ const onClick=e=>{const a=e.target.closest?.('a[data-nav]');if(!a)return;go(a.getAttribute('href'))(e);};
 
- return <article key={slug} className={'st-page vp-page'+(reduced?' st-still':'')} data-nav-tone="light" style={{'--accent':film.accent}}>
-  <div className="vp-canvas">
-   <div className="vp-top">
-    <a href="/other-project" onClick={go('/other-project')}>← Other Project</a>
-    <span>{en?'PRODUCT CONCEPT / LAUNCH FILM':'产品概念 / 宣传片'}</span>
-   </div>
-   <div className="vp-grid">
-    <Layers active={active} onPick={toFrame} lang={lang} title={film.name}/>
-    <div className="vp-main">
+ return <article key={slug} className={'st-page vf-page'+(reduced?' st-still':'')} data-nav-tone="light" style={{'--accent':film.accent}} onClick={onClick}>
+  <PathPlot film={film} lang={lang} reduced={reduced} onWatch={watch} onSkip={skip}/>
 
-     <Frame {...frame('stream',{labelledBy:'vp-title',dark:true,bodyClass:'vp-hero-body'})}>
-      <Stream film={film} lang={lang} reduced={reduced} onWatch={watch} onTry={tryIt}/>
-     </Frame>
+  <div className="vf-sheets">
+   <Sheet id="vf-speed" n={2} kicker={en?'Speed':'速度'} title={en?'Through the framings, not to them':'穿过每个构图，而不是停在每个构图上'}
+    lead={<p>{en?'The film writes its camera as twelve keys: which point of the file sits where in the frame, at what scale and tilt. What happens between the keys decides whether the picture flows or stutters.':'片子把镜头写成 12 个关键帧：文件上哪一点落在画面哪里、缩放多少、倾斜多少。关键帧之间怎么走，决定了画面是流畅还是一卡一卡。'}</p>}>
+    <Near min={720}><SpeedLab lang={lang} reduced={reduced}/></Near>
+   </Sheet>
 
-     <Frame {...frame('try')}>
-      <header className="vp-head">
-       <span className="vp-k">02 · {en?'How it works':'怎么用'}</span>
-       <h2 id="vp-h-try">{en?'Bind them in one step. Undo in one.':'一步绑定，一步撤销。'}</h2>
-       <p>{film.how[L]}</p>
-      </header>
-      <div className="vp-demo"><Suspense fallback={<div className="st-demo-loading st-mono">{en?'Loading the demo…':'正在加载演示…'}</div>}><VariablesDemo lang={L} reduced={reduced}/></Suspense></div>
-     </Frame>
-
-     <Frame {...frame('result')}>
-      <header className="vp-head">
-       <span className="vp-k">03 · {en?'The measurement':'测量'}</span>
-       <h2 id="vp-h-result">{en?`Measured across ${RUNS.length} builds.`:`在 ${RUNS.length} 次构建里测过。`}</h2>
-       <p>{film.problem[L]}</p>
-      </header>
-      <Result lang={lang} reduced={reduced}/>
-     </Frame>
-
-     <Frame {...frame('principles')}>
-      <header className="vp-head">
-       <span className="vp-k">04 · {en?'Design principles':'设计原则'}</span>
-       <h2 id="vp-h-principles">{en?'Five principles, five pieces of interface':'五条原则，五块界面'}</h2>
-       <p>{en?'Five principles the prototype was built to pass, each with the piece of interface that passes it.':'原型必须做到的五条原则，每条都配上做到这一点的那一小块界面。'}</p>
-      </header>
-      <Principles items={film.decisions} lang={lang} reduced={reduced}/>
-     </Frame>
-
-     <Frame {...frame('film')}>
-      <header className="vp-head">
-       <span className="vp-k">05 · {en?'Launch film':'宣传片'}</span>
-       <h2 id="vp-h-film">{en?'How the film tells it':'片子怎么讲这件事'}</h2>
-       <p>{en?`${DUR} seconds, 60 fps, no sound. Below is the edit itself: play it, or drag the timeline to jump to a beat.`:`${DUR} 秒，60 帧，无声。下面就是剪辑台：直接播放，或拖动时间线跳到任意一段。`}</p>
-      </header>
-      <ol className="vp-pins">{film.ideas.map((idea,i)=><Reveal as="li" key={i} delay={i*110} className="vp-pin">
-       <span className="vp-pin-dot" aria-hidden="true">{i+1}</span>
-       <div className="vp-bubble"><h3>{idea.title[L]}</h3><p>{idea.body[L]}</p></div>
-      </Reveal>)}</ol>
-      <div className="vp-desk" data-nav-tone="dark"><Desk film={film} slug={slug} lang={L} video={video}/></div>
-      <p className="vp-links">
-       <span>{en?'The edit: beats, headlines, shots and measured motion.':'剪辑台：段落、字幕、镜头和量出来的运动曲线。'}</span>
-       <span><a href={caseHref} onClick={go(caseHref)}>{film.caseName[L]} →</a><a href={src} target="_blank" rel="noopener noreferrer">{en?'Open video':'单独打开视频'} ↗</a></span>
-      </p>
-     </Frame>
-
-     <Frame {...frame('review')}>
-      <header className="vp-head">
-       <span className="vp-k">06 · {en?'Craft':'打磨'}</span>
-       <h2 id="vp-h-review">{en?'Review notes, resolved':'评审意见，逐条解决'}</h2>
-       <p>{en?`The cut went through ${scores.length} rounds of independent review. These notes came back, and this is what changed.`:`片子经过 ${scores.length} 轮独立评审。下面是评审提的意见，以及片子是怎么改的。`}</p>
-      </header>
-      <ol className="vp-threads">{film.notes.map((n,i)=><Reveal as="li" key={i} delay={i*90} className="vp-thread">
-       <div className="vp-cmt">
-        <span className="vp-av is-pin" aria-hidden="true">{i+1}</span>
-        <div><p className="vp-cmt-h"><b>{en?'Review note':'评审意见'}</b><span>{pad2(i+1)}</span></p><p>{n.note[L]}</p></div>
-       </div>
-       <div className="vp-cmt vp-reply">
-        <span className="vp-av is-reply" aria-hidden="true">↳</span>
-        <div><p className="vp-cmt-h"><b>{en?'What changed':'怎么改的'}</b><span className="vp-resolved">{en?'Resolved ✓':'已解决 ✓'}</span></p><p>{n.fix[L]}</p></div>
-       </div>
-      </Reveal>)}</ol>
-      <p className="vp-stat">
-       <span><b>{shots}</b>{en?'shots':'个镜头'}</span>
-       <span><b>60</b>fps</span>
-       <span><b>{first} → {last}</b>{en?`review score over ${scores.length} rounds`:`${scores.length} 轮评审的分数`}</span>
-       <span className="vp-spark" aria-hidden="true">{scores.map((s,i)=><span key={i} style={{'--v':s}}/>)}</span>
-      </p>
-     </Frame>
-
-     <NextProject item={nextAfter(slug)} lang={lang} onNavigate={onNavigate}/>
-     <footer className="st-footer"><span>JAY LIN / {film.name.toUpperCase()}</span><p>{en?'A product concept by Jay Lin.':'林世杰的产品概念。'}</p></footer>
+   <Sheet id="vf-shutter" n={3} kicker={en?'Shutter':'快门'} title={en?'Sixteen samples a frame, averaged in 16-bit':'每帧 16 次采样，用 16 位求平均'}
+    lead={<><p>{en?'Motion blur makes a fast move read as motion instead of a row of copies. Remotion’s CameraMotionBlur stacks its samples in the browser at 8 bits per channel; on light backgrounds like this film’s screens, that left echoed text and pink and green blotches.':'运动模糊让快速运动看起来是“在动”，而不是一排副本。Remotion 的 CameraMotionBlur 在浏览器里以每通道 8 位叠加采样；在浅色背景上（比如这支片子的界面），这会留下文字残影和粉绿色的色斑。'}</p>
+     <p>{en?'So the film has a Sub composition at 16 times its frame rate. Sample j of frame F renders at F + j/32: sixteen samples across the first half of the frame, a 180° shutter. scripts/render-mb.mjs adds each group of sixteen into a Uint16Array in Node, divides once with rounding, and encodes. 1,764 frames × 16 = 28,224 renders.':'所以片子另有一个 16 倍帧率的 Sub 合成：第 F 帧的第 j 次采样渲染在 F + j/32 帧处，16 次采样铺在一帧的前一半，也就是 180° 快门。scripts/render-mb.mjs 在 Node 里把每 16 次采样累加进 Uint16Array，只做一次带四舍五入的除法，再编码。1,764 帧 × 16 = 28,224 次渲染。'}</p></>}>
+    <Near min={560}><Shutter lang={lang} reduced={reduced}/></Near>
+    <div className="vf-fix">
+     <div className="vf-rev">
+      <p className="vf-rev-n"><Tri n={2}/>{en?'Review note':'评审意见'}</p>
+      <p>{film.notes[1].note[L]}</p>
+      <p className="vf-rev-fix">{film.notes[1].fix[L]} <span>{en?'In the code: the name’s opacity is 1 − smoother(u from 0.02 to 0.2). By a fifth of the flight it is gone, and the chip has covered 3% of the way.':'代码里：名字的不透明度是 1 − smoother(u 从 0.02 到 0.2)。飞到五分之一时名字已经消失，而芯片只走了 3% 的路程。'}</span></p>
+      <p className="vf-note">{en?'Type moving faster than about 1.5 px per sample shows as stepped copies (kit/kinetic.tsx), so headlines enter on a quartic ease-out, whose fastest moment is a third of expoOut’s, and leave by fading with a short lift.':'字的移动一旦超过每次采样约 1.5 px，就会出现分开的副本（kit/kinetic.tsx）。所以标题用四次方缓出进场，最快的一刻只有 expoOut 的三分之一；离场时淡出并稍微上移。'}</p>
+     </div>
+     <ol className="vf-strip" aria-label={en?'The film, frame by frame':'片中逐帧'}>
+      {[[18.55,en?'Named, about to fly':'改好名字，准备起飞'],[18.8,en?'The first names fade as their chips start':'最先起飞的芯片名字开始淡出'],[19,en?'Blank pills arc down':'空白的胶囊划着弧线落下'],[19.2,en?'Mid-flight, under the 16-sample shutter':'飞行中，16 次采样的快门下']].map(([t,c],i)=>
+       <li key={t}><img src={`${MEDIA}/flight-${i+1}.webp`} width="672" height="378" alt="" loading="lazy" decoding="async"/><span><b>{tc(t)}</b>{c}</span></li>)}
+     </ol>
     </div>
-   </div>
+   </Sheet>
+
+   <Sheet id="vf-type" n={4} kicker={en?'Type':'文字'} title={en?'Words on a moving camera':'运动镜头上的字'}
+    lead={<p>{en?'The camera never parks, so the type has to stay readable while everything under it moves. Three details from the film.':'镜头从不停下，所以字要在下面的一切都在动的时候保持可读。下面是片子里的三处细节。'}</p>}>
+    <div className="vf-details">
+     <Reveal className="vf-detail is-a"><p className="vf-dk"><i>A</i>{en?'The scramble':'乱码'}</p><Scramble lang={lang} reduced={reduced}/></Reveal>
+     <Reveal className="vf-detail is-b"><p className="vf-dk"><i>B</i>{en?'A plate the size of the words':'和字一样大的底板'}</p><PlateDetail film={film} lang={lang}/></Reveal>
+     <Reveal className="vf-detail is-c"><p className="vf-dk"><i>C</i>{en?'Transform, not left/top, at 60 fps':'用 transform，不用 left/top，60 帧'}</p><PixelSnap lang={lang} reduced={reduced}/>
+      <p className="vf-note">{en?'Rendered at 1920 × 1080 and 60 fps. 11 of the 13 app films the study checked run at 24 or 30; these films moved to 60 when the motion-first cuts still looked like they juddered.':'以 1920 × 1080、60 帧渲染。研究查过的 13 支 App 片里有 11 支是 24 或 30 帧；以动效为先重做之后画面看起来还是一卡一卡，这几支片子就改成了 60 帧。'}</p>
+     </Reveal>
+    </div>
+   </Sheet>
+
+   <Sheet id="vf-revisions" n={5} kicker={en?'Revisions':'修订'} title={en?'From a slide deck to one take':'从幻灯片到一个长镜头'}
+    lead={<p>{en?'The first cut read like a slide deck. It was studied against nine launch films, rebuilt motion first, and reviewed six times.':'第一版看起来像幻灯片。之后拿它和九支宣传片对照研究，以动效为先重做，再经过六轮评审。'}</p>}>
+    <Revisions film={film} lang={lang}/>
+   </Sheet>
+
+   <Sheet id="vf-edit" n={6} kicker={en?'The edit':'剪辑'} title={en?'The film, on its own timeline':'剪辑台上的片子'}
+    lead={<p>{en?'29.4 s, 60 fps, silent on the site. There is no editing timeline behind it: every frame is a function of time in React, rendered by Remotion. The desk below is drawn from the film’s data, its beats, headlines and three cuts, with the picture change per frame measured from this file.':'29.4 秒，60 帧，网站上是无声版。它背后没有剪辑软件的时间线：每一帧都是 React 里一个关于时间的函数，由 Remotion 渲染。下面的剪辑台由片子的数据画出：段落、字幕、三个剪辑点，以及从这个文件逐帧量出的画面变化。'}</p>}>
+    <div className="vf-desk" ref={desk} data-nav-tone="dark"><Desk film={film} slug={slug} lang={L} video={video}/></div>
+    <ol className="vf-gnotes">{film.ideas.map((idea,i)=><li key={i}><span>{en?'NOTE':'注'} {i+1}</span><h3>{idea.title[L]}</h3><p>{idea.body[L]}</p></li>)}</ol>
+    <p className="vf-links">
+     <a href={caseHref} onClick={go(caseHref)}>{en?'The product in this film has its own design case: Ready for agents →':'片中的产品有自己的设计案例：Ready for agents →'}</a>
+     <a href={src} target="_blank" rel="noopener noreferrer">{en?'Open the video':'单独打开视频'} ↗</a>
+    </p>
+   </Sheet>
+
+   <NextProject item={nextAfter(slug)} lang={lang} onNavigate={onNavigate}/>
+   <footer className="st-footer"><span>JAY LIN / {film.name.toUpperCase()} / {en?'HOW THE FILM WAS MADE':'片子是怎么做的'}</span><p>{en?'A film by Jay Lin, rendered from code.':'林世杰的片子，用代码渲染。'}</p></footer>
   </div>
  </article>;
 }
