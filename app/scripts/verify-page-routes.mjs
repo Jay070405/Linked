@@ -22,13 +22,17 @@ assert.equal(routing.resolvePath('/other-project').type,'vibecoding');
 assert.equal(routing.resolvePath('/other-project/field01/').type,'field01');
 assert.equal(routing.resolvePath('/other-project/jay-lin').type,'brand-motion');
 assert.equal(routing.resolvePath('/other-project/touch-on-beat/').type,'touch-on-beat');
-assert.equal(routing.resolvePath('/other-project/product-films/').type,'product-films');
+assert.equal(routing.resolvePath('/other-project/product-films/').type,'vibecoding');
+for (const slug of ['variables-for-agents','last-100-feet','common-ground']) {
+  assert.equal(routing.resolvePath('/other-project/'+slug+'/').slug,slug);
+  assert.equal(routing.routeFor({type:'product-film',slug}),'/other-project/'+slug);
+}
+assert.equal(routing.resolvePath('/other-project/constructor'),null);
 assert.equal(routing.resolvePath('/other-project/hako/').type,'hako');
 assert.equal(routing.routeFor({type:'vibecoding'}),'/other-project');
 assert.equal(routing.routeFor({type:'field01'}),'/other-project/field01');
 assert.equal(routing.routeFor({type:'brand-motion'}),'/other-project/jay-lin');
 assert.equal(routing.routeFor({type:'touch-on-beat'}),'/other-project/touch-on-beat');
-assert.equal(routing.routeFor({type:'product-films'}),'/other-project/product-films');
 assert.equal(routing.routeFor({type:'hako'}),'/other-project/hako');
 assert.equal(routing.routeFor('/other-project/experiment-03'),null);
 assert.equal(routing.routeFor('/vibecoding/experiment-02'),null);
@@ -89,4 +93,4 @@ assert.equal(routing.resolvePath('/for/figma').type,'for');
 assert.equal(routing.resolvePath('/for/elsewhere'),null);
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion/Touch on Beat/Product films routes and legacy links; no invented Coming Soon routes; product index and all five product cases with the design-to-code appendix, Roco and League redirected to Systems, and /for/figma.');
+console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion/Touch on Beat/Hako/three product film routes and legacy links; no invented Coming Soon routes; product index and all five product cases with the design-to-code appendix, Roco and League redirected to Systems, and /for/figma.');
