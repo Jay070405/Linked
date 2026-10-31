@@ -13,7 +13,6 @@ import {initialLanguage, saveLanguage} from './language';
 
 // The loading screen plays once per visit: coming back to the homepage from a case or /about goes straight in.
 const ARRIVED='jl-arrived';
-// the product-film pages printed on paper, with dark frames on them: the navigation reads its tone from what is under it
 const arrivedBefore=()=>{try{return sessionStorage.getItem(ARRIVED)==='1';}catch{return false;}};
 const JOURNEY_SECTIONS=['systems','journey-about','journey-timeline','product','worlds','contact'];
 

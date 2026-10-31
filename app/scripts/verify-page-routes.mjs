@@ -71,8 +71,8 @@ assert.equal(routing.resolvePath('/about').type,'about');
 assert.equal(routing.resolvePath('/about/').type,'about');
 assert.equal(routing.routeFor({type:'about'}),'/about');
 assert.equal(routing.resolvePath('/product/').type,'product');
-// the five product cases, and the research write-up kept as the flagship's appendix
-for (const slug of ['ready-for-agents','atelier','last-100-feet','choose-not-to-lose','arden','design-to-code']) {
+// the six product cases, and the research write-up kept as the flagship's appendix
+for (const slug of ['ready-for-agents','atelier','last-100-feet','choose-not-to-lose','arden','hako','design-to-code']) {
   assert.equal(routing.resolvePath('/product/'+slug).item.slug,slug);
   assert.equal(routing.routeFor({type:'product-case',item:{slug}}),'/product/'+slug);
 }
@@ -93,4 +93,4 @@ assert.equal(routing.resolvePath('/for/figma').type,'for');
 assert.equal(routing.resolvePath('/for/elsewhere'),null);
 assert.equal(routing.routeFor('//external.test/works'),null);
 assert.equal(routing.routeFor('/works/missing'),null);
-console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion/Touch on Beat/Hako/three product film routes and legacy links; no invented Coming Soon routes; product index and all five product cases with the design-to-code appendix, Roco and League redirected to Systems, and /for/figma.');
+console.log('PASS: 25 original artwork routes; 5 Systems entries with Maoxianjia direct/roundtrip routing and Genshin preserved as Coming Soon; desk/archive/case/model plus Other Project/FIELD01/Brand & Motion/Touch on Beat/Hako/three product film routes and legacy links; no invented Coming Soon routes; product index and all six product cases with the design-to-code appendix, Roco and League redirected to Systems, and /for/figma.');

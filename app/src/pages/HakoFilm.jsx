@@ -663,7 +663,7 @@ export default function HakoFilm({lang,reduced,onNavigate}){
   const v=video.current;let raf=0;
   const paint=()=>{
    const t=Math.min(v.currentTime||0,DUR);
-   head.current.style.left=pos(t);tc.current.textContent=clock(t);
+   head.current.style.transform=`translate3d(${(t/DUR*lanes.current.clientWidth).toFixed(2)}px,0,0)`;tc.current.textContent=clock(t);
    lanes.current.setAttribute('aria-valuenow',t.toFixed(1));lanes.current.setAttribute('aria-valuetext',clock(t));
    const i=Math.max(0,BEATS.findIndex(b=>t<b.to));
    const index=t>=DUR?BEATS.length-1:i;
@@ -673,11 +673,13 @@ export default function HakoFilm({lang,reduced,onNavigate}){
   };
   const loop=()=>{paint();if(!v.paused&&!v.ended)raf=requestAnimationFrame(loop);};
   const start=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);};
+  // the playhead moves by transform (sub-pixel, no layout); a resized timeline repaints it
   paintRef.current=paint;paint();
+  const resize=new ResizeObserver(()=>paint());resize.observe(lanes.current);
   v.addEventListener('play',start);v.addEventListener('seeked',paint);v.addEventListener('timeupdate',paint);
   const pauseWhenHidden=()=>{if(document.hidden){v.pause();sound.stopHear();}};
   document.addEventListener('visibilitychange',pauseWhenHidden);
-  return()=>{cancelAnimationFrame(raf);v.removeEventListener('play',start);v.removeEventListener('seeked',paint);v.removeEventListener('timeupdate',paint);document.removeEventListener('visibilitychange',pauseWhenHidden);suppressRef.current(false);};
+  return()=>{cancelAnimationFrame(raf);resize.disconnect();v.removeEventListener('play',start);v.removeEventListener('seeked',paint);v.removeEventListener('timeupdate',paint);document.removeEventListener('visibilitychange',pauseWhenHidden);suppressRef.current(false);};
  },[sound]);
  // V1: each shot tiles its own frames at their true 16:9, like an editor's filmstrip
  useEffect(()=>{
