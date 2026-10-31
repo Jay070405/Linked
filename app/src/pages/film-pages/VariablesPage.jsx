@@ -143,7 +143,7 @@ function PathPlot({film,lang,reduced,onWatch,onSkip}){
   if(r.cut.current)r.cut.current.classList.toggle('is-on',t>=1222/60);
   if(rhead.current&&size.current.rw)rhead.current.style.transform=`translate3d(${((t-T0)/SPAN*size.current.rw).toFixed(1)}px,0,0)`;
   if(range.current)range.current.value=t.toFixed(2);
-  range.current?.setAttribute('aria-valuetext',en?`${t.toFixed(1)} seconds, between framing ${ki+1} and ${ki+2}`:`${t.toFixed(1)} 秒，第 ${ki+1} 和第 ${ki+2} 个构图之间`);
+  range.current?.setAttribute('aria-valuetext',en?`${t.toFixed(1)} seconds, between keyframes ${ki+1} and ${ki+2}`:`${t.toFixed(1)} 秒，第 ${ki+1} 和第 ${ki+2} 个关键帧之间`);
   drawMonitor(t);
  },[drawMonitor,en,L]);
 
@@ -202,12 +202,12 @@ function PathPlot({film,lang,reduced,onWatch,onSkip}){
    <div className="vf-sheet vf-stage-in">
     <Zones/>
     <header className="vf-hero">
-     <p className="vf-kicker"><a href="/other-project" data-nav>← {en?'Other Project':'其他项目'}</a><span>{en?'How the film was made':'片子是怎么做的'}</span><button type="button" className="vf-skip-m" onClick={onSkip}>{en?'Skip':'跳过'} ↓</button></p>
+     <p className="vf-kicker"><a href="/other-project" data-nav>← {en?'Other Project':'其他项目'}</a><span>{en?'How the film was made':'片子是怎么做的'}</span><button type="button" className="vf-skip-m" onClick={onSkip}>{en?'Skip ahead':'跳过'} ↓</button></p>
      <h1 id="vf-title">{film.name}</h1>
-     <p className="vf-deck">{en?'Nearly one take: no cut for 20.4 seconds.':'几乎是一个长镜头：前 20.4 秒没有剪辑点。'} <span className="vf-deck-more">{en?'From 6.9 s one camera path flies through twelve framings of the file, and the screens change inside the moving window.':'从 6.9 秒起，一条镜头路径飞过文件的 12 个构图，界面就在运动中的窗口里切换。'}</span> <b className="vf-hint-scroll">{reduced?(en?'Drag the ruler to fly it.':'拖动下面的标尺，沿路径飞一遍。'):(en?'Scroll to fly it.':'往下滚动，沿路径飞一遍。')}</b></p>
+     <p className="vf-deck">{en?'The film has no cut for its first 20.4 seconds.':'片子前 20.4 秒没有剪辑点。'} <span className="vf-deck-more">{en?'From 6.9 s the camera follows one path through twelve framings of the file, and the screens change while the window moves.':'从 6.9 秒开始，镜头沿一条路径经过文件的 12 个构图，界面在移动的窗口里切换。'}</span> <b className="vf-hint-scroll">{reduced?(en?'Drag the ruler to move the camera along its path.':'拖动下方的标尺，镜头就沿路径移动。'):(en?'Scroll to move the camera along its path.':'往下滚动，镜头就沿路径移动。')}</b></p>
      <div className="vf-actions">
       <button type="button" className="vf-btn is-primary" onClick={onWatch}>▶ {en?'Watch the film':'看片子'}</button>
-      <button type="button" className="vf-btn" onClick={onSkip}>{en?'Skip the flight':'跳过这段'} ↓</button>
+      <button type="button" className="vf-btn" onClick={onSkip}>{en?'Skip ahead':'跳过这段'} ↓</button>
      </div>
     </header>
     <figure className="vf-draw">
@@ -217,29 +217,29 @@ function PathPlot({film,lang,reduced,onWatch,onSkip}){
       <span className="vf-lab is-dim" style={{left:px(720),top:py(-168)}}>1440</span>
       <span className="vf-lab is-dim is-v" style={{left:px(-168),top:py(430)}}>900 + 40</span>
       {CAM.REGIONS.map(g=><span key={g.id} className="vf-lab is-region" style={{left:px(g.x),top:py(g.place==='above'?g.y:g.y+g.h)}} data-place={g.place}>{g.label[L]}</span>)}
-      {P.entry&&<span className="vf-lab is-entry" style={{left:px(P.entry[0]),top:py(VB.y+20)}}>{en?'K01 · 6.9 s · rises in from below ↓':'K01 · 6.9 秒 · 从画面下方升入 ↓'}</span>}
+      {P.entry&&<span className="vf-lab is-entry" style={{left:px(P.entry[0]),top:py(VB.y+20)}}>{en?'K01 · 6.9 s · the file enters from below ↓':'K01 · 6.9 秒 · 文件从下方进入 ↓'}</span>}
       {P.keys.map((k,i)=>k.c&&i>0&&<span key={i} ref={el=>{r.klabels.current[i]=el;}} className={'vf-lab is-key'+(i%2?' is-alt':'')} style={{left:px(k.c[0]),top:py(k.c[1])}}>K{pad2(i+1)} · {k.t.toFixed(1)} s</span>)}
       <span ref={tag} className="vf-tag" aria-hidden="true"><b>{en?'CAMERA':'镜头'}</b></span>
      </div></div>
      <figcaption className="vf-legend">
-      <span><i className="is-cam"/>{en?'The frame, traced back onto the tilted file':'画面四角投回倾斜的文件上'}</span>
-      <span><i className="is-dot"/>{en?'Its centre, one dot every 0.1 s':'画面中心，每 0.1 秒一个点'}</span>
-      <span><i className="is-key"/>{en?'The twelve framings (keys)':'12 个构图（关键帧）'}</span>
-      <span><i className="is-swap"/>{en?'Screen swaps, mid-move (ruler)':'运动中切换界面（标尺）'}</span>
+      <span><i className="is-cam"/>{en?'Frame outline, projected onto the tilted file':'画面边框，投影到倾斜的文件上'}</span>
+      <span><i className="is-dot"/>{en?'Frame centre, a dot every 0.1 s':'画面中心，每 0.1 秒一个点'}</span>
+      <span><i className="is-key"/>{en?'Keyframes (12)':'关键帧（12 个）'}</span>
+      <span><i className="is-swap"/>{en?'Screen changes, marked on the ruler':'界面切换，标在标尺上'}</span>
      </figcaption>
     </figure>
     <div className="vf-side">
     <figure className="vf-mon" ref={mon}>
-     <canvas ref={canvas} role="img" aria-label={en?'The film’s frame at this point of the path':'路径上这一点对应的片中画面'}/>
-     <span className="vf-mon-k">{en?'VIEW A · THE FILM':'视图 A · 片中画面'}</span>
+     <canvas ref={canvas} role="img" aria-label={en?'Film frame at the current time':'当前时间的片中画面'}/>
+     <span className="vf-mon-k">{en?'VIEW A · FILM FRAME':'视图 A · 片中画面'}</span>
      <span ref={r.tc} className="vf-mon-tc">00:00:06:54</span>
      <span className="vf-mon-scr"><em>{en?'Screen':'界面'}</em><span ref={r.screen}/></span>
      <button type="button" className="vf-mon-play" onClick={onWatch}>▶ {en?'Watch the film':'看片子'}</button>
-     <span ref={r.cut} className="vf-mon-cut">{en?'CUT · 20.4 s →':'剪辑点 · 20.4 秒 →'}</span>
+     <span ref={r.cut} className="vf-mon-cut">{en?'Cut at 20.4 s →':'20.4 秒剪辑点 →'}</span>
     </figure>
     <dl className="vf-read" aria-live="off">
      <div><dt>{en?'Time':'时间'}</dt><dd ref={r.t}>6.90 s</dd></div>
-     <div><dt>{en?'Framing':'构图'}</dt><dd><span ref={r.key}>K01 → K02</span><span ref={r.keyT} className="vf-read-sub"/></dd></div>
+     <div><dt>{en?'Keyframes':'关键帧'}</dt><dd><span ref={r.key}>K01 → K02</span><span ref={r.keyT} className="vf-read-sub"/></dd></div>
      <div><dt>{en?'Window':'窗口'}</dt><dd ref={r.x}/></div>
      <div><dt>{en?'Tilt x / y':'倾斜 x / y'}</dt><dd ref={r.tilt}/></div>
      <div className="is-wide"><dt>{en?'Picture speed':'画面速度'}</dt><dd><span ref={r.speed}/><span className="vf-read-bar"><i ref={r.bar}/></span></dd></div>
@@ -247,7 +247,7 @@ function PathPlot({film,lang,reduced,onWatch,onSkip}){
     <TitleBlock lang={lang}/>
     </div>
     <div className="vf-ruler">
-     <button type="button" className="vf-step" onClick={()=>jump(-1)} aria-label={en?'Previous framing':'上一个构图'}>‹</button>
+     <button type="button" className="vf-step" onClick={()=>jump(-1)} aria-label={en?'Previous keyframe':'上一个关键帧'}>‹</button>
      <div className="vf-rtrack" ref={ruler}>
       {Array.from({length:28},(_,i)=>7+i*.5).filter(t=>t<=20.4).map(t=><span key={t} className={'vf-rt'+(t%1===0?' is-s':'')} style={{left:rp(t)}}>{t%2===0&&t<20?<em>{t}</em>:null}</span>)}
       {CAM.KEYS.map((k,i)=><span key={i} className="vf-rk" style={{left:rp(k.t)}}><b>{i+1}</b></span>)}
@@ -255,10 +255,10 @@ function PathPlot({film,lang,reduced,onWatch,onSkip}){
       <span className="vf-rcut" aria-hidden="true">{en?'CUT':'剪'}</span>
       <span ref={rhead} className="vf-rhead" aria-hidden="true"/>
       <input ref={range} type="range" min={T0} max={T1} step=".01" defaultValue={T0}
-       aria-label={en?'Film time along the camera path':'镜头路径上的片中时间'} onChange={e=>seek(+e.target.value,false)}
+       aria-label={en?'Film time, 6.9 to 20.4 s':'片中时间，6.9 到 20.4 秒'} onChange={e=>seek(+e.target.value,false)}
        onKeyDown={e=>{const d={ArrowRight:.1,ArrowUp:.1,ArrowLeft:-.1,ArrowDown:-.1}[e.key];if(d!==undefined){e.preventDefault();seek(tRef.current+(e.shiftKey?Math.sign(d)/60:d),false);}else if(e.key==='PageDown'){e.preventDefault();jump(1);}else if(e.key==='PageUp'){e.preventDefault();jump(-1);}}}/>
      </div>
-     <button type="button" className="vf-step" onClick={()=>jump(1)} aria-label={en?'Next framing':'下一个构图'}>›</button>
+     <button type="button" className="vf-step" onClick={()=>jump(1)} aria-label={en?'Next keyframe':'下一个关键帧'}>›</button>
     </div>
    </div>
   </div>
@@ -286,7 +286,7 @@ function TitleBlock({lang}){
 /** Without the scroll flight, the twelve framings as stills. */
 function KeyFrames({lang}){
  const en=lang==='en';
- return <ol className="vf-keyframes" aria-label={en?'The twelve framings':'12 个构图'}>{CAM.KEYS.map((k,i)=>{
+ return <ol className="vf-keyframes" aria-label={en?'The twelve keyframes':'12 个关键帧'}>{CAM.KEYS.map((k,i)=>{
   const idx=i===CAM.KEYS.length-1?135:Math.round((k.t-T0)*10);
   return <li key={i}><img src={seqSrc(idx)} width="640" height="360" alt="" loading="lazy" decoding="async"/><span>K{pad2(i+1)} · {k.t.toFixed(1)} s</span></li>;
  })}</ol>;
@@ -315,7 +315,7 @@ function Sheet({id,n,title,kicker,lead,children,className=''}){
 /* ---------- sheet 2: speed, from the keys ---------- */
 
 const ALTS={
- eased:{f:CAM.easedAt,name:{en:'Eased into each key',zh:'每个关键帧缓停'}},
+ eased:{f:CAM.easedAt,name:{en:'Ease to a stop at each key',zh:'每个关键帧缓停'}},
  catmull:{f:CAM.catmullAt,name:{en:'Catmull-Rom spline',zh:'Catmull-Rom 样条'}},
 };
 const CURVE_DT=1/60;
@@ -407,14 +407,14 @@ const SpeedLab=memo(function SpeedLab({lang,reduced}){
  const lp=t=>(t-T0)/SPAN*100+'%';
 
  return <div ref={root} className="vf-speed">
-  <div className="vf-seg" role="group" aria-label={en?'Compare the film’s spline with':'把片子的样条和它对比'}>
+  <div className="vf-seg" role="group" aria-label={en?'Compare the film’s spline with':'和片子的样条对比'}>
    <span className="vf-seg-k">{en?'Compare with':'对比'}</span>
    {Object.entries(ALTS).map(([k,a])=><button key={k} type="button" aria-pressed={alt===k} onClick={()=>setAlt(k)}>{a.name[L]}</button>)}
   </div>
   <div className="vf-speed-grid">
    <figure className="vf-graph-fig">
     <div className="vf-graph-head">
-     <span className="vf-key-a">{en?'The film: monotone spline':'片子：单调样条'} <b ref={readA}/></span>
+     <span className="vf-key-a">{en?'Film: monotone spline':'片子：单调样条'} <b ref={readA}/></span>
      <span className="vf-key-b">{ALTS[alt].name[L]} <b ref={readB}/></span>
      <span className="vf-graph-t" ref={readT}/>
     </div>
@@ -428,33 +428,33 @@ const SpeedLab=memo(function SpeedLab({lang,reduced}){
       <path className="vf-curve is-a" d={d(C.spline)}/>
      </svg>
      {al.stops.map(k=><span key={k.t} className="vf-stop is-b" style={{left:lp(k.t)}}/>)}
-     {sp.stops.map(k=><span key={k.t} className="vf-stop is-a" style={{left:lp(k.t)}}><em>{en?`rest at ${k.t.toFixed(1)} s`:`${k.t.toFixed(1)} 秒停住`}</em></span>)}
+     {sp.stops.map(k=><span key={k.t} className="vf-stop is-a" style={{left:lp(k.t)}}><em>{en?`stops at ${k.t.toFixed(1)} s`:`${k.t.toFixed(1)} 秒停下`}</em></span>)}
      <span ref={cursor} className="vf-gcur" aria-hidden="true"/>
      <span ref={dotB} className="vf-gdot is-b" aria-hidden="true"/>
      <span ref={dotA} className="vf-gdot is-a" aria-hidden="true"/>
     </div>
     <div className="vf-gx" aria-hidden="true">{[8,10,12,14,16,18,20].map(t=><span key={t} style={{left:lp(t)}}>{t} s</span>)}</div>
-    <figcaption>{en?'Picture speed, computed in your browser from the film’s twelve keys: how fast the file’s points cross a 5 × 3 grid of the 1920 × 1080 frame, perspective included, on a log scale so slow drifts and full stops both show. Drag across it, or use the arrow keys.':'画面速度，在你的浏览器里由片子的 12 个关键帧算出：文件上落在画面 5 × 3 网格处的那些点，在 1920 × 1080 画面里移动得多快，含透视；纵轴是对数刻度，慢速漂移和完全停住都看得出来。可以在图上拖动，或用方向键。'}</figcaption>
+    <figcaption>{en?'Picture speed, calculated in the browser from the film’s twelve keyframes. It is how fast the points of the file under a 5 × 3 grid move across the 1920 × 1080 frame, with perspective. The vertical axis is logarithmic, so slow drifts and stops both show. Drag across the graph or use the arrow keys.':'画面速度由片子的 12 个关键帧在浏览器里算出。取画面上 5 × 3 网格处对应的文件点，看它们在 1920 × 1080 画面里移动多快，含透视。纵轴用对数刻度，慢速漂移和停顿都看得到。可以在图上拖动，或用方向键。'}</figcaption>
    </figure>
    <div className="vf-speed-side">
     <figure className="vf-mini">
      <div className="vf-draw-box" ref={box}><div className="vf-plane" ref={plane}><Plan P={P} mini liveRef={live} altRef={ghost}/></div></div>
      <figcaption>
       <span><i className="is-cam"/>{en?'The film':'片子'}</span><span><i className="is-alt"/>{ALTS[alt].name[L]}</span>
-      <button type="button" className="vf-play" onClick={()=>setPlaying(p=>!p)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Fly both':'▶ 两个一起飞')}</button>
+      <button type="button" className="vf-play" onClick={()=>setPlaying(p=>!p)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Play both':'▶ 两个一起播放')}</button>
      </figcaption>
     </figure>
     <div className="vf-bars" aria-hidden="true"><span className="is-a"><i ref={barA}/></span><span className="is-b"><i ref={barB}/></span></div>
     <dl className="vf-stats">
-     <div><dt>{en?'Comes to rest at a framing':'在构图上停住'}</dt><dd><b>{al.stops.length}</b><span>{ALTS[alt].name[L]}</span></dd><dd><b className="is-a">{sp.stops.length}</b><span>{en?'the film':'片子'}</span></dd></div>
-     <div><dt>{en?'Swings past a key, at most':'冲过关键帧，最多'}</dt><dd><b>{num(al.over)} px</b><span>{al.overAt?`${al.overAt[0]}–${al.overAt[1]} s`:'—'}</span></dd><dd><b className="is-a">{num(sp.over)} px</b><span>{en?'the film':'片子'}</span></dd></div>
-     <div><dt>{en?'Fastest moment':'最快的一刻'}</dt><dd><b>{num(C.peaks[alt])}</b><span>px/s</span></dd><dd><b className="is-a">{num(C.peaks.spline)}</b><span>px/s</span></dd></div>
+     <div><dt>{en?'Stops at a keyframe':'在关键帧上停下'}</dt><dd><b>{al.stops.length}</b><span>{ALTS[alt].name[L]}</span></dd><dd><b className="is-a">{sp.stops.length}</b><span>{en?'the film':'片子'}</span></dd></div>
+     <div><dt>{en?'Largest overshoot past a keyframe':'冲过关键帧的最大距离'}</dt><dd><b>{num(al.over)} px</b><span>{al.overAt?`${al.overAt[0]}–${al.overAt[1]} s`:'—'}</span></dd><dd><b className="is-a">{num(sp.over)} px</b><span>{en?'the film':'片子'}</span></dd></div>
+     <div><dt>{en?'Peak speed':'最高速度'}</dt><dd><b>{num(C.peaks[alt])}</b><span>px/s</span></dd><dd><b className="is-a">{num(C.peaks.spline)}</b><span>px/s</span></dd></div>
     </dl>
    </div>
   </div>
   <div className="vf-cols">
-   <p>{en?`Eased into each key, the usual way, the camera stops dead at every framing it reaches: ${S.eased.stops.length} times in 13.5 seconds. That stop-and-go is what the film’s first smoothness rule forbids. A Catmull-Rom spline keeps moving, but with these keys it swings up to ${num(S.catmull.over)} px past a framing and comes back.`:`按通常的做法在每个关键帧缓停，镜头每到一个构图就会停死：13.5 秒里停 ${S.eased.stops.length} 次。片子的第一条流畅规则禁止的正是这种走走停停。Catmull-Rom 样条会一直动，但用这组关键帧，它最多会冲过一个构图 ${num(S.catmull.over)} px 再折回来。`}</p>
-   <p>{en?`The film runs one monotone cubic through all twelve. Each key’s tangent is the harmonic mean of the slopes on either side, or zero where a value turns back: speed carries through a framing, and nothing passes one. It rests once, at ${stop?stop.t.toFixed(1):'18.0'} s, where the fast pull-back ends and every value turns back at the same moment. At ${sp.slow.length} other framings most values turn back too, and the one or two still moving keep the picture drifting, at ${num(slowLo)}–${num(slowHi)} px/s.`:`片子用的是一条穿过全部 12 个关键帧的单调三次曲线。每个关键帧的切线取两侧斜率的调和平均；某个数值要折返时，切线取零。速度能带着穿过构图，也不会冲过任何一个。它只停一次，在 ${stop?stop.t.toFixed(1):'18.0'} 秒：快速拉远在这里结束，所有数值同时折返。另有 ${sp.slow.length} 个构图，大部分数值也在折返，只剩一两个还在动，让画面以 ${num(slowLo)}–${num(slowHi)} px/s 慢慢漂移。`}</p>
+   <p>{en?`With the usual ease in and out at each keyframe, the camera stops at every one of them, ${S.eased.stops.length} times in 13.5 seconds. The first smoothness rule in the project’s README is that cameras never ease to a stop between framings or before a cut. A Catmull-Rom spline through the same keyframes keeps moving, but it overshoots, carrying the window up to ${num(S.catmull.over)} px past a keyframe before it comes back.`:`如果按通常的做法在每个关键帧缓入缓出，镜头每到一个关键帧都会停下，13.5 秒里停 ${S.eased.stops.length} 次。项目 README 的第一条流畅规则就是：镜头不能在构图之间或剪辑点之前缓停。Catmull-Rom 样条经过同一组关键帧时一直在动，但会冲过头，窗口最多越过关键帧 ${num(S.catmull.over)} px 再折回来。`}</p>
+   <p>{en?`The film uses one monotone cubic through all twelve keyframes. At each keyframe the tangent is the harmonic mean of the slopes on either side, or zero where a value changes direction. A value that keeps going keeps its speed through the keyframe, and no value goes past one. The camera stops once, at ${stop?stop.t.toFixed(1):'18.0'} s, where the fast pull-back ends and every value changes direction at the same moment. At ${sp.slow.length} other keyframes most values change direction too, and the one or two still moving keep the picture drifting at ${num(slowLo)}–${num(slowHi)} px/s.`:`片子用一条穿过全部 12 个关键帧的单调三次曲线。每个关键帧处的切线取两侧斜率的调和平均，数值在这里折返时取零。继续往同一方向走的数值，经过关键帧时速度不掉；也没有哪个数值会越过关键帧。镜头只在 ${stop?stop.t.toFixed(1):'18.0'} 秒停了一次，那里快速拉远结束，所有数值同时折返。另有 ${sp.slow.length} 个关键帧上大部分数值也在折返，剩下一两个还在动，画面以 ${num(slowLo)}–${num(slowHi)} px/s 慢慢漂移。`}</p>
   </div>
  </div>;
 });
@@ -584,11 +584,11 @@ const Shutter=memo(function Shutter({lang,reduced}){
  return <div ref={root} className="vf-shutter">
   <div className="vf-sh-grid">
    <figure className="vf-sh-main">
-    <div className="vf-sh-k"><span>{en?'DEMONSTRATION · drawn live from the film’s flight maths, not its pixels':'演示 · 按片子的飞行公式实时绘制，不是片中像素'}</span></div>
+    <div className="vf-sh-k"><span>{en?'DEMONSTRATION · drawn in the browser from the film’s flight code, not taken from the film':'演示 · 按片子的飞行代码在浏览器里绘制，不是片中画面'}</span></div>
     <div ref={wrap} className="vf-sh-canvas"><canvas ref={main} role="img" aria-label={en?`Chip color/background in flight, frame ${F+1} of ${FLIGHT_FRAMES}, ${n} samples`:`color/background 芯片飞行中，第 ${F+1}/${FLIGHT_FRAMES} 帧，${n} 次采样`}/></div>
     <div ref={lwrap} className="vf-sh-loupe">
      <canvas ref={loupe} aria-hidden="true"/>
-     <span className="vf-sh-lk">{en?'DETAIL B · 1:1 with the 1920 frame · red ticks: where each sample sat':'局部 B · 与 1920 画面 1:1 · 红色刻度：每次采样的位置'}</span>
+     <span className="vf-sh-lk">{en?'DETAIL B · 1:1 with the 1920 frame · red ticks mark the samples':'局部 B · 1920 画面的 1:1 · 红色刻度是各次采样的位置'}</span>
     </div>
    </figure>
    <div className="vf-sh-ctrl">
@@ -596,17 +596,17 @@ const Shutter=memo(function Shutter({lang,reduced}){
      <span className="vf-seg-k">{en?'Samples per frame':'每帧采样'}</span>
      <div>{SAMPLE_SET.map(v=><button key={v} type="button" aria-pressed={n===v} onClick={()=>setN(v)}>{v}</button>)}</div>
     </div>
-    <label className="vf-slider"><span className="vf-seg-k">{en?'Frame of the flight':'飞行中的帧'} <b>{pad2(F+1)} / {FLIGHT_FRAMES} · {t.toFixed(2)} s</b></span>
+    <label className="vf-slider"><span className="vf-seg-k">{en?'Flight frame':'飞行帧'} <b>{pad2(F+1)} / {FLIGHT_FRAMES} · {t.toFixed(2)} s</b></span>
      <input type="range" min="0" max={FLIGHT_FRAMES-1} value={F} onChange={e=>{setPlaying(false);setF(+e.target.value);}}/>
     </label>
     <div className="vf-sh-row">
-     <button type="button" className="vf-play" onClick={()=>setPlaying(p=>!p)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Play at ¼ speed':'▶ 四分之一速播放')}</button>
-     <button type="button" role="switch" aria-checked={fix} className="vf-switch" onClick={()=>setFix(v=>!v)}><i/>{en?'Name fades as it starts to fly (the fix)':'起飞时名字淡出（修正后）'}</button>
+     <button type="button" className="vf-play" onClick={()=>setPlaying(p=>!p)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Play at ¼ speed':'▶ 以 1/4 速度播放')}</button>
+     <button type="button" role="switch" aria-checked={fix} className="vf-switch" onClick={()=>setFix(v=>!v)}><i/>{en?'Fade the name at take-off (the fix)':'起飞时淡出名字（修正）'}</button>
     </div>
     <dl className="vf-sh-read">
-     <div><dt>{en?'Moves this frame':'这一帧移动'}</dt><dd>{move.toFixed(1)} px</dd></div>
-     <div><dt>{en?'Between samples':'采样间距'}</dt><dd>{n>1?gap.toFixed(2)+' px':'—'}</dd></div>
-     <div className="is-wide"><dt>{en?'Reads as':'看起来是'}</dt><dd className={stepped?'is-warn':''}>{n===1?(en?'one sharp copy: it strobes in motion':'一个清晰的副本：运动中会频闪'):stepped?(en?`${n} stepped copies (over ~1.5 px apart)`:`${n} 个分开的副本（间距超过约 1.5 px）`):(en?'one continuous streak':'一道连续的拖影')}</dd></div>
+     <div><dt>{en?'Movement in this frame':'这一帧的位移'}</dt><dd>{move.toFixed(1)} px</dd></div>
+     <div><dt>{en?'Sample spacing':'采样间距'}</dt><dd>{n>1?gap.toFixed(2)+' px':'—'}</dd></div>
+     <div className="is-wide"><dt>{en?'Result':'效果'}</dt><dd className={stepped?'is-warn':''}>{n===1?(en?'One sharp copy, which strobes in motion':'一个清晰的副本，运动时会频闪'):stepped?(en?`${n} separate copies, more than about 1.5 px apart`:`${n} 个分开的副本，间距超过约 1.5 px`):(en?'A continuous streak':'一道连续的拖影')}</dd></div>
     </dl>
    </div>
   </div>
@@ -636,12 +636,12 @@ function Scramble({lang,reduced}){
    <span className="vf-scr-tc">{en?'FRAME':'帧'} {f} · {(f/60).toFixed(3)} s</span>
   </div>
   <ol className="vf-scr-cells" aria-hidden="true">{Array.from({length:SCR_N},(_,i)=><li key={i} className={state(i)+(i===k?' is-on':'')}/>)}</ol>
-  <p className="vf-scr-out"><span>{en?'scramble() run here for frame':'在这里为这一帧运行 scramble()'} {f}:</span><code>{text}</code></p>
+  <p className="vf-scr-out"><span>{en?'scramble() in the browser, frame':'浏览器里运行 scramble()，第'} {f}{en?':':' 帧：'}</span><code>{text}</code></p>
   <div className="vf-sh-row">
-   <button type="button" className="vf-play" onClick={()=>setPlaying(v=>!v)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Play, 10× slower':'▶ 放慢 10 倍播放')}</button>
+   <button type="button" className="vf-play" onClick={()=>setPlaying(v=>!v)} aria-pressed={playing}>{playing?(en?'❚❚ Pause':'❚❚ 暂停'):(en?'▶ Play at 1/10 speed':'▶ 以 1/10 速度播放')}</button>
    <label className="vf-slider is-inline"><span className="vf-sr">{en?'Frame':'帧'}</span><input type="range" min="0" max={SCR_N-1} value={k} onChange={e=>{setPlaying(false);setK(+e.target.value);}} aria-valuetext={`${en?'frame':'帧'} ${f}: ${text}`}/></label>
   </div>
-  <p className="vf-note">{en?`${scrN} frames of scramble, then the name: 0.25 s. The reviewers’ rule, set when the films ran at 30 fps, was 8 frames or fewer, about a quarter second; at 60 fps a quarter second is 15 frames. The product name never scrambles: it rises in word by word. Each frame’s characters are held for all 16 shutter samples (frameT), or one frame would print two strings over each other.`:`乱码 ${scrN} 帧，然后定格成名字：共 0.25 秒。评审的规则定于片子还是 30 帧的时候：不超过 8 帧，大约四分之一秒；换成 60 帧后，四分之一秒是 15 帧。产品名从不乱码，而是一个词一个词升起来。每一帧的字符在 16 次快门采样里保持不变（frameT），否则一帧里会叠出两串字。`}</p>
+  <p className="vf-note">{en?`The scramble runs for ${scrN} frames and the name settles on the next one, 0.25 s in all. The reviewers set a limit of 8 frames, about a quarter second, when the films ran at 30 fps; at 60 fps a quarter second is 15 frames. The product name is never scrambled. It rises in word by word. The characters are held for the whole frame (frameT), so all 16 shutter samples show the same string; without that, one frame would print two strings on top of each other.`:`乱码持续 ${scrN} 帧，下一帧落定成名字，一共 0.25 秒。评审定这条上限时片子还是 30 帧，上限是 8 帧，约四分之一秒；换成 60 帧后，四分之一秒是 15 帧。产品名从不做乱码，它是逐词升起来的。字符在整帧内保持不变（frameT），16 次快门采样看到的是同一串字；不这样做，一帧里会叠出两串字。`}</p>
  </div>;
 }
 
@@ -659,13 +659,13 @@ function PlateDetail({film,lang}){
    <span className="vf-pl-lab" style={{left:fx(526),top:fy(306)}}>860</span>
    <span className="vf-pl-lab" style={{left:fx(986),top:fy(171)}}>210</span>
    <span className="vf-pl-lab is-sm" style={{left:fx(48),top:fy(40)}}>96 · 66</span>
-   <span className="vf-pl-lab is-focus" style={{left:fx(1560),top:fy(929)}}>{en?'86%: soft below (8 px)':'86% 以下虚化（8 px）'}</span>
+   <span className="vf-pl-lab is-focus" style={{left:fx(1560),top:fy(929)}}>{en?'Below 86%: 8 px blur':'86% 以下：8 px 模糊'}</span>
    <button type="button" className="vf-pl-toggle" aria-pressed={dims} onClick={()=>setDims(v=>!v)}>{dims?(en?'Hide dimensions':'隐藏尺寸'):(en?'Show dimensions':'显示尺寸')}</button>
   </figure>
   <div className="vf-rev">
    <p className="vf-rev-n"><Tri n={1}/>{en?'Review note':'评审意见'}</p>
    <p>{note.note[L]}</p>
-   <p className="vf-rev-fix">{note.fix[L]} <span>{en?'The plate is 860 × 210 frame px, a near-black at 84% with a 16 px backdrop blur, and it fades in and out with the shot.':'底板 860 × 210（画面像素），近黑色、84% 不透明度，加 16 px 背景模糊，随这个镜头淡入淡出。'}</span></p>
+   <p className="vf-rev-fix">{note.fix[L]} <span>{en?'The plate is 860 × 210 px in the frame, near-black at 84% opacity with a 16 px backdrop blur. It fades in and out with the shot.':'底板在画面里是 860 × 210 px，近黑色，不透明度 84%，加 16 px 背景模糊，随镜头淡入淡出。'}</span></p>
   </div>
  </div>;
 }
@@ -697,7 +697,7 @@ function PixelSnap({lang,reduced}){
   {row(a,en?'transform: translate3d':'transform: translate3d',ra)}
   {row(b,en?'left / top':'left / top',rb)}
   {reduced&&<label className="vf-slider"><span className="vf-seg-k">{en?'Position':'位置'}</span><input type="range" min="0" max={CELLS-.01} step=".01" value={x} onChange={e=>setX(+e.target.value)}/></label>}
-  <p className="vf-note">{en?`Simulated at ${DRIFT} px a second, one cell per pixel. Placed by transform, the edge moves a tenth of a pixel each frame and the browser shades it across two pixels. Placed by left/top, Chrome snaps it to whole pixels: it holds, then jumps one pixel, ${DRIFT} times a second. The film’s window and its flying chips are placed by transform.`:`模拟每秒漂移 ${DRIFT} px，一格就是一个像素。用 transform 定位，边缘每帧移动十分之一像素，浏览器把它分摊到两个像素上渲染；用 left/top，Chrome 会吸附到整像素：先停住，再跳一个像素，每秒 ${DRIFT} 次。片子里的窗口和飞行的芯片都用 transform 定位。`}</p>
+  <p className="vf-note">{en?`A simulated drift of ${DRIFT} px a second, one cell per pixel. With transform, the edge moves a tenth of a pixel each frame and the browser shades it across two pixels. With left/top, Chrome snaps it to whole pixels, so it holds and then jumps one pixel, ${DRIFT} times a second. In the film, the window and the flying chips are positioned with transform.`:`模拟每秒漂移 ${DRIFT} px，一格代表一个像素。用 transform 时，边缘每帧移动十分之一像素，浏览器把它分摊在两个像素上显示。用 left/top 时，Chrome 会把位置吸附到整像素，于是停一下、跳一个像素，每秒 ${DRIFT} 次。片子里的窗口和飞行的芯片都用 transform 定位。`}</p>
  </div>;
 }
 
@@ -709,12 +709,12 @@ const STUDY=[
  ['The Browser Company','Dia',78],['Notion','Introducing the new Notion AI',57],['Apple','iOS 26 Liquid Glass',86],
 ];
 const RULES=[
- {en:'Only hard cuts, pushes and match cuts: no dissolves, irises or flashes',zh:'只用硬切、推镜和匹配剪辑：不用叠化、圆形遮罩和闪白'},
+ {en:'Transitions are hard cuts, pushes and match cuts only. No dissolves, irises or flashes',zh:'转场只用硬切、推镜和匹配剪辑，不用叠化、圆形遮罩和闪白'},
  {en:'No still picture of 0.8 s or more; end cards keep pushing',zh:'没有 0.8 秒以上的静止画面；结尾卡也一直在推'},
  {en:'A title-safe zone nothing else enters; labels at least 24 px',zh:'标题有固定安全区，其他东西不进去；标签至少 24 px'},
  {en:'Scrambles 8 frames or fewer, never on the product name',zh:'乱码不超过 8 帧，不用在产品名上'},
  {en:'One set of numbers, the same all the way through',zh:'全片只用一套数字，前后一致'},
- {en:'Act out the key line once',zh:'把最关键的那句话演出来一次'},
+ {en:'The film’s main line is acted out on screen once',zh:'片子的主句要在画面上演出来一次'},
 ];
 
 function ScoreChart({scores,lang}){
@@ -727,11 +727,11 @@ function ScoreChart({scores,lang}){
     <path className="vf-score-line" d={'M'+scores.map((s,i)=>`${x(i)} ${y(s)}`).join('L')}/>
    </svg>
    {[70,80,90].map(v=><span key={v} className="vf-score-y" style={{top:y(v)+'%'}}>{v}</span>)}
-   <span className="vf-score-tg" style={{top:y(95)+'%'}}>{en?'95 asked for':'目标 95'}</span>
+   <span className="vf-score-tg" style={{top:y(95)+'%'}}>{en?'Target 95':'目标 95'}</span>
    {scores.map((s,i)=><span key={i} className={'vf-score-pt'+(i===scores.length-1?' is-last':'')} style={{left:x(i)+'%',top:y(s)+'%'}}><b>{s}</b></span>)}
   </div>
   <div className="vf-score-x" aria-hidden="true">{scores.map((_,i)=><span key={i} style={{left:x(i)+'%'}}>R{i+1}</span>)}</div>
-  <figcaption>{en?`Independent review, six rounds: ${scores.join(' → ')} out of 100 (motion 30, craft 30, story 25, finish 15).`:`独立评审六轮：${scores.join(' → ')}，满分 100（动效 30、工艺 30、叙事 25、完成度 15）。`}</figcaption>
+  <figcaption>{en?`Six rounds of independent review: ${scores.join(' → ')} out of 100. Weights: motion 30, craft 30, story 25, finish 15.`:`六轮独立评审：${scores.join(' → ')}，满分 100。权重为动效 30、工艺 30、叙事 25、完成度 15。`}</figcaption>
  </figure>;
 }
 
@@ -741,21 +741,21 @@ function Revisions({film,lang}){
   <div className="vf-fc">
    {film.firstCut.map((p,i)=><Reveal as="figure" key={i} delay={i*90} className="vf-fc-pair">
     <div className="vf-fc-imgs">
-     <span><img src={`${MEDIA}/v1-${i+1}.webp`} width="960" height="540" alt="" loading="lazy" decoding="async"/><em>{en?'REV A · FIRST CUT':'A 版 · 第一版'}</em></span>
+     <span><img src={`${MEDIA}/v1-${i+1}.webp`} width="960" height="540" alt="" loading="lazy" decoding="async"/><em>{en?'FIRST CUT':'第一版'}</em></span>
      <span><img src={`${MEDIA}/final-${i+1}.webp`} width="960" height="540" alt="" loading="lazy" decoding="async"/><em className="is-final">{en?`FINAL · ${p.final.toFixed(1)} s`:`终版 · ${p.final.toFixed(1)} 秒`}</em></span>
     </div>
-    <figcaption>{p.caption[L]}</figcaption>
+    <figcaption>{COPY.firstCut[i][L]}</figcaption>
    </Reveal>)}
   </div>
   <dl className="vf-diff">
-   <div><dt>{en?'First cut':'第一版'}</dt><dd>{en?'37 s on light grey. Measured one frame a second, 11 seconds looked almost the same as the second before; 6 big changes; it ended on a 5-second still card.':'37 秒，浅灰底。按每秒一帧测量，有 11 秒和前一秒几乎一样；大变化只有 6 次；最后停在一张 5 秒不动的结尾卡上。'}</dd></div>
-   <div><dt>{en?'Final':'终版'}</dt><dd>{en?'29.4 s in a dark room lit like a canvas. One take to 20.4 s, then cuts at 24 and 27.4 s; the end card lasts 2 s and pushes in the whole time.':'29.4 秒，暗场里像被照亮的画布。一个长镜头到 20.4 秒，之后在 24 秒和 27.4 秒硬切；结尾卡 2 秒，全程都在推近。'}</dd></div>
+   <div><dt>{en?'First cut':'第一版'}</dt><dd>{en?'37 s, on light grey. Sampled one frame a second, 11 of those seconds looked almost the same as the second before, and there were only 6 big changes. It ended on a still card held for 5 s.':'37 秒，浅灰底。按每秒一帧取样，有 11 秒和前一秒几乎一样，大变化只有 6 次。结尾是一张停了 5 秒的静止卡。'}</dd></div>
+   <div><dt>{en?'Final':'终版'}</dt><dd>{en?'29.4 s, in a dark room lit like a canvas. No cut until 20.4 s, then cuts at 24 and 27.4 s. The end card lasts 2 s and keeps pushing in.':'29.4 秒，暗场，像一块被照亮的画布。20.4 秒之前没有剪辑点，之后在 24 秒和 27.4 秒硬切。结尾卡 2 秒，一直在推近。'}</dd></div>
   </dl>
   <div className="vf-study">
    <div>
-    <h3>{en?'Nine app launch films, one frame a second':'九支 App 宣传片，每秒一帧'}</h3>
-    <p>{en?'Before the rebuild, the first cut was laid out one frame a second beside nine launch films by software companies. For this film the study pointed to Linear’s: nearly one long take, the interface on a big tilted plane, a low gliding camera, shallow focus, and a dark room where only the line in play is lit.':'重做之前，把第一版按每秒一帧铺开，和九支软件公司的宣传片放在一起对照。对这支片子，研究指向的是 Linear 那支：近乎一个长镜头，界面铺在一个倾斜的大平面上，镜头低角度滑过，景深很浅，暗场里只照亮正在发生的那一行。'}</p>
-    <p className="vf-note">{en?'Studied as text and contact sheets only; no frames of these films are shown here.':'只做文字记录和联系表对照，这里不展示这些片子的画面。'}</p>
+    <h3>{en?'Study of nine app launch films':'九支 App 宣传片的对照研究'}</h3>
+    <p>{en?'Before the rebuild, I laid the first cut out one frame a second next to nine launch films from software companies. For this film, the study pointed to Linear’s. That film is nearly one long take, with the interface on a large tilted plane, a low camera gliding over it, shallow focus, and a dark room where only the active line is lit.':'重做之前，我把第一版按每秒一帧铺开，和九支软件公司的宣传片放在一起比。对这支片子，研究指向 Linear 那支。那支片子近乎一个长镜头，界面铺在倾斜的大平面上，镜头低角度滑过，景深很浅，暗场里只照亮正在发生的那一行。'}</p>
+    <p className="vf-note">{en?'Studied from notes and contact sheets. No frames from these films are reproduced here.':'研究只用文字记录和联系表，这里不放这些片子的画面。'}</p>
    </div>
    <ol className="vf-study-list">{STUDY.map(([who,what,s],i)=><li key={i} className={who==='Linear'?'is-on':undefined}><span>{pad2(i+1)}</span><b>{who}</b><em>{what}</em><i>{s} s</i></li>)}</ol>
   </div>
@@ -768,12 +768,26 @@ function Revisions({film,lang}){
    </Reveal>)}</ol>
   </div>
   <div className="vf-rules">
-   <p className="vf-k"><span>§</span>{en?'Rules the reviews produced':'评审压出来的规则'}</p>
+   <p className="vf-k"><span>§</span>{en?'Rules from the reviews':'评审定下的规则'}</p>
    <ol>{RULES.map((r,i)=><li key={i}><span>{pad2(i+1)}</span>{r[L]}</li>)}</ol>
-   <p className="vf-note">{en?'The reviewer was an agent that could watch the renders and frame scans but not change files. Six rounds did not reach the 95 asked for.':'评审是一个只能看渲染和逐帧扫描、不能改文件的智能体。六轮下来没有达到要求的 95 分。'}</p>
+   <p className="vf-note">{en?'The reviewer was an AI agent that could look at the renders and frame scans but could not change files. After six rounds the score was 85, short of the 95 I asked for.':'评审是一个 AI 智能体，可以看渲染和逐帧扫描，不能改文件。六轮之后是 85 分，没到我要求的 95 分。'}</p>
   </div>
  </>;
 }
+
+/* Copy shown on this page for the film's ideas and the first-cut captions. Same facts as FILMS in product-films-data.js,
+   worded for this page. */
+const COPY={
+ firstCut:[
+  {en:'At “But they invent the names.”, the first cut listed five invented names in red on light grey. The final pulls five chips out of a stream of values and scrambles each one into its name.',zh:'在“But they invent the names.”这一句，第一版在浅灰底上用红色列出五个编出来的名字；终版从一串流动的数值里拽出五个芯片，逐个乱码成名字。'},
+  {en:'For “12 unbound values”, the first cut put a caption beside the whole window and outlined the row. The final pushes in on the panel row and rolls up a large 12 beside it.',zh:'讲“12 个未绑定的值”时，第一版把说明文字放在整个窗口旁边，再给那一行描边；终版推近到面板那一行，在旁边滚出一个很大的 12。'},
+ ],
+ ideas:[
+  {title:{en:'One object throughout',zh:'一个东西贯穿全片'},body:{en:'The hex values. They stream past as what the agent sees, get renamed, get bound, and come back as the measurement.',zh:'就是那些色值。先是 agent 看到的数值流，然后被改名、被绑定，最后变成测量结果。'}},
+  {title:{en:'Colour as a code',zh:'颜色只用来编码'},body:{en:'A dark room lit like a canvas. Invented names are red, the file’s own token names are blue, and nothing else is coloured.',zh:'暗场像一块被照亮的画布。编出来的名字是红色，文件里的 token 名是蓝色，其余都不上色。'}},
+  {title:{en:'Nearly one take',zh:'几乎是一个长镜头'},body:{en:'No cut for the first 20.4 seconds. The camera follows one spline through twelve framings of the file, so the workflow plays as one continuous action.',zh:'前 20.4 秒没有剪辑点。镜头沿一条样条曲线经过文件的 12 个构图，整个流程是一个连续的动作。'}},
+ ],
+};
 
 /* ---------- the page ---------- */
 
@@ -794,51 +808,51 @@ export default function VariablesPage({lang,reduced,onNavigate,slug='variables-f
   <PathPlot film={film} lang={lang} reduced={reduced} onWatch={watch} onSkip={skip}/>
 
   <div className="vf-sheets">
-   <Sheet id="vf-speed" n={2} kicker={en?'Speed':'速度'} title={en?'Through the framings, not to them':'穿过每个构图，而不是停在每个构图上'}
-    lead={<p>{en?'The film writes its camera as twelve keys: which point of the file sits where in the frame, at what scale and tilt. What happens between the keys decides whether the picture flows or stutters.':'片子把镜头写成 12 个关键帧：文件上哪一点落在画面哪里、缩放多少、倾斜多少。关键帧之间怎么走，决定了画面是流畅还是一卡一卡。'}</p>}>
+   <Sheet id="vf-speed" n={2} kicker={en?'Speed':'速度'} title={en?'Camera speed between keyframes':'关键帧之间的镜头速度'}
+    lead={<p>{en?'The camera is written as twelve keyframes. Each one sets which point of the file sits where in the frame, and at what scale and tilt. The graph compares the film’s interpolation between them with two others on the same keyframes.':'镜头写成 12 个关键帧，每个关键帧定下文件上哪一点落在画面哪里、缩放多少、倾斜多少。下图把片子在关键帧之间的插值方式，和同一组关键帧上的另外两种放在一起比较。'}</p>}>
     <Near min={720}><SpeedLab lang={lang} reduced={reduced}/></Near>
    </Sheet>
 
-   <Sheet id="vf-shutter" n={3} kicker={en?'Shutter':'快门'} title={en?'Sixteen samples a frame, averaged in 16-bit':'每帧 16 次采样，用 16 位求平均'}
-    lead={<><p>{en?'Motion blur makes a fast move read as motion instead of a row of copies. Remotion’s CameraMotionBlur stacks its samples in the browser at 8 bits per channel; on light backgrounds like this film’s screens, that left echoed text and pink and green blotches.':'运动模糊让快速运动看起来是“在动”，而不是一排副本。Remotion 的 CameraMotionBlur 在浏览器里以每通道 8 位叠加采样；在浅色背景上（比如这支片子的界面），这会留下文字残影和粉绿色的色斑。'}</p>
-     <p>{en?'So the film has a Sub composition at 16 times its frame rate. Sample j of frame F renders at F + j/32: sixteen samples across the first half of the frame, a 180° shutter. scripts/render-mb.mjs adds each group of sixteen into a Uint16Array in Node, divides once with rounding, and encodes. 1,764 frames × 16 = 28,224 renders.':'所以片子另有一个 16 倍帧率的 Sub 合成：第 F 帧的第 j 次采样渲染在 F + j/32 帧处，16 次采样铺在一帧的前一半，也就是 180° 快门。scripts/render-mb.mjs 在 Node 里把每 16 次采样累加进 Uint16Array，只做一次带四舍五入的除法，再编码。1,764 帧 × 16 = 28,224 次渲染。'}</p></>}>
+   <Sheet id="vf-shutter" n={3} kicker={en?'Shutter':'快门'} title={en?'Motion blur with 16 samples per frame':'每帧 16 次采样的运动模糊'}
+    lead={<><p>{en?'Without motion blur, a fast move shows up as a row of sharp copies. Remotion’s CameraMotionBlur stacks its samples in the browser at 8 bits per channel. On light backgrounds, such as this film’s screens, that left echoes of text and pink and green blotches.':'没有运动模糊，快速运动会显示成一排清晰的副本。Remotion 的 CameraMotionBlur 在浏览器里按每通道 8 位叠加采样，在浅色背景上（比如这支片子的界面）会留下文字残影和粉绿色色斑。'}</p>
+     <p>{en?'The film has a Sub composition that runs at 16 times its frame rate. Sample j of frame F is rendered at F + j/32, which spreads 16 samples across the first half of each frame (a 180° shutter). scripts/render-mb.mjs adds each group of 16 into a Uint16Array in Node, divides once with rounding, and encodes the result. That is 1,764 frames × 16 = 28,224 renders.':'片子另有一个 16 倍帧率的 Sub 合成。第 F 帧的第 j 次采样渲染在 F + j/32 处，16 次采样分布在每帧的前一半，相当于 180° 快门。scripts/render-mb.mjs 在 Node 里把每 16 次采样累加到 Uint16Array，四舍五入后只除一次，再编码。一共是 1,764 帧 × 16 = 28,224 次渲染。'}</p></>}>
     <Near min={560}><Shutter lang={lang} reduced={reduced}/></Near>
     <div className="vf-fix">
      <div className="vf-rev">
       <p className="vf-rev-n"><Tri n={2}/>{en?'Review note':'评审意见'}</p>
       <p>{film.notes[1].note[L]}</p>
-      <p className="vf-rev-fix">{film.notes[1].fix[L]} <span>{en?'In the code: the name’s opacity is 1 − smoother(u from 0.02 to 0.2). By a fifth of the flight it is gone, and the chip has covered 3% of the way.':'代码里：名字的不透明度是 1 − smoother(u 从 0.02 到 0.2)。飞到五分之一时名字已经消失，而芯片只走了 3% 的路程。'}</span></p>
-      <p className="vf-note">{en?'Type moving faster than about 1.5 px per sample shows as stepped copies (kit/kinetic.tsx), so headlines enter on a quartic ease-out, whose fastest moment is a third of expoOut’s, and leave by fading with a short lift.':'字的移动一旦超过每次采样约 1.5 px，就会出现分开的副本（kit/kinetic.tsx）。所以标题用四次方缓出进场，最快的一刻只有 expoOut 的三分之一；离场时淡出并稍微上移。'}</p>
+      <p className="vf-rev-fix">{film.notes[1].fix[L]} <span>{en?'In the code, the name’s opacity is 1 − smoother(u from 0.02 to 0.2). It is zero a fifth of the way into the flight time, when the chip has covered 3% of the distance.':'代码里，名字的不透明度是 1 − smoother(u 从 0.02 到 0.2)。飞行时间过了五分之一，名字已经完全消失，这时芯片只走了 3% 的距离。'}</span></p>
+      <p className="vf-note">{en?'kit/kinetic.tsx notes that type moving faster than about 1.5 px per sample shows as separate copies. Headlines therefore enter on a quartic ease-out, whose peak speed is a third of expoOut’s, and leave with a fade and a short lift.':'按 kit/kinetic.tsx 里的说明，字的移动超过每次采样约 1.5 px，就会出现分开的副本。所以标题用四次方缓出进场，最快时只有 expoOut 的三分之一；离场时淡出，同时稍微上移。'}</p>
      </div>
-     <ol className="vf-strip" aria-label={en?'The film, frame by frame':'片中逐帧'}>
-      {[[18.55,en?'Named, about to fly':'改好名字，准备起飞'],[18.8,en?'The first names fade as their chips start':'最先起飞的芯片名字开始淡出'],[19,en?'Blank pills arc down':'空白的胶囊划着弧线落下'],[19.2,en?'Mid-flight, under the 16-sample shutter':'飞行中，16 次采样的快门下']].map(([t,c],i)=>
+     <ol className="vf-strip" aria-label={en?'Frames from the film, 18.55 to 19.2 s':'片中画面，18.55 到 19.2 秒'}>
+      {[[18.55,en?'Names on, before take-off':'名字还在，尚未起飞'],[18.8,en?'The first names fade as their chips start to move':'先起飞的芯片名字开始淡出'],[19,en?'Blank pills on their arc':'空白胶囊沿弧线落下'],[19.2,en?'Mid-flight, with the 16-sample shutter':'飞行中，16 次采样的快门']].map(([t,c],i)=>
        <li key={t}><img src={`${MEDIA}/flight-${i+1}.webp`} width="672" height="378" alt="" loading="lazy" decoding="async"/><span><b>{tc(t)}</b>{c}</span></li>)}
      </ol>
     </div>
    </Sheet>
 
-   <Sheet id="vf-type" n={4} kicker={en?'Type':'文字'} title={en?'Words on a moving camera':'运动镜头上的字'}
-    lead={<p>{en?'The camera never parks, so the type has to stay readable while everything under it moves. Three details from the film.':'镜头从不停下，所以字要在下面的一切都在动的时候保持可读。下面是片子里的三处细节。'}</p>}>
+   <Sheet id="vf-type" n={4} kicker={en?'Type':'文字'} title={en?'Text on a moving camera':'运动镜头上的文字'}
+    lead={<p>{en?'The camera moves under the headlines almost all the time, so they have to stay readable over a moving picture. Three details from the film.':'镜头几乎一直在标题下面移动，标题要在运动的画面上保持可读。下面是片子里的三处细节。'}</p>}>
     <div className="vf-details">
-     <Reveal className="vf-detail is-a"><p className="vf-dk"><i>A</i>{en?'The scramble':'乱码'}</p><Scramble lang={lang} reduced={reduced}/></Reveal>
-     <Reveal className="vf-detail is-b"><p className="vf-dk"><i>B</i>{en?'A plate the size of the words':'和字一样大的底板'}</p><PlateDetail film={film} lang={lang}/></Reveal>
-     <Reveal className="vf-detail is-c"><p className="vf-dk"><i>C</i>{en?'Transform, not left/top, at 60 fps':'用 transform，不用 left/top，60 帧'}</p><PixelSnap lang={lang} reduced={reduced}/>
-      <p className="vf-note">{en?'Rendered at 1920 × 1080 and 60 fps. 11 of the 13 app films the study checked run at 24 or 30; these films moved to 60 when the motion-first cuts still looked like they juddered.':'以 1920 × 1080、60 帧渲染。研究查过的 13 支 App 片里有 11 支是 24 或 30 帧；以动效为先重做之后画面看起来还是一卡一卡，这几支片子就改成了 60 帧。'}</p>
+     <Reveal className="vf-detail is-a"><p className="vf-dk"><i>A</i>{en?'Scramble effect':'乱码效果'}</p><Scramble lang={lang} reduced={reduced}/></Reveal>
+     <Reveal className="vf-detail is-b"><p className="vf-dk"><i>B</i>{en?'Headline plate sized to the text':'按文字大小做的标题底板'}</p><PlateDetail film={film} lang={lang}/></Reveal>
+     <Reveal className="vf-detail is-c"><p className="vf-dk"><i>C</i>{en?'Positioning with transform, and 60 fps':'用 transform 定位，以及 60 帧'}</p><PixelSnap lang={lang} reduced={reduced}/>
+      <p className="vf-note">{en?'The film is rendered at 1920 × 1080 and 60 fps. Eleven of the 13 app films in the study run at 24 or 30 fps. When I watched the motion-first cuts, Common Ground and Last 100 Feet stuttered, and all three films moved to 60 fps as part of the fix.':'片子以 1920 × 1080、60 帧渲染。研究里的 13 支 App 片有 11 支是 24 或 30 帧。我看动效优先的那一版时，Common Ground 和 Last 100 Feet 画面一卡一卡，修的时候三支片子都改成了 60 帧。'}</p>
      </Reveal>
     </div>
    </Sheet>
 
-   <Sheet id="vf-revisions" n={5} kicker={en?'Revisions':'修订'} title={en?'From a slide deck to one take':'从幻灯片到一个长镜头'}
-    lead={<p>{en?'The first cut read like a slide deck. It was studied against nine launch films, rebuilt motion first, and reviewed six times.':'第一版看起来像幻灯片。之后拿它和九支宣传片对照研究，以动效为先重做，再经过六轮评审。'}</p>}>
+   <Sheet id="vf-revisions" n={5} kicker={en?'Revisions':'修订'} title={en?'First cut, study and review rounds':'第一版、对照研究和评审'}
+    lead={<p>{en?'The first cut read like a slide deck. I compared it with nine launch films, rebuilt it with motion first, and put it through six rounds of review.':'第一版看起来像幻灯片。我把它和九支宣传片对照，以动效为先重做，又做了六轮评审。'}</p>}>
     <Revisions film={film} lang={lang}/>
    </Sheet>
 
-   <Sheet id="vf-edit" n={6} kicker={en?'The edit':'剪辑'} title={en?'The film, on its own timeline':'剪辑台上的片子'}
-    lead={<p>{en?'29.4 s, 60 fps, silent on the site. There is no editing timeline behind it: every frame is a function of time in React, rendered by Remotion. The desk below is drawn from the film’s data, its beats, headlines and three cuts, with the picture change per frame measured from this file.':'29.4 秒，60 帧，网站上是无声版。它背后没有剪辑软件的时间线：每一帧都是 React 里一个关于时间的函数，由 Remotion 渲染。下面的剪辑台由片子的数据画出：段落、字幕、三个剪辑点，以及从这个文件逐帧量出的画面变化。'}</p>}>
+   <Sheet id="vf-edit" n={6} kicker={en?'The edit':'剪辑'} title={en?'The film and its timeline':'片子和它的时间线'}
+    lead={<p>{en?'29.4 s at 60 fps, silent on the site. It was not cut in an editing app. Every frame is a function of time in React, rendered by Remotion. The timeline below is drawn from the film’s data (beats, headlines and the three cuts), with the picture change per frame measured from this video file.':'29.4 秒，60 帧，网站上是无声版。它没有用剪辑软件剪，每一帧都是 React 里的一个时间函数，由 Remotion 渲染。下面的时间线由片子的数据画出（段落、字幕、三个剪辑点），再加上从这个视频文件逐帧量出的画面变化。'}</p>}>
     <div className="vf-desk" ref={desk} data-nav-tone="dark"><Desk film={film} slug={slug} lang={L} video={video}/></div>
-    <ol className="vf-gnotes">{film.ideas.map((idea,i)=><li key={i}><span>{en?'NOTE':'注'} {i+1}</span><h3>{idea.title[L]}</h3><p>{idea.body[L]}</p></li>)}</ol>
+    <ol className="vf-gnotes">{COPY.ideas.map((idea,i)=><li key={i}><span>{en?'NOTE':'注'} {i+1}</span><h3>{idea.title[L]}</h3><p>{idea.body[L]}</p></li>)}</ol>
     <p className="vf-links">
-     <a href={caseHref} onClick={go(caseHref)}>{en?'The product in this film has its own design case: Ready for agents →':'片中的产品有自己的设计案例：Ready for agents →'}</a>
+     <a href={caseHref} onClick={go(caseHref)}>{en?'Design case for the product: Ready for agents →':'产品的设计案例：Ready for agents →'}</a>
      <a href={src} target="_blank" rel="noopener noreferrer">{en?'Open the video':'单独打开视频'} ↗</a>
     </p>
    </Sheet>

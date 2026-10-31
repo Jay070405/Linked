@@ -7,7 +7,7 @@ import MEASURE from '../films/common-ground-measure.json';
 import './common-ground-page.css';
 
 /* Common Ground, how the film was made. Its thread is the review loop: six rounds of independent review took the film
-   from 58 to 87, each note became a rule and a code change, and the user's own "非常不 smooth" came after. The page is a
+   from 58 to 87, each note became a rule and a code change, and the stutter fixes came after. The page is a
    review console: graphite, the film's red for whatever changed, mono for the record. Every number and every line of
    code is from the project's record (films/common-ground-review.js) or measured from the site's own file
    (films/common-ground-measure.json, public/assets/other-project/common-ground/frames). The two canvas labs are live
@@ -71,7 +71,7 @@ function Monitor({film,lang,reduced}){
    <span className="cg-hud is-br" aria-hidden="true"><b ref={tc}>00:00</b> / 31:42</span>
    <button type="button" className="cg-monitor-play" onClick={toggle} aria-label={playing?(en?'Pause the film':'暂停'):(en?'Play the film':'播放')}>{playing?'❚❚':'▶'}</button>
   </div>
-  <figcaption className="cg-monitor-cap"><span>{en?'Guides drawn by this page: action-safe (90%) and title-safe (80%). Round 2 asked for a title-safe zone nothing else enters.':'虚线是这一页画上去的：动作安全区（90%）和标题安全区（80%）。第 2 轮评审要求，标题安全区里不能进别的东西。'}</span></figcaption>
+  <figcaption className="cg-monitor-cap"><span>{en?'Action-safe (90%) and title-safe (80%) guides, drawn over the video for reference; they are not in the film. From round 2 on, only the headline went in the title-safe zone.':'虚线是叠在视频上的动作安全区（90%）和标题安全区（80%），片子里没有。从第 2 轮起，标题安全区里只放标题。'}</span></figcaption>
  </figure>;
 }
 
@@ -79,13 +79,13 @@ function Hero({film,lang,reduced,back,onWatch}){
  const en=lang==='en',first=ROUNDS[0].total,last=ROUNDS[ROUNDS.length-1].total;
  return <header className="cg-hero">
   <div className="cg-wrap">
-   <div className="cg-topbar"><a href="/other-project" onClick={back}>← Other Project</a><span>{en?'Launch film · how it was made':'宣传片 · 怎么做出来的'}</span><span className="cg-topbar-r">{en?'Review log':'评审记录'} · {ROUNDS.length} {en?'rounds':'轮'}</span></div>
+   <div className="cg-topbar"><a href="/other-project" onClick={back}>← Other Project</a><span>{en?'Launch film · making of':'宣传片 · 制作过程'}</span><span className="cg-topbar-r">{en?'Review log':'评审记录'} · {ROUNDS.length} {en?'rounds':'轮'}</span></div>
    <div className="cg-hero-grid">
     <div className="cg-hero-copy">
      <h1>{film.name}</h1>
      <p className="cg-hero-lead">{en
-      ?`A ${film.duration}-second launch film, rendered from React code with Remotion, then reviewed six times. This page is its review log: what each round flagged, the rule it became, the code that changed, and the score after.`
-      :`一支 ${film.duration} 秒的宣传片，用 Remotion 从 React 代码渲染出来，前后评审了六轮。这一页是它的评审记录：每一轮指出了什么，变成了哪条规则，代码改了什么，下一轮得了几分。`}</p>
+      ?`A ${film.duration}-second launch film, rendered from React code with Remotion. An independent reviewer scored six renders of it, and the score went from 58 to 87. After each round the notes were turned into rules and code changes before the next render.`
+      :`一支 ${film.duration} 秒的宣传片，用 Remotion 从 React 代码渲染。一个独立评审给六版渲染打过分，分数从 58 升到 87。每一轮的意见都先整理成规则，再改到代码里，然后渲染下一版。`}</p>
      <div className="cg-hero-score" role="img" aria-label={en?`Review score from ${first} to ${last} over ${ROUNDS.length} rounds`:`评审分数 ${ROUNDS.length} 轮从 ${first} 到 ${last}`}>
       <span className="cg-hero-num" aria-hidden="true">{first}<i>→</i><b>{last}</b></span>
       <span className="cg-hero-bars" aria-hidden="true">{ROUNDS.map((r,i)=><i key={r.n} style={{'--h':(r.total-50)/50,'--i':i}}/>)}</span>
@@ -112,7 +112,7 @@ function Loop({lang,reduced}){
    <svg viewBox="0 0 400 400"><circle cx="200" cy="200" r="150"/><circle className="cg-ring-tick" cx="200" cy="200" r="150"/></svg>
    <div className="cg-ring-orbit"><i/></div>
    {LOOP.map((s,i)=>{const a=(-90+i*360/N)*Math.PI/180;return <span key={i} className="cg-ring-node" style={{left:`${50+37.5*Math.cos(a)}%`,top:`${50+37.5*Math.sin(a)}%`,'--i':i}}><i/><b>{s.k[lang]}</b></span>;})}
-   <div className="cg-ring-core"><b>×6</b><span>58 → 87</span><em>{en?'one night':'一夜'}</em></div>
+   <div className="cg-ring-core"><b>6</b><span>{en?'rounds in one night':'轮，一夜之内'}</span><em>58 → 87</em></div>
   </div>
   <ol className="cg-steps">{LOOP.map((s,i)=><Reveal as="li" key={i} delay={i*70}>
    <span className="cg-steps-n">{pad(i+1)}</span>
@@ -134,7 +134,7 @@ function Code({text}){
 }
 function Diff({d,lang}){
  const en=lang==='en',add=d.lines.filter(l=>l[0]==='+').length,del=d.lines.filter(l=>l[0]==='-').length;
- const tag=d.proposed?(en?'proposed · not applied':'建议 · 尚未改'):d.isNew?(en?'new file':'新文件'):d.shared?(en?'shared kit · every film':'共用 kit · 所有片子'):null;
+ const tag=d.proposed?(en?'proposed · not applied':'建议 · 尚未改'):d.isNew?(en?'new file':'新文件'):d.shared?(en?'shared kit · all films':'共用 kit · 所有片子'):null;
  return <div className={'cg-diff'+(d.proposed?' is-proposed':'')}>
   <div className="cg-diff-file"><span className="cg-diff-path">{d.file}</span>{tag&&<span className="cg-diff-tag">{tag}</span>}<span className="cg-diff-n"><b>+{add}</b> <i>−{del}</i></span></div>
   <pre tabIndex={0} aria-label={(en?'Code change in ':'代码改动：')+d.file}><code>{d.lines.map(([s,t],i)=>s==='…'
@@ -264,14 +264,14 @@ function BlurLab({lang,reduced}){
  const clock=useLabClock(scene.loop,scene.start,reduced,box);
  const n=tab==='stack'?N:16,b=tab==='stack'?bits:16,v=tab==='stack'?view:'picture';
  const caption=tab==='stack'
-  ?(N===1?(en?'One sample per frame: sharp, but the pill jumps from frame to frame with no blur between.':'每帧一个采样：清楚，但胶囊在帧与帧之间直接跳，没有拖影。')
-   :bits===8?(en?`${N} layers, each rounded to 8 bits at 1/${N} strength, then added. Fast moves show ${N} separate copies, and the rounding shifts the light page’s colour in bands. Switch to “Error ×12” to see where.`:`${N} 层，每层先按 1/${N} 的强度取整到 8 位，再加起来。快速移动时能看到 ${N} 份分开的副本，取整还让浅色底的颜色一条一条地偏。切到“误差 ×12”看偏在哪里。`)
-   :(en?`${N} samples summed in 16-bit and divided once. The page keeps its colour; only the moving pill carries blur${N<16?', still in visible steps':''}.`:`${N} 个采样用 16 位相加，只除一次。底色保持原样，只有移动的胶囊带拖影${N<16?'，但还能看出一格一格的台阶':''}。`))
-  :held?(en?'Held for the frame (frameT): all 16 samples read the same value, so every digit is whole.':'整帧取同一个值（frameT）：16 个采样读到的数一样，每个数字都是完整的。')
-   :(en?'Each sample reads the counter at its own instant. While the bills sweep, the 16 samples hold different numbers and average into overlapping digits.':'每个采样在自己的那一刻读计数器。账单扫动时，16 个采样里是不同的数，平均下来数字就叠在一起。');
- return <figure ref={box} className="cg-lab" tabIndex={0} onKeyDown={clock.keys} aria-label={en?'Shutter lab: arrow keys step a frame, space plays or pauses':'快门实验：方向键逐帧，空格播放或暂停'}>
+  ?(N===1?(en?'One sample per frame. The pill is sharp and jumps from frame to frame with no blur.':'每帧一个采样。胶囊很清楚，但在帧与帧之间直接跳，没有拖影。')
+   :bits===8?(en?`${N} layers, each rounded to 8 bits at 1/${N} strength and then added. Fast moves show ${N} separate copies, and the rounding shifts the light background’s colour in bands. “Error ×12” shows where.`:`${N} 层，每层按 1/${N} 的强度取整到 8 位，再加起来。快速移动时能看到 ${N} 份分开的副本，取整还让浅色底的颜色一条条地偏掉。切到“误差 ×12”可以看到偏在哪里。`)
+   :(en?`${N} samples summed in 16-bit and divided once. The background keeps its colour and only the moving pill is blurred${N<16?', in visible steps':''}.`:`${N} 个采样用 16 位相加，只除一次。底色不变，只有移动的胶囊有拖影${N<16?'，还能看出一格一格的台阶':''}。`))
+  :held?(en?'frameT holds the value for the whole frame, so all 16 samples show the same number and the digits stay whole.':'用 frameT 把值固定一整帧，16 个采样显示同一个数，数字就是完整的。')
+   :(en?'Each sample reads the counter at its own moment. While the bills sweep, the 16 samples show different numbers, and the average has overlapping digits.':'每个采样在自己那一刻读计数器。账单扫动时，16 个采样里是不同的数，平均之后数字叠在一起。');
+ return <figure ref={box} className="cg-lab" tabIndex={0} onKeyDown={clock.keys} aria-label={en?'Motion blur demo. Arrow keys step one frame; space plays or pauses.':'运动模糊演示。方向键逐帧，空格播放或暂停。'}>
   <div className="cg-lab-top">
-   <span className="cg-lab-k">{en?'Demo · simulated live in your browser, not frames from the film':'演示 · 在你的浏览器里实时模拟，不是片中画面'}</span>
+   <span className="cg-lab-k">{en?'Demo · simulated in your browser, not frames from the film':'演示 · 在浏览器里实时模拟，不是片中画面'}</span>
    <div className="cg-tabs" role="tablist">{[['stack',en?'Stacking':'叠加'],['counter',en?'Counters':'计数器']].map(([k,t])=><button key={k} type="button" role="tab" aria-selected={tab===k} onClick={()=>setTab(k)}>{t}</button>)}</div>
   </div>
   <div className="cg-lab-view"><ShutterCanvas scene={scene} F={clock.F} N={n} bits={b} view={v} fonts={fonts} label={caption}/></div>
@@ -281,7 +281,7 @@ function BlurLab({lang,reduced}){
     <Seg label={en?'Samples':'采样'} value={N} onChange={setN} options={[[1,'1'],[8,'8'],[16,'16']]}/>
     <Seg label={en?'Stacking':'叠加方式'} value={bits} onChange={setBits} options={[[8,en?'8-bit layers':'8 位分层'],[16,en?'16-bit sum':'16 位求和']]}/>
     <Seg label={en?'View':'显示'} value={view} onChange={setView} options={[['picture',en?'Picture':'画面'],['error',en?'Error ×12':'误差 ×12']]}/>
-   </>:<Seg label={en?'Counter':'计数器'} value={held} onChange={setHeld} options={[[false,en?'Value per sample':'每个采样各取各的'],[true,en?'Held for the frame':'整帧取一个值']]}/>}
+   </>:<Seg label={en?'Counter':'计数器'} value={held} onChange={setHeld} options={[[false,en?'Value per sample':'每个采样单独取值'],[true,en?'Held for the frame':'整帧取一个值']]}/>}
   </div>
   <figcaption className="cg-lab-cap">{caption}</figcaption>
  </figure>;
@@ -290,14 +290,14 @@ function BlurLab({lang,reduced}){
 function ExitLab({lang,reduced}){
  const en=lang==='en',box=useRef(null),fonts=useFonts(),[zoom,setZoom]=useState(false);
  const clock=useLabClock(EXIT_BEFORE.loop,EXIT_BEFORE.start,reduced,box);
- return <figure ref={box} className={'cg-lab cg-exit'+(zoom?' is-zoom':'')} tabIndex={0} onKeyDown={clock.keys} aria-label={en?'Headline exit lab: arrow keys step a frame':'标题退场实验：方向键逐帧'}>
-  <div className="cg-lab-top"><span className="cg-lab-k">{en?'Demo · the kit’s two exits, simulated under a 16-sample shutter at 30 fps':'演示 · kit 里前后两种退场，在 16 个采样、30 帧的快门下模拟'}</span></div>
+ return <figure ref={box} className={'cg-lab cg-exit'+(zoom?' is-zoom':'')} tabIndex={0} onKeyDown={clock.keys} aria-label={en?'Headline exit demo. Arrow keys step one frame.':'标题退场演示。方向键逐帧。'}>
+  <div className="cg-lab-top"><span className="cg-lab-k">{en?'Demo · the kit’s headline exit before and after round 6, simulated with 16 samples at 30 fps':'演示 · 第 6 轮前后 kit 里的标题退场，按 16 个采样、30 帧模拟'}</span></div>
   {[[EXIT_BEFORE,en?'Round 5 · slides out, expoOut over 0.28 s':'第 5 轮 · 向上滑出，expoOut，0.28 秒'],[EXIT_AFTER,en?'Round 6 · fades with a 24% lift, smoother over 0.22 s':'第 6 轮 · 淡出并上移 24%，smoother，0.22 秒']].map(([s,l],i)=><div key={i} className={'cg-exit-row'+(i?' is-after':'')}>
    <span className="cg-exit-l">{l}</span>
    <div className="cg-lab-view"><ShutterCanvas scene={s} F={clock.F} N={16} bits={16} view="picture" fonts={fonts} label={l}/></div>
   </div>)}
   <div className="cg-lab-ctl"><Transport clock={clock} loop={EXIT_BEFORE.loop} lang={lang}/><Seg label={en?'Zoom':'放大'} value={zoom} onChange={setZoom} options={[[false,'×1'],[true,'×3']]}/></div>
-  <figcaption className="cg-lab-cap">{en?'Step to frames 44 and 45. As the old exit starts, it moves up to 2.6 px between samples at the film’s size, so the 16 samples print as stacked copies; two frames later it is gone. The new one moves less than a pixel per sample and fades as it goes.':'逐帧看第 44 和 45 帧。按片子的尺寸，旧的退场一开始两个采样之间要移动多达 2.6 px，16 个采样就印成一层层的副本，两帧之后字已经不见了。新的每个采样移动不到 1 px，一边移一边淡出。'}</figcaption>
+  <figcaption className="cg-lab-cap">{en?'Frames 44 and 45 show the difference. At the film’s size the old exit moves up to 2.6 px between samples as it starts, so its 16 samples show as stacked copies, and two frames later the line is gone. The new exit moves less than a pixel per sample and fades out.':'看第 44 和 45 帧。按片子的尺寸，旧的退场刚开始时两个采样之间最多移动 2.6 px，16 个采样就显示成一层层叠影，两帧之后字已经出画。新的退场每个采样移动不到 1 px，同时淡出。'}</figcaption>
  </figure>;
 }
 
@@ -313,13 +313,13 @@ function Bars({sub,lang,prev}){
 function ScorePanel({active,lang,reduced,onJump}){
  const en=lang==='en',idx=Math.min(active,ROUNDS.length)-1,r=ROUNDS[idx],prev=ROUNDS[idx-1],scored=active<=ROUNDS.length;
  const total=useStepTo(r.total,reduced);
- const state=active===7?(en?'After round 6 · not scored':'第 6 轮之后 · 没有打分'):active===8?(en?'Open · found while making this page':'待解决 · 做这一页时发现'):`${en?'Round':'第'} ${pad(r.n)}${en?'':' 轮'} / ${pad(ROUNDS.length)}`;
+ const state=active===7?(en?'After round 6 · no score':'第 6 轮之后 · 无评分'):active===8?(en?'Open issue':'未解决'):`${en?'Round':'第'} ${pad(r.n)}${en?'':' 轮'} / ${pad(ROUNDS.length)}`;
  return <aside className={'cg-panel'+(scored?'':' is-off')} aria-label={en?'Review score':'评审分数'}>
   <p className="cg-panel-k">{state}</p>
   <p className="cg-panel-total"><b>{total}</b><span>/100</span>{prev&&scored&&<em>+{r.total-prev.total}</em>}</p>
   <Bars sub={r.sub} lang={lang} prev={scored?prev?.sub:null}/>
   <div className="cg-chart">
-   <span className="cg-chart-goal" style={{'--y':(95-50)/50}}><i>{en?'95 asked for':'要求 95'}</i></span>
+   <span className="cg-chart-goal" style={{'--y':(95-50)/50}}><i>{en?'target 95':'目标 95'}</i></span>
    {ROUNDS.map((x,i)=><button key={x.n} type="button" className={'cg-chart-col'+(i===idx&&scored?' is-on':'')+(i<idx||!scored?' is-past':'')} style={{'--h':(x.total-50)/50}} onClick={()=>onJump(x.n)} aria-label={en?`Round ${x.n}: ${x.total}`:`第 ${x.n} 轮：${x.total} 分`}><i/><b>{x.total}</b><span>R{x.n}</span></button>)}
   </div>
   <p className="cg-panel-foot">{en?'Motion 30 · Craft 30 · Story 25 · Polish 15':'动效 30 · 工艺 30 · 叙事 25 · 完成度 15'}</p>
@@ -336,31 +336,31 @@ function Round({r,lang,reduced}){
   <header className="cg-round-h">
    <span className="cg-round-badge">R{r.n}</span>
    <span className="cg-round-meta">{en?'Round':'第'} {pad(r.n)}{en?'':' 轮'} · {en?'render':'版本'} {r.film[lang]}</span>
-   <span className="cg-round-score"><b>{r.total}</b>{next?<> → {next.total} <em>+{next.total-r.total}</em></>:<> · {en?'last review':'最后一次评审'}</>}</span>
+   <span className="cg-round-score"><b>{r.total}</b>{next?<> → {next.total} <em>+{next.total-r.total}</em></>:<> · {en?'last round':'最后一轮'}</>}</span>
   </header>
   <h3>{r.title[lang]}</h3>
   <div className="cg-round-inline"><Bars sub={r.sub} lang={lang} prev={ROUNDS[r.n-2]?.sub}/></div>
-  <Block label={en?'Flagged by the reviewer':'评审指出'}>
+  <Block label={en?'Reviewer’s notes':'评审意见'}>
    <ul className="cg-flags">{r.flagged.map((f,i)=><li key={i}><span className="cg-flags-t">{typeof f.t==='string'?f.t+' s':f.t[lang]}</span><span>{f[lang]}</span></li>)}</ul>
   </Block>
-  {r.rules&&<Block label={en?'Became a rule':'变成规则'} className="is-rule"><ul className="cg-rules">{r.rules.map((x,i)=><li key={i}>{x[lang]}</li>)}</ul></Block>}
-  {r.verdict&&<Block label={en?'Verdict':'结论'} className="is-rule"><p className="cg-verdict">{r.verdict[lang]}</p></Block>}
-  {r.diffs&&<Block label={en?'What changed in the code':'代码改了什么'}>{r.diffs.map((d,i)=><Diff key={i} d={d} lang={lang}/>)}</Block>}
+  {r.rules&&<Block label={en?'Rule':'规则'} className="is-rule"><ul className="cg-rules">{r.rules.map((x,i)=><li key={i}>{x[lang]}</li>)}</ul></Block>}
+  {r.verdict&&<Block label={en?'Result':'结果'} className="is-rule"><p className="cg-verdict">{r.verdict[lang]}</p></Block>}
+  {r.diffs&&<Block label={en?'Code change':'代码改动'}>{r.diffs.map((d,i)=><Diff key={i} d={d} lang={lang}/>)}</Block>}
   {r.note&&<p className="cg-note">{r.note[lang]}</p>}
   {r.demo==='blur'&&<BlurLab lang={lang} reduced={reduced}/>}
   {r.demo==='exit'&&<ExitLab lang={lang} reduced={reduced}/>}
-  {r.next&&<p className="cg-next"><span>{en?`Round ${r.n+1} said`:`第 ${r.n+1} 轮的评价`}</span>{r.next[lang]}</p>}
+  {r.next&&<p className="cg-next"><span>{en?`Round ${r.n+1} review`:`第 ${r.n+1} 轮评审`}</span>{r.next[lang]}</p>}
  </article>;
 }
 
 function After({lang}){
  const en=lang==='en';
  return <article id="cg-r7" data-round={7} className="cg-round is-after">
-  <header className="cg-round-h"><span className="cg-round-badge">R6+</span><span className="cg-round-meta">{en?'After round 6 · my own viewing · no score':'第 6 轮之后 · 我自己看 · 没有分数'}</span></header>
-  <h3 lang="zh">{AFTER.quote}</h3>
+  <header className="cg-round-h"><span className="cg-round-badge">R6+</span><span className="cg-round-meta">{en?'After round 6 · no score':'第 6 轮之后 · 无评分'}</span></header>
+  <h3>{AFTER.title[lang]}</h3>
   <p className="cg-after-body">{AFTER.body[lang]}</p>
-  <Block label={en?'Became a rule':'变成规则'} className="is-rule"><ul className="cg-rules">{AFTER.rules.map((x,i)=><li key={i}>{x[lang]}</li>)}</ul></Block>
-  <Block label={en?'What changed in the code':'代码改了什么'}>{AFTER.diffs.map((d,i)=><Diff key={i} d={d} lang={lang}/>)}</Block>
+  <Block label={en?'Rule':'规则'} className="is-rule"><ul className="cg-rules">{AFTER.rules.map((x,i)=><li key={i}>{x[lang]}</li>)}</ul></Block>
+  <Block label={en?'Code change':'代码改动'}>{AFTER.diffs.map((d,i)=><Diff key={i} d={d} lang={lang}/>)}</Block>
   <p className="cg-note">{AFTER.note[lang]}</p>
  </article>;
 }
@@ -368,11 +368,11 @@ function After({lang}){
 function Open({lang,onStep}){
  const en=lang==='en';
  return <article id="cg-r8" data-round={8} className="cg-round is-open">
-  <header className="cg-round-h"><span className="cg-round-badge">!</span><span className="cg-round-meta">{en?'Open · found while making this page':'待解决 · 做这一页时发现'}</span></header>
+  <header className="cg-round-h"><span className="cg-round-badge">!</span><span className="cg-round-meta">{en?'Open issue':'未解决'}</span></header>
   <h3>{OPEN.title[lang]}</h3>
   <p className="cg-after-body">{OPEN.body[lang]}</p>
   <Diff d={OPEN.diff} lang={lang}/>
-  <button type="button" className="cg-link" onClick={onStep}>{en?'See frame 786 in the stepper':'在逐帧检查里看第 786 帧'} ↓</button>
+  <button type="button" className="cg-link" onClick={onStep}>{en?'Go to frame 786':'跳到第 786 帧'} ↓</button>
  </article>;
 }
 
@@ -407,7 +407,7 @@ function Stepper({lang,reduced,media,stepperRef,goTo}){
  },[i,media,near]);
  const [f,held,lo,hi]=STEPS[i],t=f/60,shot=f>=786?6:5;
  const keys=e=>{const d={ArrowRight:1,ArrowLeft:-1}[e.key];if(d){e.preventDefault();setI(x=>Math.max(0,Math.min(STEPS.length-1,x+d)));}else if(e.key==='Home'){e.preventDefault();setI(0);}else if(e.key==='End'){e.preventDefault();setI(STEPS.length-1);}};
- const note=f===785?(en?'Last frame of shot 05.':'第 05 个镜头的最后一帧。'):f===786?(en?'First frame of shot 06. One of its 16 samples is still shot 05: turn on Brighten to see the faint second “+$600”.':'第 06 个镜头的第一帧。它的 16 个采样里有一个还是第 05 个镜头：打开“提亮”能看到很淡的第二个 “+$600”。'):null;
+ const note=f===785?(en?'Last frame of shot 05.':'第 05 个镜头的最后一帧。'):f===786?(en?'First frame of shot 06. One of its 16 samples is still shot 05; with Brighten on, a faint second “+$600” shows.':'第 06 个镜头的第一帧。16 个采样里有一个还是第 05 个镜头；打开“提亮”能看到很淡的第二个 “+$600”。'):null;
  return <div className={'cg-stepper'+(bright?' is-bright':'')}>
   <div className="cg-stepper-stage" tabIndex={0} onKeyDown={keys} role="group" aria-label={en?'Frame stepper: left and right arrow keys step one frame':'逐帧查看：左右方向键一次走一帧'}>
    <img ref={img} src={`${media}/frames/f${STEPS[0][0]}.webp`} width="1280" height="720" alt={en?`Frame ${f} of the film, ${t.toFixed(3)} s: the bills counter reads ${money(held)}`:`片子第 ${f} 帧，${t.toFixed(3)} 秒：账单计数器显示 ${money(held)}`} decoding="async"/>
@@ -418,8 +418,8 @@ function Stepper({lang,reduced,media,stepperRef,goTo}){
    <div className="cg-stepper-read" aria-live="polite">
     <p className="cg-stepper-k">{en?'Shot':'镜头'} {pad(shot)} / 14 · {SHOTS[shot-1][lang]}</p>
     <img className="cg-stepper-crop" src={`${media}/frames/c${f}.webp`} width="360" height="130" alt="" loading="lazy" decoding="async"/>
-    <p className="cg-stepper-v"><span>{en?'Drawn':'画面上'}</span><b>{money(held)}</b></p>
-    <p className="cg-stepper-v"><span>{en?'Unheld, its 16 samples':'若不按帧取值，16 个采样'}</span><b className="is-dim">{money(lo)}–{money(hi)}</b></p>
+    <p className="cg-stepper-v"><span>{en?'On screen':'画面上'}</span><b>{money(held)}</b></p>
+    <p className="cg-stepper-v"><span>{en?'16 samples, if not held':'不固定时，16 个采样'}</span><b className="is-dim">{money(lo)}–{money(hi)}</b></p>
     {note&&<p className="cg-stepper-note">{note}</p>}
    </div>
    <div className="cg-stepper-ctl">
@@ -430,7 +430,7 @@ function Stepper({lang,reduced,media,stepperRef,goTo}){
     </div>
     <button type="button" onClick={()=>setI(x=>Math.min(STEPS.length-1,x+1))} disabled={i===STEPS.length-1} aria-label={en?'Next frame':'下一帧'}>→</button>
    </div>
-   <button type="button" className="cg-toggle" aria-pressed={bright} onClick={()=>setBright(b=>!b)}>{en?'Brighten ×3 to see faint layers':'提亮 ×3，看清很淡的层'}</button>
+   <button type="button" className="cg-toggle" aria-pressed={bright} onClick={()=>setBright(b=>!b)}>{en?'Brighten ×3':'提亮 ×3'}</button>
   </div>
   <p className="cg-stepper-foot">{en?'Frames 772–803 of the file on this site, one image per frame. The values beside them are computed with the film’s own code (billsAt, the re-pacing table and frameT) and match the pixels.':'这是本站视频文件的第 772–803 帧，一帧一张图。旁边的数值是用片子自己的代码（billsAt、重新定速的表和 frameT）算出来的，和画面上的像素一致。'}</p>
  </div>;
@@ -455,7 +455,7 @@ function Scope({film,lang,media}){
    <div><b>{L.filter(v=>v<1).length}</b><span>{en?'holds by the review’s test':'按评审标准的静止段'}</span></div>
    <div><b>{L[minAt].toFixed(2)}</b><span>{en?`closest, at ${(minAt/60).toFixed(2)} s (a hold is under 1.00)`:`最接近的一处，在 ${(minAt/60).toFixed(2)} 秒（低于 1.00 才算静止）`}</span></div>
    <div><b>{film.cuts.length}</b><span>{en?'cuts, all on whole frames':'个硬切，都落在整帧上'}</span></div>
-   <div><b>{n.toLocaleString('en-US')}</b><span>{en?'frames measured':'帧，逐帧量过'}</span></div>
+   <div><b>{n.toLocaleString('en-US')}</b><span>{en?'frames measured':'帧，全部测量'}</span></div>
   </div>
   <div ref={wrap} className="cg-scope-plot" tabIndex={0} role="slider" aria-label={en?'Measured motion: drag, or use the arrow keys to move a frame (Shift: half a second)':'量出来的运动：拖动，或用方向键一次走一帧（按住 Shift 走半秒）'} aria-valuemin={0} aria-valuemax={n-1} aria-valuenow={f} aria-valuetext={`${t.toFixed(2)} s`}
    onPointerDown={e=>{down.current=true;if(e.pointerType==='mouse')e.currentTarget.setPointerCapture(e.pointerId);at(e.clientX);}}
@@ -496,57 +496,57 @@ export default function CommonGroundPage({lang,reduced,onNavigate,slug}){
 
   <section className="cg-sec" aria-labelledby={uid+'-l'}>
    <div className="cg-wrap">
-    <Head n="01" label={en?'The loop':'循环'} id={uid+'-l'} title={en?'One loop, six times in one night':'一个循环，一夜跑了六遍'}
-     lead={en?'Nothing was cut in an editor or animated in After Effects. The film is a React component: every frame is a pure function of time, so a note on one frame can become a rule in the code, and the next render obeys it everywhere.':'没有在剪辑软件里剪，也没有用 After Effects 做动画。整支片子是一个 React 组件，每一帧都只由时间决定。所以对某一帧的意见可以写成代码里的一条规则，下一次渲染时处处都照着来。'}/>
+    <Head n="01" label={en?'Process':'流程'} id={uid+'-l'} title={en?'How each review round worked':'每一轮评审怎么进行'}
+     lead={en?'The film is a React component in Remotion, rendered from code. It was never cut in an editor or animated in After Effects. Each frame depends only on the time, so a fix written into the code applies to every frame in the next render.':'片子是 Remotion 里的一个 React 组件，直接从代码渲染，没有在剪辑软件里剪，也没有用 After Effects 做动画。每一帧只取决于时间，所以写进代码的修改，下一次渲染时会作用到所有帧。'}/>
     <Loop lang={lang} reduced={reduced}/>
    </div>
   </section>
 
   <section id="cg-log" className="cg-sec" aria-labelledby={uid+'-r'}>
    <div className="cg-wrap">
-    <Head n="02" label={en?'Review log':'评审记录'} id={uid+'-r'} title={en?'Six rounds, 58 to 87':'六轮，从 58 到 87'}
-     lead={en?'Each entry is one round: what the reviewer flagged in that render, the rule it became, the code that changed, and what the next round said. Times are seconds in that round’s render, 27.8–30 s long at 30 fps.':'每一条是一轮：评审在那一版里指出了什么，变成了哪条规则，代码改了什么，下一轮怎么评价。时间是那一版里的秒数，片长 27.8–30 秒，30 帧。'}/>
+    <Head n="02" label={en?'Review log':'评审记录'} id={uid+'-r'} title={en?'Review rounds 1 to 6':'第 1 到第 6 轮评审'}
+     lead={en?'Times in the reviewer’s notes are seconds in that round’s render, which ran 27.8–30 s at 30 fps. Scores are out of 100: motion 30, craft 30, story 25, polish 15.':'评审意见里的时间是那一版渲染里的秒数，那几版长 27.8–30 秒，30 帧。满分 100：动效 30、工艺 30、叙事 25、完成度 15。'}/>
     <Log lang={lang} reduced={reduced} onStep={step}/>
    </div>
   </section>
 
   <section ref={stepperRef} className="cg-sec" aria-labelledby={uid+'-s'}>
    <div className="cg-wrap">
-    <Head n="03" label={en?'Frame by frame':'逐帧'} id={uid+'-s'} title={en?'The rules, checked in the final file':'在成片里逐帧核对这些规则'}
-     lead={en?'32 frames in a row from the film on this site, 12.87–13.38 s. The bills counter races toward $40,000 at over $1,000 a frame, and the cut at 13.1 s falls between frames 785 and 786. Step with the arrow keys.':'这是本站片子里连续的 32 帧，12.87–13.38 秒。账单计数器冲向 $40,000，最快时一帧涨 $1,000 多；13.1 秒的剪辑点落在第 785 和 786 帧之间。用方向键逐帧看。'}/>
+    <Head n="03" label={en?'Frame by frame':'逐帧'} id={uid+'-s'} title={en?'Frames 772 to 803 of the final film':'成片第 772 到 803 帧'}
+     lead={en?'32 consecutive frames, 12.87–13.38 s. The bills counter climbs toward $40,000, at its fastest by more than $1,000 a frame, and the cut at 13.1 s falls between frames 785 and 786. Use the arrow keys to step.':'连续 32 帧，12.87–13.38 秒。账单计数器涨向 $40,000，最快时一帧涨 $1,000 多；13.1 秒的剪辑点在第 785 和 786 帧之间。用方向键逐帧看。'}/>
     <Reveal><Stepper lang={lang} reduced={reduced} media={media} stepperRef={stepperRef} goTo={goTo}/></Reveal>
    </div>
   </section>
 
   <section className="cg-sec" aria-labelledby={uid+'-m'}>
    <div className="cg-wrap">
-    <Head n="04" label={en?'Measured':'测量'} id={uid+'-m'} title={en?'Every frame of the final file':'成片的每一帧'}
-     lead={en?'Measured for this page from the file on this site: all 1,902 frames at 192 × 108 in greyscale. The top trace is how much the picture changes from the frame before; a camera that stopped and started would dip to zero between moves. The bottom one is the review’s hold test, each frame against the frame 0.5 s later. Red lines are the 13 cuts. Drag across it to see the moment.':'为这一页从本站的视频文件量出来：1,902 帧全部缩到 192 × 108 的灰度。上面那条是每一帧和前一帧相比变了多少；镜头如果走走停停，两段运动之间会掉到零。下面那条是评审用的静止测试：每一帧和 0.5 秒后的那一帧比。红线是 13 个剪辑点。在上面拖动，可以看到对应的画面。'}/>
+    <Head n="04" label={en?'Measured':'测量'} id={uid+'-m'} title={en?'Frame-by-frame measurement of the final film':'成片逐帧测量'}
+     lead={en?'All 1,902 frames of the film file on this site, measured at 192 × 108 in greyscale. The top trace shows how much each frame differs from the one before; a camera that stopped and started would drop to zero between moves. The bottom trace is the review’s hold test, which compares each frame with the frame 0.5 s later. Red lines mark the 13 cuts. Drag across the chart to see each moment.':'本站视频文件的全部 1,902 帧，缩到 192 × 108 灰度后测量。上面一条是每一帧和前一帧的差别，镜头如果走走停停，两段运动之间会掉到零。下面一条是评审用的静止测试，拿每一帧和 0.5 秒后的那一帧比。红线是 13 个剪辑点。在图上拖动可以看到对应的画面。'}/>
     <Reveal><Scope film={film} lang={lang} media={media}/></Reveal>
    </div>
   </section>
 
   <section ref={desk} className="cg-sec" aria-labelledby={uid+'-e'}>
    <div className="cg-wrap">
-    <Head n="05" label={en?'The edit':'剪辑台'} id={uid+'-e'} title={en?'Fourteen shots, one timeline':'14 个镜头，一条时间线'}
-     lead={en?'The film above its own timeline: beats, headlines, shots and measured motion. Click or drag the timeline to jump; Shift and an arrow key step one frame.':'片子和它自己的时间线：段落、字幕、镜头和量出来的运动。点击或拖动时间线跳转；按住 Shift 再按方向键，一次走一帧。'}/>
+    <Head n="05" label={en?'The edit':'剪辑台'} id={uid+'-e'} title={en?'The film and its timeline':'片子和时间线'}
+     lead={en?'The timeline under the film shows beats, headlines, shots and measured motion. Click or drag it to jump; Shift with an arrow key steps one frame.':'片子下面的时间线上有段落、字幕、镜头和量出来的运动。点击或拖动时间线跳转；按住 Shift 再按方向键，一次走一帧。'}/>
     <Reveal><Desk film={film} slug={slug} lang={lang} video={video}/></Reveal>
    </div>
   </section>
 
   <section className="cg-sec cg-end" aria-labelledby={uid+'-w'}>
    <div className="cg-wrap">
-    <Head n="06" label={en?'Where it stopped':'停在哪里'} id={uid+'-w'} title={en?'87, and a list that isn’t empty':'87 分，清单还没清空'}/>
+    <Head n="06" label={en?'Status':'现状'} id={uid+'-w'} title={en?'Open items':'还没解决的问题'}/>
     <div className="cg-end-grid">
-     <Reveal as="p">{en?'The score stopped at 87, short of the 95 I had asked for. The reviewer’s last notes were about material, not motion: the four product screens are upscaled screenshots, soft next to a chart drawn in code, and the fix is to redraw them as vector panels. The smoothness work after round 6 had no score at all; it is judged on the curve above. And four cuts still carry one stray sample.':'分数停在 87，没到我要求的 95。评审最后的意见在素材，不在动效：四张产品界面是放大的截图，放在代码画的图表旁边显得发虚，修法是重画成矢量面板。第 6 轮之后为顺滑做的修改没有分数，靠上面那条曲线判断。另外还有四个剪辑点多了一个错位的采样。'}</Reveal>
-     <Reveal as="p" delay={80}>{en?'Common Ground is the film’s name for the Choose Not to Lose prototype. What the product does, and why, is in its own case: ':'Common Ground 是片子里给 Choose Not to Lose 原型起的名字。产品做什么、为什么这样做，在它自己的案例里：'}<a href={caseHref} onClick={go(caseHref)}>Choose Not to Lose →</a></Reveal>
+     <Reveal as="p">{en?'The score ended at 87, below the 95 I had asked for. The reviewer’s last notes were about the four product screens, which are upscaled screenshots and look soft next to the chart drawn in code. The fix is to redraw them as vector panels. The smoothness work after round 6 has no score; it is checked on the motion curve above. Four cuts still carry one stray sample each.':'分数最后是 87，低于我要求的 95。评审最后的意见是关于四张产品界面的。它们是放大的截图，放在代码画的图表旁边显得发虚，修法是重画成矢量面板。第 6 轮之后为顺畅做的修改没有评分，用上面的运动曲线检查。另外，四个剪辑点各多了一个错位的采样。'}</Reveal>
+     <Reveal as="p" delay={80}>{en?'Common Ground is the name the film uses for the Choose Not to Lose prototype. What the product does, and why, is covered in its case study. ':'片子里的 Common Ground 就是 Choose Not to Lose 原型。产品做什么、为什么这样设计，写在它的案例里。'}<a href={caseHref} onClick={go(caseHref)}>Choose Not to Lose →</a></Reveal>
     </div>
    </div>
   </section>
 
   <div className="cg-wrap">
    <NextProject item={nextAfter(slug)} lang={lang} onNavigate={onNavigate}/>
-   <footer className="st-footer"><span>JAY LIN / {film.name.toUpperCase()}</span><p>{en?'A launch film rendered from code, reviewed six times.':'一支用代码渲染、评审了六轮的宣传片。'}</p></footer>
+   <footer className="st-footer"><span>JAY LIN / {film.name.toUpperCase()}</span><p>{en?'Launch film for the Choose Not to Lose prototype.':'Choose Not to Lose 原型的宣传片。'}</p></footer>
   </div>
  </article>;
 }

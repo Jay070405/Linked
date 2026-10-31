@@ -154,14 +154,7 @@
 .xs-notes .is-fix{color:var(--red)}
 .xs-notes p{margin:0;font-size:15px;line-height:1.6;color:var(--ink-2)}
 .xs-notes p:nth-of-type(2){color:var(--ink)}
-.xs-quote{position:relative;margin:clamp(64px,10vh,110px) 0 0;padding:clamp(28px,4vh,40px) 0 clamp(24px,3.6vh,36px);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
-.xs-quote::before{content:'';position:absolute;inset:6px 0;border-top:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2);pointer-events:none}
-.xs-quote-lead{margin:0;font:12px/1.5 Mono,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--pencil)}
-.xs-quote blockquote{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 28px;margin:14px 0 0;color:var(--red);font-family:'Songti SC','STSong','Noto Serif SC','SimSun',serif}
-.xs-quote-a{font-size:clamp(24px,2.6vw,38px);line-height:1.1;color:var(--ink-2)}
-.xs-quote-b{font-size:clamp(64px,10vw,160px);line-height:.95;letter-spacing:.02em;font-weight:700}
-.xs-quote figcaption{margin-top:10px;font:italic 400 clamp(20px,2vw,28px)/1.25 Editorial,Georgia,serif;color:var(--ink-2)}
-.xs-after-quote{margin-top:22px}
+.xs-after-quote{margin-top:clamp(28px,4.4vh,44px)}
 
 /* SC 03: three causes */
 .xs-cause{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.3fr);gap:28px clamp(32px,4.4vw,72px);padding:clamp(36px,5vh,52px) 0;border-top:1px solid var(--ink);align-items:start}
@@ -472,7 +465,6 @@
  .xs-leap-tc{font-size:13px}
  .xs-arc-t{font-size:9.5px}
  .xs-arc-t.is-door{font-size:9px}
- .xs-quote-lead{font-size:13px;letter-spacing:.03em}
  .xs-camspark figcaption,.xs-camspark-plot span{font-size:13px}
  .xs-camspark-plot{margin-bottom:76px}
  .xs-camspark-plot span:nth-of-type(2){margin-top:38px}
@@ -481,9 +473,6 @@
  .xs-tickrow-k small{font-size:13px;letter-spacing:.02em}
  .xs-keys button{grid-template-columns:1fr;gap:2px}
  .xs-keys b{font-size:13px}
- .xs-quote-a{font-size:22px}
- .xs-quote-b{font-size:clamp(56px,18vw,84px)}
- .xs-quote figcaption{font-size:20px}
  .xs-page .st-footer p{font-size:19px}
  .xs-page .st-footer span,.xs-page .st-ba-tabs button,.xs-page .st-ba-label{font-size:13px;letter-spacing:.03em}
  .xs-camspark-plot small,.xs-stops small{font-size:inherit}

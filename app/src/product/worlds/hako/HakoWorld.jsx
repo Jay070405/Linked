@@ -188,7 +188,7 @@ export default function HakoWorld({item: rawItem, reduced}) {
           <div className="hw-lockup-word" data-region="Copy">
             <p className="hw-lockup-type"><Wordmark/><span className="hw-sr">hako</span></p>
             <p className="hw-lockup-line" lang="en">Draw a box. <span>Ship a product.</span></p>
-            <p className="hw-cap">{t(L('In the wordmark, “hak” is set in Mona Sans; the “o” is drawn: a rounded-square ring as tall as the x-height, its corners in the same ratio as the mark’s handles.', '字标里，“hak” 用 Mona Sans 排；“o” 是画出来的：一个和 x 字高一样高的圆角方环，圆角比例和标志上控制点的一样。'))}</p>
+            <p className="hw-cap">{t(L('In the wordmark, “hak” is set in Mona Sans and the “o” is a drawn shape, a rounded-square ring as tall as the x-height. Its corners have the same ratio as the handles on the mark.', '字标里的 “hak” 用 Mona Sans 排，“o” 是单独画的圆角方环，高度等于 x 字高，圆角比例和标志上的控制点相同。'))}</p>
           </div>
         </Build>
         <Build className="hw-brand-block" label={L('Palette', '配色')}>

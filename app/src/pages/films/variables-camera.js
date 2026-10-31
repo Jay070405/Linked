@@ -104,16 +104,16 @@ export function pictureSpeed(f,t,dt=1e-4){
 
 /** The screen inside the window, swapped on the frame while the window moves. */
 export const STAGES=[
- {at:6.9,src:'row',name:{en:'The file, its unbound-values row',zh:'文件，和未绑定数值那一行'}},
- {at:9.95,src:'outline',name:{en:'Unbound layers outlined, behind a scan line',zh:'扫描线扫过，未绑定的图层被框出来'}},
- {at:12.35,src:'review',name:{en:'Check designs, the review list',zh:'Check designs 的检查清单'}},
- {at:14.15,src:'picker',name:{en:'The variable picker, light then dark',zh:'variable 选择器，先浅色后深色'}},
- {at:17.85,src:'bound',name:{en:'Bound: nine values on 29 layers',zh:'绑定完成：29 个图层上的 9 个值'}},
+ {at:6.9,src:'row',name:{en:'File, unbound-values row',zh:'文件，未绑定数值那一行'}},
+ {at:9.95,src:'outline',name:{en:'A scan line outlines the unbound layers',zh:'扫描线框出未绑定的图层'}},
+ {at:12.35,src:'review',name:{en:'Check designs review list',zh:'Check designs 检查清单'}},
+ {at:14.15,src:'picker',name:{en:'Variable picker, light then dark',zh:'variable 选择器，先浅色后深色'}},
+ {at:17.85,src:'bound',name:{en:'Bound 9 values on 29 layers',zh:'已绑定 29 个图层上的 9 个值'}},
 ];
 /** Construction lines on the file drawing: regions the film's own overlays point at (window-local px, minus the bar). */
 export const REGIONS=[
  {id:'row',x:1206,y:148,w:224,h:26,place:'below',label:{en:'unbound-values row',zh:'未绑定数值那一行'}},
- {id:'scan',x:380,y:60,w:420,h:700,place:'below',label:{en:'canvas, scanned 10.1–11.4 s',zh:'画布，10.1–11.4 秒扫描'}},
+ {id:'scan',x:380,y:60,w:420,h:700,place:'below',label:{en:'canvas, scanned 10.1–11.4 s',zh:'画布，10.1–11.4 秒被扫描'}},
  {id:'list',x:862,y:369,w:315,h:380,place:'above',label:{en:'review list',zh:'检查清单'}},
 ];
 

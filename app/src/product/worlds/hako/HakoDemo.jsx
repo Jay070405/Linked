@@ -106,7 +106,7 @@ export default function HakoDemo({reduced = false}) {
     });
     later(2400 + targets.length * 260, () => {
       setAgents(a => { const next = {...a}; targets.forEach(r => { if (next[r.agent]) next[r.agent] = {...next[r.agent], on: false}; }); return next; });
-      setSaid(t(L('Built. Ship it, or draw another box.', '做好了。可以发布，也可以再画一个框。')));
+      setSaid(t(L('Built. You can ship it or draw another box.', '做好了。可以发布，也可以再画一个框。')));
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, reduced, REGIONS, t]);
@@ -153,7 +153,7 @@ export default function HakoDemo({reduced = false}) {
 
   return <div ref={wrap} className={`hd${reduced ? ' hd-still' : ''}${ship === 'live' ? ' is-shipped' : ''}${tall ? ' is-tall' : ''}`} onKeyDown={key}>
     <div className="hd-top">
-      <p className="hd-hint">{t(L('Drag a box over any part of the sketch (or click one part), then press Build.', '在草图上任意拖一个框（或直接点一块），然后按 Build。'))}</p>
+      <p className="hd-hint">{t(L('Drag a box over part of the sketch, or click one part, then press Build.', '在草图上拖一个框，或者直接点一块，然后按 Build。'))}</p>
       <div className="hd-actions">
         <button type="button" onClick={all}>{t(L('Select all', '全选'))}</button>
         <button type="button" onClick={reset}>{t(L('Reset', '重来'))}</button>
@@ -193,6 +193,6 @@ export default function HakoDemo({reduced = false}) {
       </ul>
     </div>
     <p className="hd-sr" role="status" aria-live="polite">{said}</p>
-    <p className="hd-fine">{t(L('A scripted demo: the agents reveal UI made in advance, on a timer. No model runs. Hako and Daybreak are fictional; Daybreak’s screens stay in English.', '这是写好脚本的演示：agent 按时间揭开事先做好的界面，没有调用任何模型。Hako 和 Daybreak 都是虚构的；Daybreak 的界面保留英文。'))}</p>
+    <p className="hd-fine">{t(L('This demo is scripted. The agents reveal UI made in advance, on a timer, and no model runs. Hako and Daybreak are fictional, and Daybreak’s screens are in English.', '这个演示是预先写好的。agent 按计时揭开提前做好的界面，没有调用任何模型。Hako 和 Daybreak 都是虚构的，Daybreak 的界面是英文的。'))}</p>
   </div>;
 }

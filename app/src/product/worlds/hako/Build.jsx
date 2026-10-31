@@ -129,9 +129,9 @@ export function BuildProvider({still, root, children}) {
     {still ? null : <div className={`hw-hint${left ? '' : ' is-gone'}`}>
       <div className="hw-hint-chip">
         <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="4" width="12" height="12"/><rect className="h" x="2" y="2" width="4" height="4"/><rect className="h" x="14" y="2" width="4" height="4"/><rect className="h" x="2" y="14" width="4" height="4"/><rect className="h" x="14" y="14" width="4" height="4"/></svg>
-        <span className="hw-hint-fine">{t(L('Drag a box around a sketch to build it sooner', '在草图外面拖个框，就能提前把它做出来'))}</span>
-        <span className="hw-hint-touch">{t(L('Tap a sketch to build it sooner', '点一下草图，就能提前把它做出来'))}</span>
-        <button type="button" onClick={buildAll} tabIndex={left ? 0 : -1}>{t(L('Build the rest', '全部做出来'))}</button>
+        <span className="hw-hint-fine">{t(L('Drag a box around a sketch to build it now', '在草图外面拖一个框，可以马上把它做出来'))}</span>
+        <span className="hw-hint-touch">{t(L('Tap a sketch to build it now', '点一下草图，可以马上把它做出来'))}</span>
+        <button type="button" onClick={buildAll} tabIndex={left ? 0 : -1}>{t(L('Build the rest', '其余的全部做出来'))}</button>
       </div>
     </div>}
   </PageBuild.Provider>;

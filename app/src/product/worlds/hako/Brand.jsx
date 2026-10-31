@@ -72,8 +72,8 @@ export function TypeSpecimens() {
 }
 
 const DURS = [['instant', 100], ['fast', 250], ['normal', 450], ['moderate', 700], ['slow', 1100], ['deliberate', 1800]];
-const DUR_USE = {instant: L('click compress', '点击回弹'), fast: L('handle pop, chip in', '控制点弹出、标签进场'), normal: L('UI element enters', '界面元素进场'), moderate: L('panel moves', '面板移动'), slow: L('camera segment', '一段镜头'), deliberate: L('a hero transformation', '主角级的变形')};
-const EASES = [['snap', '.35,0,.15,1', L('UI arrivals', '界面进场')], ['soft', '.33,0,.2,1', L('type, surfaces', '文字、面')], ['glide', '.45,0,.2,1', L('camera, never to a stop', '镜头，永不急停')]];
+const DUR_USE = {instant: L('click compress', '点击时的按压'), fast: L('handle pop, chip in', '控制点弹出，标签出现'), normal: L('UI element enters', '界面元素出现'), moderate: L('panel moves', '面板移动'), slow: L('camera segment', '一段镜头'), deliberate: L('a hero transformation', '主体元素的大变形')};
+const EASES = [['snap', '.35,0,.15,1', L('UI arrivals', '界面元素出现')], ['soft', '.33,0,.2,1', L('type, surfaces', '文字、面')], ['glide', '.45,0,.2,1', L('camera, never to a stop', '镜头，不会停到静止')]];
 
 /** The motion tokens, playable: pick a duration and an ease, and the mark crosses the track with them. */
 export function MotionTokens({still}) {

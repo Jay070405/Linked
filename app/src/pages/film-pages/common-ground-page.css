@@ -153,7 +153,6 @@
 .cg-note{margin:24px 0 0;max-width:720px;font-size:15px;line-height:1.7;color:var(--muted)}
 .cg-next{display:grid;gap:6px;margin:28px 0 0;padding:16px 18px;border-radius:10px;background:var(--surface);font-size:16px;line-height:1.55}
 .cg-next span{font:var(--k)/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.cg-round.is-after h3{font-size:clamp(34px,4vw,56px)}
 .cg-after-body{margin:18px 0 0;max-width:740px;font-size:16.5px;line-height:1.72;color:#c3c5cc}
 .cg-round.is-open .cg-round-badge{border-style:dashed}
 .cg-link{margin-top:18px;padding:8px 0;border:0;background:none;color:var(--red);font:500 15px/1.4 var(--sans);cursor:pointer;text-align:left}

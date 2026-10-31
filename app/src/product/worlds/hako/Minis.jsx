@@ -27,9 +27,9 @@ export function PointMini() {
     '一个深色的家庭能源仪表盘。顶部是问候语和 Live 标记。三张卡片：当前发电功率、带圆环的电池电量、本月省下的钱。一张每周太阳能柱状图，今天高亮，其余几天是预测。一列带开关的设备……'));
   const n = [...(mode === 'point' ? PROMPT : describe)].length;
   return <div className={`hw-mini hw-point is-${mode}`}>
-    <div className="hw-seg" role="group" aria-label={t(L('Show the request as', '请求的方式'))}>
-      <button type="button" aria-pressed={mode === 'describe'} onClick={() => setMode('describe')}>{t(L('Describe it', '描述出来'))}</button>
-      <button type="button" aria-pressed={mode === 'point'} onClick={() => setMode('point')}>{t(L('Point at it', '指出来'))}</button>
+    <div className="hw-seg" role="group" aria-label={t(L('How the request is made', '请求的方式'))}>
+      <button type="button" aria-pressed={mode === 'describe'} onClick={() => setMode('describe')}>{t(L('Describe in words', '用文字描述'))}</button>
+      <button type="button" aria-pressed={mode === 'point'} onClick={() => setMode('point')}>{t(L('Select with a box', '用框选'))}</button>
     </div>
     <div className="hw-mini-canvas">
       <MiniSketch/>
@@ -38,18 +38,18 @@ export function PointMini() {
       <p className="hw-point-prompt is-point" aria-hidden={mode !== 'point'} lang="en"><span aria-hidden="true">✦ </span>{PROMPT}</p>
     </div>
     <p className="hw-mini-read" aria-live="polite">{mode === 'point'
-      ? t(L(`Prompt: ${n} characters. Scope: the box.`, `提示：${n} 个字符。范围：这个框。`))
-      : t(L(`Prompt: ${n} characters. Scope: whatever the words say; the sketch goes unused.`, `提示：${n} 个字符。范围：全凭文字；草图用不上。`))}</p>
+      ? t(L(`Prompt: ${n} characters. Scope: the box.`, `提示：${n} 个字符。范围：框里的内容。`))
+      : t(L(`Prompt: ${n} characters. Scope: only what the words say. The sketch is not used.`, `提示：${n} 个字符。范围：只有文字里写到的内容，草图没有用上。`))}</p>
   </div>;
 }
 
 const ACTORS = [
-  {id: 'you', name: L('You', '你'), color: '#FF5A1F', rule: L('Persimmon: only your own selection, and the brand.', '柿子橙：只用在你自己的选框上，以及品牌。')},
-  {id: 'agents', name: L('Agents', 'Agent'), color: '#5B4BFF', rule: L('Ultraviolet: agents, and nothing else.', '紫外色：只给 agent，别无他用。')},
-  {id: 'mia', name: 'Mia', color: '#E8467C', rule: L('Mia’s pink: only on her cursor and her frames.', 'Mia 的粉色：只在她的光标和选框上。')},
-  {id: 'theo', name: 'Theo', color: '#0FA3A3', rule: L('Theo’s teal: only on his cursor and his frames.', 'Theo 的青色：只在他的光标和选框上。')},
-  {id: 'ren', name: 'Ren', color: '#E8A21A', rule: L('Ren’s amber: only on his cursor and his frames.', 'Ren 的琥珀色：只在他的光标和选框上。')},
-  {id: 'live', name: L('Live', '上线'), color: '#17B26A', rule: L('Green: only what has shipped.', '绿色：只给已经发布的东西。')},
+  {id: 'you', name: L('You', '你'), color: '#FF5A1F', rule: L('Persimmon: your own selection and the brand only.', '柿子橙：只用于你自己的选框和品牌。')},
+  {id: 'agents', name: L('Agents', 'Agent'), color: '#5B4BFF', rule: L('Ultraviolet: agents only.', '紫外色：只用于 agent。')},
+  {id: 'mia', name: 'Mia', color: '#E8467C', rule: L('Mia’s pink: her cursor and frames only.', 'Mia 的粉色：只用于她的光标和选框。')},
+  {id: 'theo', name: 'Theo', color: '#0FA3A3', rule: L('Theo’s teal: his cursor and frames only.', 'Theo 的青色：只用于他的光标和选框。')},
+  {id: 'ren', name: 'Ren', color: '#E8A21A', rule: L('Ren’s amber: his cursor and frames only.', 'Ren 的琥珀色：只用于他的光标和选框。')},
+  {id: 'live', name: L('Live', '上线'), color: '#17B26A', rule: L('Green: shipped work only.', '绿色：只用于已经发布的内容。')},
 ];
 
 /** 2. Colour says who is acting: pick someone, and only their marks stay lit. */
@@ -59,7 +59,7 @@ export function ColourMini() {
   const dim = who => (focus && focus !== who ? ' is-dim' : '');
   const actor = ACTORS.find(a => a.id === focus);
   return <div className="hw-mini hw-colour">
-    <div className="hw-who" role="group" aria-label={t(L('Show one actor', '只看一位'))}>
+    <div className="hw-who" role="group" aria-label={t(L('Show one person or agent', '只看其中一方'))}>
       {ACTORS.map(a => <button key={a.id} type="button" aria-pressed={focus === a.id} style={{'--c': a.color}} onClick={() => setFocus(f => (f === a.id ? null : a.id))}><i aria-hidden="true"/>{t(a.name)}</button>)}
     </div>
     <div className="hw-mini-canvas hw-colour-canvas" aria-hidden="true">
@@ -83,7 +83,7 @@ export function ColourMini() {
       <div className={`hw-c-cur is-mia${dim('mia')}`} style={{'--c': '#E8467C'}}><Cursor color="#E8467C"/><span>Mia</span></div>
       <div className={`hw-c-cur is-ren${dim('ren')}`} style={{'--c': '#E8A21A'}}><Cursor color="#E8A21A"/><span>Ren</span></div>
     </div>
-    <p className="hw-mini-read" aria-live="polite">{actor ? t(actor.rule) : t(L('Everyone at once: five colours, each with one job, each with a name beside it.', '所有人一起看：五种颜色，各管一件事，旁边都带着名字。'))}</p>
+    <p className="hw-mini-read" aria-live="polite">{actor ? t(actor.rule) : t(L('Showing everyone. Each colour has one use and a name next to it.', '全部显示。每种颜色只有一个用途，旁边都有名字。'))}</p>
   </div>;
 }
 
@@ -126,11 +126,11 @@ export function FramesMini({still}) {
   return <div ref={root} className="hw-mini hw-frames">
     <div className="hw-frames-pair">
       <div className="hw-frames-log">
-        <p className="hw-frames-cap">{t(L('In a chat', '聊天记录里'))}</p>
+        <p className="hw-frames-cap">{t(L('Chat log', '聊天记录'))}</p>
         <ol aria-hidden="true">{LOG.slice(0, step + 1).map(([who, line], i) => <li key={i}><b>{who}</b> {t(line)}</li>)}</ol>
       </div>
       <div className="hw-frames-canvas">
-        <p className="hw-frames-cap">{t(L('On the canvas', '画布上'))}</p>
+        <p className="hw-frames-cap">{t(L('Canvas', '画布'))}</p>
         <div className="hw-frames-board" aria-hidden="true">
           {[['Layout', 'is-head'], ['Metrics', 'is-chart'], ['Devices', 'is-list']].map(([who, cls]) => <div key={who} className={`hw-fr ${cls} is-${s[who] || 'idle'}`}>
             <span className="hw-fr-sk"/><span className="hw-fr-ui"/><i className="hw-fr-scan"/>
@@ -140,8 +140,8 @@ export function FramesMini({still}) {
       </div>
     </div>
     <div className="hw-mini-foot">
-      <p className="hw-mini-read">{t(L('The log says what was said. The canvas shows where the work is.', '聊天记录告诉你说了什么，画布告诉你活儿在哪儿。'))}</p>
-      <button type="button" className="hw-mini-btn" onClick={play}>{t(L('Replay', '再放一遍'))}</button>
+      <p className="hw-mini-read">{t(L('The same build in both views. On the canvas you can see which region each agent is working on.', '两边是同一次构建。在画布上能看出每个 agent 正在做哪一块。'))}</p>
+      <button type="button" className="hw-mini-btn" onClick={play}>{t(L('Replay', '重放'))}</button>
     </div>
   </div>;
 }
@@ -189,7 +189,7 @@ export function CodeMini({still}) {
     <div className="hw-code-card" aria-live="polite">
       <p className="hw-code-head"><span>Chart · solar.week</span><span>04 Data</span></p>
       <pre lang="en"><span className="hw-ln is-c">{'// built by Hako · Metrics'}</span><span className="hw-ln">{'<BarChart'}</span><span className="hw-ln">{'  data={'}<span className="is-a">solar.week</span>{'}'}</span><span className="hw-ln">{'  forecast'}</span>{day ? <span key={pick} className="hw-ln is-new">{'  highlight='}<span className="is-s">"{pick}"</span></span> : null}<span className="hw-ln">{'/>'}</span></pre>
-      <p className="hw-mini-read">{day ? t(L(`You picked ${day.name.en.split(',')[0]}; the prop is written into the chart’s code.`, `你选了${day.name.zh.replace('（今天）', '')}，属性就写进了图表代码。`)) : t(L('Pick a day on the chart.', '在图表上选一天。'))}</p>
+      <p className="hw-mini-read">{day ? t(L(`${day.name.en.split(',')[0]} selected. The highlight prop is now in the chart’s code.`, `已选${day.name.zh.replace('（今天）', '')}，highlight 属性已经写进图表代码。`)) : t(L('Pick a day on the chart.', '在图表上选一天。'))}</p>
     </div>
   </div>;
 }
@@ -219,8 +219,8 @@ export function ShipMini({still}) {
       </li>)}</ol>
     </div>
     <div className="hw-mini-foot">
-      <p className="hw-mini-read" aria-live="polite">{done ? t(L('Live. The readouts are the film’s, from a fictional deploy.', '上线了。这些读数来自片子里一次虚构的部署。')) : t(L('Press Ship: the selection rides the track.', '按 Ship：选框沿着轨道走。'))}</p>
-      <button type="button" className="hw-mini-btn is-ship" onClick={run}>{done ? t(L('Ship again', '再发一次')) : 'Ship ↗'}</button>
+      <p className="hw-mini-read" aria-live="polite">{done ? t(L('Live. These readouts come from the film’s fictional deploy.', '已上线。这些读数来自片子里虚构的部署。')) : t(L('Press Ship to send the selection along the track.', '按 Ship，选框会沿轨道往前走。'))}</p>
+      <button type="button" className="hw-mini-btn is-ship" onClick={run}>{done ? t(L('Ship again', '再发布一次')) : 'Ship ↗'}</button>
     </div>
   </div>;
 }

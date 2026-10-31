@@ -39,16 +39,16 @@ const SPECS={"synth":"976554014599fszuda530000000000000000000011100000043bdryuc5
 // cuts on exact frames: the 3D↔2D mark swaps at 44.417 and 46.05 are cuts too
 const SHOTS=[0,.45,5.85,10.3,13.05,17.6,19.9,31.9,32.5,44.417,46.05,DUR];
 const BEATS=[
- {to:.45,name:'Key',camera:{en:'Macro on a 3D keycap',zh:'3D 键帽特写'},built:{en:'A 3D keycap, lit and framed as a macro. The B key bottoms out at 0.22 s: the only sound before the music, a heavy key slowed to 0.84×.',zh:'一颗 3D 键帽，按微距来打光和构图。B 键在 0.22 秒按到底：这是音乐进来之前唯一的声音，一颗重键放慢到 0.84 倍。'}},
- {to:5.85,name:'Draw',camera:{en:'Pulls back with the drag, easing into a pan',zh:'跟着拖拽拉远，顺势转成横移'},built:{en:'Cut on frame 27, with the song’s first note. The drag snaps onto a guide, three corner handles tick at least 50 ms apart, and a key at 3.4 s keeps the camera easing out so the payoff is never still.',zh:'在第 27 帧切入，正好是歌的第一个音。拖拽吸附到参考线上，三个角点依次“嗒”一声，间隔不小于 50 毫秒；3.4 秒处加了一个关键帧，让镜头一直在缓出，定格的那一下也从不静止。'}},
- {to:10.3,name:'Build',camera:{en:'Macro on the prompt, then a pull-back with a focus pull',zh:'先特写提示框，再拉远并转移焦点'},built:{en:'Cut on frame 351, with the first typed character. The text types at 22 characters a second; about 11 a second are heard. The Build click lands on the band’s entrance at 7.65 s, where the x axis turns while y keeps rising, so the camera never parks.',zh:'在第 351 帧切入，正好是第一个字符出现。画面上每秒打 22 个字符，声音只保留大约 11 个。Build 的点击落在 7.65 秒乐队进来的那一下；这里 x 轴转向，y 轴继续上升，所以镜头不会停住。'}},
- {to:13.05,name:'Metrics',camera:{en:'One steep macro on a rounded U-turn',zh:'一个大倾角特写，走一条圆滑的 U 形路线'},built:{en:'One macro move on five keys: along the numbers, then a rounded U-turn onto the curve. It only ever moves down, so it carries its speed through the turn. Each ✓ is a marimba note picked against the harmony under it.',zh:'一个特写运镜，五个关键帧：先沿着数字走，再绕一个圆滑的 U 形落到曲线上。它只往下走，所以转弯时速度不会掉。每个 ✓ 是一个马林巴音，按当时的和声来选。'}},
+ {to:.45,name:'Key',camera:{en:'Macro on a 3D keycap',zh:'3D 键帽特写'},built:{en:'A 3D keycap, lit and framed as a macro. The B key bottoms out at 0.22 s. It is the only sound before the music, a heavy key recording slowed to 0.84×.',zh:'一颗 3D 键帽，按微距打光和构图。B 键在 0.22 秒按到底，这是音乐进来前唯一的声音，用的是一颗重键的录音，放慢到 0.84 倍。'}},
+ {to:5.85,name:'Draw',camera:{en:'Pulls back with the drag, easing into a pan',zh:'跟着拖拽拉远，顺势转成横移'},built:{en:'Cut on frame 27, with the song’s first note. The drag snaps onto a guide, three corner handles tick at least 50 ms apart, and a camera key at 3.4 s keeps the camera easing out, so the frame never goes still.',zh:'在第 27 帧切入，正好是歌的第一个音。拖拽吸附到参考线上，三个角点依次响一下，间隔不小于 50 毫秒。3.4 秒处加了一个镜头关键帧，让镜头一直在缓出，画面不会停住。'}},
+ {to:10.3,name:'Build',camera:{en:'Macro on the prompt, then a pull-back with a focus pull',zh:'先特写提示框，再拉远并转移焦点'},built:{en:'Cut on frame 351, with the first typed character. The text types at 22 characters a second; about 11 a second are heard. The Build click lands on the band’s entrance at 7.65 s, where the x axis turns while y keeps rising, so the camera doesn’t stop.',zh:'在第 351 帧切入，正好是第一个字符出现。画面上每秒打 22 个字符，声音只保留大约 11 个。Build 的点击落在 7.65 秒乐队进来的位置；这里 x 轴转向，y 轴继续上升，镜头不会停住。'}},
+ {to:13.05,name:'Metrics',camera:{en:'One steep macro on a rounded U-turn',zh:'一个大倾角特写，走一条圆滑的 U 形路线'},built:{en:'One macro move on five keys, along the numbers and then in a rounded U-turn onto the curve. It only moves down, so it carries its speed through the turn. Each ✓ is a marimba note picked against the harmony under it.',zh:'一个特写运镜，五个关键帧。先沿着数字走，再绕一个圆滑的 U 形落到曲线上。镜头只往下走，所以转弯时速度不会掉。每个 ✓ 是一个马林巴音，按当时的和声来选。'}},
  {to:17.6,name:'Team',camera:{en:'One push from wide into medium',zh:'从全景一路推到中景'},built:{en:'Cut on frame 783, on the beat grid. The headline is billboarded and swaps its words in place on the beat at 15.15 s while one push runs from wide to medium.',zh:'在第 783 帧切入，落在节拍网格上。标题始终朝向镜头，在 15.15 秒的拍点上原地换词，同时一个推镜从全景推到中景。'}},
  {to:19.9,name:'Comment',camera:{en:'Macro, its pitch easing from 15° to 11.25°',zh:'特写，俯仰角从 15° 缓到 11.25°'},built:{en:'The macro’s pitch eases down to 11.25° so the interface type stops leaning into italic. When Mia types, only every other character sounds; Ren’s switch lands on the music’s hit.',zh:'特写的俯仰角缓到 11.25°，界面文字就不会被拉成斜体。Mia 打字时只有隔一个字符才出一次声；Ren 的开关正好落在音乐的重音上。'}},
- {to:31.124,name:'Layers',camera:{en:'One continuous take: rise, turn, descend',zh:'一镜到底：升起、环绕、落下'},built:{en:'One continuous take through the dark stage. The roll now turns once and peaks near 3.7°/s; it used to whip at 30°/s. The song’s first join (22.04 s) opens the act.',zh:'一镜到底穿过暗场。横滚只转一次，峰值约每秒 3.7°；以前会甩到每秒 30°。歌的第一个接口（22.04 秒）把这一段引出来。'}},
- {to:39.327,name:'Ship',camera:{en:'Continuous, with one cut-in on the button',zh:'连续运镜，中间切一个按钮特写'},built:{en:'The chorus lands on the select click; Ship sits on beat 2 with a 250 Hz book knock under it and a 2 dB dip in the music. The cut-in to the button is pinned to frames, and on the deploy trip the lens rides the box itself.',zh:'副歌落在选中的点击上；Ship 落在第 2 拍，底下垫一记 250 Hz 的书本敲击，音乐同时压低 2 dB。按钮特写的切入切出都钉在整帧上；送达途中，镜头直接跟着盒子走。'}},
- {to:43.398,name:'Scale',camera:{en:'Dolly out',zh:'后拉揭示'},built:{en:'The pull-back hands over to an analytic camera curve instead of sampled keys: sampling had added jerk (0.19 against 0.06). The marquee click gets a book-knock body and a 1.5 dB dip.',zh:'后拉的镜头交给一条解析的运动曲线，而不是采样出来的关键帧：采样会加入抖动（急动度 0.19，对比 0.06）。大框选的点击垫了书本敲击，音乐压低 1.5 dB。'}},
- {to:DUR,name:'Mark',camera:{en:'Match cut on the shape, then flat',zh:'形状匹配剪辑，再切到平面'},built:{en:'The mark swaps 3D↔2D twice, each swap pinned to a frame (44.42 and 46.05 s). The B key’s sound returns as a bookend, and the flat mark lands on the outro’s first attack.',zh:'标志在 3D 和 2D 之间切换两次，每次都钉在整帧上（44.42 和 46.05 秒）。片头 B 键的声音在这里回来，首尾呼应；平面标志落在尾声的第一个起音上。'}},
+ {to:31.124,name:'Layers',camera:{en:'One continuous take: rise, turn, descend',zh:'一镜到底：升起、环绕、落下'},built:{en:'One continuous take through the dark stage. The roll turns once and peaks near 3.7°/s; an earlier version swung at 30°/s. The song’s first join (22.04 s) opens the act.',zh:'一镜到底穿过暗场。横滚只转一次，峰值约每秒 3.7°；早先的版本达到每秒 30°。歌的第一个接口（22.04 秒）是这一段的开头。'}},
+ {to:39.327,name:'Ship',camera:{en:'Continuous, with one cut-in on the button',zh:'连续运镜，中间切一个按钮特写'},built:{en:'The chorus lands on the select click; Ship sits on beat 2 with a 250 Hz book knock under it and a 2 dB dip in the music. The cut-in to the button is pinned to frames, and on the deploy trip the camera follows the box itself.',zh:'副歌落在选中的点击上；Ship 落在第 2 拍，底下垫一记 250 Hz 的书本敲击，音乐同时压低 2 dB。按钮特写的切入切出都在整帧上；送达途中，镜头直接跟着盒子走。'}},
+ {to:43.398,name:'Scale',camera:{en:'Dolly out',zh:'后拉揭示'},built:{en:'The pull-back hands over to an analytic camera curve. Sampling it into keys had added jerk (0.19 against 0.06). The marquee click gets a book-knock body and a 1.5 dB dip.',zh:'后拉的镜头改用一条解析的运动曲线，没有用采样出来的关键帧，因为采样会增加急动度（0.19，对比 0.06）。大框选的点击垫了书本敲击，音乐压低 1.5 dB。'}},
+ {to:DUR,name:'Mark',camera:{en:'Match cut on the shape, then flat',zh:'形状匹配剪辑，再切到平面'},built:{en:'The mark swaps 3D↔2D twice, each swap pinned to a frame (44.42 and 46.05 s). The B key sound from the opening comes back here, and the flat mark lands on the outro’s first attack.',zh:'标志在 3D 和 2D 之间切换两次，每次都在整帧上（44.42 和 46.05 秒）。片头 B 键的声音在这里再出现一次；平面标志落在尾声的第一个起音上。'}},
 ];
 const HEADLINES=[[.6,4.1,'Draw a box.'],[13.1,14.7,'Hako builds what’s inside.'],[15.15,16.55,'With your team.'],[19.2,21.95,'And your agents.'],[25.2,27.4,'Every layer, production-ready.'],[37.53,39.33,'Ship a product.'],[46.15,DUR,'hako · Draw a box. Ship a product.']];
 // track A: four pieces of the 2:53 song, joined on the beat ([film from, film to, song from, song to])
@@ -212,11 +212,11 @@ function Switch({value,options,onChange,label}){
 function SignalPath({lang,reduced}){
  const en=lang==='en';
  const nodes=[
-  ['hk-music',en?'A1 · MUSIC':'A1 · 音乐',en?'2:53 → 0:50':'2:53 → 0:50',en?'one song, four pieces, joined on the beat':'一首歌，剪成 4 段，在拍子上拼接'],
-  ['hk-warp',en?'WARP':'变速','0.93–1.11×',en?'the picture’s clock bent onto 7 hits':'把画面的时钟掰弯，对上 7 个重拍'],
+  ['hk-music',en?'A1 · MUSIC':'A1 · 音乐',en?'2:53 → 0:50':'2:53 → 0:50',en?'the song cut into four pieces, joined on beats':'歌剪成 4 段，在拍点上接起来'],
+  ['hk-warp',en?'WARP':'变速','0.93–1.11×',en?'picture timing adjusted to 7 hits':'画面时间调到 7 个重拍上'],
   ['hk-pic',en?'V1 · PICTURE':'V1 · 画面',en?'11 shots':'11 个镜头',en?'every cut on an exact frame':'每个剪辑点都在整帧上'],
-  ['hk-foley',en?'A2 · FOLEY':'A2 · 音效',en?'82 recordings':'82 个录音',en?'each on the frame of its action':'各自落在动作的那一帧'],
-  ['hk-cut',en?'MIX':'混音','−15.87 LUFS',en?'the music dipped only four times':'音乐只被压低过 4 次'],
+  ['hk-foley',en?'A2 · FOLEY':'A2 · 音效',en?'82 recordings':'82 个录音',en?'each placed on the frame of its action':'每个都放在对应动作的那一帧'],
+  ['hk-cut',en?'MIX':'混音','−15.87 LUFS',en?'the music lowered in four places':'音乐在 4 处压低'],
  ];
  const go=id=>event=>{event.preventDefault();document.getElementById(id)?.closest('section')?.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});};
  return <Reveal as="ol" className="hkt-path" aria-label={en?'The order the film was made in':'片子的制作顺序'}>
@@ -234,7 +234,7 @@ function MusicEdit({lang,sound,hearing}){
   <ol className="hkt-joins">{JOINS.map(([t,score],i)=><li key={t}>
    <Hear id={'join'+i} a={t-1.6} b={t+1.6} sound={sound} hearing={hearing}>{en?'Join':'接口'} {i+1} · {t.toFixed(1)} s<em>{en?'cut score':'匹配分'} {score} / 3</em></Hear>
   </li>)}</ol>
-  <figcaption>{en?'Each join plays up to one beat and continues from another whose eight neighbouring beats match in harmony, timbre and rhythm (cutsearch.mjs), so a downbeat lands where a downbeat was. A 30 ms crossfade ends on the beat; the new piece’s attack is untouched.':'每个接口都是从某一拍直接接到另一拍：两边各 8 拍的和声、音色和节奏型要对得上（cutsearch.mjs），这样重拍还落在重拍的位置。30 毫秒的交叉淡化正好在拍子上结束，新一段的起音一点没动。'}</figcaption>
+  <figcaption>{en?'At each join the song jumps from one beat to another. cutsearch.mjs picks the pair whose eight surrounding beats match best in harmony, timbre and rhythm, which keeps downbeats on downbeats. A 30 ms crossfade ends on the beat, so the new piece’s attack stays as recorded.':'每个接口处，歌从一拍直接跳到另一拍。cutsearch.mjs 比较两边各 8 拍的和声、音色和节奏，挑最接近的一对，这样重拍仍然落在重拍上。30 毫秒的交叉淡化在拍点上结束，新一段的起音保持原样。'}</figcaption>
  </Reveal>;
 }
 
@@ -246,18 +246,18 @@ function WarpPanel({lang,reduced,sound,hearing}){
  const Y0=64,K=.32; // zero line, units per ms
  const curve=useMemo(()=>'M'+WARP_D.map((v,i)=>(i*2).toFixed(0)+','+(Y0-v/10*K).toFixed(2)).join('L'),[]);
  const fmt=ms=>{
-  const a=Math.abs(ms);if(a<.5)return en?'on the hit':'正好在拍上';
+  const a=Math.abs(ms);if(a<.5)return en?'on the hit':'在拍上';
   return en?`${a.toFixed(0)} ms ${ms>0?'late':'early'} · ${(a*.06).toFixed(1)} frames`:`${ms>0?'晚':'早'} ${a.toFixed(0)} 毫秒 · ${(a*.06).toFixed(1)} 帧`;
  };
  const move=event=>{
   const r=plot.current.getBoundingClientRect(),x=Math.min(1,Math.max(0,(event.clientX-r.left)/r.width)),i=Math.min(499,Math.round(x*500));
   const d=WARP_D[i]/10,rate=1+(WARP_D[i+1]-WARP_D[i])/10000/.1;
-  read.current.textContent=(en?`${(i/10).toFixed(1)} s · picture ${on?(d>=0?'+':'')+d.toFixed(0)+' ms':'+0 ms'} · speed ${on?rate.toFixed(3):'1.000'}×`:`${(i/10).toFixed(1)} 秒 · 画面 ${on?(d>=0?'+':'')+d.toFixed(0)+' 毫秒':'+0 毫秒'} · 速率 ${on?rate.toFixed(3):'1.000'}×`);
+  read.current.textContent=(en?`${(i/10).toFixed(1)} s · picture ${on?(d>=0?'+':'')+d.toFixed(0)+' ms':'+0 ms'} · speed ${on?rate.toFixed(3):'1.000'}×`:`${(i/10).toFixed(1)} 秒 · 画面 ${on?(d>=0?'+':'')+d.toFixed(0)+' 毫秒':'+0 毫秒'} · 速度 ${on?rate.toFixed(3):'1.000'}×`);
  };
  return <div ref={ref} className={'hkt-warp'+(on?' is-on':'')}>
   <div className="hkt-warp-top">
-   <Switch value={on} onChange={pick} label={en?'Show the picture as laid out or warped':'显示原始排布或变速后的画面'} options={[[false,en?'As laid out':'原始排布'],[true,en?'Warped onto track A':'变速对上配乐 A']]}/>
-   <p ref={read} className="hkt-warp-read" aria-live="off">{en?'Rate stays between 0.93× and 1.11×':'速率始终在 0.93× 到 1.11× 之间'}</p>
+   <Switch value={on} onChange={pick} label={en?'Show the picture with its original timing or warped':'显示原始时间或变速后的画面'} options={[[false,en?'Original timing':'原始时间'],[true,en?'Warped to track A':'按配乐 A 变速']]}/>
+   <p ref={read} className="hkt-warp-read" aria-live="off">{en?'Speed range 0.93× to 1.11×':'速度范围 0.93× 到 1.11×'}</p>
   </div>
   <figure className="hkt-warp-plot" onPointerMove={move} onPointerDown={move}>
    <div ref={plot} className="hkt-warp-svg">
@@ -274,7 +274,7 @@ function WarpPanel({lang,reduced,sound,hearing}){
     <span className="hkt-warp-y is-top">+150 ms</span><span className="hkt-warp-y is-zero">0</span><span className="hkt-warp-y is-low">−100 ms</span>
    </div>
    <div className="hkt-axis" aria-hidden="true">{[0,10,20,30,40,50].map(s=><span key={s} style={{left:pos(s)}}>{s} s</span>)}</div>
-   <figcaption>{en?'d(t), how far the warp moves the picture against the song. It is 0 until 20 s (the film was laid out on this 100 BPM song’s grid), pulls the picture up to 109 ms earlier through the chorus, lets it fall 91 ms behind for the box’s landing, then holds 150 ms from 46 s.':'d(t)：变速把画面相对歌曲移动了多少。前 20 秒是 0（片子本来就是按这首 100 BPM 的歌的网格排的），副歌时把画面最多提前 109 毫秒，盒子落地时让它晚 91 毫秒，46 秒以后保持 150 毫秒。'}</figcaption>
+   <figcaption>{en?'d(t) is how far the warp shifts the picture against the song. It stays at 0 until 20 s, because the film was laid out on this song’s 100 BPM grid. Through the chorus it moves the picture up to 109 ms earlier, at the box’s landing 91 ms later, and from 46 s it holds at 150 ms.':'d(t) 表示变速把画面相对歌曲移动了多少。前 20 秒是 0，因为片子本来就是按这首歌 100 BPM 的网格排的。副歌里画面最多提前 109 毫秒，盒子落地时推后 91 毫秒，46 秒以后保持在 150 毫秒。'}</figcaption>
   </figure>
   <ol className="hkt-hits">{HITS.map((h,i)=>{
    const ms=(on?h.out-h.o:h.f-h.o)*1000,first=Math.ceil((h.o-WIN)*FPS)/FPS;
@@ -282,7 +282,7 @@ function WarpPanel({lang,reduced,sound,hearing}){
     <img src={`${media}/tech-${h.img}.webp`} width="480" height="270" loading="lazy" decoding="async" alt=""/>
     <div className="hkt-hit-text"><span className="st-mono">{String(i+1).padStart(2,'0')} · {h.o.toFixed(3)} s</span><b>{h.picture[lang]}</b><span>{en?'on ':'对上'}{h.music[lang]}</span></div>
     <div className="hkt-lane" aria-hidden="true"><i className="hkt-lane-hit"/><div className="hkt-lane-pic"><i/></div></div>
-    <p className={'hkt-off'+(Math.abs(ms)<.5?' is-on':'')}>{fmt(ms)}{on&&i===6&&<small>{en?'pinned to frame 2763':'钉在第 2763 帧'}</small>}</p>
+    <p className={'hkt-off'+(Math.abs(ms)<.5?' is-on':'')}>{fmt(ms)}{on&&i===6&&<small>{en?'pinned to frame 2763':'固定在第 2763 帧'}</small>}</p>
     <Hear id={'hit'+i} a={Math.max(0,h.o-1.8)} b={h.o+1} sound={sound} hearing={hearing}>{en?'Hear':'听'}</Hear>
    </li>;
   })}</ol>
@@ -367,13 +367,13 @@ function KeyPad({lang,sound}){
  return <div className="hkt-pad">
   <div className="hkt-pad-row">
    <label className="hkt-type"><span className="st-mono">{en?'Type here':'在这里打字'}</span><input type="text" value={value} onChange={()=>{}} onInput={onInput} autoComplete="off" autoCorrect="off" spellCheck={false} placeholder={en?'Make it real — dark, live data':'Make it real — dark, live data'} aria-describedby="hkt-pad-help"/></label>
-   <button type="button" className="hkt-dry" onClick={prompt}><i aria-hidden="true"/><span>{en?'The film’s prompt, dry':'片中的提示词（干声）'}</span><em>{en?'15 strokes, its own picks':'15 下，用片中挑的录音'}</em></button>
+   <button type="button" className="hkt-dry" onClick={prompt}><i aria-hidden="true"/><span>{en?'The film’s prompt, no music':'片中的提示词，不带配乐'}</span><em>{en?'15 strokes, same recordings as the film':'15 下，录音和片中一样'}</em></button>
   </div>
   <div className="hkt-pad-row">
    <Switch value={cut} onChange={setCut} label={en?'Cut each stroke before its key-up':'在抬键声之前切掉'} options={[[true,en?'Cut at 50 ms':'在 50 毫秒处切'],[false,en?'With the key-up':'保留抬键声']]}/>
    <ol className="hkt-picks" aria-label={en?'Recordings played':'播放过的录音'}>{log.map(s=><li key={s.id} className={s.skip?'is-skip':s.ch===' '?'is-space':undefined} title={s.skip?(en?'skipped: under 60 ms':'跳过：间隔不到 60 毫秒'):'key-'+s.rec}>{s.skip?'—':s.rec}</li>)}</ol>
   </div>
-  <p id="hkt-pad-help" className="hkt-pad-help">{en?'Each stroke picks one of 12 clean Cherry keyboard recordings (two space-bar ones for spaces) with a hashed seed, never the same one twice in a row; strokes under 60 ms apart stay silent, as in the film.':'每一下都用打散过的种子，从 12 个干净的 Cherry 键盘录音里挑一个（空格用两个空格键录音），从不连续两次用同一个；间隔不到 60 毫秒的按键不出声，和片中一样。'}</p>
+  <p id="hkt-pad-help" className="hkt-pad-help">{en?'Each stroke picks one of 12 clean Cherry keyboard recordings with a hashed seed (spaces use two space-bar recordings) and never repeats the previous one. Strokes less than 60 ms apart are skipped, as in the film.':'每一下用打散过的种子，从 12 个干净的 Cherry 键盘录音里挑一个（空格用两个空格键录音），不会和上一下相同。间隔不到 60 毫秒的按键不出声，和片中一样。'}</p>
  </div>;
 }
 
@@ -387,7 +387,7 @@ function MarimbaPad({lang,sound}){
   })}
    <button type="button" className="is-tok" onClick={()=>{const [rec,f0]=nearest(MARIMBA,81);sound.play(rec,{rate:hz(81)/f0,cut:.012,cutLen:.008,hp:200,gain:.8});}}><b>{en?'tok':'tok'}</b><span>{en?'strike only, 20 ms':'只留敲击，20 毫秒'}</span></button>
   </div>
-  <p className="hkt-pad-help">{en?'D major pentatonic (D E F♯ A B). Four recordings (G5, B5, F6, C7); each note plays the nearest one, a near-tie going to the one above, then resamples the rest of the way. A ✓ rings for 0.35 s; a panel appearing gets only the 20 ms strike.':'D 大调五声音阶（D E F♯ A B）。只有四个录音（G5、B5、F6、C7）；每个音用最近的那个，距离几乎一样时选高的，剩下的差距靠重采样补上。✓ 响 0.35 秒；面板出现只用前 20 毫秒的敲击。'}</p>
+  <p className="hkt-pad-help">{en?'D major pentatonic (D E F♯ A B) from four recordings (G5, B5, F6, C7). Each note plays the nearest recording, taking the higher one in a near-tie, and resamples the rest of the way. A ✓ rings for 0.35 s; a panel appearing gets only the 20 ms strike.':'D 大调五声音阶（D E F♯ A B），只用四个录音（G5、B5、F6、C7）。每个音用最近的录音，距离差不多时选高的那个，剩下的差距用重采样补上。✓ 响 0.35 秒；面板出现时只用前 20 毫秒的敲击。'}</p>
  </div>;
 }
 
@@ -396,11 +396,11 @@ function WhyRecorded({lang,sound}){
  const en=lang==='en';
  return <Reveal className="hkt-why">
   <div className="hkt-why-text">
-   <span className="st-mono">{en?'ROUND 1 → ROUND 5':'第 1 轮 → 第 5 轮'}</span>
-   <h3>{en?'Recordings, not interface blips':'用录音，不用界面提示音'}</h3>
-   <p>{en?'The first pass used a pack of interface sounds. Measured, its pop was a single pure partial with no glide, the most electronic sound in the film; the handle, toggle and agent-click blips were synthesized too. What reads as electronic is exactly that: a pure partial, no glide, a long steady tone. A mouth pop has air across the band and a pitch that slides.':'第一版用的是一套界面音效包。测出来它的“啵”只有一个纯净的分音，音高不滑动，是全片最电子味的声音；控制点、开关、agent 点击的提示音也都是合成的。听起来“电子”，原因就是这些：纯分音、没有滑音、一段稳定的长音。真人的“啵”在整个频段里都有气声，音高还会滑。'}</p>
+   <span className="st-mono">{en?'ROUNDS 1–5':'第 1–5 轮'}</span>
+   <h3>{en?'Why the interface sounds were replaced':'为什么换掉界面音效包'}</h3>
+   <p>{en?'The first pass used a pack of interface sounds. Its pop measured as a single pure partial with no glide, and the review called it the most electronic sound in the film. The handle, toggle and agent-click blips were synthesized too. The traits that read as electronic were a pure partial, no glide and a long steady tone. A recorded mouth pop has air across the band and a pitch that slides.':'第一版用的是一套界面音效包。测下来，它的“啵”只有一个纯分音，音高不滑动，评审认为这是全片最像电子音的声音。控制点、开关和 agent 点击的提示音也都是合成的。听起来像电子音，是因为纯分音、没有滑音、长时间稳定的音。录下来的嘴巴“啵”声在整个频段都有气声，音高也会滑动。'}</p>
    <ul className="hkt-rounds" aria-label={en?'Cues per review round':'每轮评审后的音效数'}>{[217,157,93,89,82].map((n,i)=><li key={i} style={{'--w':n/217}}><span>{en?'Round':'第'} {i+1}{en?'':'轮'}</span><i/><b>{n}</b></li>)}</ul>
-   <p className="hkt-small">{en?'Cues in the pass each of the five review rounds heard, thinned until only what a hand or the product does makes a sound.':'五轮评审各自听到的那一版里有多少个音效：一路删减，直到只剩手或产品发出的声音。'}</p>
+   <p className="hkt-small">{en?'Number of cues in the version each of the five review rounds listened to.':'五轮评审各自听的那一版里有多少个音效。'}</p>
   </div>
   <div className="hkt-why-pair">
    <figure><Spectro data={SPECS.synth} color="#c9c7c0" label={en?'Spectrogram of the round-1 pop: one flat line':'第 1 轮“啵”声的频谱图：一条平直的线'}/>
@@ -420,32 +420,32 @@ function BugLog({lang,sound,hearing}){
  return <ol className="hkt-bugs">
   <Reveal as="li">
    <span className="st-mono">{en?'ROUND 1 · DESIGN':'第 1 轮 · 设计'}</span>
-   <h3>{en?'Every ✓ a fifth off':'每个 ✓ 都差了五度'}</h3>
-   <p>{en?'A pluck was retuned from its loudest partial. On this file that is the 3rd harmonic (1320 Hz), not the fundamental (439 Hz), so each note came out an octave and a fifth low: a D heard as a G, rubbing against the song’s F♯.':'一个拨弦音是按它最响的分音来定调的。这个文件最响的是三次谐波（1320 Hz），不是基频（439 Hz），于是每个音都低了一个八度加五度：D 听成了 G，和歌里的 F♯ 打架。'}</p>
+   <h3>{en?'Check sounds tuned from the wrong partial':'✓ 音按错了分音定调'}</h3>
+   <p>{en?'A pluck was retuned from its loudest partial. On this file the loudest is the 3rd harmonic at 1320 Hz, while the fundamental is 439 Hz, so every note came out an octave and a fifth low. A D sounded as a G and clashed with the song’s F♯.':'拨弦音是按它最响的分音来定调的。这个文件最响的是 1320 Hz 的三次谐波，基频其实是 439 Hz，所以每个音都低了一个八度加五度。D 听起来是 G，和歌里的 F♯ 冲突。'}</p>
    <div className="hkt-harm" aria-label={en?'Partials of the pluck, measured':'拨弦音各分音的实测电平'} role="img">{PLUCK.map((db,i)=><span key={i} className={i===2?'is-loud':i===0?'is-f0':undefined} style={{'--h':(1+db/24).toFixed(3)}}><i/><b>{i+1}</b></span>)}</div>
    <p className="hkt-small">{en?'Partials 1–8, measured on the file; the 3rd is loudest.':'第 1–8 个分音的实测电平；第 3 个最响。'}</p>
    <div className="hkt-row">
-    <button type="button" className="hkt-dry" onClick={()=>sound.play('kenney-pluck_001',{rate:D5/1319.9,hp:120,gain:.7})}><i aria-hidden="true"/><span>{en?'“D” tuned from 1320 Hz':'按 1320 Hz 定的“D”'}</span><em>{en?'the bug: sounds G':'错误：听起来是 G'}</em></button>
+    <button type="button" className="hkt-dry" onClick={()=>sound.play('kenney-pluck_001',{rate:D5/1319.9,hp:120,gain:.7})}><i aria-hidden="true"/><span>{en?'“D” tuned from 1320 Hz':'按 1320 Hz 定的“D”'}</span><em>{en?'the bug, sounds as G':'错误版本，听起来是 G'}</em></button>
     <button type="button" className="hkt-dry" onClick={()=>sound.play('kenney-pluck_001',{rate:D5/439.3,hp:120,gain:.7})}><i aria-hidden="true"/><span>{en?'D tuned from 439.3 Hz':'按 439.3 Hz 定的 D'}</span><em>{en?'fixed':'修正后'}</em></button>
    </div>
-   <p className="hkt-small">{en?'Round 2 then found the pluck itself was a synthesized tone; the ✓s became a recorded marimba.':'第 2 轮又发现这个拨弦音本身就是合成音；✓ 后来换成了马林巴录音。'}</p>
+   <p className="hkt-small">{en?'Round 2 found that the pluck itself was a synthesized tone, and the ✓s were changed to a recorded marimba.':'第 2 轮发现这个拨弦音本身就是合成音，后来 ✓ 换成了马林巴录音。'}</p>
   </Reveal>
   <Reveal as="li" delay={70}>
    <span className="st-mono">{en?'SCORE V3 · SOUND REVIEW':'配乐 v3 · 声音评审'}</span>
-   <h3>{en?'Three ✓s, 200 ms early':'三个 ✓，早了 200 毫秒'}</h3>
-   <p>{en?'In the code-built score, the three ✓ pings of the deploy cards played 200 ms before the green ticks finished drawing. In the foley pass every sound sits on the first frame that shows its action.':'在代码做的那版配乐里，部署卡片上的三个 ✓ 提示音比绿色的勾画完早了 200 毫秒。到了音效这一版，每个声音都对在第一次看到动作的那一帧。'}</p>
+   <h3>{en?'Check sounds 200 ms ahead of the ticks':'✓ 声比勾早 200 毫秒'}</h3>
+   <p>{en?'In the code-built score, the three ✓ pings on the deploy cards played 200 ms before the green ticks finished drawing. In the foley version every sound sits on the first frame that shows its action.':'在代码做的那版配乐里，部署卡片上的三个 ✓ 提示音比绿色的勾画完早了 200 毫秒。音效版里，每个声音都放在第一次看到对应动作的那一帧。'}</p>
    <Switch value={final} onChange={setFinal} label={en?'Score v3 or final foley':'配乐 v3 或终版音效'} options={[[false,en?'Score v3':'配乐 v3'],[true,en?'Final foley':'终版音效']]}/>
    <div className="hkt-ticks" aria-hidden="true">
     <div><span>{en?'tick drawn':'勾画完'}</span>{TICKS.map(t=><i key={t} className="is-tick" style={{left:x(t)}}>✓</i>)}</div>
     <div><span>{en?'sound':'声音'}</span>{(final?FINAL:V3).map((t,i)=><i key={i} className="is-ping" style={{'--x':xn(t)}}/>)}</div>
    </div>
-   <p className="hkt-small">{en?(final?'35.317, 35.567, 35.817 s: 8 ms after each tick, inside one frame.':'35.11, 35.36, 35.60 s against ticks done at 35.31, 35.56, 35.80 s.'):(final?'35.317、35.567、35.817 秒：比勾晚 8 毫秒，在一帧之内。':'35.11、35.36、35.60 秒，而勾在 35.31、35.56、35.80 秒才画完。')}</p>
-   <Hear id="bug-ticks" a={34.9} b={36.3} sound={sound} hearing={hearing}>{en?'Hear the final in the film':'在片中听终版'}</Hear>
+   <p className="hkt-small">{en?(final?'35.317, 35.567 and 35.817 s, 8 ms after each tick, within one frame.':'Pings at 35.11, 35.36 and 35.60 s; ticks done at 35.31, 35.56 and 35.80 s.'):(final?'35.317、35.567、35.817 秒，比勾晚 8 毫秒，在一帧之内。':'提示音在 35.11、35.36、35.60 秒，勾在 35.31、35.56、35.80 秒画完。')}</p>
+   <Hear id="bug-ticks" a={34.9} b={36.3} sound={sound} hearing={hearing}>{en?'Play this moment in the film':'在片中听这一段'}</Hear>
   </Reveal>
   <Reveal as="li" delay={140}>
    <span className="st-mono">{en?'ROUND 1 · SYNC':'第 1 轮 · 同步'}</span>
-   <h3>{en?'Typing three frames late':'打字声晚了三帧'}</h3>
-   <p>{en?'Some key recordings open with a lone blip and then 45 to 57 ms of room before the strike. Trimmed at 3 % of peak, the cue started on the blip, so 13 typed cues sounded about three frames late. Now a recording starts 2 ms before it first crosses 20 % of its peak.':'有些按键录音开头先有一个孤立的小毛刺，然后是 45 到 57 毫秒的房间底噪，才是真正的敲击。按峰值的 3% 去切，起点就落在毛刺上，结果 13 个打字声晚了大约三帧。现在每个录音都从它第一次超过峰值 20% 的位置往前留 2 毫秒开始。'}</p>
+   <h3>{en?'Key sounds three frames late':'打字声晚了约三帧'}</h3>
+   <p>{en?'Some key recordings start with a lone blip, followed by 45 to 57 ms of room tone before the strike. With the trim at 3 % of peak, the cue started on the blip, and 13 typed cues sounded about three frames late. A recording now starts 2 ms before it first crosses 20 % of its peak.':'有些按键录音开头先有一个孤立的小毛刺，后面是 45 到 57 毫秒的房间底噪，然后才是敲击。按峰值 3% 来切时，起点落在毛刺上，13 个打字声晚了大约三帧。现在每个录音从第一次超过峰值 20% 的位置往前 2 毫秒开始。'}</p>
    <div className="hkt-env" role="img" aria-label={en?'The key-08 recording: 55 ms of room between the 3 % and 20 % crossings':'key-08 录音：3% 和 20% 两个阈值之间隔着 55 毫秒'}>
     <svg viewBox="0 0 60 60" preserveAspectRatio="none" aria-hidden="true">{KEY08_ENV.map((v,i)=><rect key={i} x={i+.15} width=".7" y={60-v} height={Math.max(.5,v)}/>)}</svg>
     <b style={{left:'0%'}}><span>3 %</span></b><b className="is-good" style={{left:55.1/120*100+'%'}}><span>20 % · 55 ms</span></b>
@@ -454,10 +454,10 @@ function BugLog({lang,sound,hearing}){
   </Reveal>
   <Reveal as="li" delay={210}>
    <span className="st-mono">{en?'ROUND 1 · SYNC':'第 1 轮 · 同步'}</span>
-   <h3>{en?'One key, five times running':'同一个键，连响五次'}</h3>
-   <p>{en?'Each cue seeded its own random generator with nearly the same number as its neighbour, and a Lehmer generator’s first draws from close seeds are close too. So a typing run walked the pool in order and repeated one recording up to five times. The seed is hashed first now, and a run never plays the same recording twice in a row.':'每个音效都给自己的随机数生成器一个种子，而相邻音效的种子几乎一样；Lehmer 生成器从相近的种子出发，前几个数也很接近。于是一段打字按顺序走遍录音池，同一个录音最多连响五次。现在种子先打散再用，一段打字里也不会连续两次用同一个录音。'}</p>
+   <h3>{en?'Repeated key recordings':'按键录音重复'}</h3>
+   <p>{en?'Each cue seeded its own random generator with almost the same number as the cue before it, and a Lehmer generator gives close first draws for close seeds. A typing run therefore went through the pool in order and repeated one recording up to five times. The seed is now hashed first, and a run never plays the same recording twice in a row.':'每个音效给自己的随机数生成器一个种子，相邻音效的种子几乎一样；Lehmer 生成器在种子相近时，开头几个数也很接近。结果一段打字按顺序轮过录音池，同一个录音最多连着用了五次。现在种子先打散再用，一段打字里不会连续两次用同一个录音。'}</p>
    <ol className="hkt-picks is-static" aria-label={en?'The recordings the film’s prompt plays':'片中提示词用到的录音'}>{PROMPT.map(([t,rec])=><li key={t} className={SPACES.includes(rec)?'is-space':undefined}>{rec}</li>)}</ol>
-   <p className="hkt-small">{en?'The 15 strokes the film’s prompt plays, by recording (shaded: the space bar). Try the keyboard above.':'片中提示词的 15 下按键各用了哪个录音（深色是空格键）。可以在上面的键盘里自己试。'}</p>
+   <p className="hkt-small">{en?'The recording used for each of the 15 strokes in the film’s prompt; shaded ones are the space bar. The keyboard above uses the same rule.':'片中提示词 15 下按键各自用的录音，深色的是空格键。上面的键盘用的是同一套规则。'}</p>
   </Reveal>
  </ol>;
 }
@@ -480,8 +480,8 @@ function Shutter({lang}){
     <span className="hkt-shutter-l">0</span><span className="hkt-shutter-m">{en?'½ frame · shutter closes':'½ 帧 · 快门关'}</span><span className="hkt-shutter-r">{en?'1 frame':'1 帧'}</span>
    </div>
    <input type="range" min="0" max=".5" step={1/64} value={c} onChange={event=>setC(+event.target.value)} aria-label={en?'Where the cut falls inside frame 783':'剪辑点落在第 783 帧里的位置'} aria-valuetext={`${(c*16.667).toFixed(1)} ms, ${k} of 8`}/>
-   <p>{k===0?(en?'On the frame: all 8 samples are the new shot. A clean cut.':'落在整帧上：8 个采样全是新镜头，干净的一刀。'):(en?`${(c*16.667).toFixed(1)} ms into the frame: ${k} of 8 samples still show the macro, so one frame is a double exposure.`:`切在这一帧的第 ${(c*16.667).toFixed(1)} 毫秒：8 个采样里有 ${k} 个还是上一个特写，这一帧就成了双重曝光。`)}</p>
-   <button type="button" className="hkt-dry" onClick={()=>setC(0)} disabled={k===0}><i aria-hidden="true"/><span>{en?'Pin the cut to the frame':'把剪辑点钉到整帧'}</span></button>
+   <p>{k===0?(en?'Cut on the frame boundary. All 8 samples show the new shot.':'剪在帧边界上，8 个采样都是新镜头。'):(en?`Cut ${(c*16.667).toFixed(1)} ms into the frame. ${k} of 8 samples still show the macro, so the frame is a double exposure.`:`剪在这一帧的第 ${(c*16.667).toFixed(1)} 毫秒。8 个采样里有 ${k} 个还是上一个特写，这一帧就成了双重曝光。`)}</p>
+   <button type="button" className="hkt-dry" onClick={()=>setC(0)} disabled={k===0}><i aria-hidden="true"/><span>{en?'Move the cut to the frame boundary':'把剪辑点移到帧边界'}</span></button>
   </div>
  </div>;
 }
@@ -547,7 +547,7 @@ function SplineDemo({lang,reduced}){
    <div className="hkt-rail-track">{model.strobe.map(([y,back],i)=><i key={i} className={back?'is-back':undefined} style={{left:(y*100).toFixed(2)+'%'}}/>)}{!reduced&&<div ref={dot} className="hkt-rail-dot"><b/></div>}</div>
   </div>
   <div className="hkt-spline-foot">
-   <p>{en?'Demonstration: the film’s own spline (kit/motion.ts track()), ported line for line. Drag a key, or focus one and use the arrow keys. The rail shows the camera every 1/15 s: shaded bars mark where it runs backwards between keys.':'演示：片子自己的样条曲线（kit/motion.ts 的 track()），逐行移植。拖动关键帧，或选中后用方向键。下面的轨道每 1/15 秒记一次镜头位置：深色的是在关键帧之间往回走的地方。'}</p>
+   <p>{en?'Demonstration of the film’s spline (track() in kit/motion.ts), ported line for line. Drag a key, or focus one and use the arrow keys. The rail marks the camera position every 1/15 s; orange bars are where it moves backwards between keys.':'演示：片子用的样条曲线（kit/motion.ts 里的 track()），逐行移植过来。可以拖动关键帧，或选中后用方向键调。下面的轨道每 1/15 秒记一次镜头位置，橙色的是在关键帧之间往回走的地方。'}</p>
    <button type="button" className="hkt-dry" onClick={()=>setKeys(KEY0)}><i aria-hidden="true"/><span>{en?'Reset the keys':'重置关键帧'}</span></button>
   </div>
  </div>;
@@ -572,7 +572,7 @@ function SpeedChart({lang}){
    <span className="hkt-speed-tag" style={{top:yOf(20)/H*100+'%'}}>{en?'budget 20 px/f':'预算 20 px/帧'}</span>
   </div>
   <div className="hkt-axis" aria-hidden="true">{[0,10,20,30,40,50].map(s=><span key={s} style={{left:pos(s)}}>{s} s</span>)}</div>
-  <figcaption>{en?'The camera alone: a 7 × 5 grid of canvas points projected through it, fastest point per frame (camspeed.ts, run through the warp). Over budget twice: the opening keycap macro and the deploy trip, where the lens rides the box. Dashed: the camera cuts.':'只算镜头本身：把画布上 7 × 5 个点投影过去，取每帧最快的那个（camspeed.ts，按变速后的时间算）。两处超出预算：开场的键帽特写，和送达途中镜头跟着盒子走的那段。虚线是镜头剪辑点。'}</figcaption>
+  <figcaption>{en?'Camera motion only. A 7 × 5 grid of canvas points is projected through the camera, and the chart shows the fastest point in each frame (camspeed.ts, run through the warp). It goes over 20 px twice, in the opening keycap macro and on the deploy trip where the camera follows the box. Dashed lines are camera cuts.':'只算镜头本身的运动。把画布上 7 × 5 个点投影到画面里，图上是每帧最快的那个点（camspeed.ts，按变速后的时间计算）。有两处超过 20 像素：开场的键帽特写，和送达途中镜头跟着盒子走的那段。虚线是镜头剪辑点。'}</figcaption>
  </Reveal>;
 }
 
@@ -584,7 +584,7 @@ function SnapChart({lang}){
  return <figure className="hkt-snap">
   <div><span className="st-mono">translate3d · will-change</span>{bars(rows.ex,'is-ex')}</div>
   <div><span className="st-mono">translateY · {en?'snapped':'取整'}</span>{bars(rows.sn,'is-sn')}</div>
-  <figcaption>{en?'Illustration: pixels moved per frame over the last 24 frames of a 40 px rise on the film’s soft ease (700 ms) at 1× density. Snapped to whole pixels, the end of the ease stutters 1, 0, 1, 0.':'示意：一行字用片子的 soft 缓动（700 毫秒）上移 40 像素，最后 24 帧每帧移动多少像素（1 倍像素密度）。按整像素取整后，缓动的尾巴变成 1、0、1、0 地抖。'}</figcaption>
+  <figcaption>{en?'Illustration: pixels moved per frame over the last 24 frames of a 40 px rise on the film’s soft ease (700 ms) at 1× density. Snapped to whole pixels, the end of the ease moves 1, 0, 1, 0.':'示意：一行字用片子的 soft 缓动（700 毫秒）上移 40 像素，最后 24 帧每帧移动多少像素（1 倍像素密度）。按整像素取整后，缓动的末尾变成 1、0、1、0 这样跳。'}</figcaption>
  </figure>;
 }
 
@@ -620,7 +620,7 @@ function Reel({lang,reduced,onPlay}){
       <h3>{b.name}</h3>
       <p>{b.built[lang]}</p>
       <p className="hk-reel-cam"><span className="st-mono">{en?'Camera':'镜头'}</span>{b.camera[lang]}</p>
-      <ul className="hk-reel-jobs" aria-label={en?'Sounds in this beat':'这一段的声音'}>{cues.length?FAMILIES.filter(f=>cues.some(c=>c[1]===f.id)).map(f=><li key={f.id} style={{'--c':f.color}}><i aria-hidden="true"/>{cues.filter(c=>c[1]===f.id).length} · {f.label[lang]}</li>):<li className="is-quiet">{en?'No foley: the music alone':'没有音效，只有音乐'}</li>}</ul>
+      <ul className="hk-reel-jobs" aria-label={en?'Sounds in this beat':'这一段的声音'}>{cues.length?FAMILIES.filter(f=>cues.some(c=>c[1]===f.id)).map(f=><li key={f.id} style={{'--c':f.color}}><i aria-hidden="true"/>{cues.filter(c=>c[1]===f.id).length} · {f.label[lang]}</li>):<li className="is-quiet">{en?'No foley, music only':'没有音效，只有音乐'}</li>}</ul>
      </div>
     </li>;
    })}</ol>
@@ -630,9 +630,9 @@ function Reel({lang,reduced,onPlay}){
 }
 
 const NOTES_QC=[
- {note:{en:'Cuts braked. One shot slowed to 0.4 px a frame going into a cut, and the next opened at 15.',zh:'剪辑点会“刹车”：一个镜头进剪辑点前慢到每帧 0.4 像素，下一个镜头却以 15 像素起步。'},fix:{en:'The next camera now starts moving before the cut, so every cut lands on motion.',zh:'下一个镜头的摄影机在剪辑点之前就开始运动，每一刀都切在动作上。'}},
- {note:{en:'On the deploy trip the box weaved on screen: it changed direction five times between 34.7 and 36.5 s, swinging up to 125 px, because sparse camera keys ran ahead of it and then behind.',zh:'送达途中盒子在画面里左右摇摆：34.7 到 36.5 秒之间换了五次方向，最大摆幅 125 像素，因为稀疏的镜头关键帧一会儿跑在它前面，一会儿落在后面。'},fix:{en:'From 34.0 to 37.2 s the lens rides the box itself. Probed against the real camera, the box now crosses the frame one way, at most 1.47 px a frame sideways.',zh:'34.0 到 37.2 秒之间，镜头直接跟着盒子走。用真实的镜头代码去测，盒子现在只朝一个方向穿过画面，横向每帧最多 1.47 像素。'}},
- {note:{en:'The hero clicks were no louder over the music than the small ones: Ship sat 3.4 LU under it and the lockup 5.9, against Theo’s 3.3.',zh:'关键点击压在音乐上的响度并不比小动作大：Ship 比音乐低 3.4 LU，收尾标志低 5.9，而 Theo 的点击只低 3.3。'},fix:{en:'Secondary hits came down 4 to 8 dB and the heroes kept a book-knock body; in the last check the six heroes were the six loudest hits, within 1.1 LU of each other.',zh:'次要的声音降了 4 到 8 dB，关键动作保留书本敲击的底；最后一轮检查里，六个关键动作正好是最响的六个声音，彼此相差不到 1.1 LU。'}},
+ {note:{en:'The picture slowed sharply into some cuts. One shot was down to 0.4 px a frame going into a cut, and the next opened at 15.',zh:'有些剪辑点前画面突然变慢。一个镜头进剪辑点前只有每帧 0.4 像素，下一个镜头却从 15 像素开始。'},fix:{en:'The next camera now starts moving before the cut, so the picture is in motion at every cut.',zh:'下一个镜头在剪辑点之前就开始运动，所以每个剪辑点上画面都在动。'}},
+ {note:{en:'On the deploy trip the box weaved on screen: it changed direction five times between 34.7 and 36.5 s, swinging up to 125 px, because the sparse camera keys ran ahead of it and then fell behind.',zh:'送达途中盒子在画面里左右摇摆：34.7 到 36.5 秒之间换了五次方向，最大摆幅 125 像素，因为稀疏的镜头关键帧一会儿跑在它前面，一会儿落在后面。'},fix:{en:'From 34.0 to 37.2 s the camera follows the box itself. In a probe on the film’s camera code, the box now crosses the frame in one direction, at most 1.47 px a frame sideways.',zh:'34.0 到 37.2 秒之间，镜头直接跟着盒子走。用片子的镜头代码测试，盒子现在只朝一个方向穿过画面，横向每帧最多 1.47 像素。'}},
+ {note:{en:'The main clicks were no louder against the music than the small ones. Ship sat 3.4 LU under the music and the lockup 5.9, while Theo’s click sat 3.3 under.',zh:'主要的点击相对音乐并不比小动作响。Ship 比音乐低 3.4 LU，收尾标志低 5.9，而 Theo 的点击只低 3.3。'},fix:{en:'Secondary hits came down 4 to 8 dB and the main actions kept a book-knock body. In the last check the six main actions were the six loudest hits, within 1.1 LU of each other.',zh:'次要的声音降了 4 到 8 dB，主要动作保留书本敲击垫底。最后一轮检查中，六个主要动作就是最响的六个声音，彼此相差不到 1.1 LU。'}},
 ];
 
 const waveD=(()=>{const top=[],bottom=[];EDIT.wave.forEach((v,i)=>{const x=((i+.5)/20).toFixed(3),y=Math.max(v*.92,.02).toFixed(3);top.push(x+','+(-y));bottom.unshift(x+','+y);});return 'M'+top.join('L')+'L'+bottom.join('L')+'Z';})();
@@ -712,27 +712,27 @@ export default function HakoFilm({lang,reduced,onNavigate}){
  const shared={lang,sound,hearing};
  const FOLEY=[
   {fam:'click',wave:'kenney-ui-click1',files:['kenney-ui-click1'],
-   note:{en:'A real mouse button. Agents click with the same button 25 % faster: higher and lighter, a different hand.',zh:'真实的鼠标按键。agent 用同一个按键、快 25% 来点：更高、更轻，听得出是另一只手。'},
-   plays:[{name:'kenney-ui-click1',o:{hp:160,gain:.9},label:{en:'Your click',zh:'你的点击'},meta:'click1 · hp 160 Hz'},{name:'kenney-ui-click1',o:{rate:1.25,hp:600,gain:.55},label:{en:'An agent’s click',zh:'agent 的点击'},meta:'×1.25 · hp 600 Hz'}],
-   film:{a:6.9,b:8.5,t:'7.65 s',img:'f0459',label:{en:'Build, on the band’s entrance',zh:'Build，落在乐队进来的那一下'}}},
+   note:{en:'A recorded mouse button. Agent clicks use the same recording played 25 % faster, which makes them higher and lighter, so they sound like a different hand.',zh:'录下来的鼠标按键。agent 的点击用同一段录音快 25% 播放，音更高、更轻，听起来像另一只手。'},
+   plays:[{name:'kenney-ui-click1',o:{hp:160,gain:.9},label:{en:'User click',zh:'用户点击'},meta:'click1 · hp 160 Hz'},{name:'kenney-ui-click1',o:{rate:1.25,hp:600,gain:.55},label:{en:'Agent click',zh:'agent 点击'},meta:'×1.25 · hp 600 Hz'}],
+   film:{a:6.9,b:8.5,t:'7.65 s',img:'f0459',label:{en:'Build click, as the band comes in',zh:'点击 Build，乐队在这时进来'}}},
   {fam:'key',wave:'key-04',files:['key-04','key-30',...KEYS.map(k=>'key-'+k),...SPACES.map(k=>'key-'+k)],marks:[[.05,en?'cut':'切']],
-   note:{en:'A Cherry keyboard. Each stroke is cut at 50 ms with a 30 ms fade, before its key-up, so a run reads as strokes, not doubles.',zh:'Cherry 机械键盘。每一下在 50 毫秒处切断、30 毫秒淡出，赶在抬键声之前，所以连打听起来是一下一下的，不会成双。'},
-   plays:[{name:'key-04',o:{hp:200,lp:10000,gain:.8},label:{en:'A stroke, uncut',zh:'一下，不切'},meta:en?'key-up included':'带抬键声'},{name:'key-04',o:{...keyOpts('04'),gain:.8},label:{en:'Cut before the key-up',zh:'在抬键前切掉'},meta:'50 + 30 ms'},{name:'key-30',o:{rate:.84,hp:70,gain:.9},label:{en:'The B key',zh:'B 键'},meta:en?'key-30 at 0.84×':'key-30，0.84 倍'}],
-   film:{a:5.55,b:7.5,t:'5.85 s',img:'f0384',label:{en:'The prompt, typed',zh:'打出提示词'}},extra:<KeyPad lang={lang} sound={sound}/>},
+   note:{en:'A Cherry keyboard. Each stroke is cut at 50 ms with a 30 ms fade, before the key-up sound, so fast typing doesn’t sound doubled.',zh:'Cherry 机械键盘。每一下在 50 毫秒处切断，淡出 30 毫秒，在抬键声之前结束，连续打字时不会听成两下。'},
+   plays:[{name:'key-04',o:{hp:200,lp:10000,gain:.8},label:{en:'One stroke, uncut',zh:'完整的一下'},meta:en?'key-up included':'带抬键声'},{name:'key-04',o:{...keyOpts('04'),gain:.8},label:{en:'Cut before the key-up',zh:'在抬键声前切掉'},meta:'50 + 30 ms'},{name:'key-30',o:{rate:.84,hp:70,gain:.9},label:{en:'The B key',zh:'B 键'},meta:en?'key-30 at 0.84×':'key-30，0.84 倍'}],
+   film:{a:5.55,b:7.5,t:'5.85 s',img:'f0384',label:{en:'Typing the prompt',zh:'输入提示词'}},extra:<KeyPad lang={lang} sound={sound}/>},
   {fam:'marimba',wave:'vsco-marimba-B5',files:MARIMBA.map(m=>m[0]),marks:[[.35,'✓ 0.35 s']],
-   note:{en:'A recorded marimba (VSCO 2 CE), retuned to the song’s key. A ✓ is a note; a panel appearing gets only the mallet’s strike.',zh:'马林巴录音（VSCO 2 CE），按歌的调性重新定音。✓ 是一个完整的音；面板出现只用槌子敲下去的那一下。'},
+   note:{en:'A recorded marimba (VSCO 2 CE), retuned to the song’s key. Each ✓ is a full note; a panel appearing gets only the mallet strike.',zh:'马林巴录音（VSCO 2 CE），按歌的调重新定音。每个 ✓ 是一个完整的音；面板出现时只用槌子敲击的那一下。'},
    plays:[],film:{a:34.9,b:36.3,t:'35.38 s',img:'f2139',label:{en:'✓ Build, ✓ Checks, ✓ Edge: A, B, E',zh:'✓ Build、✓ Checks、✓ Edge：A、B、E'}},extra:<MarimbaPad lang={lang} sound={sound}/>},
   {fam:'body',wave:'kenney-rpg-bookPlace3',files:['kenney-rpg-bookClose','kenney-rpg-bookPlace1','kenney-rpg-bookPlace3'],marks:[[.022,'+22 ms']],
-   note:{en:'Book foley for the box: a cover shutting for the flaps, a book set down for the touchdown, and a 250 Hz knock under the hero clicks, the band the chorus leaves free.',zh:'盒子用书本拟音：合上书封当作盒盖合上，把书放到桌上当作落地，再给几个关键点击垫一记 250 Hz 的敲击，正好是副歌空出来的频段。'},
+   note:{en:'The box sounds are books. A cover shutting plays the flaps closing, a book set down plays the touchdown, and a 250 Hz knock sits under the main clicks, in a band the chorus leaves free.',zh:'盒子的声音都来自书：合上书封是盒盖合上，书放到桌上是落地。几个主要的点击下面垫了一记 250 Hz 的敲击，这个频段副歌没有占用。'},
    plays:[{name:'kenney-rpg-bookClose',o:{hp:90,lp:9000,gain:.85},label:{en:'Flaps seal',zh:'盒盖合上'},meta:'bookClose'},{name:'kenney-rpg-bookPlace1',o:{hp:60,lp:9000,gain:.85},label:{en:'Touchdown',zh:'落地'},meta:'bookPlace1'},{name:'kenney-rpg-bookPlace3',o:{hp:120,lp:2500,gain:.9},label:{en:'Body, from first contact',zh:'敲击，从轻触开始'},meta:en?'flams 25 ms late':'晚 25 毫秒，发虚'},{name:'kenney-rpg-bookPlace3',o:{from:.022,hp:120,lp:2500,gain:.9},label:{en:'Body, from the knock',zh:'敲击，从实击开始'},meta:'from +22 ms'}],
-   film:{a:31.3,b:32.9,t:'32.24 s',img:'f1935',label:{en:'Ship: click, knock and a 2 dB dip',zh:'Ship：点击、敲击，音乐压低 2 dB'}}},
+   film:{a:31.3,b:32.9,t:'32.24 s',img:'f1935',label:{en:'Ship click, its knock and a 2 dB dip in the music',zh:'Ship 的点击和敲击，音乐压低 2 dB'}}},
   {fam:'pop',wave:'pop-ezd-3',files:['pop-ezd-3','pop-ezd-8','pop-ezd-4','kenney-drop_003'],
-   note:{en:'Only where something springs out: Mia’s pin, the reply row, the popover. Recorded mouth pops with air in them, voiced by the harmony underneath.',zh:'只用在有东西“弹出来”的地方：Mia 的评论钉、回复那一行、弹出的浮层。用的是带气声的嘴巴录音，音高跟着底下的和声走。'},
+   note:{en:'Used only where something springs out: Mia’s pin, the reply row and the popover. They are recorded mouth pops with air in them, pitched to the harmony underneath.',zh:'只用在有东西弹出来的地方：Mia 的评论钉、回复那一行和浮层。用的是带气声的嘴巴录音，音高按底下的和声来定。'},
    plays:[{name:'pop-ezd-3',o:{rate:hz(83)/1021,hp:200,lp:9000,gain:.85},label:{en:'Mia’s pin: B5',zh:'Mia 的评论钉：B5'},meta:'ezd-3 −57 ¢'},{name:'pop-ezd-8',o:{rate:hz(81)/783,hp:200,lp:9000,gain:.85},label:{en:'The popover: A5',zh:'浮层：A5'},meta:'ezd-8 +202 ¢'},{name:'pop-ezd-4',o:{hp:200,lp:9000,gain:.7},label:{en:'Dropped: near-sine',zh:'弃用：近乎正弦'},meta:'ezd-4'}],
    film:{a:17.15,b:18.2,t:'17.60 s',img:'f1057',label:{en:'Mia’s pin, on the cut into the comment',zh:'Mia 的评论钉，落在切入评论的那一刀'}}},
  ];
  return <article ref={root} className={'st-page hk-page'+(reduced?' st-still':'')} data-nav-tone="dark" style={{'--accent':'#ff5a1f'}}>
-  <Hero reduced={reduced} video={film} poster={media+'/poster.webp'} title="Hako" tagline={en?['Cut to the song,','clicked to the frame.']:['剪在歌上，','点在帧上。']}
+  <Hero reduced={reduced} video={film} poster={media+'/poster.webp'} title="Hako" tagline={en?['A 50-second film rendered from code,','cut to a song I generated.']:['一支用代码渲染的 50 秒短片，','按我生成的一首歌来剪。']}
    back={<a href="/other-project" onClick={go('/other-project')}>← Other Project</a>} kicker={en?'LAUNCH FILM · HOW IT WAS MADE':'发布短片 · 怎么做出来的'}
    meta={[[en?'FILM':'片子',en?'50 s · 1080p60 · rendered from code':'50 秒 · 1080p60 · 代码渲染'],[en?'MUSIC':'音乐',en?'Track A · 100 BPM · D major':'配乐 A · 100 BPM · D 大调'],[en?'FOLEY':'音效',en?'82 recorded cues':'82 个录音音效'],[en?'BUILT WITH':'工具','Remotion · three.js · Node']]}
    actions={<>
@@ -742,74 +742,74 @@ export default function HakoFilm({lang,reduced,onNavigate}){
 
   <div className="st-wrap">
    <section className="st-section hkt-intro" aria-label={en?'How it was made':'制作顺序'}>
-    <Statement reduced={reduced} text={en?'The music came first. The picture was bent onto its hits, and then 82 recorded sounds went onto the frames where a hand or the product acts. Nothing was shot or edited in a timeline app: every frame, cut and sound placement is code, rendered by Remotion.':'先有音乐。画面被调速，对上歌的重拍；然后 82 个录音音效落到手或产品动作的那一帧上。没有拍摄，也没有在剪辑软件里剪：每一帧、每个剪辑点、每个声音的位置都是代码，由 Remotion 渲染出来。'}/>
+    <Statement reduced={reduced} text={en?'The work went in this order: music, picture, sound. The song was cut to 50 seconds, the picture’s timing was adjusted to land on its hits, and 82 recorded sounds were placed on the frames where a hand or the product acts. The film was rendered from code with Remotion. Nothing was filmed and no editing app was used.':'工作顺序是先音乐，再画面，最后音效。歌剪成 50 秒，画面的时间调到落在歌的重拍上，82 个录音音效放在手或产品有动作的那几帧。整支片子用 Remotion 从代码渲染，没有实拍，也没用剪辑软件。'}/>
     <SignalPath lang={lang} reduced={reduced}/>
    </section>
 
    <section className="st-section" aria-labelledby="hk-music">
-    <SectionHead index={`A1 / ${en?'MUSIC':'音乐'}`} title={<Sel id="hk-music">{en?'Music first':'先有音乐'}</Sel>} lead={en?'The first score was modelled in code: piano, marimba and bass, synthesised in Node. Jay turned it down; a modelled score can’t reach a produced track. So Claude wrote prompts for an AI music generator in two directions, Jay generated the songs, and the film was cut to one of them.':'第一版配乐是用代码模拟的：钢琴、马林巴和贝斯，全在 Node 里合成。Jay 否掉了它，模拟出来的配乐到不了成品音乐的水准。于是 Claude 写了两个方向的提示词交给 AI 音乐生成器，Jay 生成了歌，片子按其中一首来剪。'}/>
+    <SectionHead index={`A1 / ${en?'MUSIC':'音乐'}`} title={<Sel id="hk-music">{en?'Choosing and editing the song':'选歌和剪歌'}</Sel>} lead={en?'The first score was synthesised in Node from modelled piano, marimba and bass. I turned it down, because a modelled score can’t reach the quality of a produced track. Claude wrote prompts for an AI music generator in two directions, I generated a song from each, and the film was cut to one of them.':'第一版配乐是在 Node 里用模拟的钢琴、马林巴和贝斯合成的。我没有用它，因为模拟出来的配乐达不到成品音乐的质量。之后 Claude 写了两个方向的提示词给 AI 音乐生成器，我各生成了一首歌，片子按其中一首来剪。'}/>
     <ol className="hkt-takes">
-     <Reveal as="li" className="is-drop"><span className="st-mono">{en?'SCORE V3.1 · CODE':'配乐 v3.1 · 代码'}</span><b>{en?'Modelled acoustic score':'模拟原声配乐'}</b><p>{en?'Piano, marimba and bass modelled in Node, −14.6 LUFS. Rejected.':'在 Node 里模拟的钢琴、马林巴和贝斯，−14.6 LUFS。被否。'}</p><em>{en?'Rejected':'被否'}</em></Reveal>
-     <Reveal as="li" className="is-pick" delay={80}><span className="st-mono">{en?'TRACK A':'配乐 A'}</span><b>“Product Launch”</b><p>{en?'100 BPM, D major, 2:53. The film was already laid out on a 100 BPM grid, so the picture barely has to move.':'100 BPM，D 大调，2 分 53 秒。片子本来就排在 100 BPM 的网格上，画面几乎不用动。'}</p><em>{en?'Chosen':'选中'}</em></Reveal>
-     <Reveal as="li" delay={160}><span className="st-mono">{en?'TRACK B':'配乐 B'}</span><b>“Brass and Claps”</b><p>{en?'About 107.5 BPM and drifting, G → E♭. Fitted too, following its tracked beats instead of a grid.':'约 107.5 BPM，速度会漂，G → E♭。也做了一版对位，跟的是逐拍追踪出来的拍点，而不是固定网格。'}</p><em>{en?'Fitted, not chosen':'做了，没选'}</em></Reveal>
+     <Reveal as="li" className="is-drop"><span className="st-mono">{en?'SCORE V3.1 · CODE':'配乐 v3.1 · 代码'}</span><b>{en?'Modelled acoustic score':'模拟原声配乐'}</b><p>{en?'Modelled piano, marimba and bass, mixed to −14.6 LUFS.':'模拟的钢琴、马林巴和贝斯，混音响度 −14.6 LUFS。'}</p><em>{en?'Rejected':'没用'}</em></Reveal>
+     <Reveal as="li" className="is-pick" delay={80}><span className="st-mono">{en?'TRACK A':'配乐 A'}</span><b>“Product Launch”</b><p>{en?'100 BPM, D major, 2:53. The film was already laid out on a 100 BPM grid, so the picture barely had to move.':'100 BPM，D 大调，2 分 53 秒。片子本来就排在 100 BPM 的网格上，画面几乎不用动。'}</p><em>{en?'Used':'用了'}</em></Reveal>
+     <Reveal as="li" delay={160}><span className="st-mono">{en?'TRACK B':'配乐 B'}</span><b>“Brass and Claps”</b><p>{en?'About 107.5 BPM with tempo drift, G → E♭. A fitted version was made too; because of the drift it follows tracked beats.':'约 107.5 BPM，速度有漂移，G → E♭。也做了一版对位；因为速度会漂，用的是逐拍追踪出来的拍点。'}</p><em>{en?'Fitted, not used':'做了，没用'}</em></Reveal>
     </ol>
     <MusicEdit {...shared}/>
    </section>
 
    <section className="st-section" aria-labelledby="hk-warp">
-    <SectionHead index={`A1 → V1 / ${en?'WARP':'变速'}`} title={<Sel id="hk-warp">{en?'Bend the picture, not the song':'弯的是画面，不是歌'}</Sel>} lead={en?'Seven moments in the picture should land on seven hits in the song. Instead of cutting the music around them, the film’s clock is bent: W(t) = t + d(t), a smooth spline through the hits that starts and ends at normal speed. The picture never runs slower than 0.93× or faster than 1.11×, and every cut is mapped back and pinned to an exact frame.':'画面里有 7 个时刻要落在歌的 7 个重拍上。不去剪音乐，而是把片子的时钟掰弯：W(t) = t + d(t)，一条穿过这些重拍的平滑样条，开头和结尾都是正常速度。画面最慢 0.93 倍、最快 1.11 倍，每个剪辑点都映射回来，钉在整帧上。'}/>
+    <SectionHead index={`A1 → V1 / ${en?'WARP':'变速'}`} title={<Sel id="hk-warp">{en?'Fitting the picture to the song':'画面卡点'}</Sel>} lead={en?'Seven picture events had to land on seven hits in the song. The film’s timing is adjusted with W(t) = t + d(t), where d is a smooth spline through the hits that starts and ends at normal speed. Playback speed stays between 0.93× and 1.11×, and every cut is mapped back and pinned to an exact frame.':'画面里有 7 个事件要落在歌的 7 个重拍上。做法是调整画面的时间，W(t) = t + d(t)，d 是一条穿过这些重拍的平滑样条，开头和结尾都是正常速度。播放速度保持在 0.93× 到 1.11× 之间，每个剪辑点都映射回来，固定在整帧上。'}/>
     <Reveal><WarpPanel lang={lang} reduced={reduced} sound={sound} hearing={hearing}/></Reveal>
     <Reveal className="hkt-callout">
-     <span className="st-mono">{en?'FIRST FIT · “FIX FIRST”':'第一版对位 · “先修再说”'}</span>
-     <p>{en?'The first warp was checked from the delivered mp4: A/V offset 0 ms, the joins inaudible, five anchored hits within a few milliseconds of the beat. One action was off. The Ship click, the film’s title action, landed 52–60 ms (about 3.6 frames) after the beat: track A has no hit there, so nothing pulled it. The fix was one more anchor, beat 2 of the chorus ↔ the Ship click, and the select click set 20 ms ahead of the downbeat so the warp doesn’t have to surge between the two.':'第一版变速是从交付的 mp4 里检查的：音画偏移 0 毫秒，接口听不出来，五个锚定的重拍都只差几毫秒。只有一个动作不在拍上。Ship 的点击，也就是全片的标题动作，比拍子晚了 52–60 毫秒（约 3.6 帧）：配乐 A 在那里没有重拍，没有东西把它拉过去。修法是再加一个锚点：副歌第 2 拍 ↔ Ship 的点击；同时把选中的点击放在重拍前 20 毫秒，这样两者之间变速不用突然加快。'}</p>
+     <span className="st-mono">{en?'FIRST FIT':'第一版对位'}</span>
+     <p>{en?'The first warp was checked on the delivered mp4. The A/V offset was 0 ms, the joins were inaudible and five anchored hits were within a few milliseconds of the beat. The check still marked it “fix first”, because the Ship click, the film’s title action, landed 52–60 ms (about 3.6 frames) after the beat; track A has no hit there to anchor it. The fix added one more anchor, beat 2 of the chorus to the Ship click, and moved the select click 20 ms ahead of the downbeat so the warp doesn’t have to speed up sharply between the two.':'第一版变速在交付的 mp4 上检查过。音画偏移 0 毫秒，接口听不出来，五个锚定的重拍都只差几毫秒。检查结论仍然是“先修”，因为 Ship 的点击（全片的标题动作）比拍子晚了 52–60 毫秒，约 3.6 帧；配乐 A 在那里没有重拍可以锚定。修改是再加一个锚点，把副歌第 2 拍对到 Ship 的点击，并把选中的点击放到重拍前 20 毫秒，这样两者之间的变速不会突然加快。'}</p>
     </Reveal>
    </section>
 
    <section className="st-section" aria-labelledby="hk-pic">
-    <SectionHead index={`V1 / ${en?'PICTURE':'画面'}`} title={<Sel id="hk-pic">{en?'Picture that keeps time':'守拍的画面'}</Sel>} lead={en?'A sound can only land on a frame if the picture holds still enough to see it land. Four rules the picture follows, each found by measuring a render, not by eye.':'声音要落在某一帧上，画面得稳到让人看清它落下。下面是画面遵守的四条规矩，每一条都是量渲染结果量出来的，不是凭眼睛。'}/>
+    <SectionHead index={`V1 / ${en?'PICTURE':'画面'}`} title={<Sel id="hk-pic">{en?'Four picture rules':'画面的四条规则'}</Sel>} lead={en?'These rules keep the picture steady enough for a sound to read as landing on a frame. Each one was found by measuring renders.':'这四条规则让画面足够稳，声音落在哪一帧才看得出来。每一条都是在测量渲染结果时发现的。'}/>
     <ol className="hkt-rules">
      <Reveal as="li" className="hkt-rule is-wide">
-      <div className="hkt-rule-text"><span className="hkt-rule-n">01</span><h3>{en?'Cuts sit on exact frames, on the grid':'剪辑点落在整帧上，也落在网格上'}</h3>
-       <p>{en?'Each output frame is the average of 8 renders spread over the first half of the frame, a 180° shutter, blended in Node. A cut between frames would mix two shots inside one frame. So every cut, and both 3D↔2D swaps of the mark, is pinned to a frame, and three cuts sit on the 100 BPM grid: frames 27, 351 and 783 (0.45, 5.85 and 13.05 s), 18 frames to an eighth note.':'每一个输出帧都是 8 次渲染的平均，这 8 次分布在这一帧的前半段，相当于 180° 快门，在 Node 里混合。如果剪辑点落在两帧之间，一帧里就会混进两个镜头。所以每个剪辑点、标志的两次 3D↔2D 切换都钉在整帧上；其中三个剪辑点还落在 100 BPM 的网格上：第 27、351、783 帧（0.45、5.85、13.05 秒），每个八分音符 18 帧。'}</p></div>
+      <div className="hkt-rule-text"><span className="hkt-rule-n">01</span><h3>{en?'Cuts on whole frames and on the beat grid':'剪辑点对齐整帧和节拍网格'}</h3>
+       <p>{en?'Each output frame is the average of 8 renders spread over the first half of the frame (a 180° shutter), blended in Node. A cut between frames would mix two shots inside one frame, so every cut and both 3D↔2D swaps of the mark are pinned to frames. Three cuts also sit on the 100 BPM grid, at frames 27, 351 and 783 (0.45, 5.85 and 13.05 s). An eighth note is 18 frames.':'每个输出帧是 8 次渲染的平均，这 8 次分布在这一帧的前半段（相当于 180° 快门），在 Node 里混合。剪辑点如果落在两帧之间，一帧里就会混进两个镜头，所以每个剪辑点和标志的两次 3D↔2D 切换都固定在整帧上。其中三个剪辑点还在 100 BPM 的网格上，分别是第 27、351、783 帧（0.45、5.85、13.05 秒）。一个八分音符是 18 帧。'}</p></div>
       <Shutter lang={lang}/>
      </Reveal>
      <Reveal as="li" className="hkt-rule is-wide">
-      <div className="hkt-rule-text"><span className="hkt-rule-n">02</span><h3>{en?'Inside a shot, the camera never stops':'镜头内部，摄影机从不停下'}</h3>
-       <p>{en?'Camera keys are passed through, not stopped at: a quintic spline, continuous in position, speed and acceleration. But beside a steep step, the speed and acceleration the curve carries into a key can push it past the key and back, and a camera that reverses for a moment reads as a hitch. track() clamps the tangents (Fritsch–Carlson), then trims the accelerations until every segment runs one way. A key where every axis turns at once parks the camera too, so the axes take turns.':'关键帧是“穿过去”的，不是停在上面：一条五次样条，位置、速度、加速度都连续。可是紧挨着一段陡坡时，曲线带进关键帧的速度和加速度会把它推过头再折回来；摄影机哪怕只倒退一瞬间，看起来也是卡了一下。track() 先夹住斜率（Fritsch–Carlson），再一点点收小加速度，直到每一段都只朝一个方向走。所有轴在同一个关键帧上一起转向也会让镜头停住，所以各轴轮流转。'}</p></div>
+      <div className="hkt-rule-text"><span className="hkt-rule-n">02</span><h3>{en?'Camera speed between keyframes':'关键帧之间的镜头速度'}</h3>
+       <p>{en?'The camera passes through its keys without stopping. Between keys it follows a quintic spline, continuous in position, speed and acceleration. Next to a steep step, the speed and acceleration carried into a key can push the curve past the key and back, and even a brief reverse reads as a hitch. track() clamps the tangents (Fritsch–Carlson), then trims the accelerations until every segment moves in one direction. A key where every axis turns at once also stops the camera, so the axes turn at different keys.':'镜头经过关键帧时不停。关键帧之间走的是五次样条，位置、速度和加速度都连续。如果旁边有一段很陡的变化，带进关键帧的速度和加速度会让曲线冲过关键帧再折回来，哪怕只倒退一瞬间，也会看出顿了一下。track() 先用 Fritsch–Carlson 方法限制斜率，再逐步减小加速度，直到每一段都只朝一个方向走。所有轴在同一个关键帧上同时转向，也会让镜头停住，所以各轴在不同的关键帧上转向。'}</p></div>
       <SplineDemo lang={lang} reduced={reduced}/>
      </Reveal>
      <Reveal as="li" className="hkt-rule">
-      <div className="hkt-rule-text"><span className="hkt-rule-n">03</span><h3>{en?'Screen speed stays in budget':'画面速度不超预算'}</h3>
-       <p>{en?'The research set a budget of about 20 px a frame unblurred, 60 at most. camspeed.ts measures every frame; where it runs over, it stays well under 60, with motion blur on every frame.':'前期研究定的预算是：不加模糊时每帧约 20 像素，最多 60。camspeed.ts 每一帧都量；超出的地方也远低于 60，而且每一帧都有运动模糊。'}</p></div>
+      <div className="hkt-rule-text"><span className="hkt-rule-n">03</span><h3>{en?'Screen speed per frame':'每帧的画面速度'}</h3>
+       <p>{en?'The research budget was about 20 px per frame without blur, with a cap of 60. camspeed.ts measures every frame. Where the camera goes over 20, it stays well under 60, and every frame has motion blur.':'前期研究定的预算是不加模糊时每帧约 20 像素，上限 60。camspeed.ts 每一帧都测。超过 20 的地方也远低于 60，而且每一帧都有运动模糊。'}</p></div>
       <SpeedChart lang={lang}/>
      </Reveal>
      <Reveal as="li" className="hkt-rule">
-      <div className="hkt-rule-text"><span className="hkt-rule-n">04</span><h3>{en?'Type holds still':'字要稳'}</h3>
-       <p>{en?'Two traps. 2D text eased with translateY is snapped to whole pixels in Chrome, so at the end of an ease it moves 1 px, then 0, then 1: a judder. translate3d with will-change keeps the sub-pixel position. And headlines placed in the 3D scene sheared under the tilted camera (the H leaned 8° and read as italic), so they are billboarded: they move with the world but always face the lens.':'两个坑。2D 文字用 translateY 做缓动，Chrome 会把位置取整到像素，缓动快结束时就变成动 1 像素、停、再动 1 像素：抖。translate3d 加 will-change 保住亚像素位置。另外，放进 3D 场景里的标题被倾斜的镜头拉歪（H 歪了 8°，像斜体），所以都改成始终朝向镜头：跟着场景动，但永远正对镜头。'}</p></div>
+      <div className="hkt-rule-text"><span className="hkt-rule-n">04</span><h3>{en?'Text motion and pixel snapping':'文字运动和像素取整'}</h3>
+       <p>{en?'In Chrome, 2D text eased with translateY snaps to whole pixels, so near the end of an ease it moves 1 px, then 0, then 1, which judders. translate3d with will-change keeps the sub-pixel position. Headlines placed in the 3D scene sheared under the tilted camera; the H leaned 8° and read as italic. They are now billboarded, so they move with the world and always face the lens.':'在 Chrome 里，2D 文字用 translateY 做缓动会被取整到整像素，缓动快结束时就成了动 1 像素、停一帧、再动 1 像素，看起来在抖。translate3d 加 will-change 能保留亚像素位置。放进 3D 场景的标题在倾斜的镜头下会变形，H 歪了 8°，像斜体。现在这些标题始终朝向镜头，跟着场景移动，但一直正对镜头。'}</p></div>
       <SnapChart lang={lang}/>
      </Reveal>
     </ol>
    </section>
 
    <section className="st-section" aria-labelledby="hk-foley">
-    <SectionHead index={`A2 / ${en?'FOLEY':'音效'}`} title={<Sel id="hk-foley">{en?'82 recorded sounds':'82 个录音音效'}</Sel>} lead={en?'Only what a hand or the product does makes a sound: no whooshes, no risers, and the headlines rise in silence. Every hit is a CC0 recording placed on the first frame that shows its action, set against the music in the band it speaks in, and tuned to the song’s key where it has a pitch. Press anything below to hear it.':'只有手和产品的动作才出声：没有呼啸声，没有上升音效，标题出现时是安静的。每一下都是 CC0 授权的录音，放在第一次看到这个动作的那一帧，按它所在的频段和音乐比着调音量，有音高的就调到歌的调上。下面每个按钮都可以点开听。'}/>
+    <SectionHead index={`A2 / ${en?'FOLEY':'音效'}`} title={<Sel id="hk-foley">{en?'UI foley: 82 recorded sounds':'界面音效：82 个录音'}</Sel>} lead={en?'Sounds are limited to what a hand or the product does. There are no whooshes or risers, and the headlines come in without sound. Each hit is a CC0 recording placed on the first frame that shows its action. Its level is set against the music in the hit’s own frequency band, and pitched hits are tuned to the song’s key. Every button below plays a sound.':'只有手和产品的动作才有声音，没有呼啸声和上升音效，标题出现时也没有声音。每个声音都是 CC0 授权的录音，放在第一次看到对应动作的那一帧；音量按它所在的频段和音乐比较来定，有音高的声音调到歌的调上。下面的按钮都可以点开听。'}/>
     <WhyRecorded lang={lang} sound={sound}/>
     <ul className="hkt-strips">{FOLEY.map(s=><Strip key={s.fam} {...s} {...shared}/>)}</ul>
-    <h3 className="hkt-sub">{en?'What the reviews caught':'评审抓到的问题'}</h3>
+    <h3 className="hkt-sub">{en?'Bugs found in review':'评审中发现的问题'}</h3>
     <BugLog {...shared}/>
    </section>
 
    <section className="st-section hk-film-section" aria-labelledby="hk-beats">
-    <SectionHead index={`V1 · A2 / ${en?'TEN BEATS':'十个段落'}`} title={<Sel id="hk-beats">{en?'How each beat was built':'每一段是怎么做的'}</Sel>} lead={en?'Keep scrolling and the ten beats run sideways: what the camera does, the technique behind it, and the sounds you hear in it. Click a still to play the film from there.':'继续往下滚，十个段落会横着走一遍：镜头怎么动、背后用了什么办法、这一段里能听到哪些声音。点任意一张画面，就从那里开始播放。'}/>
+    <SectionHead index={`V1 · A2 / ${en?'TEN BEATS':'十个段落'}`} title={<Sel id="hk-beats">{en?'How each beat was built':'每一段的做法'}</Sel>} lead={en?'Scrolling moves through the ten beats. Each card lists the camera move, how the beat was made and the sounds in it. Click a still to play the film from that point.':'往下滚动会依次经过十个段落。每张卡片写了镜头运动、这一段的做法和其中的声音。点画面可以从那里开始播放。'}/>
     <Reel lang={lang} reduced={reduced} onPlay={jump}/>
    </section>
 
    <section className="st-section" aria-labelledby="hk-cut">
-    <SectionHead index={`TL / ${en?'THE MIX':'混音'}`} title={<Sel id="hk-cut">{en?'All tracks on one timeline':'所有轨道，一条时间线'}</Sel>} lead={en?'The final cut with its picture, music and foley, all on the 100 BPM grid. Under the foley the music sits 0.6 dB down and is touched only by four short dips of 1–2 dB, under Ship, Live, the marquee and the lockup; a limiter works on the foley alone. −15.87 LUFS. Click or drag the timeline to jump.':'成片的画面、音乐和音效，全部对在 100 BPM 的节拍网格上。音效底下的音乐整体低 0.6 dB，只在 Ship、Live、大框选和收尾标志四处被短暂压低 1–2 dB；限幅器只作用在音效上。整体响度 −15.87 LUFS。点击或拖动时间线可以跳转。'}/>
+    <SectionHead index={`TL / ${en?'THE MIX':'混音'}`} title={<Sel id="hk-cut">{en?'The final mix on its timeline':'成片时间线'}</Sel>} lead={en?'The final cut with its picture, music and foley lanes on the 100 BPM grid. Under the foley the music is 0.6 dB lower overall, with four short dips of 1–2 dB under Ship, Live, the marquee and the lockup. The limiter runs on the foley only. The file measures −15.87 LUFS. Click or drag the timeline to jump.':'成片的画面、音乐和音效轨，都对在 100 BPM 的节拍网格上。音效底下的音乐整体低 0.6 dB，在 Ship、Live、大框选和收尾标志四处再短暂压低 1–2 dB。限幅器只作用在音效上。成片响度 −15.87 LUFS。点击或拖动时间线可以跳转。'}/>
     <Reveal>
     <div className="hk-desk">
      <div className="hk-bar"><span className="hk-dots" aria-hidden="true"><i/><i/><i/></span><b>hako-a-sfx.mp4</b><span className="hk-bar-meta">1920 × 1080 · 60 FPS · {en?'TRACK A + FOLEY':'配乐 A + 音效'}</span><span ref={tc} className="hk-tc" aria-hidden="true">00:00:00:00</span></div>
-     <video ref={video} controls playsInline preload="metadata" poster={media+'/poster.webp'} aria-label={en?'Hako — SaaS launch film':'Hako SaaS 发布短片'} onPlay={syncMusic} onPause={syncMusic} onEnded={syncMusic} onError={()=>{setFailed(true);syncMusic();}}>
+     <video ref={video} controls playsInline preload="metadata" poster={media+'/poster.webp'} aria-label={en?'Hako SaaS launch film':'Hako SaaS 发布短片'} onPlay={syncMusic} onPause={syncMusic} onEnded={syncMusic} onError={()=>{setFailed(true);syncMusic();}}>
       <source src={film} type="video/mp4"/>
       <a href={film}>{en?'Open video':'打开视频'}</a>
      </video>
@@ -850,7 +850,7 @@ export default function HakoFilm({lang,reduced,onNavigate}){
    </section>
 
    <section className="st-section" aria-labelledby="hk-qc">
-    <SectionHead index={`QC / ${en?'CHECKS':'检查'}`} title={<Sel id="hk-qc">{en?'Measured, then fixed':'先量，再修'}</Sel>} lead={en?'Three rounds of independent review on the picture and five on the foley. Each finding was checked by a sceptical second pass before it was fixed, usually with a probe run on the real code or the render.':'画面做了三轮独立评审，音效做了五轮。每条问题修之前都要经过一轮挑刺式的复核，通常是用探针在真实代码或渲染结果上跑一遍。'}/>
+    <SectionHead index={`QC / ${en?'CHECKS':'检查'}`} title={<Sel id="hk-qc">{en?'Review notes':'评审记录'}</Sel>} lead={en?'The picture had three rounds of independent review and the foley five. Before a finding was fixed, another reviewer tried to disprove it, usually with a probe on the film’s code or the render.':'画面做了三轮独立评审，音效做了五轮。每条问题在修之前，都由另一位评审尝试推翻，通常是在片子的代码或渲染结果上跑探针。'}/>
     <Reveal as="figure" className="st-chart">
      <svg viewBox="0 0 600 100" preserveAspectRatio="none" role="img" aria-label={en?'Frame-to-frame picture change across the 50-second film':'50 秒成片逐帧的画面变化量'}>
       {SHOTS.slice(1,-1).map(s=><line key={s} x1={s*12} x2={s*12} y1="0" y2="100"/>)}
@@ -862,7 +862,7 @@ export default function HakoFilm({lang,reduced,onNavigate}){
    </section>
 
    <NextProject item={nextAfter('hako')} lang={lang} onNavigate={onNavigate}/>
-   <footer className="st-footer"><span>JAY LIN / HAKO</span><p>{en?'Cut to the song, clicked to the frame.':'剪在歌上，点在帧上。'}</p></footer>
+   <footer className="st-footer"><span>JAY LIN / HAKO</span><p>{en?'Hako launch film, 50 s':'Hako 发布短片，50 秒'}</p></footer>
   </div>
  </article>;
 }
