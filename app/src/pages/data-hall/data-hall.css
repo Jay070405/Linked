@@ -1,0 +1,141 @@
+/* Data Hall — every class here starts with dh- so nothing reaches other pages inside the site */
+.dh{--dh-paper:#fafbfc;--dh-ink:#111114;--dh-muted:#62646b;--dh-petal:#dea6bb;background:var(--dh-paper);color:var(--dh-ink)}
+.dh-film{position:relative}
+.dh-stage{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden}
+.dh-canvas,.dh-fallback{position:absolute;inset:0;width:100%;height:100%;display:block}
+.dh-fallback{object-fit:cover}
+.dh-head{transition:none;position:absolute;left:clamp(16px,4vw,56px);top:clamp(92px,13vh,128px);pointer-events:none;display:flex;flex-direction:column;gap:6px}
+.dh-head span{font:500 11px/1 Mono,ui-monospace,monospace;letter-spacing:.14em;color:var(--dh-muted)}
+.dh-head h1{margin:0;font:600 clamp(28px,3.2vw,44px)/1 Geist,'TikTok Sans','PingFang SC',sans-serif;letter-spacing:-.02em}
+.dh-captions{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(40px,8vh,84px);width:min(430px,calc(100% - 32px));pointer-events:none}
+.dh-caption{position:absolute;left:0;bottom:0;width:100%;box-sizing:border-box;padding:16px 18px 17px;border-radius:14px;background:#fafbfcf5;box-shadow:0 0 0 1px #1111140f;will-change:opacity,transform}
+.dh-caption{opacity:0;visibility:hidden;transform:translate3d(0,10px,0);transition:opacity .2s ease,transform .2s ease,visibility 0s linear .2s}
+.dh-caption.is-on{opacity:1;visibility:visible;transform:none;transition:opacity .34s ease .14s,transform .34s cubic-bezier(.2,.8,.2,1) .14s,visibility 0s}
+@media (prefers-reduced-motion:reduce){.dh-caption,.dh-caption.is-on{transition:none}}
+.dh-caption h2{color:var(--dh-ink);margin:0 0 8px;font:600 clamp(19px,1.7vw,23px)/1.2 Geist,'TikTok Sans','PingFang SC',sans-serif;letter-spacing:-.01em}
+.dh-caption p{margin:0;font:400 15px/1.55 'TikTok Sans','PingFang SC','Microsoft YaHei',sans-serif;color:var(--dh-muted);text-wrap:pretty}
+.dh-film.is-static .dh-stage{position:relative;height:auto;overflow:visible;padding:clamp(120px,16vh,160px) clamp(16px,4vw,56px) 40px}
+.dh-film.is-static .dh-fallback{position:relative;inset:auto;height:auto;aspect-ratio:1274/1080;max-width:720px;border-radius:12px}
+.dh-film.is-static .dh-head{position:relative;inset:auto;margin-bottom:28px}
+.dh-film.is-static .dh-captions{position:relative;inset:auto;width:auto;max-width:720px;margin-top:28px;display:grid;gap:12px}
+.dh-film.is-static .dh-caption{position:relative}
+.dh-film.is-static .dh-progress{display:none}
+.dh-progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:#11111410}
+.dh-progress i{display:block;height:100%;background:var(--dh-ink);transform:scaleX(0);transform-origin:0 50%}
+.dh-progress b{position:absolute;bottom:0;width:1px;height:6px;background:currentColor;opacity:.45}
+/* a soft band under the site navigation so it stays legible over bright or busy frames */
+.dh-stage::before{content:'';position:absolute;inset:0 0 auto;height:130px;z-index:1;pointer-events:none;background:linear-gradient(#fafbfcd0,#fafbfc00)}
+.dh-stage.is-dark::before{background:linear-gradient(#0c0d0fcc,#0c0d0f00)}
+/* while the film is on screen the Back button sits under the navigation, clear of the sheet's title block */
+body.dh-film-on .portfolio-return{top:108px;bottom:auto}
+@media(max-width:650px){body.dh-film-on .portfolio-return{top:106px;bottom:auto}}
+/* over the film the navigation is a solid bar in either tone and swaps at once, so it never fades through grey */
+/* (no background blur over the film: under a near-opaque bar it can't be seen, and it would be redone every frame) */
+body.dh-page .v16-navigation:not(.is-menu-open)[data-tone=dark]{background:#0c0d0ff5;border-bottom:1px solid #ffffff0d}
+body.dh-film-on .v16-navigation:not(.is-menu-open){backdrop-filter:none;-webkit-backdrop-filter:none}
+body.dh-page .v16-navigation :is(.v16-wordmark,.v16-primary-nav a,.v16-language,.v16-language button){transition:none}
+/* while the film sets the bar's tone itself, the closed menu button follows the bar's ink too (its colour is otherwise set
+   inline, from the navigation's own tone) */
+body.nav-tone-owned .v16-navigation:not(.is-menu-open) .sm-toggle{color:var(--nav-ink)!important}
+.dh-head,.dh-captions,.dh-progress{z-index:2}
+.dh-stage.is-dark{color:#f2f3f5}
+.dh-stage.is-dark .dh-caption{background:#0d0e10f5;box-shadow:0 0 0 1px #ffffff14}
+.dh-stage.is-dark .dh-caption h2{color:#f2f3f5}
+.dh-stage.is-dark .dh-caption p,.dh-stage.is-dark .dh-head span{color:#a6a9b0}
+.dh-stage.is-dark .dh-progress{background:#ffffff1a}
+.dh-stage.is-dark .dh-progress i{background:#f2f3f5}
+@media(max-width:700px){
+  .dh-caption p{font-size:14px}
+  /* low on a phone, so the opening caption clears the sheet's title block */
+  .dh-captions{bottom:calc(28px + env(safe-area-inset-bottom))}
+  .dh-caption{padding:13px 15px 14px}
+}
+
+/* how it was made */
+.dh-making{position:relative;z-index:1;background:var(--dh-paper);padding:clamp(80px,12vh,140px) clamp(16px,5vw,72px) 72px;border-top:1px solid #1111141a}
+.dh-m-head{max-width:760px;margin:0 0 clamp(56px,9vh,96px)}
+.dh-m-head span,.dh-m-text>span{font:500 11px/1 Mono,ui-monospace,monospace;letter-spacing:.14em;color:var(--dh-muted)}
+.dh-m-head h2{margin:14px 0 18px;font:600 clamp(30px,3.6vw,50px)/1.08 Geist,'TikTok Sans','PingFang SC',sans-serif;letter-spacing:-.025em}
+.dh-m-head p,.dh-m-text p{margin:0 0 12px;font:400 16px/1.65 'TikTok Sans','PingFang SC','Microsoft YaHei',sans-serif;color:#3a3b40;text-wrap:pretty}
+.dh-m-block{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,80px);padding:clamp(40px,7vh,72px) 0;border-top:1px solid #11111414}
+.dh-m-block.is-wide{grid-template-columns:minmax(0,4fr) minmax(0,8fr)}
+.dh-m-text h3{margin:12px 0 16px;font:600 clamp(21px,2vw,27px)/1.2 Geist,'TikTok Sans','PingFang SC',sans-serif;letter-spacing:-.015em}
+.dh-m-figure{min-width:0;display:flex;flex-direction:column;gap:18px}
+.dh-m-code{margin:0;padding:18px 20px;border-radius:12px;background:#f0f1f3;font:500 13px/1.75 Mono,ui-monospace,monospace;color:var(--dh-ink);overflow-x:auto;white-space:pre}
+.dh-m-code b{font-weight:600}.dh-m-code i{font-family:inherit;font-style:normal;color:#8a8c93}
+.dh-m-code.is-small{font-size:12px;line-height:1.7}
+.dh-m-counts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:0}
+.dh-m-counts div{padding:16px 16px 14px;border-radius:12px;box-shadow:inset 0 0 0 1px #11111417}
+.dh-m-counts dt{font:600 clamp(24px,2.4vw,32px)/1 Geist,sans-serif;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.dh-m-counts dd{margin:8px 0 0;font:500 12px/1.4 'TikTok Sans','PingFang SC',sans-serif;color:var(--dh-muted)}
+.dh-m-gantt,.dh-m-chart,.dh-m-aisle{width:100%;height:auto;display:block;overflow:visible}
+.dh-m-aisle{overflow:hidden;border:1px solid #11111418;border-radius:10px;background:#fff}
+.dh-m-gantt line{stroke:#11111414}.dh-m-gantt text{font:500 11px Mono,'PingFang SC',monospace;fill:#55575d}
+.dh-m-bar{cursor:pointer;outline:none}.dh-m-bar rect{fill:#111114;transition:fill .2s}
+.dh-m-bar:hover rect,.dh-m-bar:focus-visible rect{fill:var(--dh-petal)}
+.dh-m-bar:focus-visible text{fill:#111114;text-decoration:underline}
+.dh-m-aisle rect{stroke:#111114;stroke-width:1}
+.dh-m-aisle text{font:600 10px Mono,monospace;letter-spacing:.12em;fill:#8a8c93}
+.dh-m-soft{fill:none;stroke:#11111430;stroke-dasharray:4 5}
+.dh-m-ring{fill:#dea6bb26;stroke:var(--dh-petal);stroke-width:1.5}
+.dh-m-cam{fill:var(--dh-petal);stroke:#111114;stroke-width:1.5}
+.dh-m-slider{display:flex;flex-direction:column;gap:10px;font:500 12px/1 Mono,'PingFang SC',monospace;color:var(--dh-muted)}
+.dh-m-slider input{width:100%;accent-color:#111114}
+.dh-m-chart rect{fill:#11111406}.dh-m-chart .is-odd rect{fill:#11111412}
+.dh-m-chart text{font:500 8.5px Mono,'PingFang SC',monospace;fill:#6b6d73;text-anchor:middle}
+.dh-m-chart path{fill:none;stroke:#111114;stroke-width:1.6;stroke-linejoin:round}
+.dh-m-cut{stroke:var(--dh-petal);stroke-width:2;stroke-dasharray:3 3}
+/* the formula under the reveal diagram's slider */
+.dh-m-slider small{display:block;margin-top:6px;font:400 12px/1.5 'TikTok Sans','PingFang SC',sans-serif;color:var(--dh-muted)}
+/* a rack still in plaster, in the reveal diagram */
+.dh-m-aisle .dh-m-plaster{fill:none;stroke:#11111433;stroke-width:1}
+.dh-m-table{width:100%;border-collapse:collapse;font:500 13px/1.4 'TikTok Sans','PingFang SC',sans-serif;font-variant-numeric:tabular-nums}
+.dh-m-table th{text-align:left;font:500 11px/1.4 Mono,'PingFang SC',monospace;letter-spacing:.06em;color:var(--dh-muted);padding:0 0 8px}
+.dh-m-table td{padding:7px 0;border-top:1px solid #11111412}
+/* the camera chart's axis note */
+.dh-m-chart .dh-m-axis{font:500 10px/1 Mono,'PingFang SC',monospace;letter-spacing:.04em;fill:var(--dh-muted)}
+/* the reviews' findings, before and after */
+.dh-m-findings{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.dh-m-findings li{border:1px solid #11111414;border-radius:12px;padding:14px 16px;background:#fff}
+.dh-m-findings p{margin:0 0 10px;font:500 14px/1.45 'TikTok Sans','PingFang SC',sans-serif;color:var(--dh-ink)}
+.dh-m-findings dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dh-m-findings dt{font:500 10px/1.4 Mono,'PingFang SC',monospace;letter-spacing:.08em;color:var(--dh-muted);text-transform:uppercase}
+.dh-m-findings dd{margin:2px 0 0;font:400 13px/1.45 'TikTok Sans','PingFang SC',sans-serif;color:var(--dh-ink)}
+.dh-m-findings span{display:block;margin-top:8px;font:500 10px/1.4 Mono,'PingFang SC',monospace;letter-spacing:.06em;color:var(--dh-muted)}
+/* the page's Back button steps aside over the making-of (the navigation still leads back) */
+body.dh-making-on .portfolio-return{opacity:0;pointer-events:none;transition:opacity .2s ease}
+/* the scripted runs' definitions, folded */
+.dh-m-more{margin:0 0 12px}
+.dh-m-more summary{cursor:pointer;font:500 12px/1.6 Mono,'PingFang SC',monospace;letter-spacing:.04em;color:var(--dh-muted)}
+.dh-m-more[open] summary{margin-bottom:6px}
+/* the scripted-runs table keeps its columns and scrolls sideways on a narrow screen */
+.dh-m-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:0 2px}
+.dh-m-scroll:focus-visible{outline:2px solid var(--dh-ink);outline-offset:2px}
+/* (the set-up's name wraps, the figures don't; on a narrow screen the table scrolls, with a fade at the edge as the cue) */
+.dh-m-wide{min-width:660px;font-size:12px}
+.dh-m-wide :is(th,td){padding-right:10px;white-space:nowrap}
+.dh-m-wide :is(th,td):first-child{white-space:normal;min-width:120px}
+.dh-m-scroll{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
+@media(min-width:1200px){.dh-m-scroll{-webkit-mask-image:none;mask-image:none}}
+.dh-m-note{margin:0;font:400 14px/1.6 'TikTok Sans','PingFang SC',sans-serif;color:var(--dh-muted)}
+.dh-m-sources{list-style:none;margin:0;padding:0;counter-reset:s}
+.dh-m-sources li{display:grid;grid-template-columns:28px 1fr;gap:0 10px;padding:12px 0;border-top:1px solid #11111412;counter-increment:s}
+.dh-m-sources li::before{content:counter(s,decimal-leading-zero);grid-row:span 2;font:500 11px/1.6 Mono,monospace;color:var(--dh-muted)}
+.dh-m-sources p{margin:0;font:500 15px/1.5 'TikTok Sans','PingFang SC',sans-serif}
+.dh-m-sources span{display:flex;flex-wrap:wrap;gap:4px 14px;font:400 12px/1.6 Mono,'PingFang SC',monospace;color:var(--dh-muted)}
+.dh-m-sources a{color:inherit;text-decoration:underline;text-decoration-color:#62646b55;text-underline-offset:3px}
+.dh-m-sources a:hover{color:var(--dh-ink)}
+.dh-m-reviews{list-style:none;margin:0;padding:0}
+.dh-m-reviews>li{padding:14px 0;border-top:1px solid #11111412}
+.dh-m-reviews summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;font:600 14px/1.4 Geist,'PingFang SC',sans-serif}
+.dh-m-reviews summary::-webkit-details-marker{display:none}
+.dh-m-reviews summary b::before{content:'+';display:inline-block;width:16px;font-weight:400;color:var(--dh-muted)}
+.dh-m-reviews details[open] summary b::before{content:'−'}
+.dh-m-reviews summary span{font:500 12px/1.4 Mono,monospace;color:var(--dh-muted)}
+.dh-m-sub{margin:28px 0 6px;font:600 15px/1.4 Geist,'PingFang SC',sans-serif;color:var(--dh-ink)}
+.dh-m-choices{margin:0;padding-left:18px;font:400 14px/1.6 'TikTok Sans','PingFang SC',sans-serif;color:#3a3b40}
+.dh-m-choices li{padding:4px 0}
+.dh-m-reviews ul{margin:8px 0 0;padding-left:18px;font:400 14px/1.6 'TikTok Sans','PingFang SC',sans-serif;color:#3a3b40}
+.dh-m-foot{display:flex;justify-content:space-between;padding-top:40px;border-top:1px solid #11111414;font:500 12px/1 Mono,monospace;letter-spacing:.08em;color:var(--dh-muted)}
+.dh-m-foot a{color:var(--dh-ink);text-decoration:none}
+@media(max-width:860px){.dh-m-block,.dh-m-block.is-wide{grid-template-columns:1fr}}

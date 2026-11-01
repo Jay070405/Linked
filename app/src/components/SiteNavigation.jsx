@@ -15,20 +15,24 @@ function useNavigationTone(tone) {
   useEffect(() => {
     if (tone !== 'auto') return;
     let frame = 0;
+    // the tone is also written to the bar itself, so it is right when a page that set the bar's tone directly hands back
+    const apply = value => { setDetected(value); const bar = document.querySelector('.v16-navigation'); if (bar && bar.dataset.tone !== value) bar.dataset.tone = value; };
     const sample = () => {
       frame = 0;
+      // (a page that sets the tone itself, on the bar, while it is on screen: body.nav-tone-owned)
+      if (document.body.classList.contains('nav-tone-owned')) return;
       const declared = document.body.dataset.navTone;
-      if (declared === 'light' || declared === 'dark') { setDetected(declared); return; }
+      if (declared === 'light' || declared === 'dark') { apply(declared); return; }
       const scene = document.elementsFromPoint(innerWidth * .5, Math.min(96, innerHeight * .15)).find(el => !el.closest('.v16-navigation,.studio-loading'));
       const tagged = scene?.closest('[data-nav-tone]')?.dataset.navTone;
-      if (tagged === 'light' || tagged === 'dark') { setDetected(tagged); return; }
+      if (tagged === 'light' || tagged === 'dark') { apply(tagged); return; }
       let node = scene;
       while (node && node !== document.documentElement) {
         const rgb = getComputedStyle(node).backgroundColor.match(/[\d.]+/g)?.map(Number);
-        if (rgb?.length >= 3 && (rgb[3] ?? 1) > .8) { setDetected(rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722 > 170 ? 'light' : 'dark'); return; }
+        if (rgb?.length >= 3 && (rgb[3] ?? 1) > .8) { apply(rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722 > 170 ? 'light' : 'dark'); return; }
         node = node.parentElement;
       }
-      setDetected('dark');
+      apply('dark');
     };
     const queue = () => { if (!frame) frame = requestAnimationFrame(sample); };
     const observer = new MutationObserver(queue);

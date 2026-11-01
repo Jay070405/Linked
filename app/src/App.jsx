@@ -62,10 +62,10 @@ export default function App(){
  useEffect(()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>setReduced(preference.matches);preference.addEventListener('change',sync);return()=>preference.removeEventListener('change',sync);},[]);
  return <>
  <a className="skip-link" href={modal?'#portfolio-page':'#systems'}>{lang==='en'?'Skip to content':'跳到正文'}</a>
- <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive','systems'].includes(modal.type)?'dark':['about','product-film','hako'].includes(modal.type)?'auto':'light'):'auto'} onLanguage={chooseLang} onNavigate={nav} onAbout={()=>nav('about')}/>
+ <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive','systems'].includes(modal.type)?'dark':['about','product-film','hako','data-hall'].includes(modal.type)?'auto':'light'):'auto'} onLanguage={chooseLang} onNavigate={nav} onAbout={()=>nav('about')}/>
  <main className="home-journey" inert={modal?true:undefined} aria-hidden={!!modal}>
   <LegacyHero lang={lang} reduced={quiet} onProduct={()=>open('/product')}/>
-  <OneStroke lang={lang} reduced={quiet} onOpen={open} onArchive={()=>open('/works/archive')} onAbout={()=>nav('about')} onNavigate={nav} onTransition={transition}/>
+  <OneStroke lang={lang} reduced={quiet} covered={!!modal} onOpen={open} onArchive={()=>open('/works/archive')} onAbout={()=>nav('about')} onNavigate={nav} onTransition={transition}/>
  </main>
  <div className="journey-indicator"><i/><span><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>SCROLL TO EXPLORE</ExpressiveTitle></span></div>
  <button className="motion-toggle" aria-pressed={quiet} aria-label={quiet?(lang==='en'?'Enable motion':'恢复动态'):(lang==='en'?'Reduce motion':'减少动态')} onClick={toggleMotion} title={lang==='en'?'Toggle reduced motion':'切换减少动态'}><ExpressiveTitle variant="type" typingSpeed={30} reduced={quiet} hover={false}>{quiet?'MOTION −':'MOTION +'}</ExpressiveTitle></button>

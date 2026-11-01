@@ -1,0 +1,382 @@
+{
+ "rounds": [
+  {
+   "round": 1,
+   "codex": 60,
+   "claude": 59,
+   "changes": {
+    "en": [
+     "The match cut was a dissolve between two drawings that didn't line up. The building was reshaped to the proportions of a GPU die, about 0.8 wide to tall, and the die's schematic is now drawn on the hall's own plan, so only the labels change at the cut.",
+     "The status lights' glow read the wrong texture channel and drew hard discs; it now reads the alpha, smaller and dimmer.",
+     "A zero-radius reality circle still left a 2.2 m disc real and erased the middle of the plan; the mask was rewritten.",
+     "The dive rushed and then stalled because the yaw swung back; it now turns one way only, and the dive's peak speed fell from 61.5 to 42.4.",
+     "The descent looked through two overhead trunks; they moved to the far end, and the clearance check now includes every service and the camera's near plane."
+    ],
+    "zh": [
+     "转场原本只是两张对不上的图纸互相淡入淡出。把建筑改成和一颗 GPU 裸片一样的比例（宽高比约 0.8），芯片示意图直接画在机房平面上，转场时只换标注。",
+     "状态灯的光晕读错了贴图通道，画成了硬边圆片；改成读透明度通道，更小也更暗。",
+     "半径为零时仍有 2.2 米的圆被当成“真实”，把平面图中间擦掉了；重写了这个遮罩。",
+     "下潜先冲再停，因为水平角往回摆了一下；现在只朝一个方向转，峰值速度从 61.5 降到 42.4。",
+     "下降时镜头正对着两条顶上的主干线；把它们移到了另一端，避让检查也加上了所有管线和镜头的近裁剪面。"
+    ]
+   }
+  },
+  {
+   "round": 2,
+   "codex": 70,
+   "claude": 64,
+   "changes": {
+    "en": [
+     "The probe now fails on a stop, a lurch between neighbouring 1% windows of scroll, or a peak over 2.5× a chapter’s mean, and it covers the cut. The camera keeps turning slowly through the cut, so the zoom’s turnaround is never a stop.",
+     "The status lights rendered cyan: the shader doubled their colours with nothing to tone-map them. They now output green, amber and blue as they are.",
+     "The locate light couldn’t be found. It moved onto the tray’s front and leaves with it, and a thin outline in the accent colour marks the tray while the camera turns.",
+     "The tray’s fans stuck through its 1U lid; they now stand on the tray floor, with a drive cage and power board filling the front.",
+     "The opening plan was too small to read: the film now opens close on the drawing, with larger labels on clear floor, and ends on the whole sheet."
+    ],
+    "zh": [
+     "探针现在会判不通过：停顿、相邻 1% 滚动区间速度相差超过 1.5 倍、或峰值超过本段平均 2.5 倍；转场那一段也量进去了。镜头在转场时缓慢转动，所以推拉掉头的那一刻不会停住。",
+     "状态灯显示成了青色：着色器把颜色乘了 2，又没有色调映射。现在绿、琥珀、蓝都按原色输出。",
+     "定位灯找不到。把它装到托盘正面，跟托盘一起出来；镜头转过去时，用品牌色细线框出那个托盘。",
+     "托盘的风扇顶穿了 1U 的盖子；现在立在托盘底板上，前半部分补上了硬盘笼和配电板。",
+     "开头的平面图太小看不清：现在开场贴近图纸，标注更大，放在空地上；整张图纸留到结尾。"
+    ]
+   }
+  },
+  {
+   "round": 3,
+   "codex": 73,
+   "claude": 68,
+   "changes": {
+    "en": [
+     "The zoom still turned round at the cut. The cut now frames the sheet smaller, so after it the camera keeps closing in, by distance and then by lens, until it lands on the opening view: no turnaround, and the film ends where it began.",
+     "The die now turns into its drawing inside its own outline while the other die and the HBM stacks are still real, and only then does the paper close in.",
+     "The probe now also fails a gradual surge (neighbouring 5% windows more than 1.6× apart), counts the lens shift as motion and measures zoom as the lens sees it. Every check passes.",
+     "The opening text drew as hollow outlines (soft letter edges came first); the drawing’s time map now starts white, so edges come last.",
+     "The tray slides out level on rails; only the middle CDU of each pod was piped, now all nine are; the walls stop at the plan’s 1.2 m cut until the power rooms are in.",
+     "The tray was rebuilt part by part from one parts list that also draws the board, so pads and silkscreen sit only round real parts: power stages, memory, connectors, fans with blades, cold plates with fittings, quick disconnects, drive sleds and network modules. Its draw calls fell from about 172 to 9.",
+     "The plan became a full sheet (A-101) with room and door tags, millimetre dimensions, a section marker, legend, notes and title block, and the die’s drawing a sheet of its own (C-301) on the same frame lines. Labels draw as whole words.",
+     "The plaster model casts the sun’s shadows, and a piece that isn’t built yet casts none. Along the walk, each compute tray has four real cables from its ports to the bundle at the rack’s side.",
+     "Captions fade on a short clock instead of with the scroll, so a visitor who stops never reads a half-faded card; the navigation is a solid bar in both tones.",
+     "The drawings and relief maps are packed on the GPU instead of in loops on the main thread, and on phones the locate tray stays in frame through the turn."
+    ],
+    "zh": [
+     "转场时推拉还是掉了头。现在转场时图纸取景更小，转场之后镜头先拉近距离、再收窄焦距，一路推到开头那个画面：全程不掉头，结尾回到开头。",
+     "现在裸片先在自己的轮廓里变成图纸，另一颗裸片和 HBM 还是实物，之后纸面才从四周合拢。",
+     "探针也会判渐变的加速（相邻 5% 区间相差超过 1.6 倍），把镜头平移算作运动，并按镜头看到的缩放来量推拉。全部通过。",
+     "开场的文字先画出空心轮廓（字的软边先出现）；时间图改成从白色开始，边缘最后出现。",
+     "托盘平着沿导轨滑出；每组原来只有中间那台 CDU 接了管，现在 9 台都接上；配电间装好之前，墙只立到图纸剖切的 1.2 米。",
+     "托盘按零件重做，同一份零件表同时画电路板，所以焊盘和丝印只出现在真实零件周围：供电、内存、连接器、带叶片的风扇、带接头的冷板、快速接头、硬盘托架和网络模块。绘制调用从约 172 次降到 9 次。",
+     "平面图做成完整图纸（A-101），有房间和门的编号、毫米尺寸、剖切符号、图例、说明和图签；裸片也有自己的一张图（C-301），图框线和平面图一致。文字整字出现。",
+     "石膏模型有太阳投影，还没建起来的构件不投影。沿着走的那条通道，每个计算托盘的网口都有四根真实的线缆接到机柜侧面的线束。",
+     "字幕改成按时间淡入淡出，不再跟着滚动，停下来的人不会看到半透明的卡片；导航栏在深浅两种画面上都是实色。",
+     "图纸和凹凸贴图改在 GPU 上处理，不再在主线程逐像素循环；手机上转身时，要抽出的托盘一直在画面里。"
+    ]
+   }
+  },
+  {
+   "round": 4,
+   "codex": 78,
+   "claude": 74,
+   "changes": {
+    "en": [
+     "The film ends on the opening crop: from the GPU the camera closes in on one die, its floor plan draws on it in light lines, paper fills in behind and spreads out, and the camera comes to rest on exactly the opening’s framing before the labels swap. The last frame is the first.",
+     "At the swap the lines both sheets share stay; the die’s own labels go first and the hall’s come after, so the two never show at once.",
+     "The tray’s lid slides off instead of hinging over the rack; the cold plates lift and hold; the rails start at the rack face; the steel is plain satin.",
+     "Fans with depth on the fan walls, steel coolant pipes with coloured collars, three cable shapes, handles as geometry.",
+     "The north rooms are the hall’s distribution rooms; the UPS, batteries and switchgear are in a separate power building, now noted on the sheet and in the caption."
+    ],
+    "zh": [
+     "片尾落在开场的取景上：镜头从 GPU 推近一颗裸片，它的平面图先以浅色线条画在裸片上，纸面在后面铺开，镜头停在和开场完全一样的取景，再换标注。最后一帧就是第一帧。",
+     "切换时两张图共有的线条不动；裸片自己的标注先退，机房的标注后进，两者不会同时出现。",
+     "托盘盖改成滑出，不再翻起来挡住机柜；冷板抬起后停住；导轨从机柜面开始；钢板改成素面缎纹。",
+     "风扇墙的风扇有了深度，冷却管改成不锈钢加色环，线缆三种形状，把手做成几何体。",
+     "北侧几间房是机房的配电间；UPS、电池和开关设备在另一栋电力楼里，图纸和字幕都写明了。"
+    ]
+   }
+  },
+  {
+   "round": 5,
+   "codex": 80,
+   "claude": 78,
+   "changes": {
+    "en": [
+     "The camera slows steadily from the dive to rest on the last frame, instead of arriving at speed and stopping; the probe now checks that it only slows, never brakes harder than anywhere else, and has no dips.",
+     "The swap keeps a separate layer of the lines both sheets draw identically, so no fragments of either sheet’s lettering survive it.",
+     "The paper spreads out from the die with a pixel-wide edge, with no fog.",
+     "The rack fronts are drawn from the pulled tray’s own front, with seams you can count, and the cables run into a real bundle.",
+     "The drawn-to-real boundary is 0.3 m wide with an ink line; shadow maps redraw only while they change; the frame budget counts any frame over 17.5 ms."
+    ],
+    "zh": [
+     "镜头从下潜一路匀减速，停在最后一帧，不再高速冲到终点再停；探针检查它只减速、刹车不比片中任何地方更急、也没有忽快忽慢。",
+     "切换时，两张图完全相同的线条单独成一层，所以不会残留任何一张图的文字碎片。",
+     "纸面从裸片向外铺开，边缘只有一个像素宽，没有雾。",
+     "机柜正面照着抽出来的那个托盘的正面画，托盘之间的缝能数得清，线缆接进真实的线束。",
+     "图纸和实物的交界改成 0.3 米并画一条墨线；阴影贴图只在会变的时候重画；帧预算把超过 17.5 毫秒的帧都算作掉帧。"
+    ]
+   }
+  },
+  {
+   "round": 6,
+   "codex": 83,
+   "claude": 81,
+   "changes": {
+    "en": [
+     "The plan’s skeleton is drawn identically on both sheets and holds through the cut; everything else changes behind a hard wipe with a hairline in the accent, so at mid-cut the hall’s hot aisle runs into the die’s L2 cache.",
+     "The camera is re-timed along its path so its acceleration is continuous, and the turn is re-keyed so the locate tray glides evenly across the frame; the probe now measures the tray’s travel on screen.",
+     "Every shader is compiled and every texture uploaded at start-up, which removed a 1.4 s stall when the tray first came into view; a script measures a cold load and a continuous scroll in four set-ups.",
+     "A rack and everything on it turn real together, so the edge between drawing and material falls at a seam; the die shows plain silicon and the memory stacks carry no marks.",
+     "The Back button moves under the navigation during the film; the film turns dark from the walk; the sun leaves before the real floor appears."
+    ],
+    "zh": [
+     "两张图纸上共同的平面骨架完全一样，切换时保持不动；其余部分在一道带强调色细线的硬切后替换，所以切到一半时，机房的热通道正好接上裸片的二级缓存。",
+     "镜头沿原路径重新分配时间，加速度连续；转身段重新设关键帧，要抽出的托盘在画面里匀速滑过；探针也开始测托盘在屏幕上的移动。",
+     "所有着色器和贴图在启动时就编译、上传好，去掉了托盘第一次出现时 1.4 秒的卡顿；脚本在四种条件下实测冷启动和连续滚动。",
+     "一台机柜连同上面的东西一起变成实物，所以图纸和实物的分界落在机柜缝上；裸片露出的是素面硅片，HBM 上不印字。",
+     "影片播放时返回按钮移到导航栏下方；从走进通道开始画面转为深色；实物地面出现之前太阳光就退出。"
+    ]
+   }
+  },
+  {
+   "round": 7,
+   "codex": 85,
+   "claude": 82,
+   "changes": {
+    "en": [
+     "At the cut every label switches whole as the wipe passes its centre, and a label that is showing keeps the other sheet’s lines out from under it.",
+     "The lens shift through the turn eases in and out, the speed is smoothed over a wider span and the camera slows to rest over the last 5% of the film; on phones the camera aims a little ahead of the turn, so the tray glides in.",
+     "The racks near you are built when the walk begins, and the hall turns real later at power-on, so the half-drawn aisle has room; rack cables appear only with their rack.",
+     "On the racks either side of the pulled tray each tray face stands proud of the rack, with real seams; the die drawing’s memory interfaces sit under their stacks; phones get larger lettering.",
+     "Every moving frame is kept in the measurements, start-up includes the fonts and the camera, and the scripted runs use a 2× screen."
+    ],
+    "zh": [
+     "切换时，每个标注在硬切线经过它的中心时整体换掉，显示着的标注下面不会透出另一张图的线。",
+     "转身时的镜头平移缓入缓出，速度在更宽的范围上平滑，片尾最后 5% 慢慢停下；手机上镜头提前一点看向机柜，托盘平稳地滑进画面。",
+     "走进通道时身边的机柜已经是实物，通电时整个机房才变成实物，半图纸的通道有了时间；机柜上的线缆随机柜一起出现。",
+     "抽出托盘两边的机柜，每个托盘面板都凸出机柜，缝是真的；裸片图纸的内存接口对准上面的 HBM；手机上的字更大。",
+     "测量保留每一帧移动画面，启动时间包括字体和镜头，脚本测试用 2 倍像素比的屏幕。"
+    ]
+   }
+  },
+  {
+   "round": 8,
+   "codex": 87,
+   "claude": 83,
+   "changes": {
+    "en": [
+     "The film turns dark at power-on, when the picture does, and the walk caption appears once the racks beside you are real. On phones the real circle sits ahead of you, so the near racks in the narrow frame are the real ones.",
+     "The camera keeps speeding up from the walk through the power-on into the turn, with no peak before it; on phones the wider lens and the lens slide are spread over the walk and the turn, and the probe now measures the phone camera as it really is.",
+     "At the cut, a die label goes when the wipe reaches its west edge and a hall label appears once the wipe has passed its east edge, so the two never overlap; specks at label edges are gone.",
+     "The thin parts of the plaster model are inked: frames as lines, pipes and drops with a dark rim. The fibre trays have side walls, the route on the floor is a thin line, the drive latches are grey and the CPU lid is nickel.",
+     "The die drawing’s memory interfaces sit centred under their stacks; on phones the sheet has a compact title block and its section mark inside the frame. The frame-rate governor can step the pixel ratio back up."
+    ],
+    "zh": [
+     "通电时画面变暗，页面也同时变暗；身边的机柜变成实物后，走廊的说明才出现。手机上实物的圆放在前方，窄画面里近处的机柜就是实物。",
+     "从走廊、通电到转身，镜头一路加速，中间不再先快后慢；手机上加宽镜头和平移分摊到走廊和转身里，测速脚本也按手机上真实的镜头来测。",
+     "切换时，裸片的标注在硬切线碰到它的西边时消失，机房的标注等硬切线完全越过它的东边才出现，两者不会重叠；标注边上的碎点没有了。",
+     "石膏模型里的细构件加了墨线：框架画成线，管道和立管有深色轮廓。光纤槽有了侧壁，地上的路线变成细线，硬盘扣改成灰色，CPU 顶盖是镍色。",
+     "裸片图纸的内存接口居中对准 HBM；手机上图纸有紧凑的图签，剖切符号在画面里面。帧率调节在流畅时可以把像素比调回来。"
+    ]
+   }
+  },
+  {
+   "round": 9,
+   "codex": 89,
+   "claude": 85,
+   "changes": {
+    "en": [
+     "The status lights on the racks round the pulled tray sit on the tray faces, so the power-on turns them green in frame.",
+     "The tray comes apart more slowly: the camera holds one speed from the slide through the explode into the dive, on phones too.",
+     "The thin parts of the plaster build draw a light line; the blue locate light leads and the outline only follows; the floor ring is gone.",
+     "Both sheets end their notes column with a title strip that is in frame at rest; at the cut, overlapping labels switch together.",
+     "The scene is built in steps that give the page back its main thread; integrated and phone GPUs start at a pixel ratio of 1; the nearest tray faces have recessed grilles."
+    ],
+    "zh": [
+     "抽出托盘周围机柜的状态灯放到托盘面板上，通电时画面里的灯会变绿。",
+     "托盘拆开得更慢：从滑出、拆开到下潜，镜头保持同一速度，手机上也一样。",
+     "石膏模型里的细构件画成浅线；蓝色定位灯先出现，轮廓随后才出；地上的圆圈去掉了。",
+     "两张图纸的说明栏底部都有图签，停下来时在画面里；切换时，重叠的标注一起换。",
+     "场景分步搭建，每一步之间把主线程还给页面；集成显卡和手机显卡从像素比 1 开始；最近的托盘面板格栅有了凹进去的深度。"
+    ]
+   }
+  },
+  {
+   "round": 10,
+   "codex": 89.3,
+   "claude": 86.5,
+   "changes": {
+    "en": [
+     "The blue locate light blinks fully on and off with a bright core, and is the cue; the grey outline only follows it, on wide screens.",
+     "On phones the lens widens during the walk, so the camera no longer slows into the slide.",
+     "The powered hall has depth: the far end falls into the dark, the light strips glow, the floor catches the light; racks turn real as a wipe up their faces.",
+     "The network racks at the start of the walk have proud unit faces and fibre jumpers; the die drawing has GPC tiles; labels swap on clean paper.",
+     "Start-up runs in short steps and can be cancelled; modest GPUs get a cheaper set-up; the scripted runs log where each stall happens."
+    ],
+    "zh": [
+     "蓝色定位灯完整地亮灭，有明亮的灯芯，由它来指出托盘；灰色轮廓只在宽屏上随后出现。",
+     "手机上镜头在步行时加宽，滑出托盘时镜头不再变慢。",
+     "通电后的机房有了纵深：远处没入黑暗，灯带发光，地面反光；机柜从下往上变成实物。",
+     "步行起点的网络机柜有凸出的面板和光纤跳线；裸片图纸加了 GPC 方块；标注在干净的纸面上切换。",
+     "启动分成小步，可以中途取消；性能较弱的显卡用更省的设置；脚本测试记下每次卡顿发生的位置。"
+    ]
+   }
+  },
+  {
+   "round": 11,
+   "codex": 89.8,
+   "claude": 87.8,
+   "changes": {
+    "en": [
+     "Start-up runs in short steps on a canvas of its own; no frame in the scripted runs stalls for more than 50 ms.",
+     "On phones the lens widens over the aerial shots and holds through the walk; on desktop the camera no longer speeds up into the slide.",
+     "The powered hall has a pool of light along each aisle and slotted fibre trays; the network racks at the start of the walk are hardware.",
+     "Racks turn real behind a crisp ink line; the die drawing keeps its labels off the GPC tiles.",
+     "The locate light stays on for most of each second; modest GPUs get a simpler set-up."
+    ],
+    "zh": [
+     "启动分成小步，用自己的画布；脚本测试里没有超过 50 毫秒的卡顿。",
+     "手机上镜头在鸟瞰时加宽，步行时保持不变；桌面上滑出托盘时镜头不再突然加速。",
+     "通电后的通道地面有一条光带，光纤槽是带孔的；步行起点的网络机柜是实物。",
+     "机柜变成实物时前沿是一条清楚的墨线；裸片图纸的标注不再压在 GPC 方块上。",
+     "定位灯每秒大部分时间亮着；性能较弱的显卡用更简单的设置。"
+    ]
+   }
+  },
+  {
+   "round": 12,
+   "codex": 89.5,
+   "claude": 88,
+   "changes": {
+    "en": [
+     "The opening draws as soon as its plan is ready; the rest of the film builds behind it.",
+     "Phones and unnamed GPUs get the cheaper set-up, capped at a lower pixel ratio, and the scripted runs now test it.",
+     "On phones the camera holds its pace through the explode; the real circle waits until eye level.",
+     "The tray close-ups sit in contact shadows, with rounded edges, solder fillets and a floor that doesn’t repeat; the powered hall has reflections in the floor and dark end doors.",
+     "At the cut the hall’s labels arrive one by one as the hairline reaches them; reduced motion stops at every caption."
+    ],
+    "zh": [
+     "平面图一画好，开场就开始画；其余部分在后面搭建。",
+     "手机和不报名称的显卡用较省的设置，像素比上限更低，脚本测试也测这一档。",
+     "手机上拆开托盘时镜头速度不变；实物的圆等到眼睛高度才出现。",
+     "托盘特写的元件有接触阴影、圆角和焊点，底板不再重复；通电后的地面有倒影，热通道端门是深色的。",
+     "切换时机房的标注随着细线一个个出现；减少动态时每段说明都会停一下。"
+    ]
+   }
+  },
+  {
+   "round": 13,
+   "codex": 89.4,
+   "claude": 88.5,
+   "changes": {
+    "en": [
+     "Start-up work is paced in pieces of a few milliseconds, so the opening draws smoothly while the film builds; the film holds on the plan until it is ready.",
+     "The light/dark switch no longer restyles the whole page while it moves.",
+     "The tray shows its four NICs and two DPUs; the drive cage has real vents.",
+     "On phones the tray stays in frame as it slides out; the network racks’ cables are dressed; the racks stand on dark kick plates.",
+     "A GPU that can’t keep up even at the lowest pixel ratio gets held frames instead of judder; the making-of states the machine’s load during the runs."
+    ],
+    "zh": [
+     "启动工作分成几毫秒一段，全片在后台搭建时开场画面画得很顺；搭好之前画面停在平面图上。",
+     "明暗切换时不再在滚动中重算整个页面的样式。",
+     "托盘上有四个网卡和两个 DPU；硬盘笼有真正的通风孔。",
+     "手机上托盘滑出时一直在画面里；网络机柜的线缆理整齐了；机柜底部有深色踢脚板。",
+     "最低像素比也跟不上的显卡改用定格画面，避免卡顿；技术页写明测试时机器的负载。"
+    ]
+   }
+  },
+  {
+   "round": 14,
+   "codex": 89.8,
+   "claude": 88.5,
+   "changes": {
+    "en": [
+     "The home page’s own scene is no longer built underneath this page, and the opening’s shaders compile before it draws: shorter freezes while loading.",
+     "The opening’s draw-in pauses through a stall instead of skipping; the slow-GPU fallback eases to held frames and needs three bad checks in a row.",
+     "Apple-silicon Macs get the cheaper set-up in Chrome too; on phones the tray’s front stays in frame as it opens.",
+     "Dressed patch cords on the network racks, a shadow along every row’s foot, and the hall’s labels switch at their centres at the cut.",
+     "The making-of shows three review findings with their before and after."
+    ],
+    "zh": [
+     "首页自己的场景不再在这一页下面搭建，开场的着色器在画之前先编译：加载时卡顿更短。",
+     "开场画图遇到卡顿时会暂停，不再跳过；慢显卡的退路平滑地停在定格画面上，并且要连续三次跟不上才启用。",
+     "Chrome 里的 Apple 芯片 Mac 也用较省的设置；手机上托盘拆开时前面板一直在画面里。",
+     "网络机柜的跳线理成束，每排机柜脚下有阴影，切换时机房标注按中心切换。",
+     "技术页列出三条评审意见和修改前后的数据。"
+    ]
+   }
+  },
+  {
+   "round": 15,
+   "codex": 89.9,
+   "claude": 88.8,
+   "changes": {
+    "en": [
+     "While the film is on screen it sets the navigation’s tone itself: the light/dark switches no longer hitch.",
+     "The drawings are drawn in slices of a few milliseconds, and the environment and shaders are prepared in smaller steps.",
+     "On phones the tray stays in frame as it opens (now checked by the probe); a return visit cuts to where you were.",
+     "At the cut, labels never overlap and the notes column never blanks; the row-end racks have steel side panels.",
+     "The making-of’s figures come from the current runs, and the table fits its column."
+    ],
+    "zh": [
+     "影片在画面上时由它自己设置导航的明暗：明暗切换不再卡顿。",
+     "图纸分成几毫秒一段来画，环境光和着色器也分成更小的步骤准备。",
+     "手机上托盘拆开时始终在画面里（测速脚本会检查）；再次进入页面时直接切到上次的位置。",
+     "切换时标注不会重叠，说明栏不会空白；每排两头的机柜有钢制侧板。",
+     "技术页的数字来自最新的实测，表格放得下。"
+    ]
+   }
+  },
+  {
+   "round": 16,
+   "codex": 89.4,
+   "claude": 88.5,
+   "changes": {
+    "en": [
+     "The Menu button stays visible over the dark chapters.",
+     "The heavy start-up steps wait until the opening has drawn itself in: no stall over 50 ms in any scripted run.",
+     "On a real phone screen the tray stays in frame as it opens; a return visit cuts straight to where you were.",
+     "The rack sides are steel; the die is plain polished silicon; two captions are plainer."
+    ],
+    "zh": [
+     "深色段落里“目录”按钮保持可见。",
+     "启动时较重的步骤等开场画完再做：脚本测试里没有超过 50 毫秒的卡顿。",
+     "在真实的手机屏幕上托盘拆开时始终在画面里；再次进入时直接回到上次的位置。",
+     "机柜侧板是钢的；裸片是抛光的硅；两条说明更朴素。"
+    ]
+   }
+  },
+  {
+   "round": 17,
+   "codex": 89.8,
+   "claude": 88.8,
+   "changes": {
+    "en": [
+     "Where the camera moves fastest each step takes more scroll, so the close-ups no longer pass faster under the wheel.",
+     "The die’s silicon no longer throws glare over its drawing.",
+     "Loading can be cancelled at any step; an early scroll is carried smoothly once the film is ready."
+    ],
+    "zh": [
+     "镜头移动最快的地方每一段要滚得更多，特写在滚轮下不再一闪而过。",
+     "裸片的硅表面不再反光盖住图纸。",
+     "加载的每一步都能取消；早早开始滚动时，全片就绪后平滑地跟上。"
+    ]
+   }
+  },
+  {
+   "round": 18,
+   "codex": 89.5,
+   "claude": 88.7,
+   "changes": {
+    "en": [
+     "The scroll follows the camera’s own speed, so the pace under the wheel stays nearly even from the descent to the die.",
+     "At the cut no label crosses the hairline; the GPU package reads as separate materials.",
+     "The camera chart is drawn by scroll, and an early scroll is never taken for a restored position."
+    ],
+    "zh": [
+     "滚动按镜头自己的速度分配，从下降到裸片，滚轮下的速度几乎一样。",
+     "切换时没有标注越过细线；GPU 封装上的各种材料分得清楚。",
+     "镜头速度图按滚动来画；很早开始滚动也不会被当成恢复的位置。"
+    ]
+   }
+  }
+ ]
+}

@@ -18,6 +18,7 @@ export function resolvePath(pathname) {
   if (path === '/other-project/jay-lin') return { type: 'brand-motion' };
   if (path === '/other-project/touch-on-beat') return { type: 'touch-on-beat' };
   if (path === '/other-project/hako') return { type: 'hako' };
+  if (path === '/other-project/data-hall') return { type: 'data-hall' };
   if (path === '/other-project/product-films') return { type: 'vibecoding' };
   const film = path.match(/^\/other-project\/([a-z0-9-]+)$/)?.[1];
   if (Object.hasOwn(FILMS, film ?? '')) return { type: 'product-film', slug: film, name: FILMS[film] };
@@ -44,6 +45,7 @@ export function routeFor(page) {
   if (page?.type === 'touch-on-beat') return '/other-project/touch-on-beat';
   if (page?.type === 'product-film' && Object.hasOwn(FILMS, page.slug ?? '')) return '/other-project/' + page.slug;
   if (page?.type === 'hako') return '/other-project/hako';
+  if (page?.type === 'data-hall') return '/other-project/data-hall';
   if (page?.type === 'model') return '/systems/roco/model';
   if (['product', 'product-case', 'for', 'about'].includes(page?.type)) return productRouteFor(page);
   if (page?.type === 'art') return allWorks.find(w => w.id === page.item?.id || w.slug === page.item?.slug)?.href || null;
@@ -63,7 +65,7 @@ function historyState(meta) {
   return next;
 }
 function parentPath(page) {
-  if (['field01', 'brand-motion', 'touch-on-beat', 'product-film', 'hako'].includes(page?.type)) return '/other-project';
+  if (['field01', 'brand-motion', 'touch-on-beat', 'product-film', 'hako', 'data-hall'].includes(page?.type)) return '/other-project';
   if (page?.type === 'art') return '/works/archive';
   if (page?.type === 'archive') return '/works';
   if (page?.type === 'system') return '/systems';

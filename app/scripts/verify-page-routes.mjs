@@ -29,6 +29,8 @@ for (const slug of ['variables-for-agents','last-100-feet','common-ground']) {
 }
 assert.equal(routing.resolvePath('/other-project/constructor'),null);
 assert.equal(routing.resolvePath('/other-project/hako/').type,'hako');
+assert.equal(routing.resolvePath('/other-project/data-hall/').type,'data-hall');
+assert.equal(routing.routeFor({type:'data-hall'}),'/other-project/data-hall');
 assert.equal(routing.routeFor({type:'vibecoding'}),'/other-project');
 assert.equal(routing.routeFor({type:'field01'}),'/other-project/field01');
 assert.equal(routing.routeFor({type:'brand-motion'}),'/other-project/jay-lin');

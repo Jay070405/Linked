@@ -1,0 +1,613 @@
+{
+ "measured": "2026-11-01",
+ "seconds": 40,
+ "gpuLoad": 28,
+ "runs": [
+  {
+   "name": "window at 2×",
+   "W": 1600,
+   "H": 900,
+   "dsf": 2,
+   "cpu": {
+    "median": 1.1,
+    "p95": 2.7
+   },
+   "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+   "endDpr": 1.5,
+   "dprChanges": 0,
+   "boot": {
+    "fonts": 31,
+    "camera": 23,
+    "plan": 230,
+    "scene": 3853,
+    "first": 134,
+    "longest": 135,
+    "steps": [
+     [
+      "renderer",
+      6,
+      6
+     ],
+     [
+      "plan drawing",
+      187,
+      111
+     ],
+     [
+      "opening shaders",
+      11,
+      11
+     ],
+     [
+      "route, outline",
+      14,
+      14
+     ],
+     [
+      "hall",
+      48,
+      14
+     ],
+     [
+      "tray",
+      161,
+      10
+     ],
+     [
+      "die drawing",
+      50,
+      7
+     ],
+     [
+      "environment",
+      75,
+      75
+     ],
+     [
+      "materials",
+      0,
+      0
+     ],
+     [
+      "textures",
+      1,
+      1
+     ],
+     [
+      "shaders",
+      41,
+      20
+     ],
+     [
+      "geometry",
+      63,
+      24
+     ]
+    ]
+   },
+   "frames": 6265,
+   "median": 6.5,
+   "p95": 6.6,
+   "p99": 6.6,
+   "max": 25.7,
+   "over": 0,
+   "stalls": 0,
+   "stallAt": [],
+   "gpuFrame": {
+    "median": 4.47,
+    "p95": 6.72,
+    "frames": 6257,
+    "worstChapter": {
+     "name": "dive",
+     "p95": 7.19
+    }
+   },
+   "tier": "full"
+  },
+  {
+   "name": "window at 2×, CPU ÷4",
+   "W": 1600,
+   "H": 900,
+   "dsf": 2,
+   "cpu": {
+    "median": 2.7,
+    "p95": 8.3
+   },
+   "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+   "endDpr": 1.5,
+   "dprChanges": 0,
+   "boot": {
+    "fonts": 7,
+    "camera": 81,
+    "plan": 623,
+    "scene": 5346,
+    "first": 7,
+    "longest": 106,
+    "steps": [
+     [
+      "renderer",
+      13,
+      12
+     ],
+     [
+      "plan drawing",
+      479,
+      26
+     ],
+     [
+      "opening shaders",
+      16,
+      16
+     ],
+     [
+      "route, outline",
+      8,
+      8
+     ],
+     [
+      "hall",
+      192,
+      65
+     ],
+     [
+      "tray",
+      797,
+      21
+     ],
+     [
+      "die drawing",
+      283,
+      18
+     ],
+     [
+      "environment",
+      106,
+      106
+     ],
+     [
+      "materials",
+      1,
+      1
+     ],
+     [
+      "textures",
+      4,
+      2
+     ],
+     [
+      "shaders",
+      194,
+      97
+     ],
+     [
+      "geometry",
+      172,
+      44
+     ]
+    ]
+   },
+   "frames": 5266,
+   "median": 6.5,
+   "p95": 12.9,
+   "p99": 19.4,
+   "max": 38.8,
+   "over": 1.7,
+   "stalls": 0,
+   "stallAt": [],
+   "gpuFrame": {
+    "median": 4.3,
+    "p95": 8.31,
+    "frames": 5267,
+    "worstChapter": {
+     "name": "dive",
+     "p95": 11.14
+    }
+   },
+   "tier": "full"
+  },
+  {
+   "name": "phone size",
+   "W": 390,
+   "H": 844,
+   "dsf": 3,
+   "cpu": {
+    "median": 1,
+    "p95": 2.4
+   },
+   "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+   "endDpr": 1.25,
+   "dprChanges": 1,
+   "boot": {
+    "fonts": 1,
+    "camera": 24,
+    "plan": 226,
+    "scene": 3557,
+    "first": 156,
+    "longest": 157,
+    "steps": [
+     [
+      "renderer",
+      7,
+      7
+     ],
+     [
+      "plan drawing",
+      188,
+      119
+     ],
+     [
+      "opening shaders",
+      12,
+      12
+     ],
+     [
+      "route, outline",
+      2,
+      2
+     ],
+     [
+      "hall",
+      46,
+      12
+     ],
+     [
+      "tray",
+      158,
+      9
+     ],
+     [
+      "die drawing",
+      46,
+      6
+     ],
+     [
+      "environment",
+      75,
+      75
+     ],
+     [
+      "materials",
+      0,
+      0
+     ],
+     [
+      "textures",
+      1,
+      1
+     ],
+     [
+      "shaders",
+      41,
+      20
+     ],
+     [
+      "geometry",
+      65,
+      25
+     ]
+    ]
+   },
+   "frames": 6270,
+   "median": 6.5,
+   "p95": 6.6,
+   "p99": 6.6,
+   "max": 6.8,
+   "over": 0,
+   "stalls": 0,
+   "stallAt": [],
+   "gpuFrame": {
+    "median": 3.4,
+    "p95": 5.93,
+    "frames": 6261,
+    "worstChapter": {
+     "name": "tray",
+     "p95": 7.09
+    }
+   },
+   "tier": "modest"
+  },
+  {
+   "name": "phone size, CPU ÷4",
+   "W": 390,
+   "H": 844,
+   "dsf": 3,
+   "cpu": {
+    "median": 2.4,
+    "p95": 7.4
+   },
+   "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+   "endDpr": 1.25,
+   "dprChanges": 1,
+   "boot": {
+    "fonts": 7,
+    "camera": 85,
+    "plan": 531,
+    "scene": 4939,
+    "first": 25,
+    "longest": 105,
+    "steps": [
+     [
+      "renderer",
+      11,
+      11
+     ],
+     [
+      "plan drawing",
+      414,
+      25
+     ],
+     [
+      "opening shaders",
+      17,
+      17
+     ],
+     [
+      "route, outline",
+      6,
+      6
+     ],
+     [
+      "hall",
+      178,
+      59
+     ],
+     [
+      "tray",
+      763,
+      22
+     ],
+     [
+      "die drawing",
+      253,
+      14
+     ],
+     [
+      "environment",
+      105,
+      105
+     ],
+     [
+      "materials",
+      1,
+      1
+     ],
+     [
+      "textures",
+      5,
+      2
+     ],
+     [
+      "shaders",
+      188,
+      94
+     ],
+     [
+      "geometry",
+      142,
+      42
+     ]
+    ]
+   },
+   "frames": 5418,
+   "median": 6.5,
+   "p95": 12.9,
+   "p99": 19.3,
+   "max": 45.2,
+   "over": 1.3,
+   "stalls": 0,
+   "stallAt": [],
+   "gpuFrame": {
+    "median": 3.29,
+    "p95": 7.21,
+    "frames": 5403,
+    "worstChapter": {
+     "name": "tray",
+     "p95": 9.95
+    }
+   },
+   "tier": "modest"
+  },
+  {
+   "name": "window at 2×, modest set-up",
+   "W": 1600,
+   "H": 900,
+   "dsf": 2,
+   "cpu": {
+    "median": 1.1,
+    "p95": 2.6
+   },
+   "tier": "modest",
+   "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+   "endDpr": 1.25,
+   "dprChanges": 1,
+   "boot": {
+    "fonts": 2,
+    "camera": 24,
+    "plan": 215,
+    "scene": 3677,
+    "first": 284,
+    "longest": 285,
+    "steps": [
+     [
+      "renderer",
+      8,
+      8
+     ],
+     [
+      "plan drawing",
+      175,
+      101
+     ],
+     [
+      "opening shaders",
+      12,
+      12
+     ],
+     [
+      "route, outline",
+      2,
+      2
+     ],
+     [
+      "hall",
+      43,
+      12
+     ],
+     [
+      "tray",
+      157,
+      7
+     ],
+     [
+      "die drawing",
+      48,
+      6
+     ],
+     [
+      "environment",
+      76,
+      76
+     ],
+     [
+      "materials",
+      0,
+      0
+     ],
+     [
+      "textures",
+      1,
+      0
+     ],
+     [
+      "shaders",
+      42,
+      21
+     ],
+     [
+      "geometry",
+      59,
+      21
+     ]
+    ]
+   },
+   "frames": 6270,
+   "median": 6.5,
+   "p95": 6.6,
+   "p99": 6.6,
+   "max": 12.9,
+   "over": 0,
+   "stalls": 0,
+   "stallAt": [],
+   "gpuFrame": {
+    "median": 3.77,
+    "p95": 6.23,
+    "frames": 6259,
+    "worstChapter": {
+     "name": "dive",
+     "p95": 6.94
+    }
+   }
+  },
+  {
+   "name": "window at 2×, modest set-up, CPU ÷4",
+   "W": 1600,
+   "H": 900,
+   "dsf": 2,
+   "cpu": {
+    "median": 2.2,
+    "p95": 7.9
+   },
+   "tier": "modest",
+   "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+   "endDpr": 1.25,
+   "dprChanges": 1,
+   "boot": {
+    "fonts": 7,
+    "camera": 89,
+    "plan": 550,
+    "scene": 4945,
+    "first": 22,
+    "longest": 108,
+    "steps": [
+     [
+      "renderer",
+      10,
+      10
+     ],
+     [
+      "plan drawing",
+      432,
+      28
+     ],
+     [
+      "opening shaders",
+      24,
+      24
+     ],
+     [
+      "route, outline",
+      6,
+      6
+     ],
+     [
+      "hall",
+      188,
+      64
+     ],
+     [
+      "tray",
+      770,
+      24
+     ],
+     [
+      "die drawing",
+      258,
+      14
+     ],
+     [
+      "environment",
+      108,
+      108
+     ],
+     [
+      "materials",
+      1,
+      1
+     ],
+     [
+      "textures",
+      4,
+      2
+     ],
+     [
+      "shaders",
+      215,
+      107
+     ],
+     [
+      "geometry",
+      148,
+      36
+     ]
+    ]
+   },
+   "frames": 5314,
+   "median": 6.5,
+   "p95": 12.9,
+   "p99": 19.4,
+   "max": 38.9,
+   "over": 1.8,
+   "stalls": 0,
+   "stallAt": [],
+   "gpuFrame": {
+    "median": 3.61,
+    "p95": 7.1,
+    "frames": 5312,
+    "worstChapter": {
+     "name": "dive",
+     "p95": 9.16
+    }
+   }
+  }
+ ]
+}

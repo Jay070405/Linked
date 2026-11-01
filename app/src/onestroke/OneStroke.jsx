@@ -12,20 +12,26 @@ import {resumeFor} from '../components/contact-model';
 const wantStatic = reduced => reduced || !webglAvailable() || innerWidth / innerHeight < MIN_ASPECT;
 
 /** The homepage after the office: one line through a lake, a drafting sheet, a ring and five products, back to the lake. */
-export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchive, onAbout, onNavigate, onTransition}) {
-  const [staticMode, setStaticMode] = useState(() => wantStatic(reduced));
+export default function OneStroke({lang = 'zh', reduced = false, covered = false, onOpen, onArchive, onAbout, onNavigate, onTransition}) {
+  // (the WebGL test itself waits while the home is covered: it creates a context of its own)
+  const [staticMode, setStaticMode] = useState(() => (covered ? false : wantStatic(reduced)));
+  // while a portfolio page covers the home (a visit that lands on one), the engine waits: building it would compete with
+  // that page's own start-up. It is built once the home is uncovered, and kept from then on
+  const [armed, setArmed] = useState(!covered);
+  useEffect(() => { if (!covered) setArmed(true); }, [covered]);
   const sectionRef = useRef(null), layerRef = useRef(null), engine = useRef(null);
   const props = useRef({}); props.current = {onOpen, onArchive, onAbout, onNavigate, onTransition};
   const en = lang === 'en', L = v => pick(v, lang);
 
   useEffect(() => {
+    if (!armed) return undefined;
     const check = () => setStaticMode(wantStatic(reduced));
     check(); addEventListener('resize', check);
     return () => removeEventListener('resize', check);
-  }, [reduced]);
+  }, [reduced, armed]);
 
   useEffect(() => {
-    if (staticMode) return undefined;
+    if (staticMode || !armed) return undefined;
     const go = where => {
       const p = props.current;
       if (where === 'about') p.onAbout?.();
@@ -44,7 +50,7 @@ export default function OneStroke({lang = 'zh', reduced = false, onOpen, onArchi
     return () => { eng.dispose(); engine.current = null; };
     // the engine reads the language through setLang; it is built once per mode
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [staticMode]);
+  }, [staticMode, armed]);
   useEffect(() => { engine.current?.setLang(lang); }, [lang]);
 
   if (staticMode) return <OneStrokeStatic lang={lang} onOpen={onOpen} onArchive={onArchive} onAbout={onAbout} onNavigate={onNavigate}/>;
