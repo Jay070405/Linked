@@ -1,6 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import PROBE from './probe.json';
-import {pToScroll} from './camera';
+import {pToScroll, SCROLL_LENGTH} from './camera';
+import REVIEWS from './reviews.json';
 import {T} from './timeline';
 import {RACK, RACKS, ROWS, COLD_AISLE, HOT_AISLE, PODS, PER_ROW, NET_EACH_END, FACTS, ROW_X0, ROW_X1, WALK_Z, WALK_AISLE, ROOMS} from './plan';
 import PERF from './perf.json';
@@ -32,6 +33,32 @@ const CHOICES = [
   ['The layout of the die. The maker hasn’t published a floor plan, so the drawing is illustrative.', '芯片裸片的布局。厂商没有公开版图，所以这张图是示意。'],
 ];
 
+const ART = '/assets/other-project/data-hall/making/';
+const ROUNDS = REVIEWS.rounds;
+// the film's chapters as a visitor meets them: a still from the film (datahall-capture.mjs, CLEAN=1) and the moment
+// to jump to
+const CHAPTERS = [
+  [0.02, ['Plan', '平面图'], ['The hall as drawn: 96 racks in three pods, cut 1.2 m above the floor.', '图纸上的机房：三组共 96 台机柜，在离地 1.2 米处剖切。']],
+  [0.2, ['Build', '施工'], ['Slab, walls and rooms, then the frames and the services over every row.', '底板、墙和房间，再是每排顶上的框架和管线。']],
+  [0.3, ['Racks', '机柜进场'], ['The racks arrive last, built and tested at the factory.', '机柜最后进场，在工厂装好、测好。']],
+  [0.42, ['Descent', '下降'], ['The camera comes down to eye height at the end of a cold aisle.', '镜头降到一条冷通道口，人眼的高度。']],
+  [0.52, ['Walk', '步行'], ['Racks within a few metres turn real; the rest stay drawn.', '几米之内的机柜变成实物，其余的还是图纸。']],
+  [0.59, ['Power on', '通电'], ['Status lights turn green down the rows. The hall is designed for 7.4 MW.', '状态灯一排排变绿。机房按 7.4 兆瓦设计。']],
+  [0.72, ['Tray', '托盘'], ['A blue locate light marks one tray. It slides out and comes apart.', '蓝色定位灯标出一个托盘，它滑出来，再拆开。']],
+  [0.82, ['GPU', 'GPU'], ['Under the cold plate: two dies and eight memory stacks.', '冷板下面：两颗裸片和八颗显存。']],
+  [0.9, ['Die plan', '裸片平面图'], ['The die’s floor plan, then the cut back to the hall’s plan.', '裸片的平面图，然后切回机房的平面图。']],
+];
+// the pulled tray's parts, numbered where they are on its still (tray.webp: the 1600 × 900 frame at p0.72);
+// research.md §3
+const PARTS = [
+  [650, 335, ['Two compute boards, each with one CPU and two GPUs under cold plates', '两块计算板，每块 1 颗 CPU、2 块 GPU，上面压着冷板']],
+  [880, 405, ['Coolant: one loop per board, coupled at the back as the tray slides in', '冷却液：每块板一路，托盘推进去时在后面自动接上']],
+  [790, 500, ['Eight 40 mm fans, for the network cards, drives and DPUs', '8 个 40 毫米风扇，给网卡、硬盘和 DPU 散热']],
+  [995, 612, ['Four cluster network cards and two DPUs', '4 张集群网卡和 2 个 DPU']],
+  [1010, 728, ['Their ports are at the front, facing the cold aisle', '它们的接口在前面，朝着冷通道']],
+  [680, 655, ['Drive cage: eight E1.S bays, loaded from the front', '硬盘笼：8 个 E1.S 硬盘位，从前面插拔']],
+];
+
 const SOURCES = [
   {fact: ['72 GPUs and 36 CPUs per rack; from top to bottom between the power shelves, 10 compute trays, 9 switch trays and 8 compute trays', '每台机柜 72 块 GPU、36 颗 CPU；在上下两组电源之间，从上到下是 10 个计算托盘、9 个交换托盘、8 个计算托盘'], src: [['NVIDIA DGX GB200 User Guide', 'https://docs.nvidia.com/dgx/dgxgb200-user-guide/hardware.html'], ['NVIDIA, Hot Chips 2025', 'https://hc2025.hotchips.org/assets/program/tutorials/HC2025.T1DCRacks.S5.Norton.pdf']]},
   {fact: ['132 kW per GPU rack and 22 kW per network rack, three pods of two rows, 7,392 kW in all', '每台 GPU 机柜 132 千瓦、网络机柜 22 千瓦，三组各两排，合计 7,392 千瓦'], src: [['Schneider Electric, Reference Design 109', 'https://www.se.com/ca/en/download/document/RD109DSR0_EN']]},
@@ -54,15 +81,27 @@ export default function MakingOf({lang, onJump, onNavigate, stats}) {
   }, []);
   return <section ref={making} className="dh-making" data-nav-tone="light" aria-labelledby="dh-making-title">
     <header className="dh-m-head">
-      <span>{L(lang, 'DATA HALL', '数据中心')}</span>
+      <span>{L(lang, 'DATA HALL · OTHER PROJECT · 2026', '数据中心 · OTHER PROJECT · 2026')}</span>
       <h2 id="dh-making-title">{L(lang, 'How it was built', '怎么做出来的')}</h2>
-      <p>{L(lang, 'The geometry and textures are generated in the browser when the page loads; the scroll drives the construction and the camera. These are the parts that took the most work, with numbers measured from this page.', '几何体和贴图在页面加载时由浏览器生成，滚动驱动施工过程和镜头。下面是最费功夫的几处，数字都是从这个页面实测的。')}</p>
+      <p>{L(lang, 'Data Hall is a film you scroll. It starts as the floor plan of a 7.4 MW AI data hall, builds the hall in the order a contractor would, walks down a cold aisle, pulls out one compute tray and ends on the floor plan of a GPU die. The hall follows a published reference design and the maker’s specifications.', 'Data Hall 是一段用滚动来看的片子。它从一间 7.4 兆瓦 AI 机房的平面图开始，按施工的顺序把机房盖起来，走进一条冷通道，抽出一个计算托盘，最后停在一颗 GPU 裸片的平面图上。机房按一份公开的参考设计和厂商的规格来做。')}</p>
+      <p>{L(lang, 'Everything is drawn live in the browser: there is no video and no downloaded model. The geometry and textures are made in code when the page loads, and the scroll drives the construction and the camera. Below are the parts that took the most work, with numbers measured from this page.', '画面全部在浏览器里实时画出来，没有视频，也没有下载的模型。几何体和贴图在页面加载时用代码生成，滚动驱动施工过程和镜头。下面是最费功夫的几处，数字都是从这个页面实测的。')}</p>
+      <dl className="dh-m-meta">{[
+        [L(lang, 'Scroll', '滚动'), L(lang, `about ${Math.round(11 * SCROLL_LENGTH)} screens`, `约 ${Math.round(11 * SCROLL_LENGTH)} 屏`)],
+        [L(lang, 'Chapters', '段落'), String(CHAPTERS.length)],
+        [L(lang, 'Sheets', '图纸'), 'A-101 · C-301'],
+        [L(lang, 'Built with', '工具'), 'three.js · React · Vite'],
+        [L(lang, 'Downloaded assets', '下载的素材'), L(lang, 'None', '无')],
+        [L(lang, 'Reviews', '评审'), L(lang, `${ROUNDS.length} rounds, two reviewers`, `${ROUNDS.length} 轮，两位评审`)],
+      ].map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
     </header>
+    <Idea lang={lang}/>
+    <Chapters lang={lang} onJump={onJump}/>
     <DataFile lang={lang}/>
     <Schedule lang={lang} onJump={onJump}/>
     <Reality lang={lang}/>
+    <Tray lang={lang}/>
     <Camera lang={lang}/>
-    <Block n="05" title={L(lang, 'Where the numbers come from', '数字从哪来')} body={L(lang, 'Every caption was checked against published specifications and a reference design. The sources are listed first, then the dimensions I chose where nothing is published.', '每一句字幕都对照过公开的规格和参考设计。下面先列资料来源，再列没有公开资料、由我自己定的尺寸。')}>
+    <Block n="08" title={L(lang, 'Where the numbers come from', '数字从哪来')} body={L(lang, 'Every caption was checked against published specifications and a reference design. The sources are listed first, then the dimensions I chose where nothing is published.', '每一句字幕都对照过公开的规格和参考设计。下面先列资料来源，再列没有公开资料、由我自己定的尺寸。')}>
       <ol className="dh-m-sources">{SOURCES.map((s, i) => <li key={i}><p>{s.fact[en ? 0 : 1]}</p><span>{s.src.length ? s.src.map(([label, url], k) => <a key={k} href={url} target="_blank" rel="noopener noreferrer">{label} ↗</a>) : '—'}</span></li>)}</ol>
       <h3 className="dh-m-sub">{L(lang, 'Modelling choices', '建模时自己定的')}</h3>
       <ul className="dh-m-choices">{CHOICES.map((c, i) => <li key={i}>{c[en ? 0 : 1]}</li>)}</ul>
@@ -80,6 +119,51 @@ function Block({n, title, body, children, wide = false}) {
   </article>;
 }
 
+function Idea({lang}) {
+  const sheets = [['plan', ['A-101 · Data Hall 01, plan at +1.20 · 1:200', 'A-101 · 数据中心一号机房，+1.20 平面 · 1:200']], ['die', ['C-301 · GPU die 1, floor plan · illustrative', 'C-301 · 一颗 GPU 裸片，平面图 · 示意']]];
+  return <Block n="01" title={L(lang, 'The idea', '想法')} body={[
+    L(lang, 'A drawing holds a hall, the hall holds a chip, and the chip is a drawing again.', '一张图纸里有一座机房，机房里有一颗芯片，芯片又是一张图纸。'),
+    L(lang, 'A data hall is built from drawings, so the film starts from one: a plan with its grid, line weights and title block. The hall goes up in the order a builder would put it up, and the camera keeps going in until it reaches a single GPU die.', '机房是照着图纸盖的，所以片子从一张图纸开始：有轴网、线宽和图签的平面图。机房按施工的顺序盖起来，镜头一路往里走，直到一颗 GPU 裸片。'),
+    L(lang, 'The film ends on the die’s floor plan, drawn on the same sheet. So that the last cut is a match and not a dissolve, the building has the die’s proportions (the hall is 22 × 27.5 m; the die is drawn 25.5 × 31.5 mm, about 800 mm²), and the die’s blocks sit on the hall’s own lines: compute where the racks are, L2 cache where the hot aisles are, memory interfaces in the rooms along the north side. At the cut only the labels change.', '片子停在裸片的平面图上，和机房画在同一张图纸上。为了让最后一下是对位切换而不是叠化，机房按裸片的比例来定（机房 22 × 27.5 米；裸片画成 25.5 × 31.5 毫米，约 800 平方毫米），裸片上的区块落在机房自己的线上：计算单元在机柜的位置，二级缓存在热通道的位置，内存接口在北侧那排房间里。切换时只换标注。'),
+  ]}>
+    <div className="dh-m-sheets">{sheets.map(([k, cap]) => <figure key={k}><img src={`${ART}${k}.webp`} width={1200} height={675} loading="lazy" decoding="async" alt={L(lang, ...cap)}/><figcaption>{L(lang, ...cap)}</figcaption></figure>)}</div>
+  </Block>;
+}
+
+function Chapters({lang, onJump}) {
+  return <Block n="02" wide title={L(lang, 'The film, chapter by chapter', '逐段看')} body={L(lang, 'Nine chapters and one camera that never cuts until the last moment. Click a chapter to go to it.', '九段，镜头一路不断，到最后一刻才切。点一段，跳到那里。')}>
+    <ol className="dh-m-chapters">{CHAPTERS.map(([p, name, line], i) => <li key={i}><button type="button" onClick={() => onJump(p)}>
+      <img src={`${ART}chapter-${i + 1}.webp`} width={640} height={360} loading="lazy" decoding="async" alt=""/>
+      <span>{String(i + 1).padStart(2, '0')} · {L(lang, ...name)}</span><p>{L(lang, ...line)}</p>
+    </button></li>)}</ol>
+  </Block>;
+}
+
+function Tray({lang}) {
+  return <Block n="06" wide title={L(lang, 'Inside the tray', '托盘里面')} body={L(lang, 'Each rack holds 18 of these 1U compute trays, about 766 × 438 mm. The parts are the ones the maker documents. Their exact positions aren’t published, so where they sit is approximate. No part carries a brand.', '每台机柜有 18 个这样的 1U 计算托盘，约 766 × 438 毫米。零件按厂商公开的资料来做；具体位置没有公开，所以摆放是近似的。零件上都没有品牌。')}>
+    <figure className="dh-m-tray">
+      <div><img src={`${ART}tray.webp`} width={1200} height={675} loading="lazy" decoding="async" alt={L(lang, 'The compute tray pulled out of its rack, lid off, with its parts numbered', '从机柜里抽出来、打开盖子的计算托盘，零件标了编号')}/>
+        {PARTS.map(([x, y], i) => <b key={i} style={{left: `${x / 16}%`, top: `${y / 9}%`}} aria-hidden="true">{i + 1}</b>)}</div>
+      <ol>{PARTS.map(([, , t], i) => <li key={i}><b>{i + 1}</b>{L(lang, ...t)}</li>)}</ol>
+    </figure>
+  </Block>;
+}
+
+function Scores({lang}) {
+  // both reviewers' scores out of 100, round by round (reviews.json); the dashed line is the 90 the project aims for
+  const W = 560, H = 190, n = ROUNDS.length, lo = 55, hi = 95, x = r => 30 + (r - 1) / (n - 1) * (W - 44), y = v => H - 22 - (v - lo) / (hi - lo) * (H - 34);
+  const line = k => ROUNDS.map((r, i) => `${i ? 'L' : 'M'}${x(r.round).toFixed(1)},${y(r[k]).toFixed(1)}`).join('');
+  const last = ROUNDS[n - 1];
+  return <figure className="dh-m-scores">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={L(lang, `Review scores by round, from ${ROUNDS[0].codex} and ${ROUNDS[0].claude} in round 1 to ${last.codex} and ${last.claude} in round ${n}`, `各轮评审分数，从第 1 轮的 ${ROUNDS[0].codex} 和 ${ROUNDS[0].claude}，到第 ${n} 轮的 ${last.codex} 和 ${last.claude}`)}>
+      {[60, 70, 80, 90].map(v => <g key={v}><line x1={30} x2={W - 14} y1={y(v)} y2={y(v)} className={v === 90 ? 'is-goal' : ''}/><text x={24} y={y(v) + 3.5}>{v}</text></g>)}
+      {[1, 5, 10, 15, n].map(r => <text key={r} className="is-x" x={x(r)} y={H - 6}>{r}</text>)}
+      <path d={line('codex')}/><path className="is-claude" d={line('claude')}/>
+    </svg>
+    <figcaption>{L(lang, `Score out of 100 by round: GPT solid, Claude dashed. Round ${n}: ${last.codex} and ${last.claude}.`, `各轮得分（满分 100）：实线是 GPT，虚线是 Claude。第 ${n} 轮：${last.codex} 和 ${last.claude}。`)}</figcaption>
+  </figure>;
+}
+
 function DataFile({lang}) {
   const rows = [
     ['RACK', `${RACK.w.toFixed(2)} × ${RACK.d.toFixed(2)} × ${RACK.h} m`, '48U'],
@@ -89,7 +173,7 @@ function DataFile({lang}) {
     ['PER_ROW', String(PER_ROW), L(lang, `${PER_ROW - 2 * NET_EACH_END} GPU + ${NET_EACH_END} + ${NET_EACH_END} network`, `${PER_ROW - 2 * NET_EACH_END} 台 GPU + 两头各 ${NET_EACH_END} 台网络`)],
     ['HALL', `${ROOMS.hall.x1 - ROOMS.hall.x0} × ${ROOMS.hall.z1 - ROOMS.hall.z0} m`, L(lang, 'clear span', '无柱')],
   ];
-  return <Block n="01" title={L(lang, 'One data file', '一份数据')} body={L(lang, 'The drawing and the 3D model share the same dimensions, from one data file. Change an aisle width and the drawing, the racks, the pipes and the camera’s clearance check all move with it.', '图纸和 3D 模型用的是同一组尺寸，来自同一个数据文件。改一个通道宽度，图纸、机柜、管道，连镜头的避让检查都会跟着变。')}>
+  return <Block n="03" title={L(lang, 'One data file', '一份数据')} body={L(lang, 'The drawing and the 3D model share the same dimensions, from one data file. Change an aisle width and the drawing, the racks, the pipes and the camera’s clearance check all move with it.', '图纸和 3D 模型用的是同一组尺寸，来自同一个数据文件。改一个通道宽度，图纸、机柜、管道，连镜头的避让检查都会跟着变。')}>
     <pre className="dh-m-code">{rows.map(([k, v, c]) => <span key={k}><b>{k.padEnd(11)}</b>= {v}{c && <i>  // {c}</i>}{'\n'}</span>)}</pre>
     <dl className="dh-m-counts">
       <div><dt>{RACKS.length}</dt><dd>{L(lang, 'racks', '台机柜')}</dd></div>
@@ -101,7 +185,7 @@ function DataFile({lang}) {
 
 function Schedule({lang, onJump}) {
   const max = T.connect[1], W = 560, rowH = 22, H = SCHEDULE.length * rowH + 30, x = v => 128 + v / max * (W - 140);
-  return <Block n="02" title={L(lang, 'The build schedule', '施工进度表')} body={L(lang, 'Each piece has a start and a length on the scroll. A shader grows it up from its base, or along its run for pipes and trays, so scrolling back takes it down again. Overhead services are installed before the racks, as on a real site. Click a bar to go to that moment.', '每个构件在滚动上都有开始时间和长度。着色器让它从底部往上长，管道和桥架则顺着走向延伸，所以往回滚它会再拆掉。和真实工地一样，顶上的管线先装，机柜后进场。点一条横条，跳到那一刻。')}>
+  return <Block n="04" title={L(lang, 'The build schedule', '施工进度表')} body={L(lang, 'Each piece has a start and a length on the scroll. A shader grows it up from its base, or along its run for pipes and trays, so scrolling back takes it down again. Overhead services are installed before the racks, as on a real site. Click a bar to go to that moment.', '每个构件在滚动上都有开始时间和长度。着色器让它从底部往上长，管道和桥架则顺着走向延伸，所以往回滚它会再拆掉。和真实工地一样，顶上的管线先装，机柜后进场。点一条横条，跳到那一刻。')}>
     <svg className="dh-m-gantt" viewBox={`0 0 ${W} ${H}`} role="list" aria-label={L(lang, 'Build schedule', '施工进度表')}>
       {[0, 0.1, 0.2, 0.3].map(v => <g key={v}><line x1={x(v)} x2={x(v)} y1={0} y2={H - 22}/><text x={x(v)} y={H - 6}>{Math.round(v * 100)}%</text></g>)}
       {SCHEDULE.map(([k, en, zh], i) => {
@@ -123,7 +207,7 @@ function Reality({lang}) {
   const sx = 46, x = v => (v - (ROW_X0 - 2.2)) * sx, z = v => (v - (WALK_Z - 2.6)) * sx, Wpx = (ROW_X1 - ROW_X0 + 3.4) * sx;
   // how far up its face a rack has turned real (0–1): the shader's wipeT, from the rack's centre
   const real = (px, pz) => {const d = Math.hypot(px - camX, pz - WALK_Z), t = Math.min(1, Math.max(0, (d - R) / Wd)); return 1 - t * t * (3 - 2 * t);};
-  return <Block n="03" title={L(lang, 'What turns real, and when', '什么时候变真实')} body={[L(lang, 'A circle round the camera decides what is real. When it reaches a rack’s centre, the rack’s real material wipes upward from the floor, behind a thin ink line; the cables and fittings on it follow the same wipe. Floors, walls and services blend by each point’s own distance. The circle grows as you walk, so what you have passed stays real, and at power-on it opens to the whole hall.', '镜头周围的一个圆决定什么是实物。圆到达一台机柜的中心时，实物从地面沿着机柜往上擦出，前沿是一条细墨线；机柜上的线缆和配件跟着一起变。地面、墙和管线按每一点自己的距离过渡。圆随着往前走变大，走过的地方保持真实；通电时它扩到整个机房。'), L(lang, 'Drag the slider to walk the aisle.', '拖动滑块，沿通道走。')]}>
+  return <Block n="05" title={L(lang, 'What turns real, and when', '什么时候变真实')} body={[L(lang, 'A circle round the camera decides what is real. When it reaches a rack’s centre, the rack’s real material wipes upward from the floor, behind a thin ink line; the cables and fittings on it follow the same wipe. Floors, walls and services blend by each point’s own distance. The circle grows as you walk, so what you have passed stays real, and at power-on it opens to the whole hall.', '镜头周围的一个圆决定什么是实物。圆到达一台机柜的中心时，实物从地面沿着机柜往上擦出，前沿是一条细墨线；机柜上的线缆和配件跟着一起变。地面、墙和管线按每一点自己的距离过渡。圆随着往前走变大，走过的地方保持真实；通电时它扩到整个机房。'), L(lang, 'Drag the slider to walk the aisle.', '拖动滑块，沿通道走。')]}>
     <svg className="dh-m-aisle" viewBox={`0 0 ${Wpx} ${5.2 * sx}`} aria-hidden="true">
       {RACKS.filter(r => near.some(n => n.i === r.row)).map((r, k) => {
         const m = real(r.x, r.z), h = RACK.d * sx * m, front = r.z + r.face * RACK.d / 2;
@@ -147,7 +231,7 @@ function Camera({lang}) {
   const W = 560, H = 190, curve = PROBE.curveScroll || PROBE.curve, vmax = Math.max(...curve.map(c => c[1])) * 1.05, at = PROBE.curveScroll ? pToScroll : p => p;
   const path = useMemo(() => curve.map(([p, v], i) => `${i ? 'L' : 'M'}${(p * W).toFixed(1)},${(H - v / vmax * H).toFixed(1)}`).join(''), [curve, vmax]);
   const bands = [['plan', 0, T.slab[0]], ['build', T.slab[0], T.connect[1]], ['descend', ...T.descend], ['walk', ...T.walk], ['power', ...T.power], ['turn', ...T.turn], ['tray', T.slide[0], T.explode[1]], ['dive', ...T.dive], ['back', T.dive[1], 1]];
-  return <Block n="04" wide title={L(lang, 'Camera speed', '镜头速度')} body={[
+  return <Block n="07" wide title={L(lang, 'Camera speed', '镜头速度')} body={[
     L(lang, `The camera is a rig: a target, a distance, a yaw, a pitch and a lens. The distance, from 106 m over the 42 m sheet down to ${Math.round(106 * DETAIL.sheet / 42 * 100)} cm over a ${Math.round(DETAIL.sheet * 100)} cm one, is interpolated in log space. Each is a monotone curve through its keys, so it never overshoots a key. Then the path stays fixed and its timing is adjusted, to smooth the changes in speed. Where the camera moves faster than the film's typical pace, each step takes more scroll, in proportion to the camera's measured speed (up to 1.5×), so under the wheel the pace stays nearly even from the descent to the die. The chart shows it by scroll.`, `镜头由五个量控制：一个目标点、一个距离、水平角、俯仰角和焦距。距离从 42 米图纸上方的 106 米，一直到 ${Math.round(DETAIL.sheet * 100)} 厘米芯片图纸上方 ${Math.round(106 * DETAIL.sheet / 42 * 100)} 厘米，按对数插值。每一项都是穿过关键帧的单调曲线，所以不会冲过头。然后路径不变，只调整时间，让速度的变化平滑。镜头比全片一般速度快的地方，每一段要滚得更多，多出的比例按测出来的镜头速度定（最多 1.5 倍），所以从下降到裸片，滚轮下的速度几乎一样。图表按滚动来画。`),
     L(lang, 'Where a curve turns back, its slope is zero. In one version the yaw, the distance and the target all turned back at the power-on key, and the camera stopped dead before the turn. Letting each of them keep one direction from the walk through the turn removed the stop. The chart is this page’s camera, measured by a script that runs the same code.', '曲线掉头的地方，速度为零。有一版里，水平角、距离和目标点在通电那一帧同时掉头，镜头在转身之前停死了。改成从走路到转身，每一项都只朝一个方向变，停顿就没了。下面这张图是这个页面的镜头，用跑同一份代码的脚本量出来的。'),
   ]}>
@@ -164,16 +248,19 @@ function Camera({lang}) {
   </Block>;
 }
 
+// (the startup finding compares the same set-up before and after: the phone size with the CPU slowed 4×)
+const PHONE4 = PERF.runs.find(r => r.name === 'phone size, CPU ÷4');
 const LOAD = {task: Math.max(...PERF.runs.map(r => r.boot.longest || 0)), open: Math.max(...PERF.runs.map(r => r.boot.fonts + r.boot.camera + (r.boot.plan ?? r.boot.scene) + r.boot.first))};
 // three findings from the reviews, each with what it measured before and after the change (reviews/log.md has them all)
 const FINDINGS = [
   {what: ['The camera pushed into the slide, eased off and pushed again on phones', '手机上镜头滑出托盘时先推近、放慢、再推近'], before: ['4% windows 33 → 25 → 30', '每 4% 的速度 33 → 25 → 30'], after: ['largest change over 4%: 1.20×', '4% 内最大变化 1.20 倍'], unit: ['camera probe', '镜头测量']},
   // (the after is the current scripted runs, perf.json: the longest task and the slowest opening across all six set-ups)
-  {what: ['The page froze while the scene loaded', '场景加载时页面卡住'], before: ['longest task 568 ms, phone size with the CPU slowed 4× (round 9)', '最长阻塞 568 毫秒，手机尺寸、CPU 降速 4 倍（第 9 轮）'], after: [`longest task ${LOAD.task} ms; the opening draws within ${LOAD.open} ms (${PERF.measured})`, `最长阻塞 ${LOAD.task} 毫秒；开场在 ${LOAD.open} 毫秒内画出（${PERF.measured}）`], unit: ['scripted runs', '脚本实测']},
+  {what: ['The page froze while the scene loaded', '场景加载时页面卡住'], before: ['longest task 568 ms, phone size with the CPU slowed 4× (round 9)', '最长阻塞 568 毫秒，手机尺寸、CPU 降速 4 倍（第 9 轮）'], after: [`longest task ${PHONE4?.boot.longest ?? LOAD.task} ms in the same set-up; ${LOAD.task} ms at worst across all six runs (${PERF.measured})`, `同样设置下最长阻塞 ${PHONE4?.boot.longest ?? LOAD.task} 毫秒；六种设置里最差 ${LOAD.task} 毫秒（${PERF.measured}）`], unit: ['scripted runs', '脚本实测']},
   {what: ['At the cut, labels were sliced into half-words', '切换时标注被切成半个字'], before: ['each pixel switched where the wipe was', '每个像素在硬切线经过时切换'], after: ['each label switches whole, at its own anchor', '每个标注按自己的锚点整体切换'], unit: ['frames p0.958', '画面 p0.958']},
 ];
 function Reviews({lang}) {
-  return <Block n="06" title={L(lang, 'Reviews', '评审')} body={L(lang, 'Every version was checked by two reviewers who did not write the code, GPT (through Codex) and a separate Claude agent, against the same brief: the frames, the camera log and the code. Three of their findings:', '每一版都由两个没写代码的评审，通过 Codex 调用的 GPT 和另一个独立的 Claude，按同一份要求检查画面、镜头数据和代码。其中三条：')}>
+  return <Block n="09" title={L(lang, 'Reviews', '评审')} body={L(lang, 'Every version was checked by two reviewers who did not write the code, GPT (through Codex) and a separate Claude agent, against the same brief: the frames, the camera log and the code. Each scored it out of 100 and listed what to fix, and the next round fixed it. Three of their findings:', '每一版都由两个没写代码的评审，通过 Codex 调用的 GPT 和另一个独立的 Claude，按同一份要求检查画面、镜头数据和代码。每人打分（满分 100），列出要改的地方，下一轮改掉。其中三条：')}>
+    <Scores lang={lang}/>
     <ol className="dh-m-findings">{FINDINGS.map((f, i) => <li key={i}><p>{L(lang, ...f.what)}</p><dl><div><dt>{L(lang, 'Before', '之前')}</dt><dd>{L(lang, ...f.before)}</dd></div><div><dt>{L(lang, 'After', '之后')}</dt><dd>{L(lang, ...f.after)}</dd></div></dl><span>{L(lang, ...f.unit)}</span></li>)}</ol>
   </Block>;
 }
@@ -188,7 +275,7 @@ function Cost({lang, stats}) {
     return () => {clearInterval(t); io.disconnect();};
   }, [stats]);
   const ms = v => (v ? v.toFixed(1) + ' ms' : '—');
-  return <div ref={root}><Block n="07" title={L(lang, 'Frame cost', '一帧的开销')} body={[L(lang, `Repeated parts, such as the ${RACKS.length} racks and the ${fmt(LIGHTS)} status lights, are drawn in instanced batches, and the pulled tray is merged by material, so the busiest frame’s main pass is under a hundred draw calls (the shadow maps, drawn only while they change, come on top). The textures are painted in code at load and their relief is baked on the GPU. If moving frames miss the 60 fps budget and the GPU is the slow part, the page lowers its pixel ratio.`, `重复的构件，像 ${RACKS.length} 台机柜、${fmt(LIGHTS)} 个状态灯，都按实例批量绘制，抽出来的那个托盘按材质合并，所以最忙的一帧主画面也不到一百次绘制调用（阴影贴图只在变化时才画，另算）。贴图在加载时用代码画出来，凹凸用 GPU 算。画面移动时如果达不到 60 帧，而且慢在 GPU，页面会降低像素比。`), L(lang, 'These numbers are measured in your browser while you scroll the film: the heaviest frame it drew, the time between frames while the picture moves (not clamped; on a fast machine this is the screen’s refresh), and the CPU time spent preparing each frame.', '下面的数字是你滚动上面那段画面时，在你的浏览器里量的：画过的最重的一帧；画面移动时帧与帧之间的实际间隔（没有截断，在快的机器上就是屏幕的刷新间隔）；以及准备每一帧花的 CPU 时间。')]}>
+  return <div ref={root}><Block n="10" title={L(lang, 'Frame cost', '一帧的开销')} body={[L(lang, `Repeated parts, such as the ${RACKS.length} racks and the ${fmt(LIGHTS)} status lights, are drawn in instanced batches, and the pulled tray is merged by material, so the busiest frame’s main pass is under a hundred draw calls (the shadow maps, drawn only while they change, come on top). The textures are painted in code at load and their relief is baked on the GPU. If moving frames miss the 60 fps budget and the GPU is the slow part, the page lowers its pixel ratio.`, `重复的构件，像 ${RACKS.length} 台机柜、${fmt(LIGHTS)} 个状态灯，都按实例批量绘制，抽出来的那个托盘按材质合并，所以最忙的一帧主画面也不到一百次绘制调用（阴影贴图只在变化时才画，另算）。贴图在加载时用代码画出来，凹凸用 GPU 算。画面移动时如果达不到 60 帧，而且慢在 GPU，页面会降低像素比。`), L(lang, 'These numbers are measured in your browser while you scroll the film: the heaviest frame it drew, the time between frames while the picture moves (not clamped; on a fast machine this is the screen’s refresh), and the CPU time spent preparing each frame.', '下面的数字是你滚动上面那段画面时，在你的浏览器里量的：画过的最重的一帧；画面移动时帧与帧之间的实际间隔（没有截断，在快的机器上就是屏幕的刷新间隔）；以及准备每一帧花的 CPU 时间。')]}>
     <dl className="dh-m-counts is-live">
       <div><dt>{s ? s.calls : '—'}</dt><dd>{L(lang, 'draw calls in the main pass, heaviest frame', '次绘制（主画面，最重的一帧）')}</dd></div>
       <div><dt>{s ? fmt(s.triangles) : '—'}</dt><dd>{L(lang, 'triangles in the main pass, heaviest frame', '个三角形（主画面，最重的一帧）')}</dd></div>

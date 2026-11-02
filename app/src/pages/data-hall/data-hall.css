@@ -92,6 +92,38 @@ body.nav-tone-owned .v16-navigation:not(.is-menu-open) .sm-toggle{color:var(--na
 .dh-m-table{width:100%;border-collapse:collapse;font:500 13px/1.4 'TikTok Sans','PingFang SC',sans-serif;font-variant-numeric:tabular-nums}
 .dh-m-table th{text-align:left;font:500 11px/1.4 Mono,'PingFang SC',monospace;letter-spacing:.06em;color:var(--dh-muted);padding:0 0 8px}
 .dh-m-table td{padding:7px 0;border-top:1px solid #11111412}
+/* the project's facts, under the lede */
+.dh-m-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px 24px;margin:30px 0 0;padding:20px 0 0;border-top:1px solid #11111414}
+.dh-m-meta dt{font:500 10.5px/1 Mono,ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--dh-muted)}
+.dh-m-meta dd{margin:7px 0 0;font:500 14px/1.4 'TikTok Sans','PingFang SC',sans-serif;color:#1a1b1f}
+/* the two sheets, the chapters, the tray */
+.dh-m-sheets{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dh-m-sheets figure,.dh-m-tray,.dh-m-scores{margin:0}
+.dh-m-sheets img,.dh-m-chapters img,.dh-m-tray img{display:block;width:100%;height:auto;border-radius:6px;background:#e9eaec}
+.dh-m-sheets img{box-shadow:0 0 0 1px #11111414}
+.dh-m-sheets figcaption,.dh-m-scores figcaption{margin-top:9px;font:500 11px/1.5 Mono,ui-monospace,monospace;letter-spacing:.03em;color:var(--dh-muted)}
+.dh-m-chapters{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 14px}
+.dh-m-chapters button{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer}
+.dh-m-chapters button:focus-visible{outline:2px solid #111114;outline-offset:4px;border-radius:6px}
+.dh-m-chapters img{transition:filter .2s ease}
+.dh-m-chapters button:hover img{filter:brightness(1.08)}
+.dh-m-chapters span{display:block;margin:11px 0 5px;font:500 11px/1 Mono,ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:#1a1b1f}
+.dh-m-chapters p{margin:0;font:400 13.5px/1.5 'TikTok Sans','PingFang SC','Microsoft YaHei',sans-serif;color:#55575d}
+.dh-m-tray>div{position:relative}
+.dh-m-tray>div>b{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#f4f5f6;box-shadow:0 0 0 2px #111114,0 2px 8px #0008;display:grid;place-items:center;font:700 12px/1 Mono,monospace;color:#111114}
+.dh-m-tray ol{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
+.dh-m-tray li{display:flex;gap:10px;align-items:flex-start;font:400 14px/1.5 'TikTok Sans','PingFang SC','Microsoft YaHei',sans-serif;color:#3a3b40}
+.dh-m-tray li b{flex:none;width:22px;height:22px;margin-top:-1px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #111114;display:grid;place-items:center;font:700 11px/1 Mono,monospace;color:#111114}
+/* the reviews' scores */
+.dh-m-scores svg{display:block;width:100%;height:auto;overflow:visible}
+.dh-m-scores line{stroke:#1111141c}
+.dh-m-scores line.is-goal{stroke:#c98aa3;stroke-dasharray:3 4}
+.dh-m-scores text{font:500 10px/1 Mono,monospace;fill:var(--dh-muted);text-anchor:end}
+.dh-m-scores text.is-x{text-anchor:middle}
+.dh-m-scores path{fill:none;stroke:#111114;stroke-width:2;stroke-linejoin:round}
+.dh-m-scores path.is-claude{stroke-dasharray:6 4}
+@media(max-width:860px){.dh-m-chapters{grid-template-columns:1fr 1fr}.dh-m-tray ol{grid-template-columns:1fr}}
+@media(max-width:520px){.dh-m-sheets{grid-template-columns:1fr}.dh-m-tray>div>b{width:20px;height:20px;font-size:10.5px}}
 /* the camera chart's axis note */
 .dh-m-chart .dh-m-axis{font:500 10px/1 Mono,'PingFang SC',monospace;letter-spacing:.04em;fill:var(--dh-muted)}
 /* the reviews' findings, before and after */

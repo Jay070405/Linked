@@ -377,6 +377,23 @@
      "镜头速度图按滚动来画；很早开始滚动也不会被当成恢复的位置。"
     ]
    }
+  },
+  {
+   "round": 19,
+   "codex": 89.8,
+   "claude": 89.8,
+   "changes": {
+    "en": [
+     "The scroll is weighted by the camera’s measured speed, so the pace under the wheel stays even from the descent to the die.",
+     "A scroll position the browser restores is told apart from the visitor’s own scrolling by input since the page loaded.",
+     "Draw-call figures say they count the main pass; the camera chart and table show the pace per scroll."
+    ],
+    "zh": [
+     "滚动按测出来的镜头速度加权，从下降到裸片，滚轮下的速度一样。",
+     "浏览器恢复的滚动位置和访客自己的滚动，按页面加载以来有没有输入来区分。",
+     "绘制次数标明只算主画面；镜头图表和表格按每段滚动显示速度。"
+    ]
+   }
   }
  ]
 }
