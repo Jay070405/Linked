@@ -71,8 +71,13 @@ body.nav-tone-owned .v16-navigation:not(.is-menu-open) .sm-toggle{color:var(--na
 .dh-m-gantt,.dh-m-chart,.dh-m-aisle{width:100%;height:auto;display:block;overflow:visible}
 .dh-m-aisle{overflow:hidden;border:1px solid #11111418;border-radius:10px;background:#fff}
 .dh-m-gantt line{stroke:#11111414}.dh-m-gantt text{font:500 11px Mono,'PingFang SC',monospace;fill:#55575d}
-.dh-m-bar{cursor:pointer;outline:none}.dh-m-bar rect{fill:#111114;transition:fill .2s}
-.dh-m-bar:hover rect,.dh-m-bar:focus-visible rect{fill:var(--dh-petal)}
+/* a schedule bar is a button: the whole row takes the click, and keyboard focus draws a ring round the row (in place of
+   the site's outline, which on an SVG group spills over the rows either side) */
+.dh-m-bar{cursor:pointer;outline:none}.dh-m-bar .dh-m-span{fill:#111114;transition:fill .2s}
+.dh-m-bar .dh-m-hit{fill:transparent;stroke:transparent;stroke-width:1.5}
+.dh-m-bar:hover .dh-m-span,.dh-m-bar:focus-visible .dh-m-span{fill:var(--dh-petal)}
+.dh-m-bar:focus-visible .dh-m-hit{stroke:var(--dh-ink)}
+.dh .dh-m-bar:focus-visible{outline:none}
 .dh-m-bar:focus-visible text{fill:#111114;text-decoration:underline}
 .dh-m-aisle rect{stroke:#111114;stroke-width:1}
 .dh-m-aisle text{font:600 10px Mono,monospace;letter-spacing:.12em;fill:#8a8c93}
@@ -106,9 +111,9 @@ body.nav-tone-owned .v16-navigation:not(.is-menu-open) .sm-toggle{color:var(--na
 .dh-m-chapters button{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer}
 .dh-m-chapters button:focus-visible{outline:2px solid #111114;outline-offset:4px;border-radius:6px}
 .dh-m-chapters img{transition:filter .2s ease}
-.dh-m-chapters button:hover img{filter:brightness(1.08)}
-.dh-m-chapters span{display:block;margin:11px 0 5px;font:500 11px/1 Mono,ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:#1a1b1f}
-.dh-m-chapters p{margin:0;font:400 13.5px/1.5 'TikTok Sans','PingFang SC','Microsoft YaHei',sans-serif;color:#55575d}
+.dh-m-chapters button:hover img,.dh-m-chapters button:focus-visible img{filter:brightness(1.08)}
+.dh-m-chapters .dh-m-ch-name{display:block;margin:11px 0 5px;font:500 11px/1 Mono,ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:#1a1b1f}
+.dh-m-chapters .dh-m-ch-line{display:block;margin:0;font:400 13.5px/1.5 'TikTok Sans','PingFang SC','Microsoft YaHei',sans-serif;color:#55575d}
 .dh-m-tray>div{position:relative}
 .dh-m-tray>div>b{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#f4f5f6;box-shadow:0 0 0 2px #111114,0 2px 8px #0008;display:grid;place-items:center;font:700 12px/1 Mono,monospace;color:#111114}
 .dh-m-tray ol{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
@@ -146,6 +151,7 @@ body.dh-making-on .portfolio-return{opacity:0;pointer-events:none;transition:opa
 /* (the set-up's name wraps, the figures don't; on a narrow screen the table scrolls, with a fade at the edge as the cue) */
 .dh-m-wide{min-width:660px;font-size:12px}
 .dh-m-wide :is(th,td){padding-right:10px;white-space:nowrap}
+.dh-m-wide th{text-transform:uppercase}
 .dh-m-wide :is(th,td):first-child{white-space:normal;min-width:120px}
 .dh-m-scroll{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
 @media(min-width:1200px){.dh-m-scroll{-webkit-mask-image:none;mask-image:none}}
@@ -154,7 +160,7 @@ body.dh-making-on .portfolio-return{opacity:0;pointer-events:none;transition:opa
 .dh-m-sources li{display:grid;grid-template-columns:28px 1fr;gap:0 10px;padding:12px 0;border-top:1px solid #11111412;counter-increment:s}
 .dh-m-sources li::before{content:counter(s,decimal-leading-zero);grid-row:span 2;font:500 11px/1.6 Mono,monospace;color:var(--dh-muted)}
 .dh-m-sources p{margin:0;font:500 15px/1.5 'TikTok Sans','PingFang SC',sans-serif}
-.dh-m-sources span{display:flex;flex-wrap:wrap;gap:4px 14px;font:400 12px/1.6 Mono,'PingFang SC',monospace;color:var(--dh-muted)}
+.dh-m-sources li>span{display:flex;flex-wrap:wrap;gap:4px 14px;font:400 12px/1.6 Mono,'PingFang SC',monospace;color:var(--dh-muted)}
 .dh-m-sources a{color:inherit;text-decoration:underline;text-decoration-color:#62646b55;text-underline-offset:3px}
 .dh-m-sources a:hover{color:var(--dh-ink)}
 .dh-m-reviews{list-style:none;margin:0;padding:0}
@@ -171,3 +177,5 @@ body.dh-making-on .portfolio-return{opacity:0;pointer-events:none;transition:opa
 .dh-m-foot{display:flex;justify-content:space-between;padding-top:40px;border-top:1px solid #11111414;font:500 12px/1 Mono,monospace;letter-spacing:.08em;color:var(--dh-muted)}
 .dh-m-foot a{color:var(--dh-ink);text-decoration:none}
 @media(max-width:860px){.dh-m-block,.dh-m-block.is-wide{grid-template-columns:1fr}}
+/* text for screen readers only, such as "opens in a new tab" on the source links */
+.dh .dh-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}

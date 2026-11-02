@@ -224,7 +224,7 @@ export default function DataHall({lang, reduced, onNavigate}) {
   return <div className="dh">
     <section className={'dh-film' + (failed ? ' is-static' : '')} ref={film} style={{height: failed ? 'auto' : FILM_VH + 'vh'}} aria-label={en ? 'Data Hall, built as you scroll' : 'Data Hall，随滚动盖起来'}>
       <div className="dh-stage" ref={stage} data-nav-tone="light">
-        {failed ? <img className="dh-fallback" src="/assets/other-project/data-hall/cover.webp" alt={en ? 'The data hall’s floor plan' : '数据中心的平面图'}/> : <canvas key={reduced ? 'still' : 'moving'} ref={canvas} className="dh-canvas" aria-hidden="true"/>}
+        {failed ? <img className="dh-fallback" src="/assets/other-project/data-hall/cover.webp" alt={en ? 'A compute tray pulled out of a rack in the data hall, under the words “From a floor plan to one GPU.”' : '从机房的机柜里抽出的一个计算托盘，上方写着 “From a floor plan to one GPU.”'}/> : <canvas key={reduced ? 'still' : 'moving'} ref={canvas} className="dh-canvas" aria-hidden="true"/>}
         <header className="dh-head" ref={head}>
           <span>OTHER PROJECT · 2026</span>
           <h1>Data Hall</h1>
