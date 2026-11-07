@@ -148,6 +148,28 @@ export const PRODUCT_CASES = [
     thumb: {src: '/assets/product/hako/tile.webp', width: 1180, height: 820},
     page: true,
   },
+  {
+    slug: 'microclimate',
+    title: 'Microclimate',
+    subtitle: 'An office chair that heats or cools your upper back, lower back and seat separately, with a motorised backrest and lumbar',
+    pageTitle: 'Microclimate, a chair with three heated and cooled zones',
+    summary: 'A concept office chair you can operate in 3D: three zones that heat or blow air on their own, a backrest and lumbar on motors that an AI adjusts within set limits, an armrest panel, a phone app, and the chair taken apart into 11 modules.',
+    kind: 'Industrial design and iOS concept',
+    when: 'Nov 2026',
+    status: 'Concept',
+    zh: {
+      title: '小气候',
+      pageTitle: '小气候：分三个区加热和吹风的椅子',
+      subtitle: '一把办公椅：上背、腰和座垫分开加热或吹风，靠背和腰托用电机调',
+      summary: '一把能在网页上直接操作的概念办公椅：三个区各自加热或吹风，靠背和腰托用电机调，AI 在限定范围内帮你调；有扶手控制面板和手机 App，整把椅子拆成 11 个模块。',
+      kind: '工业设计与 iOS 概念设计',
+      when: '2026 年 11 月',
+      status: '概念',
+    },
+    // The live three.js chair from the page, three-quarter view on the page's light grey.
+    thumb: {src: '/assets/product/microclimate/tile.webp', width: 1500, height: 1000},
+    page: true,
+  },
 ];
 export const PUBLISHED_CASES = PRODUCT_CASES.filter(c => c.page);
 

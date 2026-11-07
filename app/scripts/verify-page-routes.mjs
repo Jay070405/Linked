@@ -73,8 +73,8 @@ assert.equal(routing.resolvePath('/about').type,'about');
 assert.equal(routing.resolvePath('/about/').type,'about');
 assert.equal(routing.routeFor({type:'about'}),'/about');
 assert.equal(routing.resolvePath('/product/').type,'product');
-// the six product cases, and the research write-up kept as the flagship's appendix
-for (const slug of ['ready-for-agents','atelier','last-100-feet','choose-not-to-lose','arden','hako','design-to-code']) {
+// the seven product cases, and the research write-up kept as the flagship's appendix
+for (const slug of ['ready-for-agents','atelier','last-100-feet','choose-not-to-lose','arden','hako','microclimate','design-to-code']) {
   assert.equal(routing.resolvePath('/product/'+slug).item.slug,slug);
   assert.equal(routing.routeFor({type:'product-case',item:{slug}}),'/product/'+slug);
 }

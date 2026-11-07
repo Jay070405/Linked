@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>小气候 Microclimate</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:,">
+<!-- the model is the heaviest thing on the page: start it before the fonts, styles and three.js -->
+<script>window.__mcPre = { glb: fetch('assets/chair.glb.txt', { cache: 'no-cache' }), json: fetch('assets/chair.json', { cache: 'no-cache' }) };</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=14">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.core.js">
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js">
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js">
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/DRACOLoader.js">
+</head>
+<body data-tone="dark">
+
+<header class="nav" id="nav">
+  <a class="nav-name" href="#hero">小气候</a>
+  <nav aria-label="页面目录">
+    <a href="#zones">三个区</a><a href="#thermal">热成像</a><a href="#posture">坐姿</a><a href="#adjust">调节</a><a href="#finish">颜色</a><a href="#parts">拆开</a><a href="#app">App</a><a href="#specs">参数</a><a href="#process">过程</a>
+  </nav>
+</header>
+
+<div id="stage" aria-hidden="true"></div>
+<div id="labels" aria-hidden="true"></div>
+<div id="loader" role="status"><span class="ld-bar"><i></i></span><span class="ld-text">正在载入椅子模型</span></div>
+
+<main>
+  <!-- 1 -->
+  <section id="hero" data-tone="dark" data-scene="hero">
+    <div class="wrap hero-in">
+      <p class="hero-kicker">工业设计、3D 建模、iOS App</p>
+      <h1>小气候</h1>
+      <p class="hero-lede">这是一把人体工学椅。上背、腰和座垫分成三个区，可以各自加热或吹风；靠背和腰托用电机调。</p>
+      <p class="hero-meta"><span>林世杰 Jay Lin</span><span>2026 年 11 月</span><span>概念设计，还没有做实物</span></p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="zones" data-tone="light" data-scene="zones">
+    <div class="pin">
+      <div class="wrap zones-copy">
+        <h2 class="statement">空调只能定一个温度。<span class="lo"><span class="w">可人坐在椅子上，</span><span class="w">背、腰和大腿</span><span class="w">冷热各不一样。</span></span></h2>
+        <p class="zones-note">所以这把椅子分成三个区，每个区自己加热或吹风。</p>
+      </div>
+      <svg class="leaders" aria-hidden="true"><g></g></svg>
+      <div class="callouts">
+        <div class="callout" data-zone="A"><b>上背</b><span>加热 3 档，风 3 档</span></div>
+        <div class="callout" data-zone="B"><b>腰</b><span>加热 3 档，风 3 档</span></div>
+        <div class="callout" data-zone="C"><b>座垫</b><span>加热 3 档，风 3 档</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section id="thermal" data-tone="dark" data-scene="thermal">
+    <div class="pin">
+      <div class="th-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="wrap th-top">
+        <h2>用热成像看三个区</h2>
+        <div class="seg" role="radiogroup" aria-label="画面">
+          <button role="radio" aria-checked="false" data-th="0">实拍</button>
+          <button role="radio" aria-checked="true" data-th="1">热成像</button>
+        </div>
+      </div>
+      <ol class="th-steps">
+        <li><time>09:00</time><h3>刚坐下</h3><p>屋里 24°C，椅面和屋里一样。</p></li>
+        <li><time>09:02</time><h3>座垫加热 2 档，上背 1 档</h3><p>热从面料下面的电热丝往外散开，座垫到 35°C，上背到 33°C。</p></li>
+        <li><time>09:32</time><h3>加热满 30 分钟，自动关</h3><p>面料表面最高 43°C。电热丝超过 45°C 时，硬件直接断电，不经过软件。</p></li>
+        <li><time>14:00</time><h3>屋里到了 27°C，换成通风</h3><p>座垫开风 2 档，腰开风 1 档。风从面料下面吹出来，这时电热丝不通电。</p></li>
+        <li><time>18:30</time><h3>起身 10 秒后，三个区都关</h3><p>座上没人了，椅子就停掉加热和风扇。</p></li>
+      </ol>
+      <div class="th-hud" aria-hidden="true">
+        <div class="th-scale"><span>40°</span><i></i><span>20°</span></div>
+        <div class="th-zones">
+          <div data-z="A"><span>上背</span><b>24.0°</b></div>
+          <div data-z="B"><span>腰</span><b>24.0°</b></div>
+          <div data-z="C"><span>座垫</span><b>24.0°</b></div>
+        </div>
+      </div>
+      <div class="spot" aria-hidden="true"><i></i><b>24.0°C</b></div>
+      <p class="th-tip">鼠标移到椅子上，能读出那一点的温度</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="posture" data-tone="light" data-scene="posture">
+    <div class="pin">
+      <div class="wrap posture-copy">
+        <h2 class="statement"><span class="w">靠背和腰托</span><span class="w">用电机调。</span><span class="lo"><span class="w">按扶手上的键，</span><span class="w">或者让 AI 照你的习惯来调。</span></span></h2>
+        <div class="readouts">
+          <div><span>靠背</span><b class="num" id="rRecl">0°</b></div>
+          <div><span>腰托高度</span><b class="num" id="rLum">205<small>mm</small></b></div>
+          <div><span>腰托深度</span><b class="num" id="rLumD">0<small>mm</small></b></div>
+        </div>
+        <div class="panel" role="group" aria-label="扶手控制面板">
+          <div class="panel-row">
+            <div class="rocker" data-axis="recl"><span>靠背</span>
+              <button aria-label="靠背往前" data-dir="-1"><svg viewBox="0 0 12 12"><path d="M2 8l4-4 4 4"/></svg></button>
+              <button aria-label="靠背往后" data-dir="1"><svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg></button>
+            </div>
+            <div class="rocker r4" data-axis="lum"><span>腰托</span>
+              <div class="cross">
+                <button class="c-up" aria-label="腰托往上" data-dir="1"><svg viewBox="0 0 12 12"><path d="M2 8l4-4 4 4"/></svg></button>
+                <button class="c-fwd" aria-label="腰托往前" data-axis="lumD" data-dir="1"><svg viewBox="0 0 12 12"><path d="M8 2L4 6l4 4"/></svg></button>
+                <button class="c-back" aria-label="腰托往后" data-axis="lumD" data-dir="-1"><svg viewBox="0 0 12 12"><path d="M4 2l4 4-4 4"/></svg></button>
+                <button class="c-dn" aria-label="腰托往下" data-dir="-1"><svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg></button>
+              </div>
+            </div>
+            <div class="panel-keys">
+              <button class="key-ai" id="aiKey">AI 阅读坐姿</button>
+              <button class="key-stop" id="stopKey">暂停接管</button>
+            </div>
+          </div>
+          <p class="panel-status" id="aiStatus" aria-live="polite">按住箭头调靠背和腰托，或者点「AI 阅读坐姿」让 AI 来调。</p>
+        </div>
+        <p class="posture-note">腰托拨键能往四个方向推：上下调高度，前后调深度。AI 一次只动一项，靠背最多 8°，腰托高度最多 10 mm、深度最多 5 mm，两次之间至少隔 10 分钟。座高、座深、扶手和头枕只能手动调。</p>
+      </div>
+      <svg class="angle" aria-hidden="true"><path class="angle-ref"/><path class="angle-cur"/><path class="angle-arc"/><text class="angle-t"></text></svg>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="adjust" data-tone="light" data-scene="adjust">
+    <div class="pin">
+      <div class="wrap adj-copy">
+        <h2 class="statement">这把椅子能调 11 处。<span class="lo"><span class="w">8 处用手调，</span><span class="w">3 处靠电机。</span></span></h2>
+        <div class="adj-list" id="adjList"></div>
+      </div>
+      <svg class="adj-svg" aria-hidden="true"></svg>
+      <div class="adj-keys" aria-hidden="true"></div>
+      <div class="adj-ring" aria-hidden="true"><i></i><span></span></div>
+      <div class="adj-read" aria-hidden="true"><b class="num"></b><small></small><span></span></div>
+      <div class="adj-card" aria-live="polite"></div>
+    </div>
+  </section>
+
+
+  <section id="finish" data-tone="light" data-scene="finish">
+    <div class="pin">
+      <div class="wrap fin-copy">
+        <h2 class="statement">有两种配色。<span class="lo"><span class="w">白框配浅灰面料，</span><span class="w">黑框配深灰面料。</span></span></h2>
+        <div class="swatches" role="radiogroup" aria-label="颜色">
+          <button role="radio" aria-checked="true" data-fin="white"><i></i>白色</button>
+          <button role="radio" aria-checked="false" data-fin="black"><i></i>黑色</button>
+        </div>
+        <dl class="mats">
+          <div><dt>面料</dt><dd>针织面料。三块软包的外套都有拉链，可以拆下来洗。</dd></div>
+          <div><dt>框和后壳</dt><dd>脊梁和立柱是铝压铸，表面喷涂；软包后壳是 PP 注塑，和框同色。</dd></div>
+          <div><dt>五星脚</dt><dd>铝压铸。白色款抛光，黑色款喷黑。</dd></div>
+          <div><dt>扶手面</dt><dd>PU 发泡，磨旧了可以单独换。</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="parts" data-tone="light" data-scene="parts">
+    <div class="pin">
+      <div class="wrap parts-copy">
+        <h2 class="statement">拆开是 12 块零件。<span class="lo"><span class="w">点一条线路，</span><span class="w">看它经过哪几块。</span></span></h2>
+        <div class="tabs" role="tablist" aria-label="线路">
+          <button role="tab" aria-selected="true" data-path="all">全部</button>
+          <button role="tab" aria-selected="false" data-path="heat"><i class="dot heat"></i>热</button>
+          <button role="tab" aria-selected="false" data-path="air"><i class="dot air"></i>风</button>
+          <button role="tab" aria-selected="false" data-path="power"><i class="dot power"></i>电</button>
+          <button role="tab" aria-selected="false" data-path="motion"><i class="dot motion"></i>动</button>
+        </div>
+        <p class="path-text" id="pathText">再往下滚，椅子会拆开。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="make" data-tone="white" data-scene="none">
+    <div class="wrap">
+      <h2 class="title"><span class="w">用什么做，</span><span class="w">坏了换哪块</span></h2>
+      <p class="sub">整把椅子分成 11 个模块。每块软包里的电热丝和探头只用一个插头接出来，坏了整块换。材料先按同类办公椅的常见做法定，最后还要请结构设计和供应商确认。</p>
+      <div class="mk">
+        <div class="mk-h"><span>模块</span><span>材料和做法</span><span>能拆下来做什么</span></div>
+        <div class="mk-r"><b>头枕</b><p>壳是 PA 注塑；软包是针织面料包泡棉；直杆是铝。</p><p>整个抽出来换。</p></div>
+        <div class="mk-r"><b>上背软包</b><p>后壳 PP 注塑，外套针织面料。里面有电热丝、温湿度探头、风袋和风扇。</p><p>外套拉开拆洗；发热层整块换。</p></div>
+        <div class="mk-r"><b>腰托</b><p>和上背一样，多一片弹簧钢支撑片和拉它上下走的电机。</p><p>外套拆洗。</p></div>
+        <div class="mk-r"><b>腰托底座和芯柱</b><p>底座压铸后喷涂，芯柱是铝型材。里面是调前后的小电机和自锁丝杆。</p><p>一般不拆。</p></div>
+        <div class="mk-r"><b>脊梁和立柱</b><p>铝压铸，表面喷涂。背部的分线板和三个区的指示灯装在里面。</p><p>不拆。</p></div>
+        <div class="mk-r"><b>座垫</b><p>座盆 PP 注塑；泡棉前沿换成软泡；压力膜判断有没有人坐。</p><p>外套拆洗；发热层整块换。</p></div>
+        <div class="mk-r"><b>座板和裙边</b><p>座板是冲压钢板，裙边 PP，前沿的密封条是 TPE。</p><p>—</p></div>
+        <div class="mk-r"><b>扶手，两只</b><p>立管铝压铸，扶手面 PU 发泡。右边扶手带控制面板和 NFC。</p><p>扶手面可以换。</p></div>
+        <div class="mk-r"><b>座下仓</b><p>托盘铝压铸，底盖 PC/ABS。里面是电池、主板、座垫风扇和滤网、两个调角器、靠背电机。</p><p>电池从仓门抽出来换；滤网可换；拧下底盖的 4 颗螺丝能修主板。</p></div>
+        <div class="mk-r"><b>气杆</b><p>4 级气杆，行程 130 mm，标准件。</p><p>可以换。</p></div>
+        <div class="mk-r"><b>五星脚和脚轮</b><p>五星脚铝压铸，脚轮是标准件。</p><p>可以换。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="app" data-tone="mist" data-scene="app">
+    <div class="pin">
+      <div class="app-grid">
+        <div class="app-copy">
+          <h2 class="statement">也可以用手机 App 调。<span class="lo"><span class="w">调三个区、换场景，</span><span class="w">还能看 AI 记下了什么。</span></span></h2>
+          <p>点开一个区，拖动滑块：往上是加热，往下是吹风，右边的椅子跟着变。不带手机也没关系，扶手上都能调。</p>
+        </div>
+        <div class="iphone" id="iphone" role="group" aria-label="App 原型，可以点"></div>
+        <div class="app-chair" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="glance" data-tone="mist" data-scene="none">
+    <div class="wrap glance-grid">
+      <div class="glance-copy">
+        <h3 class="glance-head">锁屏和灵动岛</h3>
+        <p class="glance-sub">加热一次最多 30 分钟。开着的时候，锁屏和灵动岛上会显示还剩多久，不用打开 App。</p>
+      </div>
+      <div class="glance-row" id="glanceRow"></div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section id="specs" data-tone="white" data-scene="specs">
+    <div class="wrap">
+      <h2 class="title">参数</h2>
+      <p class="sub">座高按坐下压实后的座面算。电池续航是估算，还没实测。</p>
+      <div class="spec-wrap">
+        <div class="spec-draw" aria-hidden="true"></div>
+        <div class="spec-side">
+          <section class="sb">
+            <h3>加热</h3><p class="big num">33 / 35 / 37<small>°C</small></p>
+            <div class="sb-fig" data-fig="heat"></div>
+            <p>三档，电热丝在面料下面。每个区单独开，加热满 30 分钟自动关。面料表面最高 43°C；电热丝到 45°C，硬件直接断电，不经过软件。</p>
+          </section>
+          <section class="sb">
+            <h3>通风</h3><p class="big num">40 / 70 / 100<small>%</small></p>
+            <div class="sb-fig" data-fig="air"></div>
+            <p>三个离心风扇：座垫的在底仓里，从底部格栅吸风；腰和上背的在垫子后面。风从面料下面吹出来，吹风时电热丝不通电。</p>
+          </section>
+          <section class="sb">
+            <h3>电池</h3><p class="big num">80<small>Wh</small></p>
+            <div class="sb-fig" data-fig="power"></div>
+            <p>插在底仓里，能抽出来单独充电；插着充电器也能边充边用。</p>
+          </section>
+          <section class="sb">
+            <h3>防夹手</h3><p class="big num">≤8 或 ≥25<small>mm</small></p>
+            <div class="sb-fig" data-fig="gap"></div>
+            <p>电动部件之间手能伸进去的缝，按 EN 1335-2 控制：要么小到手指伸不进去，要么大到夹不住。</p>
+          </section>
+          <section class="sb sb-ai">
+            <h3>AI 能动的</h3>
+            <ul class="chips"><li>三个区的档位</li><li>靠背角度</li><li>腰托高度</li><li>腰托深度</li></ul>
+            <p>人坐稳了才动，一次只动一项：靠背最多 8°，腰托高度最多 10 mm、深度最多 5 mm，两次至少隔 10 分钟。手一碰拨键、旋钮或选区键，AI 就停下。</p>
+            <h3>认出是谁在坐</h3>
+            <ul class="chips plain"><li>扶手菜单</li><li>NFC</li><li>手机</li></ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 9 -->
+  <section id="process" data-tone="white" data-scene="none">
+    <div class="wrap">
+      <h2 class="title">怎么做出来的</h2>
+      <p class="sub">前后改了十几轮，每轮都有人挑毛病。下面是几次大的改动。</p>
+      <ol class="versions">
+        <li><img src="assets/process/v3.webp" alt="V3 椅子渲染" loading="lazy"><b>V3–V7</b><p>自己编造型：侧杆、髋部转轴、一体壳。不好看，也不符合人体工学。</p></li>
+        <li><img src="assets/process/v8.webp" alt="V8 椅子渲染" loading="lazy"><b>V8</b><p>换成成熟的同步倾仰底盘，薄框上挂分开的软包。包裹感太差。</p></li>
+        <li><img src="assets/process/v9.webp" alt="V9 椅子渲染" loading="lazy"><b>V9</b><p>照参考椅的 Y 形脊梁双靠背重做，再加加热和电动。</p></li>
+        <li><img src="assets/process/v9c.webp" alt="V9c 椅子渲染" loading="lazy"><b>V9b–c</b><p>底部加厚放电池和主控板；腰托和底座做结实；画出走线、电机和风路。</p></li>
+        <li><img src="assets/process/v9e.webp" alt="V9e 椅子渲染" loading="lazy"><b>V9d–e</b><p>按欧标和国标核尺寸，转轴挪到臀部下面，做真正的同步连杆；外部评审两轮。</p></li>
+        <li><img src="assets/process/v9h.webp" alt="V9h 椅子渲染" loading="lazy"><b>V9g–i</b><p>为了缝隙数字改过了头：缝变大，比例变细长。</p></li>
+        <li><img src="assets/process/v9k.webp" alt="V9k 椅子渲染" loading="lazy"><b>V9j–k</b><p>回到认可的比例；腰托伸缩做成看得见的芯柱；座下加密封条。</p></li>
+        <li><img src="assets/process/v9l.webp" alt="V9l 拆开的整椅渲染" loading="lazy"><b>V9l</b><p>让 AI 也能调靠背和腰托高度；扶手上加了暂停接管键；整椅拆成 11 个模块；做了手机 App。</p></li>
+        <li><img src="assets/process/v9m.webp" alt="V9m 后仰 30° 的侧面渲染" loading="lazy"><b>V9m</b><p>后仰到 30° 时，座下的橡胶护套顶进叉臂 3.6 mm，重做护套形状；腰托前后改成电动，扶手上的腰托拨键变成四向。</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="foot" data-tone="white">
+    <div class="wrap foot-in">
+      <div><b>小气候 Microclimate</b><p>概念设计，2026 年 11 月。还没有做实物，也没有测试过。</p></div>
+      <div><b>设计</b><p>林世杰 Jay Lin</p></div>
+      <div><b>这个网页</b><p>页面上的椅子就是 Blender 里的那个模型，导出后用 three.js 在浏览器里实时渲染。App 是可以点的原型。</p></div>
+    </div>
+  </footer>
+</main>
+
+<script src="lang.js?v=14"></script>
+<script type="module" src="main.js?v=14"></script>
+</body>
+</html>

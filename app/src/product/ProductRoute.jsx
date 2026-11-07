@@ -8,12 +8,13 @@ import ChooseNotToLoseCase from './worlds/choose-not-to-lose/ChooseNotToLoseWorl
 import LastHundredFeetCase from './worlds/last-100-feet/LastHundredFeetWorld';
 import ArdenCase from './worlds/arden/ArdenWorld';
 import HakoCase from './worlds/hako/HakoWorld';
+import MicroclimateCase from './worlds/microclimate/MicroclimateWorld';
 import {PRODUCT_HOME} from './content';
 import {L, LangProvider, pageLanguage, useCaseLang} from './i18n';
 import './product.css';
 import AboutPage from './AboutPage';
 
-const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'last-100-feet': LastHundredFeetCase, 'choose-not-to-lose': ChooseNotToLoseCase, arden: ArdenCase, hako: HakoCase};
+const CASES = {'ready-for-agents': ReadyForAgentsCase, 'design-to-code': DesignToCodeCase, atelier: AtelierCase, 'last-100-feet': LastHundredFeetCase, 'choose-not-to-lose': ChooseNotToLoseCase, arden: ArdenCase, hako: HakoCase, microclimate: MicroclimateCase};
 
 function NotFound() {
   const {t, htmlLang} = useCaseLang();
