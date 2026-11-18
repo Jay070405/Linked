@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {flushSync} from 'react-dom';
 import SiteNavigation from '../components/SiteNavigation';
-import CircularTransition, {useCircularTransition} from '../components/CircularTransition';
+import DotTransition, {useDotTransition} from '../components/DotTransition';
 import ProductRoute from './ProductRoute';
 import {isProductPath, movedProductPath, productTitle, resolveProductPath} from './content';
 import {initialLanguage, saveLanguage} from '../language';
@@ -11,7 +11,7 @@ const SITE = {home: '/#home', systems: '/systems', art: '/works', vibecoding: '/
 
 /** The standalone entry for /product/* and /for/* (product.html). It loads no 3D, no physics and no loading screen,
     so a cold deep link shows the page as soon as this script runs. Moves between product pages use pushState and the
-    site's circular transition; links to the rest of the site are full page loads. */
+    site's page transition; links to the rest of the site are full page loads. */
 export default function ProductShell() {
   const [path, setPath] = useState(() => location.pathname);
   const [lang, setLang] = useState(initialLanguage);
@@ -35,8 +35,8 @@ export default function ProductShell() {
   const chooseLang = value => { setLang(value); saveLanguage(value); };
   useEffect(() => { document.title = `Jay Lin — ${productTitle(resolveProductPath(path), lang)}`; }, [path, lang]);
 
-  const {run: transition, layer} = useCircularTransition(reduced);
-  // Commit the page synchronously inside the transition, so the circle reveals the real destination: at the top
+  const {run: transition, layer} = useDotTransition(reduced);
+  // Commit the page synchronously inside the transition, so the transition uncovers the real destination: at the top
   // (or where you left it, going back) with focus on the page, not on the old link.
   const show = useCallback(next => {
     flushSync(() => setPath(next));
@@ -70,6 +70,6 @@ export default function ProductShell() {
     <main id="product-main" ref={main} tabIndex={-1} className="product-shell-main">
       <ProductRoute page={page} reduced={reduced} onNavigate={navigate} lang={lang}/>
     </main>
-    <CircularTransition layer={layer} lang={lang}/>
+    <DotTransition layer={layer} lang={lang}/>
   </>;
 }
