@@ -5,13 +5,15 @@ import {createGovernor} from './governor.js';
 // A machine is a function from the canvas's resolution to the milliseconds a frame costs; a display shows it at the next refresh.
 // The run feeds the governor every frame for `secs` seconds and applies what it answers, as the stage does.
 function run(cost, {secs = 60, hz = 60, max = 1.5} = {}) {
-  const G = createGovernor({max}), refresh = 1000 / hz, changes = []; let t = 0, dpr = max, low = max;
+  const G = createGovernor({max}), refresh = 1000 / hz, changes = [], spent = new Map(); let t = 0, dpr = max, low = max;
   while (t < secs * 1000) {
-    t += Math.max(1, Math.ceil(cost(dpr, t) / refresh - 1e-9)) * refresh;
+    const dt = Math.max(1, Math.ceil(cost(dpr, t) / refresh - 1e-9)) * refresh; t += dt;
+    if (t > secs * 667) spent.set(dpr, (spent.get(dpr) || 0) + dt); // where it spends the last third of the run is where it has settled
     const v = G.frame(t, false);
     if (v != null) { dpr = v; low = Math.min(low, v); changes.push([Math.round(t), +v.toFixed(3)]); }
   }
-  return {dpr, low, changes, frame: Math.max(1, Math.ceil(cost(dpr, t) / refresh - 1e-9)) * refresh};
+  const settled = [...spent].sort((a, b) => b[1] - a[1])[0][0];
+  return {dpr: settled, low, changes, frame: Math.max(1, Math.ceil(cost(settled, t) / refresh - 1e-9)) * refresh};
 }
 
 test('a machine with time to spare keeps its full resolution', () => {
@@ -47,6 +49,13 @@ test('when something else sets the pace, the picture keeps its pixels', () => {
 test('it comes back up when the load lightens', () => {
   const r = run((d, t) => (t < 20000 ? 2 + 14 * d * d : 3 * d * d), {secs: 90}); // a heavy act, then a light one
   assert.equal(r.dpr, 1.5);
+});
+
+test('a slow start, or a hitch in the middle of a visit, costs no resolution', () => {
+  const start = run((d, t) => (t < 5000 ? 40 : 4), {secs: 30}); // pictures decoding, shaders compiling
+  assert.equal(start.changes.length, 0);
+  const hitch = run((d, t) => (t > 12000 && t < 14000 ? 40 : 4), {secs: 30}); // two bad seconds
+  assert.equal(hitch.changes.length, 0);
 });
 
 test('frames while the page is hidden, and the gap after it, are not counted', () => {

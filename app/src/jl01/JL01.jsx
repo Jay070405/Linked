@@ -612,9 +612,10 @@ function Stage({S, to, on, tick, works, side, content, logs, runner, words, lang
 
   useFrame((state, dt) => {
     // the picture's resolution follows the machine it runs on (governor.js): fewer pixels when frames run long, if that helps
-    { if (!K.gov) K.gov = createGovernor({max: state.viewport.dpr, min: RES_MIN}); const v = K.gov.frame(performance.now(), document.hidden);
-      if (import.meta.env.DEV) window.__jl.gov = K.gov;
-      if (v != null && !(import.meta.env.DEV && window.__jl?.res === 0)) on.res(v); }
+    if (!(import.meta.env.DEV && window.__jl?.res === 0)) { // (development: window.__jl.res = 0 switches it off for measurements)
+      if (!K.gov) K.gov = createGovernor({max: clamp(window.devicePixelRatio || 1, 1, RES_MAX), min: RES_MIN}); // the ceiling is the screen's own, never whatever the canvas happens to be at
+      const v = K.gov.frame(performance.now(), document.hidden); if (v != null) on.res(v);
+      if (import.meta.env.DEV) window.__jl.gov = K.gov; }
     dt = Math.min(dt, .05); if (import.meta.env.DEV && window.__jl?.fast) dt = .4;
     if (import.meta.env.DEV && window.__jl?.dt) { dt = window.__jl.dt; window.__jl.skew = (window.__jl.skew || 0) + dt; } // development only: a clock the checks can step by hand
     const now = performance.now() / 1000 + ((import.meta.env.DEV && window.__jl?.skew) || 0); tick(now, dt);
@@ -776,8 +777,9 @@ function Stage({S, to, on, tick, works, side, content, logs, runner, words, lang
     // the numeral behind the carousel, white on the dark room. The game cartridge looks down at the floor, where a wall behind the machine
     // would only show its bottom edge, so there it is left out: the count is on the machine's screen
     const nm = num.current;
-    nm.material.opacity = damp(nm.material.opacity, gameOn ? 0 : wk * (1 - s.gone) * (1 - s.dive) * .06, k6, dt); nm.visible = nm.material.opacity > .004;
-    if (portrait) { nm.position.set(0, 3.3, -4.4); nm.scale.setScalar(.8); } else { nm.position.set(-1.9, 1.75, -3.6); nm.scale.setScalar(1); }
+    // On a tall screen the carousel and the machine stand in front of it and only scraps of the figure would show: left out there too
+    nm.material.opacity = damp(nm.material.opacity, gameOn || portrait ? 0 : wk * (1 - s.gone) * (1 - s.dive) * .06, k6, dt); nm.visible = nm.material.opacity > .004;
+    nm.position.set(-1.9, 1.75, -3.6);
 
     const playing = pl > .5 && s.phase === 'on';
     if (playing) runner.step(Math.min(dt, .05)).forEach(on.run);
