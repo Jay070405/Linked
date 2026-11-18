@@ -17,6 +17,7 @@ import {createScreen, drawJay} from './screen';
 import {createWipe} from './wipe';
 import {sfx} from './sfx';
 import {createRunner} from './game';
+import {createGovernor} from './governor';
 import VoxelJay from './jay';
 import {COPY, pick as pickLang} from './copy';
 import {useMusic} from '../components/BackgroundMusic';
@@ -73,6 +74,7 @@ const both = (a, b) => Object.fromEntries(Object.keys(a).map(k => [k, {...a[k], 
 const SHOTS = {product: [POSE, both(POSE, TALL)], game: [both(POSE, GAME), both(both(both(POSE, GAME), TALL), TALL_G)]};
 const shots = (game, tall) => SHOTS[game ? 'game' : 'product'][tall ? 1 : 0];
 const RAD = Math.PI / 180, LENS = Math.tan(13 * RAD);
+const RES_MAX = 1.5, RES_MIN = .7; // the canvas's pixels per page pixel: where it starts (never above the screen's own), and how far it may fall on a slow machine
 const TOPS = {face: 1.03, lcd: .77, pad: .93, pcb: .88, cell: .55}; // the top edge of each part, where Jay perches when it is being read
 const SEAT = {face: 1.28, lcd: .1, pad: .95, pcb: .95, cell: .3};   // and how far along it: the callout is pinned to the other end
 const mixPose = (a, b, t, o) => { for (const k in a) o[k] = a[k] + (b[k] - a[k]) * t; return o; };
@@ -207,15 +209,16 @@ function circuit(wide) {
 
 /* ---------- the picture: bloom on what glows, then product-render tone mapping ---------- */
 function Post() {
-  const {gl, scene, camera, size} = useThree();
+  const {gl, scene, camera, size} = useThree(), dpr = useThree(st => st.viewport.dpr);
   const composer = useMemo(() => {
     const c = new EffectComposer(gl, new THREE.WebGLRenderTarget(1, 1, {type: THREE.HalfFloatType, samples: 4}));
     c.addPass(new RenderPass(scene, camera));
     post.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), .32, .6, 1.04); c.addPass(post.bloom);
     c.addPass(new OutputPass());
+    if (import.meta.env.DEV) window.__jl = Object.assign(window.__jl || {}, {composer: c}); // development only: lets a check time each pass
     return c;
   }, [gl, scene, camera]);
-  useEffect(() => { composer.setPixelRatio(gl.getPixelRatio()); composer.setSize(size.width, size.height); }, [composer, gl, size]);
+  useEffect(() => { composer.setPixelRatio(gl.getPixelRatio()); composer.setSize(size.width, size.height); }, [composer, gl, size, dpr]);
   useEffect(() => () => composer.dispose(), [composer]);
   useFrame(() => composer.render(), 1);
   return null;
@@ -579,7 +582,7 @@ function Stage({S, to, on, tick, works, side, content, logs, runner, words, lang
   const product = useRef(), game = useRef(), wc = useRef([]);
   // scratch values the frame loop reuses. P: the shot the scroll asks for. C: the shot the camera is actually at.
   const K = useMemo(() => ({bg: new THREE.Color(STAGE.product.bg), tmp: new THREE.Color(), aim: new THREE.Color(), wcol: new THREE.Color(), look: new THREE.Vector3(.4, .55, 0),
-    pos: new THREE.Vector3(), v: new THREE.Vector3(), n: new THREE.Vector3(), P: {...POSE.hero}, C: {...POSE.hero}, o: {}, wp: {}, push: 0, floor: 1, floorOn: true}), []);
+    pos: new THREE.Vector3(), v: new THREE.Vector3(), n: new THREE.Vector3(), P: {...POSE.hero}, C: {...POSE.hero}, o: {}, wp: {}, push: 0, floor: 1, floorOn: true, gov: null}), []);
   const U = useMemo(() => ({uA: {value: new THREE.Color(STAGE.product.bg)}, uGridCol: {value: new THREE.Color(STAGE.product.grid)}, uC: {value: new THREE.Color(STAGE.product.flood)}, uGlowCol: {value: new THREE.Color('#000')},
     uGrid: {value: 0}, uFlood: {value: 0}, uGlow: {value: 0}, uShift: {value: 0}, uRun: {value: 0}, uRunX: {value: 0}, uO: {value: new THREE.Vector2(.5, .4)}, uG: {value: new THREE.Vector2(.6, .5)}, uRes: {value: new THREE.Vector2(1, 1)}}), []);
   const acc = useRef(1), axis = useRef([]), num = useRef();
@@ -608,6 +611,10 @@ function Stage({S, to, on, tick, works, side, content, logs, runner, words, lang
   }, []);
 
   useFrame((state, dt) => {
+    // the picture's resolution follows the machine it runs on (governor.js): fewer pixels when frames run long, if that helps
+    { if (!K.gov) K.gov = createGovernor({max: state.viewport.dpr, min: RES_MIN}); const v = K.gov.frame(performance.now(), document.hidden);
+      if (import.meta.env.DEV) window.__jl.gov = K.gov;
+      if (v != null && !(import.meta.env.DEV && window.__jl?.res === 0)) on.res(v); }
     dt = Math.min(dt, .05); if (import.meta.env.DEV && window.__jl?.fast) dt = .4;
     if (import.meta.env.DEV && window.__jl?.dt) { dt = window.__jl.dt; window.__jl.skew = (window.__jl.skew || 0) + dt; } // development only: a clock the checks can step by hand
     const now = performance.now() / 1000 + ((import.meta.env.DEV && window.__jl?.skew) || 0); tick(now, dt);
@@ -953,6 +960,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
   const [got, setGot] = useState([false, false, false]), [demo, setDemo] = useState(true), [cleared, setCleared] = useState(false); // the game: which letters have been taken, and who is playing
   // Jay's words. quip: what he says when poked. nap: he has dozed off. printed: the receipt is out. seen / clock: what this visit did, for the receipt
   const [ci, setCi] = useState(0), [ni, setNi] = useState(0); // which entry of the changelog, which number
+  const [res, setRes] = useState(() => clamp(window.devicePixelRatio || 1, 1, RES_MAX)); // the canvas's resolution; the stage lowers it when frames run long
   const [quip, setQuip] = useState(null), [nap, setNap] = useState(false), [printed, setPrinted] = useState(false), [seen, setSeen] = useState(0), [clock, setClock] = useState('00:00');
   const touch = useMemo(() => matchMedia('(hover: none)').matches, []), tall = useMemo(() => matchMedia('(max-aspect-ratio: 9/10)'), []);
   const list = useMemo(() => (choice ? WORKS[choice] : MIXED), [choice]);
@@ -963,7 +971,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
   const el = useRef({}).current, grab = k => n => { el[k] = n; }; // the nodes the frame loop writes to without asking React
   const hov = useRef(null), wipe = useRef(() => {}), timers = useRef([]), live = useRef({}), runner = useRef(null), opened = useRef(new Set()), quipT = useRef(0);
   if (!runner.current) runner.current = createRunner();
-  if (import.meta.env.DEV) window.__jl = Object.assign(window.__jl || {}, {runner: runner.current}); // development only, see Stage
+  if (import.meta.env.DEV) window.__jl = Object.assign(window.__jl || {}, {runner: runner.current, setRes}); // development only, see Stage
   live.current = {open, sec, T, lang, embedded, covered};
 
   // everything the visitor can do. The scene reads S every frame; React only redraws the words.
@@ -1054,6 +1062,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
       // on the last screen (and in front of the numbers) a click anywhere throws the dots about, and the bird off them
       burst(e) { const s = S.current, score = live.current.sec === SEC.score && s.ts > .9; if ((!score && (s.flood < .95 || s.m < .98)) || s.busy) return; // the numbers can be thrown about too
         s.bx = e.clientX / innerWidth * 2 - 1; s.by = 1 - e.clientY / innerHeight * 2; s.bk = 1; s.jayKick = 1; s.jaySay = '!'; sfx.tick(); },
+      res(v) { setRes(v); },
       // the pointer's own label, for things in the scene (by name, so it follows the language)
       tipKey(k, arg) { const v = live.current.T.tip[k]; a.tip(typeof v === 'function' ? v(arg) : v); },
       workTip(i, w) { a.tip(a.near(i) ? live.current.T.tip.insert : pickLang(w.title, live.current.lang)); },
@@ -1214,7 +1223,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
     data-embedded={embedded ? '' : undefined} data-covered={covered ? '' : undefined} onPointerDown={e => { act.boot(); act.burst(e); }}>
     {anchors.map(([id, y]) => <i key={id} id={id} className="jl-anchor" style={{top: y * 100 + 'vh'}}/>)}
     <div className="jl-stage">
-      {armed && <Canvas frameloop={covered || open != null ? 'never' : 'always'} dpr={[1, 1.5]} camera={{fov: 26, position: [0, 1.05, 12.6], near: .1, far: 120}} gl={{antialias: false}}
+      {armed && <Canvas frameloop={covered || open != null ? 'never' : 'always'} dpr={res} camera={{fov: 26, position: [0, 1.05, 12.6], near: .1, far: 120}} gl={{antialias: false}}
         onCreated={({scene, gl}) => { scene.environmentIntensity = STAGE.product.env; gl.toneMapping = THREE.NeutralToneMapping; gl.toneMappingExposure = 1.05; }}>
         <Stage S={S} to={to} on={act} tick={tick} works={list} side={side} content={content} logs={logs} runner={runner.current} words={T} lang={lang}/>
       </Canvas>}
