@@ -482,7 +482,7 @@ function Dots({S, works, game}) {
 // The scroll does it (S.n is the number the scroll is at, with its fraction), a click throws the dots about, the pointer swells them.
 function ScoreWall({S, content}) {
   const ref = useRef(), lamp = useRef(), walls = SCORES[content], mat = useMemo(() => dotMat(false), []);
-  const K = useMemo(() => ({o: new THREE.Object3D(), c: new THREE.Color(), v: new THREE.Vector3(), q: new THREE.Vector3(), pl: {}, sw: new Float32Array(NDOT), rnd: Array.from({length: NDOT}, () => [Math.random(), Math.random(), Math.random()]), f: 0, toy: 0}), []);
+  const K = useMemo(() => ({o: new THREE.Object3D(), c: new THREE.Color(), hot: new THREE.Color(1, .35, .12), v: new THREE.Vector3(), q: new THREE.Vector3(), pl: {}, sw: new Float32Array(NDOT), rnd: Array.from({length: NDOT}, () => [Math.random(), Math.random(), Math.random()]), f: 0, toy: 0}), []);
   useFrame((state, dt) => {
     const s = S.current, m = ref.current; if (!m) return;
     dt = Math.min(dt, .05); if (import.meta.env.DEV && window.__jl?.fast) dt = .4;
@@ -504,7 +504,7 @@ function ScoreWall({S, content}) {
       K.o.position.set(K.q.x, K.q.y, K.q.z + K.sw[k] * pl.p * .5); K.o.rotation.set(spin * (r2 - .5), spin * (r3 - .5), 0);
       K.o.scale.setScalar(Math.max(1e-4, pl.p * born * (1 - .3 * arc) * (1 + K.sw[k] * .34))); K.o.updateMatrix(); m.setMatrixAt(k, K.o.matrix);
       if (K.toy > .5) K.c.set(TOY_END[(e < .5 ? a.k : b.k) % TOY_END.length]).multiplyScalar(1 + K.sw[k] * .25);
-      else { const br = (.86 + .14 * Math.sin(now * 1.3 - a.x * .4 + r1 * 6)) * (1 + K.sw[k] * .6); K.c.setRGB(br, br, br); if (arc > .05) K.c.lerp(K.v.set(1, .35, .12), arc * .8); } // in flight a dot burns orange
+      else { const br = (.86 + .14 * Math.sin(now * 1.3 - a.x * .4 + r1 * 6)) * (1 + K.sw[k] * .6); K.c.setRGB(br, br, br); if (arc > .05) K.c.lerp(K.hot, arc * .8); } // in flight a dot burns orange (a colour must be mixed with a colour: anything else gives no number at all, and the glow pass spreads that over the whole frame as black blocks)
       m.setColorAt(k, K.c); }
     m.instanceMatrix.needsUpdate = true; m.instanceColor.needsUpdate = true;
     // where Jay sits: on top of the first figure of the number the scroll is nearest to
