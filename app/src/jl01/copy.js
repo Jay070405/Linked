@@ -10,9 +10,9 @@ const zh = {
   role: {product: '产品经理', game: '游戏策划', none: '游戏策划 / 产品经理'},
   swap: '换卡带',
   standby: '按任意键开机',
-  // Jay's bubbles
+  // Jay's bubbles (shy: what the one behind the machine calls out when it has ducked)
   say: {pick: '选一张卡带', scroll: '往下滚 ↓', hello: who => who + '，你好 · 往下滚 ↓', layers: '一共 5 层', log: '翻过来看', score: '都写在简历里', demo: '我先玩 · 空格接管', demoTouch: '我先玩 · 点屏幕接管',
-    jump: '跳！', clear: '通关！', choose: '挑一张', printing: '打印中…', printed: '拿着', cat: '是不是有猫'},
+    jump: '跳！', clear: '通关！', choose: '挑一张', printing: '打印中…', printed: '拿着', cat: '是不是有猫', shy: 'chaichai！'},
   quips: ['啾', '蓝松鸦，不是鸽子', '别戳', '没做彩蛋', '算了，给你翻一个'],
   // 01 about
   about: {kick: '01 — 关于', for: who => ' · 给 ' + who, title: ['拆开 JL-01，', '里面是林世杰。'],
@@ -46,7 +46,7 @@ const en = {
   swap: 'Swap cart',
   standby: 'Press any key',
   say: {pick: 'Pick a cart', scroll: 'Scroll ↓', hello: who => 'Hi, ' + who + ' · Scroll ↓', layers: '5 layers', log: 'Check the back.', score: 'All on the résumé.', demo: 'Demo · Space to play', demoTouch: 'Demo · Tap to play',
-    jump: 'Jump!', clear: 'Clear!', choose: 'Pick one', printing: 'Printing…', printed: 'Take it.', cat: 'Was that a cat?'},
+    jump: 'Jump!', clear: 'Clear!', choose: 'Pick one', printing: 'Printing…', printed: 'Take it.', cat: 'Was that a cat?', shy: 'chaichai!'},
   quips: ['Chirp.', 'Blue jay. Not a pigeon.', 'Don’t.', 'No easter egg.', 'Fine. One flip.'],
   about: {kick: '01 — About', for: who => ' · for ' + who, title: ['Pop the hood.', 'Jay Lin inside.'],
     lead: {product: 'Art school → business school → shipping apps with AI agents.', game: '6,632 logged throws. A 54 person-week scope. 1 Unity prototype.', none: 'Game design / product. Pick a cart first.'},

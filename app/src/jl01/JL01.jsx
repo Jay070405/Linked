@@ -1032,7 +1032,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
   const lay = useRef(null); lay.current = useMemo(() => layout(list), [list]);
   const S = useRef(null);
   if (!S.current) S.current = {phase: saved ? 'on' : 'standby', t0: performance.now() / 1000, tb: performance.now() / 1000, last: performance.now() / 1000, nap: false, poke: 0, tc: 0, pick: saved || to.side || 'product', choice: saved, press: [0, 0, 0, 0], lift: [0, 0, 0, 0, 0],
-    knob: 0, knobTo: 0, kick: 0, shake: 0, flash: 0, bx: 0, by: 0, bk: 0, explode: 0, explodeTo: 0, t1: 0, tl: 0, tp: 0, ts: 0, t2: 0, t3: 0, c: 0, n: 0, lh: -1, roost: null, jay: {x: 0, y: 0, z: 0, ry: 0, hide: false, sx: 0, sy: 0, on: 0}, catCall: 0, catPet: 0, jayKick: 0, jaySay: null, jayFlip: 0, cover: 0, flood: 0, m: 0, dive: 0, ring: 0, gone: 0, w: 0, hv: -1, print: 0, part: -1, y: 0, ins: null, busy: false, hop: 0, sx: 0, sy: 0};
+    knob: 0, knobTo: 0, kick: 0, shake: 0, flash: 0, bx: 0, by: 0, bk: 0, explode: 0, explodeTo: 0, t1: 0, tl: 0, tp: 0, ts: 0, t2: 0, t3: 0, c: 0, n: 0, lh: -1, roost: null, jay: {x: 0, y: 0, z: 0, ry: 0, hide: false, sx: 0, sy: 0, on: 0}, catCall: 0, catPet: 0, hider: {sx: 0, sy: 0, on: false}, jayKick: 0, jaySay: null, jayFlip: 0, cover: 0, flood: 0, m: 0, dive: 0, ring: 0, gone: 0, w: 0, hv: -1, print: 0, part: -1, y: 0, ins: null, busy: false, hop: 0, sx: 0, sy: 0};
   const el = useRef({}).current, grab = k => n => { el[k] = n; }; // the nodes the frame loop writes to without asking React
   const hov = useRef(null), wipe = useRef(() => {}), timers = useRef([]), live = useRef({}), runner = useRef(null), opened = useRef(new Set()), quipT = useRef(0);
   // The cat (kit.jsx). It looks in from the top edge next to Jay twice: when he says there is no easter egg, and when he has dozed off
@@ -1188,6 +1188,9 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
         const bx = beside ? J.sx - (J.sh || 80) * .5 - 64 : J.sx + (tight ? side * 84 : 0), by = beside ? J.sy + (J.sh || 80) * .66 : J.sy;
         if ((el.say.dataset.side === '1') !== beside) el.say.dataset.side = beside ? '1' : '';
         el.say.style.opacity = J.on.toFixed(2); el.say.style.transform = `translate3d(${clamp(bx, 96, innerWidth - 96).toFixed(1)}px,${Math.max(112, by).toFixed(1)}px,0)`; }
+      // the one behind the machine has a word of its own, hung where hider.jsx says: at the machine's edge, while it is out of sight
+      if (el.say2) { const h = s.hider; if ((el.say2.dataset.on === '1') !== h.on) el.say2.dataset.on = h.on ? '1' : '';
+        if (h.on) el.say2.style.transform = `translate3d(${clamp(h.sx, 76, innerWidth - 76).toFixed(1)}px,${Math.max(112, h.sy).toFixed(1)}px,0)`; }
 
       // the words follow the room: dark ink on a bright room, light ink on a dark one, and no grey on a flood of colour
       const r = el.root, side = s.choice || 'product', game = s.choice === 'game';
@@ -1417,6 +1420,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
 
     {/* Jay's words, hung over his head by the frame loop */}
     <div className="jl-say" ref={grab('say')} aria-live="polite">{say && <span key={say[0]} data-hold={say[1] ? '' : undefined}>{say[0]}</span>}</div>
+    <div className="jl-say jl-say-2" ref={grab('say2')} aria-hidden="true"><span>{T.say.shy}</span></div>
 
     {cs && <div className="jl-case" onPointerDown={e => e.stopPropagation()} style={cs.side === 'product' ? {'--c': '#0B0C0F', '--ci': '#F2F2EF', '--ca': cs.color} // product: the room stays dark and only the type takes the colour
       : {'--c': cs.color, '--ci': lum(cs.color) > .55 ? '#14110D' : '#F7F4EC'}}>

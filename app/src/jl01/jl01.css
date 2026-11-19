@@ -207,6 +207,9 @@ html.jl-home{scrollbar-width:none;overscroll-behavior:none}html.jl-home::-webkit
 @keyframes jl-say{0%{opacity:0;scale:.5}6%{opacity:1;scale:1.06}10%,84%{opacity:1;scale:1}100%{opacity:0;scale:.92}}
 @keyframes jl-say-in{from{opacity:0;scale:.5}}
 .jl-say[data-side="1"] span:before,.jl-say[data-side="1"] span:after{display:none} /* beside him, not over him: no tail */
+/* the second bubble belongs to the one behind the machine. It is always in the page and pops by a switch (data-on), not by being mounted */
+.jl-say-2 span{animation:none;opacity:0;scale:.5;transition:opacity .16s,scale .26s cubic-bezier(.3,1.5,.4,1)}
+.jl-say-2[data-on="1"] span{opacity:1;scale:1}
 .jl[data-open] .jl-say{display:none}
 
 .jl-wipe{position:fixed;inset:0;z-index:8;width:100%;height:100%;pointer-events:none}

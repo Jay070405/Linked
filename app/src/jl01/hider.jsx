@@ -4,7 +4,8 @@
 // from the candidates in concepts/cast/.
 // It belongs to the first screen. Once the machine is awake it leans out from behind the machine's right end, feet on the floor,
 // fingers round the edge, and shows most of its face. Point at it and it leans out all the way and winks; click and it is gone behind
-// the machine, and back after a moment. When the page scrolls on it is out of the way before the machine comes apart.
+// the machine, calls out from there (the page hangs its word at the machine's edge: S.current.hider), and is back after a moment.
+// When the page scrolls on it is out of the way before the machine comes apart.
 import React, {useMemo, useRef} from 'react';
 import {useFrame} from '@react-three/fiber';
 import * as THREE from 'three';
@@ -61,11 +62,15 @@ export default function VoxelHider({S, on}) {
     dt = Math.min(dt, .05); if (import.meta.env.DEV && window.__jl?.fast) dt = .4; if (import.meta.env.DEV && window.__jl?.dt) dt = window.__jl.dt; // development only, see Stage in JL01.jsx
     const now = performance.now() / 1000 + ((import.meta.env.DEV && window.__jl?.skew) || 0), hero = 1 - sm(.04, .2, s.y);
     if (s.phase !== 'on') K.since = null; else if (K.since == null) K.since = now;
-    if (s.shy && s.shy !== K.shy) { K.shy = s.shy; K.till = now + 1.5; K.sign = '!'; K.signT = .9; K.hov = false; if (K.tip) { K.tip = false; on.tip(''); } } // clicked: gone, and back after a moment
+    if (s.shy && s.shy !== K.shy) { K.shy = s.shy; K.t0 = now; K.till = now + 2.1; K.sign = '!'; K.signT = .9; K.hov = false; if (K.tip) { K.tip = false; on.tip(''); } } // clicked: gone, and back after a moment
     const want = K.since != null && now - K.since > .9 && hero > .5 && !(now < K.till) ? 1 : 0;
     K.out = damp(K.out, want, want ? 3 : 14, dt); // out slowly, in at once
     const tall = state.size.width / state.size.height < .9; // a phone has little room beside the machine: a smaller figure there
-    const out = K.out, k = sm(0, .5, hero) * (tall ? .9 : 1), there = out > .015 && k > .001; // the scroll itself takes it away, however fast: it is gone before the machine starts to open
+    const out = K.out, k = sm(0, .5, hero) * (tall ? .9 : 1), there = out > .015 && k > .001;
+    // Once it is behind the machine it calls out. Where the word hangs on the page: at the machine's right edge, a little over its head
+    { const H = s.hider, age = now - (K.t0 ?? -99); H.on = age > .32 && age < 1.8 && hero > .5 && s.phase === 'on';
+      if (H.on) { g.parent.localToWorld(K.v.set(EDGE + .04, FLOOR + ROWS * U * (tall ? .9 : 1) + .1, BACK)).project(state.camera);
+        H.sx = (K.v.x * .5 + .5) * state.size.width; H.sy = (-K.v.y * .5 + .5) * state.size.height; } } // the scroll itself takes it away, however fast: it is gone before the machine starts to open
     if (K.tip && !there) { K.tip = K.hov = false; on.tip(''); } // it went while the pointer was on it: the pointer's label goes too
     g.visible = gr.visible = there; if (!there) { g.scale.setScalar(1e-4); gr.scale.setScalar(1e-4); edge.current.visible = false; return; }
     if (K.hov && !K.tip) { K.tip = true; on.tipKey('poke'); if (K.hop < 0) K.hop = 0; K.sign = 'heart'; K.signT = 1.3; }
