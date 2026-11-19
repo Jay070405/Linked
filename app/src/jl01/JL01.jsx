@@ -1,5 +1,5 @@
 // JL-01, the home page: one machine and the things you do with it. The page's scroll is the only clock.
-// wake it (the name) -> open it up (about) -> turn it over (the changelog on its back: where he has worked) -> play it (goal, rules, feedback)
+// wake it (the wall that says PORTFOLIO lights up, and somebody looks out from behind the machine) -> open it up (about) -> turn it over (the changelog on its back: where he has worked) -> play it (goal, rules, feedback)
 // -> read the score (his numbers, as tall as the room) -> feed it a cartridge (selected work) -> let it print (let's work)
 // Every act is its own shot: a different lens, a different room, a different place for the camera. What carries you from one
 // to the next is always a thing: the machine coming apart, a cartridge passing the lens, the screen you fall into, the dots.
@@ -14,11 +14,14 @@ import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {createScreen, drawJay} from './screen';
+import {paintJay} from './sprite';
 import {createWipe} from './wipe';
 import {sfx} from './sfx';
 import {createRunner} from './game';
 import {createGovernor} from './governor';
 import VoxelJay from './jay';
+import VoxelHider from './hider';
+import VoxelCat from './cat';
 import {COPY, pick as pickLang} from './copy';
 import {useMusic} from '../components/BackgroundMusic';
 import {SIDES} from '../product/about-content.js';
@@ -338,23 +341,79 @@ function Occluder({innerRef, side, n, words, cjk}) {
 // Two walls of square dots stand in the room: the name on the first screen, LET'S WORK on the last. They are a pair on purpose,
 // the page ends where it began, in another light. A wall stands on the studio floor, so the floor mirrors it, the fog takes it and
 // the camera can move against it; the dots under the pointer swell.
-//   name  lights up dot by dot when the machine wakes, and switches itself off column by column when the page scrolls on
+//   name  the first wall (it used to spell his name; it says PORTFOLIO now). Lights up dot by dot when the machine wakes, and
+//         switches itself off column by column when the page scrolls on
 //   end   is built by the dots the work cartridges break into, and a click throws its dots about before they settle again
-const GLYPH = {J: ['..XXX', '...X.', '...X.', '...X.', '...X.', 'X..X.', '.XX..'], A: ['..X..', '.X.X.', 'X...X', 'X...X', 'XXXXX', 'X...X', 'X...X'], Y: ['X...X', 'X...X', '.X.X.', '..X..', '..X..', '..X..', '..X..'],
-  L: ['X....', 'X....', 'X....', 'X....', 'X....', 'X....', 'XXXXX'], I: ['.XXX.', '..X..', '..X..', '..X..', '..X..', '..X..', '.XXX.'], N: ['X...X', 'XX..X', 'X.X.X', 'X.X.X', 'X..XX', 'X...X', 'X...X'],
+const GLYPH = {J: ['XXXXX', '...X.', '...X.', '...X.', '...X.', 'X..X.', '.XX..'], A: ['..X..', '.X.X.', 'X...X', 'X...X', 'XXXXX', 'X...X', 'X...X'], Y: ['X...X', 'X...X', '.X.X.', '..X..', '..X..', '..X..', '..X..'],
+  L: ['X....', 'X....', 'X....', 'X....', 'X....', 'X....', 'XXXXX'], I: ['XXX', '.X.', '.X.', '.X.', '.X.', '.X.', 'XXX'], N: ['X...X', 'XX..X', 'X.X.X', 'X.X.X', 'X..XX', 'X...X', 'X...X'],
   E: ['XXXXX', 'X....', 'X....', 'XXXX.', 'X....', 'X....', 'XXXXX'], T: ['XXXXX', '..X..', '..X..', '..X..', '..X..', '..X..', '..X..'], S: ['.XXXX', 'X....', 'X....', '.XXX.', '....X', '....X', 'XXXX.'],
   W: ['X...X', 'X...X', 'X...X', 'X.X.X', 'X.X.X', 'XX.XX', 'X...X'], O: ['.XXX.', 'X...X', 'X...X', 'X...X', 'X...X', 'X...X', '.XXX.'], R: ['XXXX.', 'X...X', 'X...X', 'XXXX.', 'X.X..', 'X..X.', 'X...X'],
   K: ['X...X', 'X..X.', 'X.X..', 'XX...', 'X.X..', 'X..X.', 'X...X'], "'": ['X', 'X', '.', '.', '.', '.', '.'],
+  '-': ['.....', '.....', '.....', 'XXXXX', '.....', '.....', '.....'], P: ['XXXX.', 'X...X', 'X...X', 'XXXX.', 'X....', 'X....', 'X....'], F: ['XXXXX', 'X....', 'X....', 'XXXX.', 'X....', 'X....', 'X....'],
   0: ['.XXX.', 'X...X', 'X..XX', 'X.X.X', 'XX..X', 'X...X', '.XXX.'], 1: ['..X..', '.XX..', '..X..', '..X..', '..X..', '..X..', '.XXX.'], 2: ['.XXX.', 'X...X', '....X', '...X.', '..X..', '.X...', 'XXXXX'],
   3: ['XXXX.', '....X', '....X', '.XXX.', '....X', '....X', 'XXXX.'], 4: ['...X.', '..XX.', '.X.X.', 'X..X.', 'XXXXX', '...X.', '...X.'], 5: ['XXXXX', 'X....', 'XXXX.', '....X', '....X', 'X...X', '.XXX.'],
   6: ['.XXX.', 'X....', 'X....', 'XXXX.', 'X...X', 'X...X', '.XXX.'], 7: ['XXXXX', '....X', '...X.', '..X..', '..X..', '..X..', '..X..'], 8: ['.XXX.', 'X...X', 'X...X', '.XXX.', 'X...X', 'X...X', '.XXX.'],
   9: ['.XXX.', 'X...X', 'X...X', '.XXXX', '....X', '....X', '.XXX.'], '+': ['.....', '..X..', '..X..', 'XXXXX', '..X..', '..X..', '.....'], ',': ['..', '..', '..', '..', '..', '.X', 'X.']};
 // lines of text -> dots. x: column, y: height (the last line is at the bottom), k: which letter, cx/cy: that letter's middle
-const wallOf = lines => { const wide = lines.map(l => [...l].reduce((a, ch) => a + GLYPH[ch][0].length + 1, -1)), cols = Math.max(...wide), dots = []; let k = 0;
-  lines.forEach((l, row) => { let x = (cols - wide[row]) / 2; const base = (lines.length - 1 - row) * 8.4;
+// lead: rows from one line's top to the next line's top (a letter is 7 high). left: lines start at the same column instead of being centred
+const wallOf = (lines, {lead = 8.4, left = false} = {}) => { const wide = lines.map(l => [...l].reduce((a, ch) => a + GLYPH[ch][0].length + 1, -1)), cols = Math.max(...wide), dots = []; let k = 0;
+  lines.forEach((l, row) => { let x = left ? 0 : (cols - wide[row]) / 2; const base = (lines.length - 1 - row) * lead;
     [...l].forEach(ch => { const g = GLYPH[ch]; g.forEach((line, j) => [...line].forEach((c, i) => { if (c === 'X') dots.push({x: x + i, y: base + 6 - j, k, cx: x + (g[0].length - 1) / 2, cy: base + 3}); })); x += g[0].length + 1; k++; }); });
-  return {dots, cols, rows: lines.length * 8.4 - 1.4}; };
-const WALLS = {name: wallOf(['JAY', 'LIN']), end: wallOf(["LET'S", 'WORK'])};
+  return {dots, cols, rows: lines.length * lead - (lead - 7)}; };
+// The first wall says what this is. His name is already in the site's bar, top left; twice on one screen was once too many.
+// Two lines of unequal length: set flush left, like the words under them on the page, with more air between the lines than between the letters.
+const WALLS = {name: wallOf(['PORT', 'FOLIO'], {lead: 9.4, left: true}), end: wallOf(["LET'S", 'WORK'])};
+const NAME_H = WALLS.name.rows - .6; // its height in dot pitches, from the first dot's middle to the last dot's top
+// The first thing on the page: the machine starting up. The home is a 3D scene, and until that scene has drawn its first frames
+// nothing on the page is in its place (the words are placed by the scene's own clock). This covers that time, and any downloading:
+// the machine's name in dots, a row of dots filling up, and Jay walking along it. It needs no web font and no picture, so it is
+// there with the first paint. When the scene is ready (and never sooner than a moment, so it does not flash) it drains away in
+// dots, the way every cover on this page does. While it is up it takes every click, wheel and touch, so nothing wakes the
+// machine behind it.
+const BOOT_WORD = wallOf(['JL-01']), BOOT_MIN = 700, BOOT_OUT = 340, BOOT_GROW = 200;
+function Boot({ready, onGone}) {
+  const cv = useRef(), box = useRef(), live = useRef({ready, onGone}); live.current = {ready, onGone};
+  useEffect(() => {
+    const canvas = cv.current, g = canvas.getContext('2d'), t0 = performance.now(); let raf = 0, p = 0, last = t0, out = -1, gone = false;
+    const MIN = (import.meta.env.DEV && +new URLSearchParams(location.search).get('boot')) || BOOT_MIN; // development: ?boot=6000 keeps it up to be looked at
+    const block = e => e.preventDefault(), el = box.current;
+    el.addEventListener('wheel', block, {passive: false}); el.addEventListener('touchmove', block, {passive: false});
+    const frame = now => {
+      const dpr = Math.min(devicePixelRatio || 1, 2), W = innerWidth, H = innerHeight, dt = Math.min(100, now - last); last = now;
+      if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) { canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
+      g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+      // how far along: it creeps towards nine tenths while the page loads, and runs to the end once the scene is drawing
+      const t = now - t0, done = live.current.ready && t > MIN, aim = done ? 1 : .9 * (1 - Math.exp(-t / 1500));
+      p += (aim - p) * (1 - Math.exp(-dt / (done ? 90 : 160)));
+      if (done && p > .985 && out < 0) out = now;
+      // the ground: solid, then draining in dots from the middle outwards
+      g.fillStyle = '#0A0B0D';
+      if (out < 0) g.fillRect(0, 0, W, H);
+      else { const te = now - out, cell = Math.max(20, Math.round(Math.min(W, H) / 24)), far = Math.hypot(W / 2, H / 2) || 1;
+        for (let r = 0; r * cell < H + cell; r++) for (let c = 0; c * cell < W + cell; c++) { const cx = c * cell + cell / 2, cy = r * cell + cell / 2, k = 1 - (te - Math.hypot(cx - W / 2, cy - H / 2) / far * BOOT_OUT) / BOOT_GROW;
+          if (k <= 0) continue; if (k >= 1) g.fillRect(cx - cell / 2 - .5, cy - cell / 2 - .5, cell + 1, cell + 1); else { g.beginPath(); g.arc(cx, cy, k * cell * .74, 0, 6.2832); g.fill(); } }
+        if (te > BOOT_OUT + BOOT_GROW && !gone) { gone = true; live.current.onGone(); return; } }
+      // what stands on it, fading as the ground goes
+      const a = out < 0 ? Math.min(1, t / 220) : Math.max(0, 1 - (now - out) / 180);
+      if (a > 0) { g.globalAlpha = a;
+        const u = Math.max(6, Math.min(14, Math.round(Math.min(W * .024, H * .032)))), cols = BOOT_WORD.cols, x0 = Math.round(W / 2 - cols * u / 2), y0 = Math.round(H * .44 - 3.5 * u), n = cols, lit = Math.round(p * n), by = y0 + 11.8 * u;
+        g.fillStyle = '#F2F2EF'; for (const d of BOOT_WORD.dots) g.fillRect(x0 + d.x * u + u * .1, y0 + (6 - d.y) * u + u * .1, u * .8, u * .8);
+        for (let i = 0; i < n; i++) { const on = i < lit; g.fillStyle = on ? (i === lit - 1 && lit < n ? '#FF5A1F' : '#F2F2EF') : '#2A2D33'; const z = on ? .8 : .34; g.fillRect(x0 + i * u + u * (1 - z) / 2, by + u * (1 - z) / 2, u * z, u * z); }
+        // Jay walks the row: he stands on the dot that was lit last, and takes a step for every dot
+        const k = Math.max(2, Math.round(u * .22)), jx = x0 + Math.min(n - 1, Math.max(0, p * n - .5)) * u + u / 2 - 8.5 * k, hop = Math.abs(Math.sin(p * n * Math.PI)) * u * .25;
+        g.save(); g.translate(Math.round(jx), Math.round(by - 14 * k - u * .12 - hop)); paintJay(g, k, lit % 2, false); g.restore();
+        g.font = '500 11px ui-monospace,"SF Mono",Menlo,monospace'; g.textBaseline = 'top'; try { g.letterSpacing = '.2em'; } catch { /* older canvas */ }
+        g.fillStyle = '#7C8088'; g.textAlign = 'left'; g.fillText('LOADING', x0, by + u * 2.2);
+        g.fillStyle = '#F2F2EF'; g.textAlign = 'right'; g.fillText(String(Math.round(p * 100)).padStart(3, '0'), x0 + cols * u, by + u * 2.2);
+        try { g.letterSpacing = '0px'; } catch { /* older canvas */ } g.globalAlpha = 1; }
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return () => { cancelAnimationFrame(raf); el.removeEventListener('wheel', block); el.removeEventListener('touchmove', block); };
+  }, []);
+  return <div ref={box} className="jl-boot" role="status" aria-label="Loading" onPointerDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}><canvas ref={cv}/></div>;
+}
+
 // his numbers, from the site's about page, each as one line of dots; they share one set of dots, which re-forms from one number into the next
 const scoreText = n => String(n.value).replace(/\B(?=(\d{3})+$)/g, ',') + n.suffix;
 const SCORES = Object.fromEntries(['product', 'game'].map(k => [k, SIDES[k].numbers.slice(0, NS).map(n => { const w = wallOf([scoreText(n)]), top = w.dots.filter(d => d.k === 0 && d.y === 6);
@@ -366,7 +425,7 @@ function scorePlace(game, aspect, o) {
   o.p = Math.min(.56, half * aspect * (tall ? 1.8 : 1.42) / (SCOLS + .8)); o.x = T.lx; o.y = tall ? 2.5 : 2.15; o.z = z; return o;
 }
 // the game cartridge paints one letter per key colour, and knocks every letter a little askew
-const TOY = ['#3566FF', '#FFC933', '#FF6233', '#2FA36B', '#26262B', '#3566FF'], TOY_END = ['#F7F0DF', '#FFC933', '#FF6233', '#F7F0DF', '#7BE0A6', '#FFC933', '#F7F0DF', '#FF6233', '#7BE0A6'];
+const TOY = ['#3566FF', '#FFC933', '#FF6233', '#2FA36B', '#26262B', '#FF6233', '#3566FF', '#FFC933', '#2FA36B'], TOY_END = ['#F7F0DF', '#FFC933', '#FF6233', '#F7F0DF', '#7BE0A6', '#FFC933', '#F7F0DF', '#FF6233', '#7BE0A6'];
 const TILT = [-.1, .07, -.06, .09, -.08, .06, -.07, .08, -.05];
 // A bird sits on things: once the last wall is built, Jay sits on top of the letter nearest the machine (S for product, E for game)
 const ROOST = [4, 1].map(k => { const d = WALLS.end.dots.find(q => q.k === k); return {x: d.cx, y: 14.4, k, cx: d.cx, cy: d.cy}; });
@@ -376,9 +435,10 @@ const ROOST = [4, 1].map(k => { const d = WALLS.end.dots.find(q => q.k === k); r
 function wallPlace(kind, game, aspect, o) {
   const tall = aspect < .9, name = kind === 'name', W0 = WALLS[kind].cols - 1, T = shots(game, tall)[name ? 'hero' : 'print'], z = tall ? -1.6 : -2.6;
   const half = (T.d + (tall ? Math.max(0, .9 - aspect) * 11.5 : aspect < 1.55 ? 1.1 : 0) - z) * LENS, hw = half * aspect, right = !name && game;
-  if (tall) { o.p = name ? Math.min(.25, hw * 1.66 / (W0 + .8), (T.ly + half * .8 - 2.75) / 14.8) : Math.min(.2, hw * 1.6 / (W0 + .8));
-    o.x = -W0 / 2 * o.p; o.y = name ? 2.75 : T.ly + half * .66 - WALLS[kind].rows * o.p; o.z = z; o.ry = 0; } // the last wall leaves room above it: Jay sits on top
-  else { o.p = Math.min(name ? .25 : .2, hw * (name ? .8 : .84) / (W0 + .8)); o.ry = right ? -.17 : .18; o.y = -H / 2 + .4 * o.p;
+  if (tall) { o.p = name ? Math.min(.25, hw * 1.54 / (W0 + .8), (T.ly + half * .76 - 2.75) / NAME_H) : Math.min(.2, hw * 1.6 / (W0 + .8));
+    o.x = -W0 / 2 * o.p; o.y = name ? 2.75 + Math.max(0, T.ly + half * .76 - 2.75 - NAME_H * o.p) * .5 : T.ly + half * .66 - WALLS[kind].rows * o.p; o.z = z; o.ry = 0; } // a wall the width holds back does not fill its height: it stands in the middle of it, clear of Jay's words // the last wall leaves room above it: Jay sits on top
+  // (wide: the first wall takes less of the width than the last one, so it keeps a clear gap to the machine beside it)
+  else { o.p = Math.min(name ? .25 : .2, hw * (name ? .72 : .84) / (W0 + .8)); o.ry = right ? -.17 : .18; o.y = -H / 2 + .4 * o.p;
     o.x = right ? T.lx + hw * .9 - .4 * o.p - W0 * o.p * Math.cos(o.ry) : T.lx - hw * .9 + .4 * o.p; o.z = right ? z + W0 * o.p * Math.sin(o.ry) : z; }
   o.cs = Math.cos(o.ry); o.sn = Math.sin(o.ry); return o;
 }
@@ -411,9 +471,9 @@ function DotWall({S, kind}) {
     K.toy = damp(K.toy, game ? 1 : 0, 4, dt);
     mat.userData.glow.value = damp(mat.userData.glow.value, name ? (game ? .34 : awake ? .72 : .16) : game ? .3 : .03, 5, dt);
     if (name) { // on the dark stage the name is a lamp: it lights the side of the machine that faces it, and the floor in between
-      lamp.current.position.set(pl.x + 9 * pl.p * pl.cs, pl.y + 6 * pl.p, pl.z + 1.1);
+      lamp.current.position.set(pl.x + cols / 2 * pl.p * pl.cs, pl.y + 6 * pl.p, pl.z + 1.1);
       lamp.current.intensity = damp(lamp.current.intensity, game || !awake ? 0 : 34 * clamp(since / 1.2) * (1 - off), 5, dt); }
-    for (let i = 0; i < W.length; i++) { const d = W[i], a = wallDot(pl, d, K.toy, now, K.q); let lit = 1, size, spin = 0;
+    for (let i = 0; i < W.length; i++) { const d = W[i], a = wallDot(pl, d, K.toy * (name ? .55 : 1), now, K.q); let lit = 1, size, spin = 0; // the first wall's letters stand closer together: knocked less askew, so they do not touch
       if (name) { lit = awake ? clamp((since - d.x * .03 - K.rnd[i] * .14) / .22) : 0; size = (1 - clamp(off * 1.6 - (1 - d.x / cols) * .6)) * (.7 + .3 * lit); }
       else size = clamp((s.m - .7 - K.rnd[i] * .2) / .1); // a dot of the last wall is there once the dots flying in have reached it
       K.v.copy(K.q).project(state.camera);
@@ -582,7 +642,7 @@ function Stage({S, to, on, tick, works, side, content, logs, runner, words, lang
   const product = useRef(), game = useRef(), wc = useRef([]);
   // scratch values the frame loop reuses. P: the shot the scroll asks for. C: the shot the camera is actually at.
   const K = useMemo(() => ({bg: new THREE.Color(STAGE.product.bg), tmp: new THREE.Color(), aim: new THREE.Color(), wcol: new THREE.Color(), look: new THREE.Vector3(.4, .55, 0),
-    pos: new THREE.Vector3(), v: new THREE.Vector3(), n: new THREE.Vector3(), P: {...POSE.hero}, C: {...POSE.hero}, o: {}, wp: {}, push: 0, floor: 1, floorOn: true, gov: null}), []);
+    pos: new THREE.Vector3(), v: new THREE.Vector3(), n: new THREE.Vector3(), P: {...POSE.hero}, C: {...POSE.hero}, o: {}, wp: {}, seen: 0, push: 0, floor: 1, floorOn: true, gov: null}), []);
   const U = useMemo(() => ({uA: {value: new THREE.Color(STAGE.product.bg)}, uGridCol: {value: new THREE.Color(STAGE.product.grid)}, uC: {value: new THREE.Color(STAGE.product.flood)}, uGlowCol: {value: new THREE.Color('#000')},
     uGrid: {value: 0}, uFlood: {value: 0}, uGlow: {value: 0}, uShift: {value: 0}, uRun: {value: 0}, uRunX: {value: 0}, uO: {value: new THREE.Vector2(.5, .4)}, uG: {value: new THREE.Vector2(.6, .5)}, uRes: {value: new THREE.Vector2(1, 1)}}), []);
   const acc = useRef(1), axis = useRef([]), num = useRef();
@@ -679,6 +739,7 @@ function Stage({S, to, on, tick, works, side, content, logs, runner, words, lang
     r.rotation.x = damp(r.rotation.x, -my * .04 * calm, k6, dt);
     s.shake = damp(s.shake, 0, 9, dt); s.flash = damp(s.flash, 0, 4, dt); s.bk = damp(s.bk, 0, 2.2, dt); glow.current.color.setScalar(1.45 + s.flash * 1.7);
     if (!window.__jlFirstFrame) window.__jlFirstFrame = Math.round(performance.now());
+    if (K.seen < 3 && ++K.seen === 3) on.ready(); // three frames in: everything on the page has been put in its place, and the picture is up
     K.push = damp(K.push, s.phase === 'boot' ? .6 : 0, 5, dt);
     const fit = portrait ? Math.max(0, .9 - aspect) * 11.5 : narrow ? 1.1 : 0;
     const dist = (C.d + fit) * LENS / Math.tan(C.fov * RAD / 2) - K.push;
@@ -906,6 +967,8 @@ function Stage({S, to, on, tick, works, side, content, logs, runner, words, lang
       <Cartridge side="product" to={to} innerRef={product} on={on}/>
       <Cartridge side="game" to={to} innerRef={game} on={on}/>
       {works.map((w, i) => <WorkCart key={w.side + w.short} w={w} n={i + 1} i={i} innerRef={el => { wc.current[i] = el; }} on={on}/>)}
+      <VoxelHider S={S} on={on}/>
+      <VoxelCat S={S} on={on}/>
       <Dots S={S} works={works} game={side === 'game'}/>
       {[[-1.52, .93], [1.52, .93], [-1.52, -.93], [1.52, -.93]].map(([x, y], i) => <line key={'axis' + i} ref={el => { axis.current[i] = el; }} geometry={axisGeo} material={M.axis} position={[x, y, 0]} visible={false}/>)}
     </group>
@@ -969,12 +1032,16 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
   const lay = useRef(null); lay.current = useMemo(() => layout(list), [list]);
   const S = useRef(null);
   if (!S.current) S.current = {phase: saved ? 'on' : 'standby', t0: performance.now() / 1000, tb: performance.now() / 1000, last: performance.now() / 1000, nap: false, poke: 0, tc: 0, pick: saved || to.side || 'product', choice: saved, press: [0, 0, 0, 0], lift: [0, 0, 0, 0, 0],
-    knob: 0, knobTo: 0, kick: 0, shake: 0, flash: 0, bx: 0, by: 0, bk: 0, explode: 0, explodeTo: 0, t1: 0, tl: 0, tp: 0, ts: 0, t2: 0, t3: 0, c: 0, n: 0, lh: -1, roost: null, jay: {x: 0, y: 0, z: 0, ry: 0, hide: false, sx: 0, sy: 0, on: 0}, jayKick: 0, jaySay: null, jayFlip: 0, cover: 0, flood: 0, m: 0, dive: 0, ring: 0, gone: 0, w: 0, hv: -1, print: 0, part: -1, y: 0, ins: null, busy: false, hop: 0, sx: 0, sy: 0};
+    knob: 0, knobTo: 0, kick: 0, shake: 0, flash: 0, bx: 0, by: 0, bk: 0, explode: 0, explodeTo: 0, t1: 0, tl: 0, tp: 0, ts: 0, t2: 0, t3: 0, c: 0, n: 0, lh: -1, roost: null, jay: {x: 0, y: 0, z: 0, ry: 0, hide: false, sx: 0, sy: 0, on: 0}, catCall: 0, catPet: 0, jayKick: 0, jaySay: null, jayFlip: 0, cover: 0, flood: 0, m: 0, dive: 0, ring: 0, gone: 0, w: 0, hv: -1, print: 0, part: -1, y: 0, ins: null, busy: false, hop: 0, sx: 0, sy: 0};
   const el = useRef({}).current, grab = k => n => { el[k] = n; }; // the nodes the frame loop writes to without asking React
   const hov = useRef(null), wipe = useRef(() => {}), timers = useRef([]), live = useRef({}), runner = useRef(null), opened = useRef(new Set()), quipT = useRef(0);
+  // The cat (kit.jsx). It looks in from the top edge next to Jay twice: when he says there is no easter egg, and when he has dozed off
   if (!runner.current) runner.current = createRunner();
   if (import.meta.env.DEV) window.__jl = Object.assign(window.__jl || {}, {runner: runner.current, setRes}); // development only, see Stage
-  live.current = {open, sec, T, lang, embedded, covered};
+  // The loading screen (Boot). ready: the scene has drawn its first frames. fonts: the page's own faces are in (or were given up on).
+  // loaded: the loading screen has gone, and the machine may be woken. Until then no key, click or scroll reaches it
+  const [ready, setReady] = useState(false), [fonts, setFonts] = useState(false), [loaded, setLoaded] = useState(false);
+  live.current = {open, sec, T, lang, embedded, covered, loaded};
 
   // everything the visitor can do. The scene reads S every frame; React only redraws the words.
   const act = useMemo(() => {
@@ -983,8 +1050,9 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
     const inkOn = c => (lum(c) > .5 ? '#14110D' : '#F2F2EF');
     const see = w => { opened.current.add(w.side + w.short); setSeen(opened.current.size); }; // the receipt counts the cartridges that were actually opened
     const a = {
+      ready() { setReady(true); },
       boot() {
-        const s = S.current; if (s.phase !== 'standby') return;
+        const s = S.current; if (s.phase !== 'standby' || !live.current.loaded) return;
         sfx.click(); sfx.boot(); s.press[2] = 1; s.flash = 1; s.phase = 'boot'; s.t0 = s.tb = now(); setPhase('boot');
         later(1500, () => { s.phase = 'on'; s.t0 = now(); s.jayKick = 1; s.jaySay = '!'; setPhase('on'); if (to.side && !s.choice) a.choose(to.side); });
       },
@@ -1000,7 +1068,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
             mid: () => { set(); s.tc = 0; s.snap = true; sfx.thunk(); s.flash = .8; }, done: () => { s.busy = false; }}); }
       },
       flip() { const s = S.current; a.choose(s.choice === 'product' ? 'game' : 'product', {x: s.sx, y: s.sy}); },
-      button(i) { const s = S.current; if (s.phase === 'standby') { a.boot(); return; } s.press[i] = 1; if (a.playing()) { a.jump(); return; } sfx.click(); s.kick += Math.PI / 12; },
+      button(i) { const s = S.current; if (s.phase === 'standby') { a.boot(); return; } s.press[i] = 1; if (a.playing()) { a.jump(); return; } sfx.click(); s.kick += Math.PI / 12; if (i === 3) a.cat(); }, // the fourth key is the hidden one: it calls the cat
       // the game on the screen: any press is a jump, and the first one takes over from Jay playing by himself
       playing: () => live.current.sec === SEC.play && S.current.phase === 'on' && live.current.open == null,
       jump() { const s = S.current, what = runner.current.jump(); if (!what) return; s.press[2] = 1; if (what === 'jump') sfx.step(); else sfx.click();
@@ -1057,9 +1125,16 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
       },
       copy() { sfx.click(); navigator.clipboard?.writeText(author.email).then(() => { setCopied(true); later(1600, () => setCopied(false)); }).catch(() => {}); },
       hop() { const s = S.current; s.hop = 1; s.jayKick = 1; s.jaySay = 'note'; sfx.chirp(); },
+      shy() { S.current.shy = now(); sfx.tick(); }, // the one behind the machine was clicked: it ducks (hider.jsx)
+      // The easter egg (cat.jsx). cat: call it up from behind the machine; only on the first screen, where the machine stands whole and faces you.
+      // catGone: it has sunk back, and Jay, who had his back to it, wonders. pet: it was clicked while it was up
+      cat() { const s = S.current; if (s.phase !== 'on' || s.busy || s.y > .04) return; s.catCall = now(); },
+      catGone() { if (S.current.y > .04) return; setQuip(live.current.T.say.cat); clearTimeout(quipT.current); quipT.current = setTimeout(() => setQuip(null), 2400); },
+      pet() { S.current.catPet = now(); sfx.tick(); },
       // poke him and he answers; keep poking and he gives in
       poke() { const s = S.current, Q = live.current.T.quips, n = s.poke = s.poke % Q.length + 1, last = n === Q.length; s.hop = 1;
         if (last) { s.jayFlip = 1; s.jaySay = 'heart'; sfx.clear(); } else { s.jayKick = 1; s.jaySay = 'note'; sfx.chirp(); }
+        if (n === 4) a.cat(); // "no easter egg", he says, and behind him the cat comes up
         setQuip(Q[n - 1]); clearTimeout(quipT.current); quipT.current = setTimeout(() => setQuip(null), last ? 2600 : 1700); },
       // on the last screen (and in front of the numbers) a click anywhere throws the dots about, and the bird off them
       burst(e) { const s = S.current, score = live.current.sec === SEC.score && s.ts > .9; if ((!score && (s.flood < .95 || s.m < .98)) || s.busy) return; // the numbers can be thrown about too
@@ -1144,6 +1219,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
     const stir = () => { S.current.last = performance.now() / 1000; }; // anything the visitor does keeps Jay awake
     const key = e => {
       stir(); if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (!live.current.loaded && !live.current.covered) { if ([' ', 'PageDown', 'PageUp', 'End', 'Home', 'ArrowDown', 'ArrowUp'].includes(e.key)) e.preventDefault(); return; } // still loading: the keys wait too
       // a page of the site is open over the machine, or the keys are being used in the site's own bar: they are not for the machine
       if (live.current.covered || (e.target.closest && e.target.closest('.v16-navigation,input,textarea,select,[contenteditable]'))) return;
       const s = S.current, k = e.key.toLowerCase(), o = live.current.open, lr = k === 'arrowright' ? 1 : k === 'arrowleft' ? -1 : 0;
@@ -1209,6 +1285,12 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
   // the 3D scene is not built while a page of the site covers the home (a visit that lands on a case), only once the home is seen
   const [armed, setArmed] = useState(!covered);
   useEffect(() => { if (!covered) setArmed(true); }, [covered]);
+  // the page's faces: asked for by name (a face only used on a canvas is not fetched until something asks), and not waited on for ever
+  useEffect(() => { let alive = true; const ok = () => { if (alive) setFonts(true); }, id = setTimeout(ok, 3500);
+    if (document.fonts?.load) Promise.all(['900 40px "JL Dot"', '700 20px "JL Song"', '500 12px "JL Mono"'].map(f => document.fonts.load(f).catch(() => null))).then(() => document.fonts.ready).then(ok, ok); else ok();
+    return () => { alive = false; clearTimeout(id); }; }, []);
+  // a scene that never reports (a lost graphics context, a tab that gets no frames) must not leave the page behind its cover
+  useEffect(() => { if (!armed || covered || ready) return undefined; const id = setTimeout(() => setReady(true), 9000); return () => clearTimeout(id); }, [armed, covered, ready]);
   // the page's own canvas colour and hidden scrollbar only while the machine is the page
   useEffect(() => { const h = document.documentElement; h.classList.add('jl-home'); return () => { h.classList.remove('jl-home'); delete document.body.dataset.navTone; }; }, []);
   // the machine's sounds follow the site's one sound switch (music is off until the visitor turns it on)
@@ -1349,6 +1431,7 @@ export default function JL01({lang = 'zh', embedded = false, covered = false, on
     </div>}
 
     <canvas className="jl-wipe" ref={grab('wipe')}/>
+    {armed && !covered && !loaded && <Boot ready={ready && fonts} onGone={() => setLoaded(true)}/>}
     <div className="jl-cur" ref={grab('cur')} aria-hidden="true"><i/><span ref={grab('tip')}/></div>
     <div className="jl-space" style={{height: (L.end + 1) * 100 + 'vh'}}/>
   </div>;

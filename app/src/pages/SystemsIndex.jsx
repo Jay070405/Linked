@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {PROJECTS, pick} from '../onestroke/content';
-import titleOutline from './systems-title-outline.json';
+import {PageHead} from '../jl01/kit';
 import './systems-index.css';
 
 const T = (zh, en) => ({zh, en});
@@ -53,12 +53,9 @@ export default function SystemsIndex({lang = 'zh', reduced = false, onNavigate})
   const toWorks = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); onNavigate?.('/works'); };
 
   return <div className={`si-page${reduced ? ' si-still' : ''}${hover >= 0 ? ' is-hovering' : ''}`} data-nav-tone="dark" lang={en ? 'en' : 'zh-CN'}>
+    <PageHead word="SYSTEMS" lang={en ? 'en' : 'zh'}/>
     <header className="si-head">
-      <p className="si-label">{L(COPY.label)}</p>
-      <h1 className="si-title">
-        <span className="si-sr">{en ? 'Systems design' : '系统策划'}</span>
-        <svg viewBox={titleOutline.viewBox} aria-hidden="true">{titleOutline.letters.map((letter,i)=><path key={i} d={letter.d} pathLength="1"/>)}</svg>
-      </h1>
+      <h1 className="si-sr">{en ? 'Systems design' : '系统策划'}</h1>
       <i className="si-rule" aria-hidden="true"/>
       <div className="si-intro">
         <p className="si-lead">{L(COPY.lead)}</p>

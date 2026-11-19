@@ -2,14 +2,17 @@
 // where you pressed, the page changes underneath, the cover says where you are, and the dots drain away.
 // The contract is the one the circular transition had: run(action) with an action that may be async and is told whether it
 // is still the latest request; requests that arrive while one is running are coalesced, and only the newest commits.
+import {HEAD_PAGES, headMetrics} from '../jl01/head.js';
+
 const IN = 260, GROW = 160, OUT = 260, HOLD = 300;
 
-// what the cover says: the part of the site you have arrived in, and under it the page
+// what the cover says: the part of the site you have arrived in, and under it the page.
+// head: the page opens on its own name in dots (jl01/kit.jsx), so the cover writes the name exactly there and it simply stays
 export function placeOf(pathname = '/', hash = '') {
   const path = pathname.replace(/\/+$/, '') || '/', [, head, ...rest] = path.split('/');
   const label = head === 'product' ? 'PRODUCT' : head === 'systems' ? 'SYSTEMS' : head === 'works' ? 'ART' : head === 'other-project' || head === 'vibecoding' ? 'OTHER' : head === 'about' ? 'ABOUT' : head === 'for' ? 'HELLO'
     : hash === '#contact' ? 'HELLO' : 'JL-01';
-  return {label, sub: rest.length ? rest[rest.length - 1].replace(/-/g, ' ').toUpperCase() : ''};
+  return {label, sub: rest.length ? rest[rest.length - 1].replace(/-/g, ' ').toUpperCase() : '', head: !rest.length && HEAD_PAGES[head] === label};
 }
 
 export function createDotTransition(node, isReduced, doc = document) {
@@ -21,7 +24,9 @@ export function createDotTransition(node, isReduced, doc = document) {
   const pressed = event => { press = {x: event.clientX, y: event.clientY, t: win.performance.now()}; };
   doc.addEventListener('pointerdown', pressed, true);
   const tone = () => { let side = null; try { side = win.sessionStorage.getItem('jl-side'); } catch { /* storage is optional */ } return side === 'game' ? ['#EFE3CB', '#14110D'] : ['#0A0B0D', '#F2F2EF']; };
-  const clear = () => { win.cancelAnimationFrame?.(raf); raf = 0; node.classList.remove('is-active'); if (g) g.clearRect(0, 0, canvas.width, canvas.height); };
+  // The body is marked while the cover is up. The site's bar watches the body's classes: when the mark goes, it reads the page's tone
+  // again, now that the page it will sit over is the one on screen
+  const clear = () => { win.cancelAnimationFrame?.(raf); raf = 0; node.classList.remove('is-active'); doc.body?.classList?.remove('is-page-changing'); if (g) g.clearRect(0, 0, canvas.width, canvas.height); };
 
   const update = async () => {
     // History can change while an imported page is loading. Only commit the latest request.
@@ -46,9 +51,14 @@ export function createDotTransition(node, isReduced, doc = document) {
       else { g.beginPath(); g.arc(cx, cy, k * cell * .74, 0, 6.2832); g.fill(); }
     }
     if (st.label && a > 0) {
-      const big = Math.min(W * .17, H * .26, 230, W * .84 / (st.label.length * .62));
+      const hm = st.head ? headMetrics(W, H, st.label.length) : null, big = hm ? hm.size : Math.min(W * .17, H * .26, 230, W * .84 / (st.label.length * .62));
       g.globalAlpha = Math.min(1, a); g.fillStyle = st.ink; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.font = `900 ${big}px "JL Dot",ui-monospace,monospace`; g.fillText(st.label, W / 2, H / 2 - big * .08);
+      g.font = `900 ${big}px "JL Dot",ui-monospace,monospace`;
+      if (hm) { // set on the same baseline the page sets its head on: a line as tall as the type, centred on hm.y
+        g.textBaseline = 'alphabetic'; // (first: the font's ascent and descent are measured from whichever baseline is set)
+        const mt = g.measureText(st.label) || {}, up = mt.fontBoundingBoxAscent ?? big * .8, down = mt.fontBoundingBoxDescent ?? big * .2;
+        g.fillText(st.label, W / 2, hm.y + (up - down) / 2); g.textBaseline = 'middle';
+      } else g.fillText(st.label, W / 2, H / 2 - big * .08);
       if (st.sub) { g.font = `500 ${Math.max(11, big * .085)}px ui-monospace,"SF Mono",Menlo,monospace`; try { g.letterSpacing = '.3em'; } catch { /* older canvas */ } g.fillText(st.sub, W / 2, H / 2 + big * .6); try { g.letterSpacing = '0px'; } catch { /* older canvas */ } }
       g.globalAlpha = 1;
     }
@@ -73,7 +83,7 @@ export function createDotTransition(node, isReduced, doc = document) {
     try {
       while (pending && alive) {
         const source = doc.activeElement; let destination = source;
-        node.classList.add('is-active'); node.focus({preventScroll: true});
+        node.classList.add('is-active'); doc.body?.classList?.add('is-page-changing'); node.focus({preventScroll: true});
         if (isReduced() || doc.hidden || !g || !win.requestAnimationFrame) await update();
         else {
           const st = begin();

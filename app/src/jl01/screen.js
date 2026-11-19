@@ -8,31 +8,8 @@ const GW = 96, GH = 64, CELL = 8;
 const F = {A: '25755', B: '65656', C: '34443', D: '65556', E: '74647', F: '74644', G: '34553', H: '55755', I: '72227', J: '11152', K: '55655', L: '44447', M: '57755', N: '65555', O: '25552', P: '65644', Q: '25563', R: '65655', S: '34216', T: '72222', U: '55557', V: '55552', W: '55775', X: '55255', Y: '55222', Z: '71247',
   0: '75557', 1: '26227', 2: '61247', 3: '61216', 4: '55711', 5: '74616', 6: '34652', 7: '71222', 8: '25252', 9: '25316', '-': '00700', '.': '00002', '!': '22202', ':': '02020', '/': '11244', '>': '42124', '<': '12421', ',': '00024', "'": '22000', '=': '07070', '+': '02720'};
 
-// Jay, the pixel blue jay: X body, O belly, B beak, L legs, E eyes (one square, one round)
-export const JAY = [
-  '........XX.......',
-  '.......XXX.......',
-  '......XXXX.......',
-  '....XXXXXXXXX....',
-  '...XXXXXXXXXXX...',
-  '...XEEEXXXXXEXX..',
-  '...XEEEXXXXEEEX..',
-  '...XEEEXBBXXEXX..',
-  '...XXXXXBBXXXXX..',
-  '...XXOOOOOOOOXX..',
-  '...XXOOOOOOOOXX..',
-  '...XXXOOOOOOXXX..',
-  '....XXXXXXXXXX...',
-  '.....LL....LL....',
-];
-const LEGS = ['.....LL....LL....', '.......LL.LL.....'];
-const INK = {X: '#3d63ff', L: '#ff8a2b', O: '#ffffff', B: '#ff8a2b', E: '#0c0e13'};
-// Jay off the screen, in his own colours: the walker that follows the scroll along the bottom rail
-export function drawJay(g, k, step, flip) {
-  g.clearRect(0, 0, 17 * k, 14 * k);
-  JAY.forEach((r, j) => { const row = j === 13 ? LEGS[step] : r;
-    for (let i = 0; i < 17; i++) { const ch = row[i]; if (ch === '.') continue; g.fillStyle = INK[ch]; g.fillRect((flip ? 16 - i : i) * k, j * k, k, k); } });
-}
+import {JAY, drawJay} from './sprite';
+export {JAY, drawJay}; // (kept here too: the scene imports them from the screen)
 
 const PAL = {
   // 0 off, 1 text, 2 body, 3 belly, 4 beak, 5 dim, 6 accent, 7 extra

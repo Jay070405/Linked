@@ -66,7 +66,7 @@ export default function ProductShell() {
 
   return <>
     <a className="skip-link" href="#product-main">{lang === 'en' ? 'Skip to content' : '跳到正文'}</a>
-    <SiteNavigation lang={lang} reducedMotion={reduced} tone={page?.type==='about'?'auto':'light'} onLanguage={chooseLang} onNavigate={onNavigate} onAbout={() => navigate(SITE.about)}/>
+    <SiteNavigation lang={lang} reducedMotion={reduced} tone={page?.type==='about'||page?.type==='product'?'auto':'light'} onLanguage={chooseLang} onNavigate={onNavigate} onAbout={() => navigate(SITE.about)}/>
     <main id="product-main" ref={main} tabIndex={-1} className="product-shell-main">
       <ProductRoute page={page} reduced={reduced} onNavigate={navigate} lang={lang}/>
     </main>

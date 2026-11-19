@@ -11,6 +11,7 @@ import {ArdenTileArt, AtelierTileArt, CntlTileArt, HakoTileArt, L100TileArt, Rfa
 import {ArrowRight} from './v2/icons';
 import './v2/v2.css';
 import './v2/tiles.css';
+import {PageHead} from '../jl01/kit';
 
 const RESUME = '/assets/docs/jay-lin-resume-en.pdf';
 
@@ -138,7 +139,7 @@ export default function ProductIndex({reduced}) {
     return () => offs.forEach(off => off());
   }, [reduced]);
 
-  return <div ref={root} className={`pp-page v2-page pp-index${zh ? ' is-zh' : ''}`} lang={htmlLang} data-nav-tone="light">
+  return <><PageHead word="PRODUCT" lang={zh ? 'zh' : 'en'} paper/><div ref={root} className={`pp-page v2-page pp-index has-head${zh ? ' is-zh' : ''}`} lang={htmlLang} data-nav-tone="light">
     <header className="pp-hero">
       <h1 className="pp-hero-title" aria-label={lines.join(zh ? '' : ' ')}><span key={htmlLang} ref={heading} aria-hidden="true">{lines.map(line => <span key={line} className="pt-hl">{line}{zh ? '' : ' '}</span>)}</span></h1>
       <Annotated reduced={reduced} sans>
@@ -157,5 +158,5 @@ export default function ProductIndex({reduced}) {
     </section>
     <ProductFooter/>
     <CursorLabel root={root} reduced={reduced}/>
-  </div>;
+  </div></>;
 }

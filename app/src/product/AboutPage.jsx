@@ -6,6 +6,8 @@ import {ART, COPY, EDUCATION, FACTS, LANGUAGES, SIDES, SIDE_IDS, STATIONS} from 
 import {badgeHeight, clampOrigin, countText, openStations, smoothstep, wipeRadius} from './about-model';
 import './worlds/arden/arden.css';
 import './about.css';
+import {JayPerch} from '../jl01/kit';
+import {readSide} from '../jl01/head';
 
 function Count({number, play, reduced, index}) {
   const el = useRef(null);
@@ -83,8 +85,11 @@ export default function AboutPage({reduced = false}) {
     // A hint lives in the outgoing inert world. Transfer focus to its counterpart.
     const fromHint = button?.classList.contains('about-flip-hint') || worlds.current[target.current]?.contains(document.activeElement);
     target.current = next; setSide(next); wakeWipe.current();
+    try { sessionStorage.setItem('jl-side', next === 'game' ? 'game' : 'product'); } catch { /* private window */ } // the machine on the home page keeps the cartridge chosen here
     if (fromHint) requestAnimationFrame(() => worlds.current[next]?.querySelector('.about-flip-hint')?.focus({preventScroll: true}));
   }, []);
+  // a visitor who put the game cartridge in on the home page arrives on that side of this page
+  useEffect(() => { if (readSide() !== 'game') return undefined; const id = setTimeout(() => switchSide('game'), 500); return () => clearTimeout(id); }, [switchSide]);
   useEffect(() => {
     const media = matchMedia('(prefers-reduced-motion: reduce)');
     const sync = () => setQuiet(reduced || media.matches || !!root.current?.closest('.quiet'));
@@ -172,7 +177,7 @@ export default function AboutPage({reduced = false}) {
       return <div ref={node => { worlds.current[id] = node; }} key={id} className={`pp-page ar about-world about-world-${id}${zh ? ' is-zh' : ''}`} data-theme={id === 'game' ? 'dark' : 'light'} inert={id !== side ? true : undefined} aria-hidden={id !== side ? true : undefined} lang={htmlLang}>
         <div className="about-frame"><div className="about-spine" aria-hidden="true"><i/></div><i className="about-tip" aria-hidden="true"/>
           <section className="about-hero" data-align="hero"><div className="about-hero-inner"><div className="about-mobile-block"/><span className="about-backdrop" aria-hidden="true">{data.word}</span><header className="about-bio">
-            <p className="about-mono">{t(data.label)}</p><h1>Jay Lin</h1><p className="about-pronouns">{COPY.pronouns}</p><p className="about-role">{t(data.role)}</p><p className="about-lead">{t(data.lead)}</p>
+            <p className="about-mono">{t(data.label)}</p><h1>Jay Lin<JayPerch size={0} lang={lang}/></h1><p className="about-pronouns">{COPY.pronouns}</p><p className="about-role">{t(data.role)}</p><p className="about-lead">{t(data.lead)}</p>
             <div className="about-facts">{Object.entries(FACTS).map(([key, fact]) => <div key={key}><b>{fact.label}</b><span>{t(key === 'openTo' ? data.openTo : fact.text)}</span></div>)}</div>
             <div className="about-hints about-mono"><button className="about-flip-hint" type="button" onClick={e => switchSide(id === 'game' ? 'product' : 'game', e)}>{t(COPY.flipHint)} ↻</button><span>{t(COPY.eggHint)} ↓</span></div>
           </header></div></section>

@@ -1,0 +1,68 @@
+/* What the pages behind the home take from it (kit.jsx). The dot matrix face is declared by the site's page change
+   (components/dot-transition.css), which every page loads. */
+
+@font-face{font-family:"JL Song";src:url(/assets/fonts/jl01/noto-serif-sc-700-subset.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"JL Mono";src:url(/assets/fonts/GeistMono-Variable.woff2) format("woff2");font-weight:100 900;font-display:swap}
+
+/* ---- a page's head: its name in dots, where the page change wrote it ---- */
+.jlk-head{position:relative;overflow:hidden;--bg:#0A0B0D;--ink:#F2F2EF;--dim:#7C8088;--accent:#FF5A1F;background:var(--bg);color:var(--ink);
+  font-family:"JL Mono",ui-monospace,"SF Mono",Menlo,monospace}
+.jlk-head[data-side=game]{--bg:#EFE3CB;--ink:#14110D;--dim:#7A6F5E;--accent:#3566FF}
+.jlk-head *{box-sizing:border-box}
+/* a faint floor of light under the word, as in the studio */
+.jlk-head:before{content:'';position:absolute;left:50%;top:var(--y);width:min(120vw,1500px);height:calc(var(--size)*2.6);translate:-50% -50%;pointer-events:none;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--ink) 9%,transparent),transparent)}
+.jlk-word{position:absolute;left:50%;top:var(--y);translate:-50% -50%;display:flex;white-space:nowrap;font:900 var(--size)/1 "JL Dot",ui-monospace,monospace;letter-spacing:0;user-select:none;-webkit-user-select:none}
+.jlk-word span[data-ch]{display:block;cursor:default;animation:jlk-boot .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*55ms);
+  transition:translate .32s cubic-bezier(.3,1.6,.4,1),color .25s,text-shadow .25s;text-shadow:0 0 calc(var(--size)*.12) color-mix(in srgb,var(--ink) 30%,transparent)}
+.jlk-word span[data-at]{translate:0 -5%;text-shadow:0 0 calc(var(--size)*.2) color-mix(in srgb,var(--ink) 60%,transparent)}
+@keyframes jlk-boot{from{opacity:.08}}
+/* the game cartridge paints one letter per key colour and knocks each a little askew, as it does on the home's wall */
+.jlk-head[data-side=game] .jlk-word span[data-ch]{text-shadow:none}
+.jlk-head[data-side=game] .jlk-word span:nth-child(5n+1){color:#3566FF;rotate:-3deg}.jlk-head[data-side=game] .jlk-word span:nth-child(5n+2){color:#E0A81C;rotate:2.5deg}
+.jlk-head[data-side=game] .jlk-word span:nth-child(5n+3){color:#FF6233;rotate:-2deg}.jlk-head[data-side=game] .jlk-word span:nth-child(5n+4){color:#2FA36B;rotate:3deg}
+.jlk-head[data-side=game] .jlk-word span:nth-child(5n+5){color:#26262B;rotate:-2.5deg}
+.jlk-line{position:absolute;left:0;right:0;bottom:28px;margin:0;display:flex;justify-content:center;gap:clamp(14px,3vw,44px);font:500 11px/1 "JL Mono",ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.jlk-line span:first-child{color:var(--ink)}
+@media (hover:none){.jlk-line span:last-child{display:none}}
+@media (max-width:560px){.jlk-line{font-size:10px;letter-spacing:.12em;gap:14px}.jlk-line span:nth-child(2){display:none}}
+/* the sheet under a paper head comes out of it with the receipt's torn edge */
+.jlk-tear{position:absolute;left:0;right:0;bottom:-1px;height:13px;background:var(--paper,#FAFBFC);animation:jlk-feed .7s .15s cubic-bezier(.2,.8,.2,1) both;
+  clip-path:polygon(0 100%,0 9px,1.25% 0,2.5% 9px,3.75% 0,5% 9px,6.25% 0,7.5% 9px,8.75% 0,10% 9px,11.25% 0,12.5% 9px,13.75% 0,15% 9px,16.25% 0,17.5% 9px,18.75% 0,20% 9px,21.25% 0,22.5% 9px,23.75% 0,25% 9px,26.25% 0,27.5% 9px,28.75% 0,30% 9px,31.25% 0,32.5% 9px,33.75% 0,35% 9px,36.25% 0,37.5% 9px,38.75% 0,40% 9px,41.25% 0,42.5% 9px,43.75% 0,45% 9px,46.25% 0,47.5% 9px,48.75% 0,50% 9px,51.25% 0,52.5% 9px,53.75% 0,55% 9px,56.25% 0,57.5% 9px,58.75% 0,60% 9px,61.25% 0,62.5% 9px,63.75% 0,65% 9px,66.25% 0,67.5% 9px,68.75% 0,70% 9px,71.25% 0,72.5% 9px,73.75% 0,75% 9px,76.25% 0,77.5% 9px,78.75% 0,80% 9px,81.25% 0,82.5% 9px,83.75% 0,85% 9px,86.25% 0,87.5% 9px,88.75% 0,90% 9px,91.25% 0,92.5% 9px,93.75% 0,95% 9px,96.25% 0,97.5% 9px,98.75% 0,100% 9px,100% 100%)}
+@keyframes jlk-feed{from{translate:0 13px}}
+
+/* ---- Jay, sitting on something ---- */
+.jlk-jay{all:unset;position:relative;display:inline-block;height:var(--h,44px);aspect-ratio:17/14;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.jlk-jay span{display:block;height:100%;transform-origin:50% 100%}
+.jlk-jay span.is-hop{animation:jlk-hop .42s cubic-bezier(.3,0,.4,1)}
+.jlk-jay canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+.jlk-jay:hover span{scale:1.08}
+@keyframes jlk-hop{0%{translate:0 0;scale:1.12 .86}35%{translate:0 -46%;scale:.94 1.08}70%{translate:0 0;scale:1.14 .84}100%{scale:1}}
+.jlk-jay.on-word{position:absolute;bottom:86%;translate:-50% 0;transition:left .34s cubic-bezier(.3,.1,.3,1)}
+/* his words: the same chip as on the home */
+.jlk-jay i{position:absolute;left:50%;bottom:calc(100% + 12px);translate:-50% 0;white-space:nowrap;padding:7px 11px 8px;background:var(--ink,#F2F2EF);color:var(--bg,#0A0B0D);
+  font:700 13px/1 "Songti SC","JL Song","Source Han Serif SC","Noto Serif CJK SC","SimSun",serif;font-style:normal;letter-spacing:.14em;text-indent:.14em;animation:jlk-say 1.9s cubic-bezier(.2,.9,.3,1) both;pointer-events:none;z-index:2}
+.jlk-jay i[lang=en]{letter-spacing:.04em;text-indent:.04em}
+.jlk-jay i:before,.jlk-jay i:after{content:'';position:absolute;top:100%;left:50%;background:inherit}
+.jlk-jay i:before{width:8px;height:4px;margin-left:-4px}.jlk-jay i:after{width:4px;height:4px;margin:4px 0 0 -2px}
+@keyframes jlk-say{0%{opacity:0;scale:.5}10%{opacity:1;scale:1.06}16%,82%{opacity:1;scale:1}100%{opacity:0;scale:.94}}
+
+/* ---- the cat: out of sight under the head's lower edge (the head clips it, and a paper head's torn edge lies over it).
+   Called, it comes up a cell at a time as far as its nose, and goes down faster. Its pixels are the size of Jay's ---- */
+.jlk-cat{position:absolute;right:clamp(16px,6vw,88px);bottom:0;height:var(--h,40px);aspect-ratio:17/14;translate:0 104%;transition:translate .2s steps(4,end)}
+.jlk-cat[data-up]{translate:0 28%;transition:translate .5s steps(7,end)}
+.jlk-cat canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+@media (prefers-reduced-motion:reduce){.jlk-word span[data-ch],.jlk-tear,.jlk-jay span.is-hop{animation:none}}
+
+/* ---- where the heads sit ---- */
+/* over a head the site's bar has no ground of its own */
+body.jlk-over-head .v16-navigation:not(.is-menu-open){background:none!important;border-bottom-color:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+/* product: the head is the top of the page, and the sheet under it starts a little lower than it did under the bar alone */
+.pp-page.pp-index.has-head{padding-top:64px}
+/* systems: the head runs edge to edge above the list, through the page's own padding */
+.si-page>.jlk-head{margin:-124px -5.2vw 46px;border-bottom:1px solid #ffffff1f}
+@media (max-width:760px){.si-page>.jlk-head{margin:-104px -22px 34px}}
+/* about: Jay sits at the end of the name like a full stop, and the great word behind the page is set in the machine's dots */
+.about-bio h1 .jlk-jay{height:.34em;margin-left:.1em;vertical-align:baseline;translate:0 .02em;letter-spacing:0}
+.about-bio h1 .jlk-jay i{font-size:13px;line-height:1;font-weight:700}
+.about-page .about-backdrop{font-family:"JL Dot",ui-monospace,monospace;font-weight:900;letter-spacing:0}

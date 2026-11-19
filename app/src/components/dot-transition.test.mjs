@@ -63,10 +63,13 @@ test('a page that stops getting frames still finishes its navigation', async () 
 });
 
 test('the cover is labelled by the part of the site', () => {
-  assert.deepEqual(placeOf('/product/atelier'), {label: 'PRODUCT', sub: 'ATELIER'});
-  assert.deepEqual(placeOf('/systems/league-of-legends/'), {label: 'SYSTEMS', sub: 'LEAGUE OF LEGENDS'});
-  assert.deepEqual(placeOf('/works'), {label: 'ART', sub: ''});
-  assert.deepEqual(placeOf('/about'), {label: 'ABOUT', sub: ''});
-  assert.deepEqual(placeOf('/', '#contact'), {label: 'HELLO', sub: ''});
-  assert.deepEqual(placeOf('/', '#home'), {label: 'JL-01', sub: ''});
+  assert.deepEqual(placeOf('/product/atelier'), {label: 'PRODUCT', sub: 'ATELIER', head: false});
+  assert.deepEqual(placeOf('/systems/league-of-legends/'), {label: 'SYSTEMS', sub: 'LEAGUE OF LEGENDS', head: false});
+  assert.deepEqual(placeOf('/works'), {label: 'ART', sub: '', head: false});
+  assert.deepEqual(placeOf('/about'), {label: 'ABOUT', sub: '', head: false});
+  assert.deepEqual(placeOf('/', '#contact'), {label: 'HELLO', sub: '', head: false});
+  assert.deepEqual(placeOf('/', '#home'), {label: 'JL-01', sub: '', head: false});
+  // the two pages that open on their own name in dots: the cover writes it where the page shows it
+  assert.deepEqual(placeOf('/product'), {label: 'PRODUCT', sub: '', head: true});
+  assert.deepEqual(placeOf('/systems/'), {label: 'SYSTEMS', sub: '', head: true});
 });

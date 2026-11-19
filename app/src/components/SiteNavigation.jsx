@@ -23,7 +23,9 @@ function useNavigationTone(tone) {
       if (document.body.classList.contains('nav-tone-owned')) return;
       const declared = document.body.dataset.navTone;
       if (declared === 'light' || declared === 'dark') { apply(declared); return; }
-      const scene = document.elementsFromPoint(innerWidth * .5, Math.min(96, innerHeight * .15)).find(el => !el.closest('.v16-navigation,.studio-loading'));
+      // The page change's cover lies over everything while a page is swapped underneath, and that is exactly when a new page
+      // declares its tone: look through the cover at the page, or the bar takes the cover's (none) and keeps it
+      const scene = document.elementsFromPoint(innerWidth * .5, Math.min(96, innerHeight * .15)).find(el => !el.closest('.v16-navigation,.studio-loading,.dot-transition,.jl-boot'));
       const tagged = scene?.closest('[data-nav-tone]')?.dataset.navTone;
       if (tagged === 'light' || tagged === 'dark') { apply(tagged); return; }
       let node = scene;

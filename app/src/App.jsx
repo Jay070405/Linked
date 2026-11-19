@@ -71,7 +71,7 @@ export default function App(){
  useEffect(()=>{const preference=matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>setReduced(preference.matches);preference.addEventListener('change',sync);return()=>preference.removeEventListener('change',sync);},[]);
  return <>
  <a className="skip-link" href={modal?'#portfolio-page':'#systems'}>{lang==='en'?'Skip to content':'跳到正文'}</a>
- <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive','systems'].includes(modal.type)?'dark':['about','product-film','hako','data-hall'].includes(modal.type)?'auto':'light'):'auto'} onLanguage={chooseLang} onNavigate={nav} onAbout={()=>nav('about')}/>
+ <SiteNavigation lang={lang} reducedMotion={quiet} tone={modal?(['desk','archive'].includes(modal.type)?'dark':['about','product','product-film','hako','data-hall','systems'].includes(modal.type)?'auto':'light'):'auto'} onLanguage={chooseLang} onNavigate={nav} onAbout={()=>nav('about')}/>
  <main className="home-journey" inert={modal?true:undefined} aria-hidden={!!modal}>
   {machine?<JL01 lang={lang} embedded covered={!!modal} onOpen={openPath}/>
    :<Suspense fallback={null}><LegacyHome lang={lang} reduced={quiet} covered={!!modal} onOpen={open} onNavigate={nav} onTransition={transition}/></Suspense>}
